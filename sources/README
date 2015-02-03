@@ -1,0 +1,8 @@
+To generate KLambda from the Shen sources, use a Shen executable (Shen 17 or later) and type (load "make.shen").  Then type
+
+(make)
+
+Read the file on licensing (licensing.pdf) in the top level for details on Shen licensing and certification.pdf on accreditation.   
+
+Mark Tarver
+3-2-15
