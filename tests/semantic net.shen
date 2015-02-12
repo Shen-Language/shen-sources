@@ -2,7 +2,7 @@
   [is Object Concept] -> (if (belongs? Object Concept) yes no))
 
 (define belongs?  
-  Object Concept -> (element? Concept (fix spread-activation [Object])))
+  Object Concept -> (element? Concept (fix (function spread-activation) [Object])))
 
 (define spread-activation  
   [] -> [] 

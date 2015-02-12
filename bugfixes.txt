@@ -161,5 +161,6 @@ macro list no longer requires symbol disambiguation
 protect not stripped properly - fixed
 Shen standard dot notation native Lisp interface code introduced
 
+Shen 17.1
 
-
+function introduced into standard tests

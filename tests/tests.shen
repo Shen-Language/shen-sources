@@ -161,18 +161,18 @@
     
  (report "yacc"
    (load "yacc.shen") loaded
-   (compile <sent> [the cat likes the dog]) [the cat likes the dog]
-   (compile <sent> [the cat likes the canary] (/. E (fail))) (fail)
-   (compile <asbscs> [a a a b b c])  [a a a b b c]
-   (compile <find-digit> [a v f g 6 y u]) [6]
-   (compile <vp> [chases the cat]) [chases the cat]
-   (compile <des> [[d] [e e]]) [d e e]
-   (compile <sent'> [the cat likes the dog]) [is it true that your father likes the dog ?]
-   (compile <as> [a a a]) [a a a]
-   (compile <find-digit'> [a v f g 6 y u]) [6 y u]
-   (compile <asbs'cs> [a v f g 6 y u] (/. E (fail))) (fail)
-   (compile <find-digit''> [a v f g 6 y u]) 6
-   (compile <anbncn> [a a a b b b c c c]) [a a a b b b c c c] )
+   (compile (function <sent>) [the cat likes the dog]) [the cat likes the dog]
+   (compile (function <sent>) [the cat likes the canary] (/. E (fail))) (fail)
+   (compile (function <asbscs>) [a a a b b c])  [a a a b b c]
+   (compile (function <find-digit>) [a v f g 6 y u]) [6]
+   (compile (function <vp>) [chases the cat]) [chases the cat]
+   (compile (function <des>) [[d] [e e]]) [d e e]
+   (compile (function <sent'>) [the cat likes the dog]) [is it true that your father likes the dog ?]
+   (compile (function <as>) [a a a]) [a a a]
+   (compile (function <find-digit'>) [a v f g 6 y u]) [6 y u]
+   (compile (function <asbs'cs>) [a v f g 6 y u] (/. E (fail))) (fail)
+   (compile (function <find-digit''>) [a v f g 6 y u]) 6
+   (compile (function <anbncn>) [a a a b b b c c c]) [a a a b b b c c c] )
       
 (preclude-all-but [])    
 (tc +)       

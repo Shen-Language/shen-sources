@@ -48,7 +48,7 @@
 
 (define generate_code_for_nonlex
   Rules -> (eval (append [define (get_characteristic_non_terminal Rules) 
-                                   | (mapapp gcfn_help Rules)] 
+                                   | (mapapp (function gcfn_help) Rules)] 
                          [(protect X) -> [fail]])))
 
 (define mapapp

@@ -101,7 +101,7 @@
 
 (define normal_form
   {l_formula --> l_formula}
-   X -> (fix ==>> X))                 
+   X -> (fix (function ==>>) X))                 
     
 (define ==>>
    {l_formula --> l_formula}
