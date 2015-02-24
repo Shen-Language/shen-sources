@@ -56,14 +56,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   
 (defcc <clauses*> 
   <clause*> <clauses*> := [<clause*> | <clauses*>];
-  <e>;)
+  <e> := [];)
   
 (defcc <clause*>
   <head*> <-- <body*> <end*> := [<head*> <body*>];)
   
 (defcc <head*>
   <term*> <head*> := [<term*> | <head*>];
-  <e>;)
+  <e> := [];)
   
 (defcc <term*>
   X := (eval-cons X)  where (and (not (= <-- X)) (legitimate-term? X));)
@@ -82,7 +82,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   
 (defcc <body*>
   <literal*> <body*> := [<literal*> | <body*>];
-  <e>;)
+  <e> := [];)
   
 (defcc <literal*>
   ! := [cut (intern "Throwcontrol")];

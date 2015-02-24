@@ -256,6 +256,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   \\(mode [_ | Patterns] -) (mode [A --> B] -) C <-- (result-type Patterns B C);) 
   
 (define result-type
+  [] [--> A] -> A
   [] A -> A
   [_ | Patterns] [A --> B] -> (result-type Patterns B))  
 
