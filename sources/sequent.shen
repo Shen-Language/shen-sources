@@ -143,7 +143,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define left-rule
   [S P (@p [] C)] -> (let Q (gensym (protect Qv))
                           NewConclusion (@p [C] Q)
-                          NewPremises [(@p (map (function right->left) P) Q)]
+                          NewPremises [(@p (map (/. X (right->left X)) P) Q)]
                           (@p single [S NewPremises NewConclusion])))
 
 (define right->left
@@ -161,7 +161,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
 
 (define rule->horn-clause-body
-  S P A -> (let Variables (map (function extract_vars) A)
+  S P A -> (let Variables (map (/. X (extract_vars X)) A)
                 Predicates (map (/. X (gensym cl)) A)
                 SearchLiterals (construct-search-literals 
                                        Predicates Variables (protect Context_1957) (protect Context1_1957))
@@ -215,14 +215,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X) 
 
 (define preclude
-  Types -> (preclude-h (map (function intern-type) Types)))
+  Types -> (preclude-h (map (/. X (intern-type X)) Types)))
 
 (define preclude-h
    Types -> (let FilterDatatypes (set *datatypes* (difference (value *datatypes*) Types))
                  (value *datatypes*)))
 
 (define include
-  Types -> (include-h (map (function intern-type) Types)))
+  Types -> (include-h (map (/. X (intern-type X)) Types)))
              
 (define include-h
    Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
@@ -230,14 +230,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                  (value *datatypes*)))
 
 (define preclude-all-but
-  Types -> (preclude-h (difference (value *alldatatypes*) (map (function intern-type) Types))))
+  Types -> (preclude-h (difference (value *alldatatypes*) (map (/. X (intern-type X)) Types))))
 
 (define include-all-but
-  Types -> (include-h (difference (value *alldatatypes*) (map (function intern-type) Types))))
+  Types -> (include-h (difference (value *alldatatypes*) (map (/. X (intern-type X)) Types))))
 
 (define synonyms-help
   [] -> (demodulation-function (value *tc*) 
-                      (mapcan (function demod-rule) (value *synonyms*)))
+                      (mapcan (/. X (demod-rule X)) (value *synonyms*)))
   [S1 S2 | S] -> (let Vs (difference (extract_vars S2) (extract_vars S1))
                       (if (empty? Vs)
                           (do (pushnew [S1 S2] *synonyms*)

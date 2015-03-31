@@ -61,7 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                           (eval-kl Input))))
 
 (define monotype
-  [X | Y] -> (map (function monotype) [X | Y])
+  [X | Y] -> (map (/. Z (monotype Z)) [X | Y])
   X -> (if (variable? X) (error "input+ expects a monotype: not ~A~%" X) X))
 
 (define read
@@ -74,10 +74,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   _ 94 Bytes -> (error "read aborted")
   _ -1 Bytes -> (if (empty? Bytes)
                     (simple-error "error: empty stream")
-                    (compile (function <st_input>) Bytes (/. E E)))
+                    (compile (/. X (<st_input> X)) Bytes (/. E E)))
   Stream Byte Bytes -> (let AllBytes (append Bytes [Byte])
                             It (record-it AllBytes)
-                            Read (compile (function <st_input>) AllBytes (/. E nextbyte))
+                            Read (compile (/. X (<st_input> X)) AllBytes (/. E nextbyte))
                             (if (or (= Read nextbyte) (empty? Read))
                                 (read-loop Stream (read-byte Stream) AllBytes)
                                 Read))    where (terminator? Byte) 
@@ -92,9 +92,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define lineread-loop
   -1 Bytes Stream -> (if (empty? Bytes)
                          (simple-error "empty stream")
-                         (compile (function <st_input>) Bytes (/. E E)))
+                         (compile (/. X (<st_input> X)) Bytes (/. E E)))
   Byte _ Stream -> (error "line read aborted")  where (= Byte (hat))
-  Byte Bytes Stream -> (let Line (compile (function <st_input>) Bytes (/. E nextline))
+  Byte Bytes Stream -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
                             It (record-it Bytes)
                             (if (or (= Line nextline) (empty? Line))
                                 (lineread-loop (read-byte Stream) (append Bytes [Byte]) Stream)
@@ -112,7 +112,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Bytes -> Bytes)               
                 
 (define record-it-h
-  Bytes -> (do (set *it* (cn-all (map (function n->string) Bytes))) Bytes))
+  Bytes -> (do (set *it* (cn-all (map (/. X (n->string X)) Bytes))) Bytes))
 
 (define cn-all
   [] -> ""
@@ -120,13 +120,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define read-file
   File -> (let Bytelist (read-file-as-bytelist File)
-               (compile (function <st_input>) Bytelist (function read-error))))
+               (compile (/. X (<st_input> X)) Bytelist (/. X (read-error X)))))
 
 (define read-from-string
-  S -> (let Ns (map (function string->n) (explode S))
-            (compile (function <st_input>) 
+  S -> (let Ns (map (/. X (string->n X)) (explode S))
+            (compile (/. X (<st_input> X)) 
                      Ns 
-                     (function read-error))))
+                     (/. X (read-error X)))))
 
 (define read-error
   [[Byte | Bytes] _] -> (error "read error here:~%~% ~A~%" (compress-50 50 [Byte | Bytes]))

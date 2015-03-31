@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define yacc->shen
   S CC_Stuff -> (let CCRules (split_cc_rules true CC_Stuff [])
-                     CCBody (map (function cc_body) CCRules)
+                     CCBody (map (/. X (cc_body X)) CCRules)
                      YaccCases (yacc_cases CCBody)
                      [define S (protect Stream) -> (kill-code YaccCases)]))
 
@@ -185,7 +185,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [] -> []
   S -> [hdtl (concat (protect Parse_) S)] 	where (grammar_symbol? S) 
   S -> (concat (protect Parse_) S) 	where (variable? S)
-  [X | Y] -> (map (function semantics) [X | Y])
+  [X | Y] -> (map (/. Z (semantics Z)) [X | Y])
   X -> X) 
 
 (define snd-or-fail

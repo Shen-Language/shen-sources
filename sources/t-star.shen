@@ -38,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               (t* [Curry : Type] [] ProcessN Continuation)))
             
 (define curry
-  [F | X] -> [F | (map (function curry) X)]   where (special? F)
+  [F | X] -> [F | (map (/. Y (curry Y)) X)]   where (special? F)
   [Def F | X] -> [Def F | X] where (extraspecial? Def)
   [type X A] -> [type (curry X) A]
   [F X Y | Z] -> (curry [[F X] Y | Z])
@@ -179,7 +179,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
  X A (mode [_ | Hyp] -) <-- (by_hypothesis X A Hyp);)                 
 
 (defprolog t*-def
-  (mode [define F | X] -) A Hyp <-- (t*-defh (compile (function <sig+rules>) X) F A Hyp);)
+  (mode [define F | X] -) A Hyp <-- (t*-defh (compile (/. Y (<sig+rules> Y)) X) F A Hyp);)
 
 (defprolog t*-defh
   (mode [Sig | Rules] -) F A Hyp <-- (t*-defhh Sig (ue-sig Sig) F A Hyp Rules);)
@@ -200,12 +200,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define ue
   [P X] -> [P X]	where (= P protect)
-  [X | Y] -> (map (function ue) [X | Y])  
+  [X | Y] -> (map (/. Z (ue Z)) [X | Y])  
   X -> (concat && X)        where (variable? X)
   X -> X)
 
 (define ue-sig
-  [X | Y] -> (map (function ue-sig) [X | Y])  
+  [X | Y] -> (map (/. Z (ue-sig Z)) [X | Y])  
   X -> (concat &&& X)        where (variable? X)
   X -> X)
 

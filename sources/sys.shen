@@ -34,9 +34,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   F -> (F))
 
 (define eval
-  X -> (let Macroexpand (walk (function macroexpand) X)
+  X -> (let Macroexpand (walk (/. Y (macroexpand Y)) X)
             (if (packaged? Macroexpand)
-                (map (function eval-without-macros) (package-contents Macroexpand))
+                (map (/. Z (eval-without-macros Z)) (package-contents Macroexpand))
                 (eval-without-macros Macroexpand))))
 
 (define eval-without-macros 
@@ -45,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define proc-input+ 
   [input+ Type Stream] -> [input+ (rcons_form Type) Stream]
   [read+ Type Stream] -> [read+ (rcons_form Type) Stream]
-  [X | Y] -> (map (function proc-input+) [X | Y])
+  [X | Y] -> (map (/. Z (proc-input+ Z)) [X | Y])
   X -> X) 
   
 (define elim-def
@@ -55,13 +55,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                               MacroAdd (add-macro F) 
                               Def)
   [defcc F | X] -> (elim-def (yacc [defcc F | X]))
-  [X | Y] -> (map (function elim-def) [X | Y])
+  [X | Y] -> (map (/. Z (elim-def Z)) [X | Y])
   X -> X)
 
-\\(define add-macro
- \\ F -> (set *macros* (adjoin F (value *macros*))))
-
-  (define add-macro
+(define add-macro
     F -> (let MacroReg (value *macroreg*)
               NewMacroReg (set *macroreg* (adjoin F (value *macroreg*)))
               (if (= MacroReg NewMacroReg)
@@ -304,7 +301,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                            (if (empty? Result) (error "value not found~%") (tl Result)))) 
 
 (define hash
-  S Limit -> (let Hash (mod (sum (map (function string->n) (explode S))) Limit)
+  S Limit -> (let Hash (mod (sum (map (/. X (string->n X)) (explode S))) Limit)
                   (if (= 0 Hash)
                       1
                       Hash)))

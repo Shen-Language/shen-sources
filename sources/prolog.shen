@@ -104,16 +104,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
    X -> X)
 
 (define s-prolog
-  Clauses -> (map (function eval) (prolog->shen Clauses)))
+  Clauses -> (map (/. X (eval X)) (prolog->shen Clauses)))
 
 (define prolog->shen
-  Clauses -> (map (function compile_prolog_procedure) 
+  Clauses -> (map (/. X (compile_prolog_procedure X)) 
                    (group_clauses 
-                     (map (function s-prolog_clause) 
-                        (mapcan (function head_abstraction) Clauses)))))
+                     (map (/. X (s-prolog_clause X)) 
+                        (mapcan (/. X (head_abstraction X)) Clauses)))))
 
 (define s-prolog_clause
-  [H :- B] -> [H :- (map (function s-prolog_literal) B)])
+  [H :- B] -> [H :- (map (/. X (s-prolog_literal X)) B)])
 
 (define head_abstraction
   [H :- B] -> [[H :- B]]  where (< (complexity_head H) (value *maxcomplexity*))
@@ -124,7 +124,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                          [Clause]))
 
 (define complexity_head
-  [_ | Terms] -> (product (map (function complexity) Terms)))
+  [_ | Terms] -> (product (map (/. X (complexity X)) Terms)))
 
 (define complexity
   [mode [mode X Mode] _] -> (complexity [mode X Mode])
@@ -179,11 +179,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [[[F | _] | _] | _] -> F)
   
 (define clauses-to-shen
-  F Clauses -> (let Linear (map (function linearise-clause) Clauses)
-                    Arity (prolog-aritycheck F (map (function head) Clauses))
+  F Clauses -> (let Linear (map (/. X (linearise-clause X)) Clauses)
+                    Arity (prolog-aritycheck F (map (/. X (head X)) Clauses))
                     Parameters (parameters Arity) 
                     AUM_instructions (map (/. X (aum X Parameters)) Linear)
-                    Code (catch-cut (nest-disjunct (map (function aum_to_shen) AUM_instructions)))
+                    Code (catch-cut (nest-disjunct (map (/. X (aum_to_shen X)) AUM_instructions)))
                     ShenDef [define F | (append Parameters [(protect ProcessN) (protect Continuation)] [-> Code])]
                     ShenDef))
                                         
@@ -223,7 +223,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
    [H Tl] -> [(explicit_modes H) :- (cf_help Tl)])
 
 (define explicit_modes
-  [Pred | Terms] -> [Pred | (map (function em_help) Terms)])
+  [Pred | Terms] -> [Pred | (map (/. X (em_help X)) Terms)])
 
 (define em_help
   [mode X M] -> [mode X M]
@@ -360,7 +360,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
  
 (define chwild
    X -> [newpv (protect ProcessN)]   where (= X _)
-   [X | Y] -> (map (function chwild) [X | Y])
+   [X | Y] -> (map (/. Z (chwild Z)) [X | Y])
    X -> X)     
    
 (define newpv 

@@ -99,7 +99,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define toplineread_loop
   Byte _ -> (error "line read aborted")  where (= Byte (hat))
-  Byte Bytes -> (let Line (compile (function <st_input>) Bytes (/. E nextline))
+  Byte Bytes -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
                      It (record-it Bytes)
                     (if (or (= Line nextline) (empty? Line))
                         (toplineread_loop (read-byte (stinput)) (append Bytes [Byte]))
@@ -136,7 +136,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                   F)))
 
 (define make-key
-  Key H -> (let Atom (hd (compile (function <st_input>) Key))
+  Key H -> (let Atom (hd (compile (/. X (<st_input> X)) Key))
               (if (integer? Atom)
                   (/. X (= X (nth (+ Atom 1) (reverse H))))
                   (/. X (prefix? Key (trim-gubbins (snd X)))))))

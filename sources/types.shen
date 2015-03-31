@@ -47,7 +47,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               F)) 
 
 (define demodulate
-  X -> (trap-error (let Demod (walk (function demod) X)
+  X -> (trap-error (let Demod (walk (/. Y (demod Y)) X)
                        (if (= Demod X)
                            X
                            (demodulate Demod))) (/. E X)))  

@@ -67,7 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "Shen 18")
+(set *version* "Shen 18.1")
 
 (define initialise_arity_table
   [] -> []
@@ -138,11 +138,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [F | Y] X -> (append [F | Y] [X])
   F X -> [F X])            
 
-(set *symbol-table* [[tuple | (/. X (tuple X))]
+(set *symbol-table* [[datatype-error | (/. X (datatype-error X))]
+                     [tuple | (/. X (tuple X))]
                      [pvar | (/. X (pvar X))]
-                     [<datatype-rules> | (/. X (<datatype-rules> X))]
-                     [datatype-error | (/. X (datatype-error X))]
-                     | (mapcan (function symbol-table-entry) (external (intern "shen")))])
+                     | (mapcan (/. X (symbol-table-entry X)) (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))

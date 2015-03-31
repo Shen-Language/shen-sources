@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (package shen [] 
 
 (define shen->kl 
-  F Def -> (compile (function <define>) [F | Def] (/. X (shen-syntax-error F X))))
+  F Def -> (compile (/. X (<define> X)) [F | Def] (/. X (shen-syntax-error F X))))
 
 (define shen-syntax-error
   F X -> (error "syntax error in ~A here:~%~% ~A~%" F (next-50 50 X)))
@@ -54,7 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define curry-type
   [A --> B --> | C] -> (curry-type [A --> [B --> | C]])
   [A * B * | C] -> (curry-type [A * [B * | C]])
-  [X | Y] -> (map (function curry-type) [X | Y])
+  [X | Y] -> (map (/. Z (curry-type Z)) [X | Y])
   X -> X) 
 
 (defcc <signature-help> 
@@ -126,8 +126,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                      UpDateSymbolTable (update-symbol-table Name Arity)
                      Free (map (/. Rule (free_variable_check Name Rule)) Rules)
                      Variables (parameters Arity)
-                     Strip (map (function strip-protect) Rules)
-                     Abstractions (map (function abstract_rule) Strip)
+                     Strip (map (/. X (strip-protect X)) Rules)
+                     Abstractions (map (/. X (abstract_rule X)) Strip)
                      Applications 
                        (map (/. X (application_build Variables X))
                             Abstractions)
@@ -174,7 +174,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define strip-protect
   [P X] -> (strip-protect X)   where (= P protect)
-  [X | Y] -> (map (function strip-protect) [X | Y])
+  [X | Y] -> (map (/. Z (strip-protect Z)) [X | Y])
   X -> X)
                         
 (define linearise
@@ -215,7 +215,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Name _ Arity -> (do (output "~%warning: changing the arity of ~A can cause errors.~%" Name) Arity))
 
 (define aritycheck-action
-  [F | X] -> (do (aah F X) (map (function aritycheck-action) [F | X]))
+  [F | X] -> (do (aah F X) (map (/. Y (aritycheck-action Y)) [F | X]))
   _ -> skip)
 
 (define aah
@@ -243,7 +243,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define compile_to_kl
   Name [Variables Applications] 
    -> (let Arity (store-arity Name (length Variables))
-           Reduce (map (function reduce) Applications)
+           Reduce (map (/. X (reduce X)) Applications)
            CondExpression (cond-expression Name Variables Reduce)
            TypeTable (if (value *optimise*) (typextable (get-type Name) Variables) skip)
            TypedCondExpression (if (value *optimise*) (assign-types Variables TypeTable CondExpression) CondExpression)

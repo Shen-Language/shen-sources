@@ -40,10 +40,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define load-help
   false File -> (map (/. X (output "~S~%" (eval-without-macros X))) File)
-  _ File -> (let RemoveSynonyms (mapcan (function remove-synonyms) File)
-                 Table (mapcan (function typetable) RemoveSynonyms)
-                 Assume (map (function assumetype) Table)
-                 (trap-error (map (function typecheck-and-load) RemoveSynonyms) 
+  _ File -> (let RemoveSynonyms (mapcan (/. X (remove-synonyms X)) File)
+                 Table (mapcan (/. X (typetable X)) RemoveSynonyms)
+                 Assume (map (/. X (assumetype X)) Table)
+                 (trap-error (map (/. X (typecheck-and-load X)) RemoveSynonyms) 
                              (/. E (unwind-types E Table)))))
                              
                              
@@ -55,7 +55,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> (do (nl) (typecheck-and-evaluate X (gensym (protect A)))))
                  
 (define typetable
-  [define F | X] -> (let Sig (compile (function <sig+rest>) X (/. E (error "~A lacks a proper signature.~%" F)))
+  [define F | X] -> (let Sig (compile (/. Y (<sig+rest> Y)) X (/. E (error "~A lacks a proper signature.~%" F)))
                          [[F | Sig]])
    _ -> [])
 

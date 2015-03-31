@@ -173,4 +173,7 @@ Shen 18
 abort and absvector? given arities
 function designed to work with symbol table
 
+Shen 18.1
+source reconfigured to eliminate non-dynamic uses of 'function'
+
 

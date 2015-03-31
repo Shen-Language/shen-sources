@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> (let Y (compose (value *macros*) X)
             (if (= X Y)
                 X
-                (walk (function macroexpand) Y))))
+                (walk (/. Z (macroexpand Z)) Y))))
 
 (define error-macro
   [error String | Args] -> [simple-error (mkstr String Args)]
@@ -88,14 +88,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [Literal | Literals] -> [Literal | (pass-literals Literals)])
 
 (define defprolog-macro
-  [defprolog F | X] -> (compile (function <defprolog>) [F | X] (/. Y (prolog-error F Y)))
+  [defprolog F | X] -> (compile (/. Y (<defprolog> Y)) [F | X] (/. Y (prolog-error F Y)))
   X -> X)
 
 (define datatype-macro
   [datatype F | Rules] 
-   -> [process-datatype (intern-type F)
-        [compile [function <datatype-rules>] 
-                 (rcons_form Rules) [function datatype-error]]]
+   -> (protect [process-datatype (intern-type F)
+        [compile [lambda X [<datatype-rules> X]] 
+                 (rcons_form Rules) [function datatype-error]]])
   X -> X)
 
 (define intern-type
@@ -114,7 +114,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
 
 (define curry-synonyms
-  Synonyms -> (map (function curry-type) Synonyms))
+  Synonyms -> (map (/. X (curry-type X)) Synonyms))
 
 (define nl-macro
   [nl] -> [nl 1]
