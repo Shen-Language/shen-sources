@@ -123,6 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define compile_to_lambda+
   Name Rules -> (let Arity (aritycheck Name Rules)
+                     UpDateSymbolTable (update-symbol-table Name Arity)
                      Free (map (/. Rule (free_variable_check Name Rule)) Rules)
                      Variables (parameters Arity)
                      Strip (map (function strip-protect) Rules)
@@ -131,6 +132,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                        (map (/. X (application_build Variables X))
                             Abstractions)
                      [Variables Applications]))
+
+(define update-symbol-table
+  Name Arity -> (set *symbol-table* (update-symbol-table-h Name Arity (value *symbol-table*) [])))
+
+(define update-symbol-table-h 
+  Name Arity [] SymbolTable -> (let NewEntry [Name | (eval-kl (lambda-form Name Arity))]
+                                    [NewEntry | SymbolTable])
+  Name Arity [[Name | _] | Entries] SymbolTable 
+   -> (let ChangedEntry [Name | (eval-kl (lambda-form Name Arity))]
+           (append Entries [ChangedEntry | SymbolTable]))
+  Name Arity [Entry | Entries] SymbolTable -> (update-symbol-table-h Name Arity Entries [Entry | SymbolTable]))
 
 (define free_variable_check
   Name [Patts Action] -> (let Bound (extract_vars Patts)

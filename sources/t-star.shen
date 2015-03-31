@@ -97,7 +97,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                                     (bind X&& (placeholder))
                                     (bind W (ebr X&& X Z))
                                     (th* W A [[X&& : B] | Hyp]);
-  (mode [open FileName Direction] -) [stream Direction] Hyp <-- ! (th* FileName string Hyp);
+  (mode [open FileName Direction] -) [stream Direction] Hyp 
+       <-- ! (fwhen (element? Direction [in out]))
+             (th* FileName string Hyp);
   (mode [type X A] -) B Hyp <-- ! (unify A B) (th* X A Hyp);
   (mode [input+ A Stream] -) B Hyp <-- (bind C (demodulate A)) (unify B C) (th* Stream [stream in] Hyp);
   (mode [set Var Val] -) A Hyp <-- ! (th* Var symbol Hyp) ! (th* [value Var] A Hyp) (th* Val A Hyp);

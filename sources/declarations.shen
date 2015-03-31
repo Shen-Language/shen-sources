@@ -67,7 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "Shen 17.3")
+(set *version* "Shen 18")
 
 (define initialise_arity_table
   [] -> []
@@ -79,7 +79,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
                          
  (initialise_arity_table 
-  [absvector 1 adjoin 2 and 2 append 2 arity 1 assoc 2 boolean? 1 cd 1 compile 3 concat 2 cons 2 cons? 1 
+  [abort 0 absvector? 1 absvector 1 adjoin 2 and 2 append 2 arity 1 assoc 2 boolean? 1 cd 1 compile 3 concat 2 cons 2 cons? 1 
    cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1 enable-type-theory 1 interror 2 eval 1 
    eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2 findall 5 freeze 1 fst 1 gensym 1 get 3 
    get-time 1 address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
@@ -122,6 +122,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
       element? do difference destroy defun define defmacro defcc defprolog declare datatype cut cn 
       cons? cons cond concat compile cd cases call close bind bound? boolean? boolean bar! assoc arity 
       append and adjoin <-address address-> absvector? absvector abort])
+
+(define symbol-table-entry
+  F -> (let ArityF (arity F)
+            (cases (= ArityF -1) []
+                   (= ArityF 0) [] \\ change to [[F | F]] for CL if wanted
+                   true [[F | (eval-kl (lambda-form F ArityF))]])))
+
+(define lambda-form
+  F 0 -> F
+  F N -> (let X (gensym (protect V))
+                [lambda X (lambda-form (add-end F X) (- N 1))]))
+
+(define add-end
+  [F | Y] X -> (append [F | Y] [X])
+  F X -> [F X])            
+
+(set *symbol-table* [[tuple | (/. X (tuple X))]
+                     [pvar | (/. X (pvar X))]
+                     [<datatype-rules> | (/. X (<datatype-rules> X))]
+                     [datatype-error | (/. X (datatype-error X))]
+                     | (mapcan (function symbol-table-entry) (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))

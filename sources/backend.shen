@@ -80,14 +80,28 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define apply
   F Arguments -> (let FSym (maplispsym F)
                     (trap-error ((protect APPLY) FSym Arguments) 
-                             (/. E (analyse-application F Arguments)))))
+                             (/. E (analyse-application F FSym Arguments (error-to-string E))))))
 
+(define apply
+  F Arguments -> (let FSym (maplispsym F)
+                     (trap-error (apply-help FSym Arguments) 
+                                 (/. E (analyse-application F FSym Arguments (error-to-string E))))))
+
+(define apply-help
+  FSym [] -> (protect (FUNCALL FSym))
+  FSym [Argument] -> (protect (FUNCALL FSym Argument))
+  FSym [Argument | Arguments] -> (apply-help (protect (FUNCALL FSym Argument)) Arguments))
+                    
 \\ Very slow if higher-order partial application is used; but accurate.                             
 (define analyse-application
-  F Arguments -> (let Lambda (if (or (partial-application? F Arguments) (lazyboolop? F))
-                                 ((protect EVAL) (mk-lambda (maplispsym F) (arity F)))
-                                 (maplispsym F))
-                      (curried-apply Lambda Arguments))) 
+  F FSym Arguments Err 
+   -> (let Lambda (cases (partial-application? F Arguments) (build-up-lambda-expression FSym F) 
+                         (lazyboolop? F) (build-up-lambda-expression FSym F)
+                         true (simple-error Err))
+           (curried-apply Lambda Arguments))) 
+
+(define build-up-lambda-expression
+  FSym F -> ((protect EVAL) (mk-lambda FSym (arity F))))
 
 (define lazyboolop?
   and -> true

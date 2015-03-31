@@ -156,12 +156,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [X | Y] -> [(insert_lazyderef X) | (insert_lazyderef Y)]
   X -> X)      
 
-(define m_prolog_to_s-prolog_predicate
-  = -> unify
-  =! -> unify!
-  == -> identical
-  F -> F)
-
 (define group_clauses
   [] -> []
   [Clause | Clauses] -> (let Group (collect (/. X (same_predicate? Clause X)) 
@@ -526,7 +520,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define call 
   [F | X] ProcessN Continuation 
-   -> (call-help (m_prolog_to_s-prolog_predicate (lazyderef F ProcessN)) X ProcessN Continuation)
+   -> (call-help (function (lazyderef F ProcessN)) X ProcessN Continuation)
    _ _ _ -> false)
   
 (define call-help

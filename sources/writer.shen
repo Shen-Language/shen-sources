@@ -116,7 +116,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   S _ -> (@s (n->string 34) S (n->string 34)))
   
 (define vector->str
-  V Mode -> (cases (print-vector? V) ((<-address V 0) V)
+  V Mode -> (cases (print-vector? V) ((function (<-address V 0)) V)
                    (vector? V) (@s "<" (iter-vector V 1 Mode (maxseq)) ">")
                    true (@s "<<" (iter-vector V 0 Mode (maxseq)) ">>")))
               

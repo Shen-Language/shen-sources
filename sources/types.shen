@@ -96,6 +96,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare fix [[A --> A] --> [A --> A]])  
 (declare freeze [A --> [lazy A]])
 (declare fst [[A * B] --> A]) 
+(declare function [[A --> B] --> [A --> B]])
 (declare gensym [symbol --> symbol])
 (declare <-vector [[vector A] --> [number --> A]]) 
 (declare vector-> [[vector A] --> [number --> [A --> [vector A]]]]) 

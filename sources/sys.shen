@@ -467,7 +467,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define optimise
   + -> (set *optimise* true)
   - -> (set *optimise* false)
-  _ -> (error "optimise expects a + or a -.~%")))
+  _ -> (error "optimise expects a + or a -.~%"))
 
 (define os
   -> (value *os*))
@@ -492,4 +492,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define package?
   Package -> (trap-error (do (external Package) true) (/. E false)))
+
+(define function
+  F -> (lookup-func F (value *symbol-table*)))
+
+(define lookup-func
+  F [] -> (error "~A has no lambda expansion~%" F)
+  F [[F | Lambda] | _] -> Lambda
+  F [_ | SymbolTable] -> (lookup-func F SymbolTable)) )
+
+
+
+
+
   

@@ -169,8 +169,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
   
 (define function-abstraction 
-  F 0 -> F
-  F -1 -> (function-abstraction-help F 1 [])
+  F 0 -> (error "~A has no lambda form~%" F)
+  F -1 -> [function F]
   F N -> (function-abstraction-help F N []))  
 
 (define function-abstraction-help

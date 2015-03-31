@@ -169,3 +169,8 @@ Shen 17.2
 
 result-type debugged
 
+Shen 18 
+abort and absvector? given arities
+function designed to work with symbol table
+
+

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type"
 content="text/html; charset=iso-8859-1">
 <meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
-<title>Shen doc 17The Official Shen Standard</title>
+<title>Shen doc 18The Official Shen Standard</title>
 </head>
 
 <body>
@@ -17,7 +17,7 @@ content="text/html; charset=iso-8859-1">
         <td><div align="right"><table border="0" width="100%">
             <tr>
                 <td valign="top"><font size="7" face="Impact">Shen
-                doc 17<br>
+                doc 18<br>
                 </font><font size="6" face="Impact">The Official
                 Shen Standard</font><table border="0"
                 cellspacing="0">
@@ -1074,26 +1074,27 @@ content="text/html; charset=iso-8859-1">
         example in this Common Lisp expression; (list 'John 'put
         'the 'car 'into 'reverse), or in Qi II [John put the car
         into reverse], the symbol 'reverse' denotes a symbol. But
-        in Common Lisp the expressions (reverse '(1 2 3)) (in Qi
-        II (reverse [1 2 3])) and (mapcar 'reverse '((1 2) (2 3)
-        (3 4))), (in Qi II (map reverse [[1 2] [2 3] [3 4]])),
-        the symbol 'reverse' actually denotes a function. </font></p>
+        in Common Lisp the expressions <strong>(reverse '(1 2 3))</strong>
+        (in Qi II <strong>(reverse [1 2 3])</strong>) and <strong>(mapcar
+        'reverse '((1 2) (2 3) (3 4)))</strong>, (in Qi II <strong>(map
+        reverse [[1 2] [2 3] [3 4]]))</strong>, the symbol <strong>reverse</strong>
+        actually denotes a function. </font></p>
         <p align="left"><font size="2" face="Verdana">That means
         in the Lisp family, symbols are semantically context
         sensitive. At the head of an application they can only
         denote a function and there is no ambiguity; but within
         the body of the application they can denote either a
         function or the symbol quoted. Lets us say a symbol is<strong>
-        innocent</strong> in Qi if it is used simply to refer to
-        itself and non-innocent if not</font></p>
+        idle</strong> in Qi if it is used without naming
+        anything.</font></p>
         <p align="left"><font size="2" face="Verdana">To help
-        reading, Common Lisp includes the expression 'function'
-        which disambiguates innocent symbols from the other kind;
-        the expression (mapcar (function reverse) '((1 2) (2 3)
-        (3 4))) does what (mapcar 'reverse '((1 2) (2 3) (3 4)))
-        does but the semantics of 'reverse' is clarified to show
-        that the programmer is referring to the function not the
-        symbol itself.</font></p>
+        reading, Common Lisp includes the expression <strong>function</strong>
+        which disambiguates idle symbols from the other kind; the
+        expression <strong>(mapcar (function reverse) '((1 2) (2
+        3) (3 4))) </strong>does what <strong>(mapcar 'reverse
+        '((1 2) (2 3) (3 4)))</strong> does but the semantics of <strong>reverse</strong>
+        is clarified to show that the programmer is referring to
+        the function not the symbol itself.</font></p>
         <p align="left"><font size="2" face="Verdana">Qi I and Qi
         II followed Common Lisp in making symbols semantically
         context sensitive, relying on the Common Lisp compiler to
@@ -1110,28 +1111,28 @@ content="text/html; charset=iso-8859-1">
         <p align="left"><font size="2" face="Verdana">However the
         problem arises of the context sensitivity of symbols;
         when should a symbol should be 'vectorised' in a non-Lisp
-        language and when not? For instance, if the symbol
-        'reverse' is vectorised in the context (map reverse [[1
-        2] [2 3] [3 4]]), then the <strong>map</strong> function
-        will crash, since it receives a vector and not a function
-        as an argument. But in the context [John put the car into
-        reverse], it is right to vectorise the symbol 'reverse'
-        because it is naming itself and not calling a function.
-        How does one proceed?</font></p>
+        language and when not? For instance, if the symbol <strong>reverse</strong>
+        is vectorised in the context <strong>(map reverse [[1 2]
+        [2 3] [3 4]])</strong>, then the <strong>map</strong>
+        function will crash, since it receives a vector and not a
+        function as an argument. But in the context <strong>[John
+        put the car into reverse]</strong>, it is right to
+        vectorise the symbol <strong>reverse</strong> because it
+        is not calling a function. How does one proceed?</font></p>
         <p align="left"><font size="2" face="Verdana">There are
         several solutions to this problem. One is to simply avoid
-        innocent symbols and insist that strings do all the work
-        of innocent symbols. This follows the path of languages
-        like ML where innocent symbols do not exist. It would
-        mean that in Shen, [p &amp; q] could not be written; only
-        [&quot;p&quot; &quot;&amp;&quot; &quot;q&quot;]. However
-        this would probably not appeal to those Lispers, like
-        myself, who enjoy the convenience of working with
-        innocent symbols.</font></p>
+        idle symbols and insist that strings do all the work of
+        idle symbols. This follows the path of languages like ML
+        where idle symbols do not exist. It would mean that in
+        Shen, <strong>[p &amp; q] </strong>could not be written;
+        only <strong>[&quot;p&quot; &quot;&amp;&quot;
+        &quot;q&quot;]</strong>. However this would probably not
+        appeal to those Lispers, like myself, who enjoy the
+        convenience of working with idle symbols.</font></p>
         <p align="left"><font size="2" face="Verdana">The second
         is to treat all non-variable symbols in the body of an
         application (apart from the leading symbol which must
-        denote a function or procedure of some form) as innocent,
+        denote a function or procedure of some form) as idle,
         thus vectorising them. In this case, to prevent any
         higher-order function H from failing, H must, when
         applying any vectorised symbol S, look for the function F
@@ -1144,15 +1145,24 @@ content="text/html; charset=iso-8859-1">
         solution is to provide '<strong>function</strong>' as a
         means of disambiguation and this is what Shen does. Hence
         any symbol S which is an argument to an application is
-        treated as innocent. But if S is enclosed as in
-        '(function S)', the whole expression denotes a function. <em><u>Hence
+        treated as idle. But if S is enclosed as in '(function
+        S)', the whole expression denotes a function. <em><u>Hence
         to write portable Shen; one should avoid writing an
-        expression like '</u></em><u>(map reverse [[1 2] [2 3] [3
-        4]])</u><em><u>' and write </u></em><u>'(map (function
-        reverse) [[1 2] [2 3] [3 4]])'</u>. The former
-        construction will certainly work under a Common Lisp
-        platform, but the latter will run under Common Lisp and
-        platforms outside the Lisp family.</font></p>
+        expression like '</u></em><strong><u>(map reverse [[1 2]
+        [2 3] [3 4]])</u></strong><em><strong><u>'</u></strong></em><em><u>
+        and write </u></em><u>'</u><strong><u>(map (function
+        reverse) [[1 2] [2 3] [3 4]])</u></strong><u>'</u>. The
+        former construction will certainly work under a Common
+        Lisp platform, but the latter will run under Common Lisp
+        and platforms outside the Lisp family.</font></p>
+        <p align="left"><font size="2" face="Verdana">Note in
+        version 18 and after, <strong>function </strong>is
+        statically compiled away where possible in favour of a
+        lambda form (<strong>(function union)</strong> is <strong>(/.
+        X Y (union X Y))</strong>). When this is not possible,
+        because <strong>function</strong> is used dynamically, a
+        lookup table is used to find the appropriate lambda form.
+        zero-place functions are not admissable arguments to <strong>function</strong>.</font></p>
         <p align="left"><a name="Packages"></a><font size="3"
         face="Verdana"><strong>Packages </strong></font></p>
         <p align="left"><font size="2" face="Verdana">Packages
