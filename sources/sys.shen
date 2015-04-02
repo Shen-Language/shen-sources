@@ -72,6 +72,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define external
   Package -> (trap-error (get Package external-symbols) 
                          (/. E (error "package ~A has not been used.~%" Package))))
+
+(define internal
+  Package -> (trap-error (get Package internal-symbols) 
+                         (/. E (error "package ~A has not been used.~%" Package))))
   
 (define package-contents
   [package null _ | Contents] -> Contents
@@ -497,9 +501,3 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   F [] -> (error "~A has no lambda expansion~%" F)
   F [[F | Lambda] | _] -> Lambda
   F [_ | SymbolTable] -> (lookup-func F SymbolTable)) )
-
-
-
-
-
-  

@@ -114,6 +114,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare inferences [--> number]) 
 (declare insert [A --> [string --> string]])
 (declare integer? [A --> boolean])
+(declare internal [symbol --> [list symbol]])
 (declare intersection [[list A] --> [[list A] --> [list A]]])
 (declare kill [--> A])
 (declare language [--> string])  

@@ -17,7 +17,7 @@ content="text/html; charset=iso-8859-1">
         <td><div align="right"><table border="0" width="100%">
             <tr>
                 <td valign="top"><font size="7" face="Impact">Shen
-                doc 18<br>
+                doc 19<br>
                 </font><font size="6" face="Impact">The Official
                 Shen Standard</font><table border="0"
                 cellspacing="0">
@@ -829,7 +829,7 @@ content="text/html; charset=iso-8859-1">
                 symbol, boolean, string or number is an atom.</font></p>
             </li>
             <li><p align="left"><font size="2" face="Verdana">Any
-                atom is an s-expr.</font></p>
+                atom is an s-expr as is ().</font></p>
             </li>
             <li><p align="left"><font size="2" face="Verdana">Any
                 abstraction (lambda X Y) is an s-expr if X is a
@@ -1181,7 +1181,7 @@ content="text/html; charset=iso-8859-1">
         ... E</strong><sub><strong>n</strong></sub> are a series
         of Shen expressions.</font></p>
         <p align="left"><font size="2" face="Verdana">The Shen
-        reader prepends the package symbol followed by dot (<strong>.</strong>)
+        reader prepends the package symbol S followed by dot (<strong>.</strong>)
         before all the symbols when evaluating <strong>E</strong><sub><strong>1</strong></sub><strong>
         ... E</strong><sub><strong>n</strong> </sub>apart from
         those symbols which are <strong>external</strong>, which
@@ -1198,7 +1198,9 @@ content="text/html; charset=iso-8859-1">
         (d) ... symbols internal to the Shen package (<strong>shen</strong>)
         or ....<br>
         (e) ... symbols consisting entirely of underscores or
-        entirely of equals signs.</font></p>
+        entirely of equals signs.<br>
+        (f) ... symbols already packaged under S (a rule
+        introduced in Shen 19).</font></p>
         <p align="left"><font size="2" face="Verdana">Symbols
         which are prepended we say are <strong>internal</strong>
         (to the package). Symbols which are not are <strong>external</strong>.
@@ -1227,13 +1229,16 @@ content="text/html; charset=iso-8859-1">
         declared external to that package at the point the
         function is called. If the package does not exist, an
         error is raised.</font></p>
+        <p align="left"><font size="2" face="Verdana">The
+        function <strong>internal</strong> takes a package name
+        and returns the list of all those symbols which have been
+        found to be internal to that package at the point the
+        function is called. If the package does not exist, an
+        error is raised. This function was introduced in Shen 19.</font></p>
         <p align="left"><font size="2" face="Verdana">Note that
         Shen will allow you to reference symbols that are
         internal to a package by citing the package name (e.g. <strong>mypackage.foo</strong>).
-        However the package must have been created by the package
-        command and if <strong>mypackage</strong> has not been
-        loaded then <strong>package mypackage has not been used </strong>will
-        appear as an error message.</font></p>
+        </font></p>
         <p align="left"><font size="2" face="Verdana">Symbols
         which are external to the Shen package may not be
         redefined; the user cannot redefine <strong>append</strong>
@@ -1820,8 +1825,7 @@ content="text/html; charset=iso-8859-1">
         below) is better behaved in this respect.</font></p>
         <p align="left"><font size="2" face="Verdana">Vectors are
         numbered from 0; so <strong>(absvector 100) </strong>creates
-        a vector with addresses from 0 to 100 and the limit is
-        100.</font></p>
+        a vector with addresses from 0 to 99.</font></p>
         <p align="left"><font size="2" face="Verdana">If a vector
         V is created and nothing has been stored address V(N)
         then the result returned by <strong>(&lt;-address V N) </strong>is
@@ -2385,13 +2389,15 @@ content="text/html; charset=iso-8859-1">
         <p align="left"><a name="Numbers"></a><font size="3"
         face="Verdana"><strong>Numbers</strong></font></p>
         <p align="left"><font size="2" face="Verdana">The numbers
-        in Shen (and K</font><font size="2" face="Symbol">l) </font><font
-        size="2" face="Verdana">are as follows.</font></p>
+        in Shen are as follows.</font></p>
         <p align="left"><font size="2" face="Verdana">1. Numbers
         may be positive or negative or zero.<br>
         2. Numbers are either integers or floats; there are no
         rationals or complex numbers.<br>
-        3. E number notation is allowed.<br>
+        3. E number notation is allowed. They are not part of K</font><font
+        size="2" face="Symbol">l</font><font size="2"
+        face="Verdana"> but are parsed by the Shen reader to
+        integers or floats.<br>
         4. +,-,/,* are 2-place and operate on floats and
         integers. / applied to two integers A and B produces an
         integer if B is a divisor of A otherwise a float.<br>
@@ -2505,11 +2511,12 @@ content="text/html; charset=iso-8859-1">
         non-integer - integer = non-integer</font></p>
         <p align="left"><font size="2" face="Verdana">These
         'equations', though mathematically true, can fail outside
-        a certain range which depends on the precision of the
-        platform and therefore the accuracy of this test depends
-        on the precision of the arithmetic. Thus we recommend
-        that Shen be installed with at least double precision
-        which gives accuracy up to 16 digits.</font></p>
+        a certain range (commonly beyond 15 digits) which depends
+        on the precision of the platform and therefore the
+        accuracy of this test depends on the precision of the
+        arithmetic. Thus we recommend that Shen be installed with
+        at least double precision which gives accuracy up to 15
+        digits.</font></p>
         <p align="left"><a name="The Timer"></a><font size="3"
         face="Verdana"><strong>The Timer</strong></font></p>
         <p align="left"><font size="2" face="Verdana">The <strong>get-time</strong>

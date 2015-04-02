@@ -169,11 +169,18 @@ Shen 17.2
 
 result-type debugged
 
-Shen 18 
+Shen 17.4 
 abort and absvector? given arities
 function designed to work with symbol table
 
-Shen 18.1
-source reconfigured to eliminate non-dynamic uses of 'function'
+Shen 18
+dynamic binding for function fixed
 
+Shen 18.1
+compiled through 18
+
+Shen 19
+EQL introduced in backend
+internal introduced
+systemf given arity
 

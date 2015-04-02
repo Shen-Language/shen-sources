@@ -7,6 +7,7 @@
 \\(systemf sum)
 \\(systemf *stoutput*)
 \\(systemf package?)
+(systemf internal)
 
 (define make
   -> (map (function make-file) ["core.shen" "declarations.shen" "load.shen" "macros.shen"

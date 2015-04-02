@@ -407,24 +407,43 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
     [package null _ | Code] Stream -> (append Code Stream)
     [package PackageName Exceptions | Code] Stream
      -> (let ListofExceptions (eval-without-macros Exceptions)
-             Record (record-exceptions ListofExceptions PackageName)
+             External (record-exceptions ListofExceptions PackageName)
              PackageNameDot (intern (cn (str PackageName) "."))
-             (append (packageh PackageNameDot ListofExceptions Code) Stream))
+             ExpPackageName (explode PackageName)
+             Packaged (packageh PackageNameDot ListofExceptions Code ExpPackageName) 
+             Internal (record-internal PackageName (internal-symbols ExpPackageName Packaged))
+             (append Packaged Stream))
     X Stream -> [X | Stream])  
 
 (define record-exceptions 
   ListofExceptions PackageName 
    -> (let CurrExceptions (trap-error (get PackageName external-symbols) (/. E []))
            AllExceptions (union ListofExceptions CurrExceptions)
-           (put PackageName external-symbols AllExceptions)))   
+           (put PackageName external-symbols AllExceptions))) 
+
+(define record-internal
+  PackageName Internal -> (put PackageName internal-symbols (union Internal (trap-error (get PackageName internal-symbols) (/. E [])))))
+
+(define internal-symbols
+  ExpPackageName PackageSymbol -> [PackageSymbol]  where (and (symbol? PackageSymbol) (prefix? ExpPackageName (explode PackageSymbol)))
+  ExpPackageName [X | Y] -> (union (internal-symbols ExpPackageName X) (internal-symbols ExpPackageName Y))
+  _ _ -> [])
        
 (define packageh
-    PackageName Exceptions [X | Y] 
-      -> [(packageh PackageName Exceptions X) | (packageh PackageName Exceptions Y)]
-    PackageName Exceptions X -> X  
-                 where (or (sysfunc? X) (variable? X) (element? X Exceptions)
-                           (doubleunderline? X) (singleunderline? X))
-    PackageName Exceptions X -> (concat PackageName X)   
-             where (and (symbol? X) (not (prefix? [($ shen.)] (explode X))))
-    _ _ X -> X) )
+    PackageNameDot Exceptions [X | Y] ExpPackageName
+      -> [(packageh PackageNameDot Exceptions X ExpPackageName) | (packageh PackageNameDot Exceptions Y ExpPackageName)]
+    PackageNameDot Exceptions X ExpPackageName -> X  
+                 where (or (sysfunc? X) 
+                           (variable? X) 
+                           (element? X Exceptions)
+                           (doubleunderline? X) 
+                           (singleunderline? X))                           
+    PackageNameDot Exceptions X ExpPackageName -> (concat PackageNameDot X)                                                          
+             where (and (symbol? X) 
+                        (let ExplodeX (explode X)
+                             (and (not (prefix? [($ shen.)] ExplodeX))
+                                  (not (prefix? ExpPackageName ExplodeX)))))
+    _ _ X _ -> X) 
+
+        )
 

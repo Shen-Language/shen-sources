@@ -192,5 +192,5 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define remove-nth
   1 [_ | Y] -> Y
-  N [X | Y] -> [X | (remove-nth (- N 1) Y)])) 
+  N [X | Y] -> [X | (remove-nth (- N 1) Y)]))
   
