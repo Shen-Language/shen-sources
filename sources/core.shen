@@ -334,7 +334,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define ebr
   A B B -> A
-  A B [/. C D] -> [/. C D]	where (> (occurrences B C) 0)
+  A B [/. C D] -> [/. C D]	   where (> (occurrences B C) 0)
+  A B [lambda C D] -> [lambda C D] where (> (occurrences B C) 0)
   A B [let B C D] -> [let B (ebr A B C) D]	
   A B [C | D] -> [(ebr A B C) | (ebr A B D)]
   _ _ C -> C)  
