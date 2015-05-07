@@ -67,7 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "Shen 19.1")
+(set *version* "Shen 19.2")
 
 (define initialise_arity_table
   [] -> []
@@ -88,7 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
    n->string 1 number? 1 occurs-check 1 occurrences 2 occurs-check 1 optimise 1 or 2 os 0 package 3 package? 1
    port 0 porters 0 pos 2 print 1 profile 1 profile-results 1 pr 2 ps 1 preclude 1 preclude-all-but 1 protect 1 
    address-> 3 put 4 reassemble 2 read-file-as-string 1 read-file 1 read 1 read-byte 1 read-from-string 1 
-   release 0 remove 2 require 3 reverse 1 set 2 simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0 
+   receive 1 release 0 remove 2 require 3 reverse 1 set 2 simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0 
    string->n 1 string->symbol 1 string? 1 subst 3 sum 1 symbol? 1 systemf 1 tail 1 tl 1 tc 1 tc? 0 
    thaw 1 tlstr 1 track 1 trap-error 2 tuple? 1 type 2 return 3 undefmacro 1 unput 3 unprofile 1 unify 4 unify! 4 
    union 2 untrack 1 unspecialise 1 undefmacro 1 vector 1 vector-> 3 value 1 variable? 1 version 0  
@@ -111,8 +111,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
       verified variable? value vector-> <-vector vector vector? unspecialise untrack unit unix union unify 
       unify! unput unprofile undefmacro return type tuple? true trap-error track time thaw tc? tc tl tlstr tlv 
       tail systemf synonyms symbol symbol? string->symbol sum subst string? string->n stream string stinput 
-      stoutput step spy specialise snd simple-error set save str run reverse remove release read read-file 
-      read-file-as-bytelist read-file-as-string read-byte read-from-string package? put preclude 
+      stoutput step spy specialise snd simple-error set save str run reverse remove release read receive
+      read-file read-file-as-bytelist read-file-as-string read-byte read-from-string package? put preclude 
       preclude-all-but ps prolog? protect profile-results profile print pr pos porters port package output out os or 
       optimise open occurrences occurs-check n->string number? number null nth not nl mode macroexpand
       maxinferences mapcan map make-string load loaded list lineread limit length let lazy lambda language kill is 

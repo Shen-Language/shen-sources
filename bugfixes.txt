@@ -188,3 +188,8 @@ Shen 19.1
 
 lambda introduced as exception for ebr
 
+Shen 19.2
+
+receive made external
+callfailure in shen.next-50 corrected
+

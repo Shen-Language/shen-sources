@@ -8,6 +8,7 @@
 \\(systemf *stoutput*)
 \\(systemf package?)
 (systemf internal)
+(systemf receive)
 
 (define make
   -> (map (function make-file) ["core.shen" "declarations.shen" "load.shen" "macros.shen"

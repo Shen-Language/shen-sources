@@ -34,7 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   F Def -> (compile (/. X (<define> X)) [F | Def] (/. X (shen-syntax-error F X))))
 
 (define shen-syntax-error
-  F X -> (error "syntax error in ~A here:~%~% ~A~%" F (next-50 50 X)))
+  F [X | Y] -> (error "syntax error in ~A here:~%~% ~A~%" F (next-50 50 X))
+  F _ -> (error "syntax error in ~A~%" F))
 
 (defcc <define>
  <name> <signature> <rules> := (compile_to_machine_code <name> <rules>);
