@@ -10,6 +10,7 @@
    (load "einstein.shen") loaded
    (prolog? (einsteins_riddle X) (return X)) german 
    (prolog? (enjoys mark X) (return X)) chocolate  
+   (prolog? (enjoys willi X) (return X)) chocolate  
    (prolog? (fads mark)) [tea chocolate]
    (prolog? (prop [] [p <=> p]))  true 
    (prolog? (mapit consit [1 2 3] Out) (return Out)) [[1 1] [1 2] [1 3]] 
