@@ -100,7 +100,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   N F Result -> (output "~%~A<~A> Output from ~A ~%~A==> ~S" (spaces N) N F (spaces N) Result))
 
 (define untrack
-  F -> (eval (ps F)))
+  F -> (let Tracking (value *tracking*)
+            Tracking (set *tracking* (remove F Tracking))
+            (eval (ps F))))
 
 (define profile
   Func -> (profile-help (ps Func)))
