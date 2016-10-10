@@ -1,7 +1,7 @@
-# Mirror repository of Shen code
+# The official repository of Shen kernel code.
 
-**Important**: this mirror exists to keep track of changes across releases for reference purposes. **You will not find complete Shen releases here**. This repository may also be updated destructively to include older releases or retroactively track new files.
+This is the official repository of the reference implementation of Shen. The latest Shen releases can still be obtained from the [download page](http://www.shenlanguage.org/download_form.html) at [Shen's website](http://www.shenlanguage.org).
 
-You can always find the complete Shen release for the latest version at the [download page](http://www.shenlanguage.org/download_form.html) at [Shen's website](http://www.shenlanguage.org).
+**Important**: The latest Shen releases linked also bundle the sources for the SBCL and CLisp implementation which are unavailable in this repo.
 
-Bug reports should be submitted using the [support form](http://www.shenlanguage.org/support.html).
+Bug reports/fixes, other issues and pull requests may be submitted here.
