@@ -18,7 +18,7 @@
   [X | Y] Z <-- (rev Y W) (app W [X] Z);) 
  
 (defprolog enjoys
-  willi X <-- (likes mark X);
+  willi X <-- (enjoys mark X);
   mark chocolate <--;
   mark tea <--;) enjoys
  
