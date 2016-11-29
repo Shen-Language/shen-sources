@@ -9,6 +9,7 @@
 \\(systemf package?)
 (systemf internal)
 (systemf receive)
+(systemf <!>)
 
 (define make
   -> (map (function make-file) ["core.shen" "declarations.shen" "load.shen" "macros.shen"
