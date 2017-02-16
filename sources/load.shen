@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -43,17 +43,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   _ File -> (let RemoveSynonyms (mapcan (/. X (remove-synonyms X)) File)
                  Table (mapcan (/. X (typetable X)) RemoveSynonyms)
                  Assume (map (/. X (assumetype X)) Table)
-                 (trap-error (map (/. X (typecheck-and-load X)) RemoveSynonyms) 
+                 (trap-error (map (/. X (typecheck-and-load X)) RemoveSynonyms)
                              (/. E (unwind-types E Table)))))
-                             
-                             
+
+
 (define remove-synonyms
   [synonyms-help | S] -> (do (eval [synonyms-help | S]) [])
   Code -> [Code])
 
 (define typecheck-and-load
   X -> (do (nl) (typecheck-and-evaluate X (gensym (protect A)))))
-                 
+
 (define typetable
   [define F | X] -> (let Sig (compile (/. Y (<sig+rest> Y)) X (/. E (error "~A lacks a proper signature.~%" F)))
                          [[F | Sig]])
@@ -67,22 +67,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   E [[F | _] | Table] -> (do (remtype F) (unwind-types E Table)))
 
 (define remtype
-  F -> (set *signedfuncs* (removetype F (value *signedfuncs*)))) 
+  F -> (set *signedfuncs* (removetype F (value *signedfuncs*))))
 
 (define removetype
   _ [] -> []
   F [[F | _] | Table] -> (removetype F Table)
-  F [Entry | Table] -> [Entry | (removetype F Table)])      
-                
+  F [Entry | Table] -> [Entry | (removetype F Table)])
+
 (defcc <sig+rest>
-  <signature> <!> := <signature>;) 
-                   
+  <signature> <!> := <signature>;)
+
 (define write-to-file
    File Text -> (let Stream (open File out)
-                     String (if (string? Text) 
-                                (make-string "~A~%~%" Text) 
+                     String (if (string? Text)
+                                (make-string "~A~%~%" Text)
                                 (make-string "~S~%~%" Text))
-                     Write (pr String Stream) 
+                     Write (pr String Stream)
                      Close (close Stream)
                      Text)))
 

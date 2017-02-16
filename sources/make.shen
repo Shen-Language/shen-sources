@@ -1,5 +1,5 @@
 \\ License Note:  this code is used to generate KLambda from Shen source under the 3-clause BSD license.  The code may be changed but
-\\ the license attached to the generated KLambda may **not** be changed.  The KLambda produced is a direct derivative of the Shen sources 
+\\ the license attached to the generated KLambda may **not** be changed.  The KLambda produced is a direct derivative of the Shen sources
 \\ which are 3 clause BSD licensed.  Please look at the file license.pdf for an accompanying discussion.
 \\
 \\ (c) Mark Tarver 2015, all rights reserved
@@ -18,7 +18,7 @@
                                 "yacc.shen"]))
 
 (defcc shen.<name>
-  X := (if (symbol? X) 
+  X := (if (symbol? X)
            X
            (error "~A is not a legitimate function name.~%" X)))
 
@@ -30,24 +30,24 @@
                    KLFile (klfile ShenFile)
                    Write (write-to-file KLFile StringKL)
                    KLFile))
-                   
+
 (define make-kl-code
   [define F | Rules] -> (shen.elim-def [define F | Rules])
   [defcc F | Rules] -> (shen.elim-def [defcc F | Rules])
   Code -> Code)
-  
+
 (define klfile
   ".shen" -> ".kl"
   (@s S Ss) -> (@s S (klfile Ss)))
-  
+
 (define list->string
   [] -> ""
-  [[defun fail | _] | Y] -> (@s "(defun fail () shen.fail!)" (list->string Y)) 
-  [X | Y] -> (@s (make-string "~R~%~%" X) (list->string Y)))  
+  [[defun fail | _] | Y] -> (@s "(defun fail () shen.fail!)" (list->string Y))
+  [X | Y] -> (@s (make-string "~R~%~%" X) (list->string Y)))
 
 \\_________________________________________________________________________________________________
 \\ Note it is an offence to tamper with this section of code.  This code is **not** under BSD.
-                         
+
 (define license
   -> "c#34;Copyright (c) 2015, Mark Tarver
 
@@ -74,6 +74,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
-")  
-  
-  
+")
+
+

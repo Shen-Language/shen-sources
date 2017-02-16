@@ -1,5 +1,5 @@
 
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -41,11 +41,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define error-macro
   [error String | Args] -> [simple-error (mkstr String Args)]
   X -> X)
-  
+
 (define output-macro
   [output String | Args] -> [prhush (mkstr String Args) [stoutput]]
   [pr String] -> [pr String [stoutput]]
-  X -> X)  
+  X -> X)
 
 (define make-string-macro
   [make-string String | Args] -> (mkstr String Args)
@@ -58,11 +58,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [input+ Type] -> [input+ Type [stinput]]
   [read-byte] -> [read-byte [stinput]]
   X -> X)
-  
+
 (define compose
    [] X -> X
    [F | Fs] X -> (compose Fs (F X)))
-   
+
 (define compile-macro
   [compile F X] -> [compile F X [lambda (protect E) [if [cons? (protect E)]
                                    [error "parse error here: ~S~%" (protect E)]
@@ -92,9 +92,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
 
 (define datatype-macro
-  [datatype F | Rules] 
+  [datatype F | Rules]
    -> (protect [process-datatype (intern-type F)
-        [compile [lambda X [<datatype-rules> X]] 
+        [compile [lambda X [<datatype-rules> X]]
                  (rcons_form Rules) [function datatype-error]]])
   X -> X)
 
@@ -120,17 +120,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [nl] -> [nl 1]
   X -> X)
 
-(define assoc-macro   
+(define assoc-macro
   [F W X Y | Z] -> [F W (assoc-macro [F X Y | Z])]
                         where (element? F [@p @v append and or + * do])
-  X -> X) 
-  
+  X -> X)
+
 (define let-macro
    [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
-   X -> X)  
+   X -> X)
 
 (define abs-macro
-   [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]   
+   [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
    [/. X Y] -> [lambda X Y]
    X -> X)
 
@@ -140,26 +140,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [cases X Y | Z] -> [if X Y (cases-macro [cases | Z])]
   [cases X] -> (error "error: odd number of case elements~%")
   X -> X)
-  
+
 (define timer-macro
    [time Process] -> (let-macro
                         [let (protect Start) [get-time run]
                              (protect Result) Process
                              (protect Finish) [get-time run]
                              (protect Time) [- (protect Finish) (protect Start)]
-                             (protect Message) [prhush [cn "c#10;run time: " 
-                                                       [cn [str (protect Time)] 
+                             (protect Message) [prhush [cn "c#10;run time: "
+                                                       [cn [str (protect Time)]
                                                            " secsc#10;"]]
-                                                   [stoutput]] 
+                                                   [stoutput]]
                              (protect Result)])
-    X -> X)                           
-  
+    X -> X)
+
 (define tuple-up
   [X | Y] -> [@p X (tuple-up Y)]
-  X -> X)   
-      
+  X -> X)
+
 (define put/get-macro
-  [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]] 
+  [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]]
   [get X Pointer] -> [get X Pointer [value *property-vector*]]
   [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
   X -> X)
@@ -167,15 +167,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define function-macro
   [function F] -> (function-abstraction F (arity F))
   X -> X)
-  
-(define function-abstraction 
+
+(define function-abstraction
   F 0 -> (error "~A has no lambda form~%" F)
   F -1 -> [function F]
-  F N -> (function-abstraction-help F N []))  
+  F N -> (function-abstraction-help F N []))
 
 (define function-abstraction-help
   F 0 Vars -> [F | Vars]
-  F N Vars -> (let X (gensym (protect V)) 
+  F N Vars -> (let X (gensym (protect V))
                 [/. X (function-abstraction-help F (- N 1) (append Vars [X]))]))
 
 (define undefmacro
@@ -192,5 +192,5 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define remove-nth
   1 [_ | Y] -> Y
-  N [X | Y] -> [X | (remove-nth (- N 1) Y)])) 
-  
+  N [X | Y] -> [X | (remove-nth (- N 1) Y)]))
+
