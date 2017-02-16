@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -28,9 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 *\
 
-(package shen [] 
+(package shen []
 
-(define shen->kl 
+(define shen->kl
   F Def -> (compile (/. X (<define> X)) [F | Def] (/. X (shen-syntax-error F X))))
 
 (define shen-syntax-error
@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
  <name> <rules> := (compile_to_machine_code <name> <rules>);)
 
 (defcc <name>
-  X := (if (and (symbol? X) (not (sysfunc? X))) 
+  X := (if (and (symbol? X) (not (sysfunc? X)))
            X
            (error "~A is not a legitimate function name.~%" X)))
 
@@ -56,22 +56,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [A --> B --> | C] -> (curry-type [A --> [B --> | C]])
   [A * B * | C] -> (curry-type [A * [B * | C]])
   [X | Y] -> (map (/. Z (curry-type Z)) [X | Y])
-  X -> X) 
+  X -> X)
 
-(defcc <signature-help> 
+(defcc <signature-help>
   X <signature-help> := [X | <signature-help>]  where (not (element? X [{ }]));
  <e> := [];)
 
 (defcc <rules>
   <rule> <rules> := [(linearise <rule>) | <rules>];
   <rule> := [(linearise <rule>)];)
-  
+
 (defcc <rule>
   <patterns> -> <action> where <guard> := [<patterns> [where <guard> <action>]];
   <patterns> -> <action> := [<patterns> <action>];
-  <patterns> <- <action> where <guard> 
+  <patterns> <- <action> where <guard>
     := [<patterns> [where <guard> [choicepoint! <action>]]];
-  <patterns> <- <action> := [<patterns> [choicepoint! <action>]];)   
+  <patterns> <- <action> := [<patterns> [choicepoint! <action>]];)
 
 (define fail_if
   F X -> (if (F X) (fail) X))
@@ -112,7 +112,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (defcc <guard>
   X := X;)
 
-(define compile_to_machine_code 
+(define compile_to_machine_code
   Name Rules -> (let Lambda+ (compile_to_lambda+ Name Rules)
                      KL (compile_to_kl Name Lambda+)
                      Record (record-source Name KL)
@@ -129,7 +129,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                      Variables (parameters Arity)
                      Strip (map (/. X (strip-protect X)) Rules)
                      Abstractions (map (/. X (abstract_rule X)) Strip)
-                     Applications 
+                     Applications
                        (map (/. X (application_build Variables X))
                             Abstractions)
                      [Variables Applications]))
@@ -137,10 +137,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define update-symbol-table
   Name Arity -> (set *symbol-table* (update-symbol-table-h Name Arity (value *symbol-table*) [])))
 
-(define update-symbol-table-h 
+(define update-symbol-table-h
   Name Arity [] SymbolTable -> (let NewEntry [Name | (eval-kl (lambda-form Name Arity))]
                                     [NewEntry | SymbolTable])
-  Name Arity [[Name | _] | Entries] SymbolTable 
+  Name Arity [[Name | _] | Entries] SymbolTable
    -> (let ChangedEntry [Name | (eval-kl (lambda-form Name Arity))]
            (append Entries [ChangedEntry | SymbolTable]))
   Name Arity [Entry | Entries] SymbolTable -> (update-symbol-table-h Name Arity Entries [Entry | SymbolTable]))
@@ -159,9 +159,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Bound [P _] -> []  where (= P protect)
   Bound X -> [X]	where (and (variable? X) (not (element? X Bound)))
   Bound [lambda X Y] -> (extract_free_vars [X | Bound] Y)
-  Bound [let X Y Z] -> (union (extract_free_vars Bound Y) 
+  Bound [let X Y Z] -> (union (extract_free_vars Bound Y)
                               (extract_free_vars [X | Bound] Z))
-  Bound [X | Y] -> (union (extract_free_vars Bound X) 
+  Bound [X | Y] -> (union (extract_free_vars Bound X)
                           (extract_free_vars Bound Y))
   _ _ -> [])
 
@@ -177,7 +177,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [P X] -> (strip-protect X)   where (= P protect)
   [X | Y] -> (map (/. Z (strip-protect Z)) [X | Y])
   X -> X)
-                        
+
 (define linearise
   [Patts Action] -> (linearise_help (flatten Patts) Patts Action))
 
@@ -201,11 +201,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                        (if (= L Y)
                            [Y | (linearise_X X Var Z)]
                            [L | Z]))
-  _ _ Y -> Y)  
+  _ _ Y -> Y)
 
 (define aritycheck
   Name [[Patts Action]] -> (do (aritycheck-action Action) (aritycheck-name Name (arity Name) (length Patts)))
-  Name [[Patts1 Action1] [Patts2 Action2] | Rules] 
+  Name [[Patts1 Action1] [Patts2 Action2] | Rules]
   -> (if (= (length Patts1) (length Patts2))
          (do (aritycheck-action Action1) (aritycheck Name [[Patts2 Action2] | Rules]))
          (error "arity error in ~A~%" Name)))
@@ -225,14 +225,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                   (if (and (> Arity -1) (> Len Arity))
                       (output "warning: ~A might not like ~A argument~A.~%" F Len (if (> Len 1) "s" ""))
                       skip)))
-                      
+
 (define abstract_rule
-  [Patterns Action] -> (abstraction_build Patterns Action))  
+  [Patterns Action] -> (abstraction_build Patterns Action))
 
 (define abstraction_build
   [] Action -> Action
   [Patt | Patts] Action -> [/. Patt (abstraction_build Patts Action)])
-   
+
 (define parameters
   0 -> []
   N -> [(gensym (protect V)) | (parameters (- N 1))])
@@ -242,36 +242,36 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [V | Vs] Abstraction -> (application_build Vs [Abstraction V]))
 
 (define compile_to_kl
-  Name [Variables Applications] 
+  Name [Variables Applications]
    -> (let Arity (store-arity Name (length Variables))
            Reduce (map (/. X (reduce X)) Applications)
            CondExpression (cond-expression Name Variables Reduce)
            TypeTable (if (value *optimise*) (typextable (get-type Name) Variables) skip)
            TypedCondExpression (if (value *optimise*) (assign-types Variables TypeTable CondExpression) CondExpression)
-           KL [defun Name Variables TypedCondExpression] 
+           KL [defun Name Variables TypedCondExpression]
            KL))
-           
+
 (define get-type
   [_ | _] -> skip
   F -> (let FType (assoc F (value *signedfuncs*))
             (if (empty? FType)
                 skip
-                (tl FType))))           
+                (tl FType))))
 
 (define typextable
-  [A --> B] [V | Vs] -> (if (variable? A) 
+  [A --> B] [V | Vs] -> (if (variable? A)
                             (typextable B Vs)
                             [[V | A] | (typextable B Vs)])
   _ _ -> [])
 
 (define assign-types
-  Bound Table [let X Y Z] -> [let X 
-                                 (assign-types Bound Table Y) 
+  Bound Table [let X Y Z] -> [let X
+                                 (assign-types Bound Table Y)
                                  (assign-types [X | Bound] Table Z)]
-  Bound Table [lambda X Y] 
-              -> [lambda X (assign-types [X | Bound] Table Y)]     
-  Bound Table [cond | X] -> [cond | (map (/. Y [(assign-types Bound Table (hd Y)) 
-                                                (assign-types Bound Table (hd (tl Y)))]) X)]                           
+  Bound Table [lambda X Y]
+              -> [lambda X (assign-types [X | Bound] Table Y)]
+  Bound Table [cond | X] -> [cond | (map (/. Y [(assign-types Bound Table (hd Y))
+                                                (assign-types Bound Table (hd (tl Y)))]) X)]
   Bound Table [F | X] -> (let NewTable (typextable (get-type F) X)
                               [F | (map (/. Y (assign-types Bound (append Table NewTable) Y)) X)])
 
@@ -279,14 +279,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                          (cases (cons? AtomType) [type Atom (tl AtomType)]
                                 (element? Atom Bound) Atom
                                 true (atom-type Atom))))
-                             
+
 (define atom-type
   Atom -> (cases (string? Atom) [type Atom string]
-                 (number? Atom) [type Atom number]                                
+                 (number? Atom) [type Atom number]
                  (boolean? Atom) [type Atom boolean]
                  (symbol? Atom) [type Atom symbol]
                  true Atom))
-                 
+
 (define store-arity
   _ _ -> skip    where (value *installing-kl*)
   F Arity -> (put F arity Arity))
@@ -297,23 +297,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                           [[:tests | (reverse (value *teststack*))] Result])))
 
 (define reduce_help
-   [[/. [cons X Y] Z] A] 
-   -> (do (add_test [cons? A]) 
+   [[/. [cons X Y] Z] A]
+   -> (do (add_test [cons? A])
           (let Abstraction [/. X [/. Y (ebr A [cons X Y] Z)]]
                Application [[Abstraction [hd A]] [tl A]]
                (reduce_help Application)))
-   [[/. [@p X Y] Z] A] 
-   -> (do (add_test [tuple? A]) 
+   [[/. [@p X Y] Z] A]
+   -> (do (add_test [tuple? A])
           (let Abstraction [/. X [/. Y (ebr A [@p X Y] Z)]]
                Application [[Abstraction [fst A]] [snd A]]
                (reduce_help Application)))
-   [[/. [@v X Y] Z] A] 
-   -> (do (add_test [+vector? A]) 
+   [[/. [@v X Y] Z] A]
+   -> (do (add_test [+vector? A])
           (let Abstraction [/. X [/. Y (ebr A [@v X Y] Z)]]
                Application [[Abstraction [hdv A]] [tlv A]]
                (reduce_help Application)))
-   [[/. [@s X Y] Z] A] 
-   -> (do (add_test [+string? A]) 
+   [[/. [@s X Y] Z] A]
+   -> (do (add_test [+string? A])
           (let Abstraction [/. X [/. Y (ebr A [@s X Y] Z)]]
                Application [[Abstraction [pos A 0]] [tlstr A]]
                (reduce_help Application)))
@@ -321,7 +321,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                        (reduce_help Z))  where (not (variable? X))
    [[/. X Z] A] -> (reduce_help (ebr A X Z))
    [where P Q] -> (do (add_test P) (reduce_help Q))
-   [X Y] -> (let Z (reduce_help X) 
+   [X Y] -> (let Z (reduce_help X)
                    (if (= X Z) [X Y] (reduce_help [Z Y])))
    X -> X)
 
@@ -337,12 +337,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   A B B -> A
   A B [/. C D] -> [/. C D]	   where (> (occurrences B C) 0)
   A B [lambda C D] -> [lambda C D] where (> (occurrences B C) 0)
-  A B [let B C D] -> [let B (ebr A B C) D]	
+  A B [let B C D] -> [let B (ebr A B C) D]
   A B [C | D] -> [(ebr A B C) | (ebr A B D)]
-  _ _ C -> C)  
+  _ _ C -> C)
 
 (define add_test
-   Test -> (set *teststack* [Test | (value *teststack*)]))   
+   Test -> (set *teststack* [Test | (value *teststack*)]))
 
 (define cond-expression
   Name Variables Code -> (let Err (err-condition Name)
@@ -351,22 +351,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                               (cond-form EncodeChoices)))
 
 (define cond-form
-  [[true Result] | _] -> Result	
+  [[true Result] | _] -> Result
   Cases -> [cond | Cases])
-  
+
 (define encode-choices
-  [] _ -> []  
-  [[true [choicepoint! Action]]] Name 
+  [] _ -> []
+  [[true [choicepoint! Action]]] Name
   -> [[true [let (protect Result) Action
                  [if [= (protect Result) [fail]]
                   (if (value *installing-kl*) [sys-error Name] [f_error Name])
-                    (protect Result)]]]]   
-  [[true [choicepoint! Action]] | Code] Name 
+                    (protect Result)]]]]
+  [[true [choicepoint! Action]] | Code] Name
    -> [[true [let (protect Result) Action
              [if [= (protect Result) [fail]]
               (cond-form (encode-choices Code Name))
               (protect Result)]]]]
-  [[Test [choicepoint! Action]] | Code] Name 
+  [[Test [choicepoint! Action]] | Code] Name
    -> [[true [let (protect Freeze) [freeze (cond-form (encode-choices Code Name))]
                  [if Test
                      [let (protect Result) Action
@@ -374,13 +374,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                               [thaw (protect Freeze)]
                               (protect Result)]]
                               [thaw (protect Freeze)]]]]]
-  [[Test Result] | Code] Name -> [[Test Result] | (encode-choices Code Name)])   
+  [[Test Result] | Code] Name -> [[Test Result] | (encode-choices Code Name)])
 
 (define case-form
   [] Err -> [Err]
   [[[:tests] [choicepoint! Result]] | Code] Err -> [[true [choicepoint! Result]] | (case-form Code Err)]
   [[[:tests] Result] | _] _ -> [[true Result]]
-  [[[:tests | Tests] Result] | Code] Err 
+  [[[:tests | Tests] Result] | Code] Err
    -> [[(embed-and Tests) Result] | (case-form Code Err)])
 
 (define embed-and

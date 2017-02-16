@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (package shen []
 
-(define f_error 
+(define f_error
   F -> (do (output "partial function ~A;~%" F)
            (if (and (not (tracked? F))
                     (y-or-n? (make-string "track ~A? " F)))
@@ -64,19 +64,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (set *step* false)
 
-(define step 
+(define step
   + -> (set *step* true)
   - -> (set *step* false)
   _ -> (error "step expects a + or a -.~%"))
 
-(define spy 
+(define spy
   + -> (set *spy* true)
   - -> (set *spy* false)
   _ -> (error "spy expects a + or a -.~%"))
 
 (define terpri-or-read-char
-  -> (if (value *step*) 
-         (check-byte (read-byte (value *stinput*))) 
+  -> (if (value *step*)
+         (check-byte (read-byte (value *stinput*)))
          (nl)))
 
 (define check-byte
@@ -120,21 +120,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define unprofile
    Func -> (untrack Func))
 
-(define profile-func 
+(define profile-func
   F Params Code -> [let (protect Start) [get-time run]
                      [let (protect Result) Code
                        [let (protect Finish) [- [get-time run] (protect Start)]
-                         [let (protect Record) 
+                         [let (protect Record)
                               [put-profile F [+ [get-profile F] (protect Finish)]]
                               (protect Result)]]]])
 
-(define profile-results 
-   F -> (let Results (get-profile F) 
+(define profile-results
+   F -> (let Results (get-profile F)
              Initialise (put-profile F 0)
              (@p F Results)))
-             
+
 (define get-profile
   F -> (trap-error (get F profile) (/. E 0)))
-  
+
 (define put-profile
   F Time -> (put F profile Time)))

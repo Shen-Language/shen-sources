@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (package shen []
 
-(define datatype-error 
+(define datatype-error
   [D _] -> (error "datatype syntax error here:~%~% ~A~%" (next-50 50 D)))
 
 (defcc <datatype-rules>
@@ -56,8 +56,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X := X	where (variable? X);)
 
 (defcc <expr>
-  X := (remove-bar X) where (not (or (element? X [>> ;]) 
-                                     (singleunderline? X) 
+  X := (remove-bar X) where (not (or (element? X [>> ;])
+                                     (singleunderline? X)
                                      (doubleunderline? X)));)
 
 (define remove-bar
@@ -73,7 +73,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X := skip	where (= X ;);)
 
 (defcc <premise>
-  ! := !; 
+  ! := !;
   <formulae> >> <formula> := (sequent <formulae> <formula>);
   <formula> := (sequent [] <formula>);)
 
@@ -102,7 +102,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (defcc <doubleunderline>
   X := X	where (doubleunderline? X);)
 
-(defcc <singleunderline> 
+(defcc <singleunderline>
   X := X	where (singleunderline? X);)
 
 (define singleunderline?
@@ -111,7 +111,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define sh?
   "_" -> true
   S -> (and (= (pos S 0) "_") (sh? (tlstr S))))
-            
+
 (define doubleunderline?
   S -> (and (symbol? S) (dh? (str S))))
 
@@ -119,19 +119,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   "=" -> true
   S -> (and (= (pos S 0) "=") (dh? (tlstr S))))
 
-(define process-datatype 
+(define process-datatype
   D Rules -> (remember-datatype (s-prolog (rules->horn-clauses D Rules))))
 
-(define remember-datatype 
+(define remember-datatype
   [D | _] -> (do (set *datatypes* (adjoin D (value *datatypes*)))
-                 (set *alldatatypes* (adjoin D (value *alldatatypes*))) 
+                 (set *alldatatypes* (adjoin D (value *alldatatypes*)))
                  D))
 
 (define rules->horn-clauses
    _ [] -> []
-   D [(@p single Rule) | Rules] 
+   D [(@p single Rule) | Rules]
     -> [(rule->horn-clause D Rule) | (rules->horn-clauses D Rules)]
-   D [(@p double Rule) | Rules] 
+   D [(@p double Rule) | Rules]
    -> (rules->horn-clauses D (append (double->singles Rule) Rules)))
 
 (define double->singles
@@ -148,7 +148,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define right->left
   (@p [] C) -> C
-  _ -> (error "syntax error with ==========~%")) 
+  _ -> (error "syntax error with ==========~%"))
 
 (define rule->horn-clause
   D [S P (@p A C)] -> [(rule->horn-clause-head D C) :- (rule->horn-clause-body S P A)])
@@ -157,13 +157,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   D C -> [D (mode-ify C) (protect Context_1957)])
 
 (define mode-ify
-  [X : A] -> [mode [X : [mode A +]] -]  
+  [X : A] -> [mode [X : [mode A +]] -]
   X -> X)
 
 (define rule->horn-clause-body
   S P A -> (let Variables (map (/. X (extract_vars X)) A)
                 Predicates (map (/. X (gensym cl)) A)
-                SearchLiterals (construct-search-literals 
+                SearchLiterals (construct-search-literals
                                        Predicates Variables (protect Context_1957) (protect Context1_1957))
                 SearchClauses (construct-search-clauses Predicates A Variables)
                 SideLiterals (construct-side-literals S)
@@ -172,9 +172,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define construct-search-literals
   [] [] _ _ -> []
-  Predicates Variables Context Context1 
+  Predicates Variables Context Context1
   -> (csl-help Predicates Variables Context Context1))
- 
+
 (define csl-help
   [] [] In _ -> [[bind (protect ContextOut_1957) In]]
   [P | Ps] [V | Vs] In Out -> [[P In Out | V] | (csl-help Ps Vs Out (gensym (protect Context)))])
@@ -184,7 +184,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [Pred | Preds] [A | As] [V | Vs] -> (do (construct-search-clause Pred A V)
                                           (construct-search-clauses Preds As Vs)))
 
-(define construct-search-clause 
+(define construct-search-clause
   Pred A V -> (s-prolog [(construct-base-search-clause Pred A V)
                          (construct-recursive-search-clause Pred A V)]))
 
@@ -192,7 +192,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Pred A V -> [[Pred [(mode-ify A) | (protect In_1957)] (protect In_1957) | V] :- []])
 
 (define construct-recursive-search-clause
-  Pred A V -> [[Pred [(protect Assumption_1957) | (protect Assumptions_1957)] [(protect Assumption_1957) | (protect Out_1957)] | V] 
+  Pred A V -> [[Pred [(protect Assumption_1957) | (protect Assumptions_1957)] [(protect Assumption_1957) | (protect Out_1957)] | V]
                  :- [[Pred (protect Assumptions_1957) (protect Out_1957) | V]]])
 
 (define construct-side-literals
@@ -212,7 +212,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define recursive_cons_form
   [X | Y] -> [cons (recursive_cons_form X) (recursive_cons_form Y)]
-  X -> X) 
+  X -> X)
 
 (define preclude
   Types -> (preclude-h (map (/. X (intern-type X)) Types)))
@@ -223,7 +223,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define include
   Types -> (include-h (map (/. X (intern-type X)) Types)))
-             
+
 (define include-h
    Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
                  NewDatatypes (set *datatypes* (union ValidTypes (value *datatypes*)))
@@ -236,7 +236,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Types -> (include-h (difference (value *alldatatypes*) (map (/. X (intern-type X)) Types))))
 
 (define synonyms-help
-  [] -> (demodulation-function (value *tc*) 
+  [] -> (demodulation-function (value *tc*)
                       (mapcan (/. X (demod-rule X)) (value *synonyms*)))
   [S1 S2 | S] -> (let Vs (difference (extract_vars S2) (extract_vars S1))
                       (if (empty? Vs)
@@ -249,16 +249,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
    X Global -> (if (element? X (value Global))
                    (value Global)
                    (set Global [X | (value Global)])))
-                   
+
 (define demod-rule
-  [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])                               
+  [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])
 
 (define demodulation-function
-  TC? Rules -> (do (tc -) 
-                   (eval [define demod | (append Rules (default-rule))]) 
-                   (if TC? (tc +) skip) 
+  TC? Rules -> (do (tc -)
+                   (eval [define demod | (append Rules (default-rule))])
+                   (if TC? (tc +) skip)
                    synonyms))
-                
+
 (define default-rule
   -> (protect [X -> X]))
-                  )           
+                  )
