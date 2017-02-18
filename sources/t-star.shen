@@ -23,8 +23,7 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
@@ -35,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               ProcessN (start-new-prolog-process)
               Type (insert-prolog-variables (demodulate (curry-type A)) ProcessN)
               Continuation (freeze (return Type ProcessN void))
-              (t* [Curry : Type] [] ProcessN Continuation)))
+           (t* [Curry : Type] [] ProcessN Continuation)))
 
 (define curry
   [F | X] -> [F | (map (/. Y (curry Y)) X)]   where (special? F)
@@ -75,8 +74,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   -> (simple-error "maximum inferences exceeded~%"))
 
 (defprolog udefs*
-   P Hyp (mode [D | _] -) <-- (call [D P Hyp]);
-   P Hyp (mode [_ | Ds] -) <-- (udefs* P Hyp Ds);)
+  P Hyp (mode [D | _] -) <-- (call [D P Hyp]);
+  P Hyp (mode [_ | Ds] -) <-- (udefs* P Hyp Ds);)
 
 (defprolog th*
   X A Hyps <-- (show [X : A] Hyps) (when false);
@@ -89,20 +88,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   (mode [@p X Y] -) [A * B] Hyp <-- (th* X A Hyp) (th* Y B Hyp);
   (mode [@v X Y] -) [vector A] Hyp <-- (th* X A Hyp) (th* Y [vector A] Hyp);
   (mode [@s X Y] -) string Hyp <-- (th* X string Hyp) (th* Y string Hyp);
-  (mode [lambda X Y] -) [A --> B] Hyp <-- !
-                                           (bind X&& (placeholder))
-                                           (bind Z (ebr X&& X Y))
-                                           (th* Z B [[X&& : A] | Hyp]);
-  (mode [let X Y Z] -) A Hyp <--    (th* Y B Hyp)
-                                    (bind X&& (placeholder))
-                                    (bind W (ebr X&& X Z))
-                                    (th* W A [[X&& : B] | Hyp]);
+  (mode [lambda X Y] -) [A --> B] Hyp <-- ! (bind X&& (placeholder))
+                                            (bind Z (ebr X&& X Y))
+                                            (th* Z B [[X&& : A] | Hyp]);
+  (mode [let X Y Z] -) A Hyp <-- (th* Y B Hyp)
+                                 (bind X&& (placeholder))
+                                 (bind W (ebr X&& X Z))
+                                 (th* W A [[X&& : B] | Hyp]);
   (mode [open FileName Direction] -) [stream Direction] Hyp
-       <-- ! (fwhen (element? Direction [in out]))
-             (th* FileName string Hyp);
+    <-- ! (fwhen (element? Direction [in out]))
+          (th* FileName string Hyp);
   (mode [type X A] -) B Hyp <-- ! (unify A B) (th* X A Hyp);
-  (mode [input+ A Stream] -) B Hyp <-- (bind C (demodulate A)) (unify B C) (th* Stream [stream in] Hyp);
-  (mode [set Var Val] -) A Hyp <-- ! (th* Var symbol Hyp) ! (th* [value Var] A Hyp) (th* Val A Hyp);
+  (mode [input+ A Stream] -) B Hyp <-- (bind C (demodulate A))
+                                       (unify B C)
+                                       (th* Stream [stream in] Hyp);
+  (mode [set Var Val] -) A Hyp <-- ! (th* Var symbol Hyp)
+                                   ! (th* [value Var] A Hyp)
+                                     (th* Val A Hyp);
   X A Hyp <-- (t*-hyps Hyp NewHyp) (th* X A NewHyp);
   (mode [define F | X] -) A Hyp <-- ! (t*-def [define F | X] A Hyp);
   (mode [defmacro | _] -) unit Hyp <-- !;
@@ -112,32 +114,34 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               (udefs* [X : A] Hyp Datatypes);)
 
 (defprolog t*-hyps
-    (mode [[[cons X Y] : (mode [list A] +)] | Hyp] -) Out
+  (mode [[[cons X Y] : (mode [list A] +)] | Hyp] -) Out
     <-- (bind Out [[X : A] [Y : [list A]] | Hyp]);
-    (mode [[[@p X Y] : (mode [A * B] +)] | Hyp] -) Out
+  (mode [[[@p X Y] : (mode [A * B] +)] | Hyp] -) Out
     <-- (bind Out [[X : A] [Y : B] | Hyp]);
-    (mode [[[@v X Y] : (mode [vector A] +)] | Hyp] -) Out
+  (mode [[[@v X Y] : (mode [vector A] +)] | Hyp] -) Out
     <-- (bind Out [[X : A] [Y : [vector A]] | Hyp]);
-    (mode [[[@s X Y] : (mode string +)] | Hyp] -) Out
+  (mode [[[@s X Y] : (mode string +)] | Hyp] -) Out
     <-- (bind Out [[X : string] [Y : string] | Hyp]);
-    (mode [X | Hyp] -) Out <-- (bind Out [X | NewHyps]) (t*-hyps Hyp NewHyps);)
+  (mode [X | Hyp] -) Out
+    <-- (bind Out [X | NewHyps]) (t*-hyps Hyp NewHyps);)
 
 (define show
   P Hyps ProcessN Continuation
-   -> (do (line)
-          (show-p (deref P ProcessN))
-          (nl)
-          (nl)
-          (show-assumptions (deref Hyps ProcessN) 1)
-          (output "~%> ")
-          (pause-for-user)
-          (thaw Continuation))   where (value *spy*)
-   _ _ _ Continuation -> (thaw Continuation))
+  -> (do (line)
+         (show-p (deref P ProcessN))
+         (nl)
+         (nl)
+         (show-assumptions (deref Hyps ProcessN) 1)
+         (output "~%> ")
+         (pause-for-user)
+         (thaw Continuation))
+      where (value *spy*)
+  _ _ _ Continuation -> (thaw Continuation))
 
 (define line
   -> (let Infs (inferences)
        (output "____________________________________________________________ ~A inference~A ~%?- "
-                Infs (if (= 1 Infs) "" "s"))))
+               Infs (if (= 1 Infs) "" "s"))))
 
 (define show-p
   [X : A] -> (output "~R : ~R" X A)
@@ -146,18 +150,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 \* Enumerate assumptions. *\
 (define show-assumptions
   [] _ -> skip
-  [X | Y] N -> (do (output "~A. " N) (show-p X) (nl) (show-assumptions Y (+ N 1))))
+  [X | Y] N -> (do (output "~A. " N)
+                   (show-p X)
+                   (nl)
+                   (show-assumptions Y (+ N 1))))
 
 \* Pauses for user *\
 (define pause-for-user
-   -> (let Byte (read-byte (stinput))
-             (if (= Byte 94)
-                 (error "input aborted~%")
-                 (nl))))
+  -> (let Byte (read-byte (stinput))
+       (if (= Byte 94)
+           (error "input aborted~%")
+           (nl))))
 
 \* Does the function have a type? *\
 (define typedf?
-   F -> (cons? (assoc F (value *signedfuncs*))))
+  F -> (cons? (assoc F (value *signedfuncs*))))
 
 \* The name of the Horn clause containing the signature of F. *\
 (define sigf
@@ -175,11 +182,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   (mode [] -) [list A] <--;)
 
 (defprolog by_hypothesis
- X A (mode [[Y : B] | _] -) <-- (identical X Y) (unify! A B);
- X A (mode [_ | Hyp] -) <-- (by_hypothesis X A Hyp);)
+  X A (mode [[Y : B] | _] -) <-- (identical X Y) (unify! A B);
+  X A (mode [_ | Hyp] -) <-- (by_hypothesis X A Hyp);)
 
 (defprolog t*-def
-  (mode [define F | X] -) A Hyp <-- (t*-defh (compile (/. Y (<sig+rules> Y)) X) F A Hyp);)
+  (mode [define F | X] -) A Hyp
+    <-- (t*-defh (compile (/. Y (<sig+rules> Y)) X) F A Hyp);)
 
 (defprolog t*-defh
   (mode [Sig | Rules] -) F A Hyp <-- (t*-defhh Sig (ue-sig Sig) F A Hyp Rules);)
@@ -230,10 +238,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (defprolog t*-rule
   (mode [Patterns Action] -) A Hyp
-   <-- (newhyps (placeholders Patterns) Hyp NewHyps)
-       (t*-patterns Patterns A NewHyps)
-       !
-       (t*-action (curry (ue Action)) (result-type Patterns A) (patthyps Patterns A Hyp));)
+    <-- (newhyps (placeholders Patterns) Hyp NewHyps)
+        (t*-patterns Patterns A NewHyps)
+        !
+        (t*-action
+           (curry (ue Action))
+           (result-type Patterns A) (patthyps Patterns A Hyp));)
 
 (define placeholders
   X -> [X]    where (ue? X)
@@ -265,15 +275,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (defprolog t*-patterns
   (mode [] -) _ _ <--;
   (mode [Pattern | Patterns] -) (mode [A --> B] -) Hyp <-- (t* [Pattern : A] Hyp)
-                                                           (t*-patterns Patterns B Hyp);)
+  (t*-patterns Patterns B Hyp);)
 
 (defprolog t*-action
   (mode [where P Action] -) A Hyp
-  <-- ! (t* [P : boolean] Hyp) ! (t*-action Action A [[P : verified] | Hyp]);
+    <-- ! (t* [P : boolean] Hyp) ! (t*-action Action A [[P : verified] | Hyp]);
   (mode [choicepoint! [[fail-if F] Action]] -) A Hyp
-  <-- ! (t*-action [where [not [F Action]] Action] A Hyp);
+    <-- ! (t*-action [where [not [F Action]] Action] A Hyp);
   (mode [choicepoint! Action] -) A Hyp
-  <-- ! (t*-action [where [not [[= Action] [fail]]] Action] A Hyp);
+    <-- ! (t*-action [where [not [[= Action] [fail]]] Action] A Hyp);
   Action A Hyp <-- (t* [Action : A] Hyp);)
 
 (defprolog findall
@@ -286,6 +296,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   _ _ X A <-- (bind X (value A));)
 
 (defprolog remember
-  A Pattern <-- (is B (set A [Pattern | (value A)]));)  )
+  A Pattern <-- (is B (set A [Pattern | (value A)]));)
 
-
+)

@@ -23,7 +23,7 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
@@ -44,13 +44,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                                            [(protect ProcessN) (protect Continuation)]
                                            [-> Code])]
               Eval (eval-without-macros ShenDef)
-              F))
+            F))
 
 (define demodulate
   X -> (trap-error (let Demod (walk (/. Y (demod Y)) X)
-                       (if (= Demod X)
-                           X
-                           (demodulate Demod))) (/. E X)))
+                     (if (= Demod X)
+                         X
+                         (demodulate Demod))) (/. E X)))
 
 (define variancy-test
   F A -> (let TypeF (typecheck F (protect B))
@@ -62,8 +62,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define variant?
   X X -> true
   [X | Y] [X | Z] -> (variant? Y Z)
-  [X | Y] [W | Z] -> (variant? (subst a X Y) (subst a W Z))  where (and (pvar? X) (variable? W))
-  [[X | Y] | Z] [[X* | Y*] | Z*] -> (variant? (append [X | Y] Z) (append [X* | Y*] Z*))
+  [X | Y] [W | Z] -> (variant? (subst a X Y) (subst a W Z))
+      where (and (pvar? X) (variable? W))
+  [[X | Y] | Z] [[X* | Y*] | Z*] -> (variant? (append [X | Y] Z)
+                                              (append [X* | Y*] Z*))
   _ _ -> false)
 
 (declare absvector? [A --> boolean])
@@ -203,6 +205,3 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare == [A --> [B --> boolean]])
 
 )
-
-
-

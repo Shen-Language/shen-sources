@@ -1,4 +1,3 @@
-
 \*
 
 Copyright (c) 2010-2015, Mark Tarver
@@ -24,9 +23,7 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
@@ -34,9 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define macroexpand
   X -> (let Y (compose (value *macros*) X)
-            (if (= X Y)
-                X
-                (walk (/. Z (macroexpand Z)) Y))))
+         (if (= X Y)
+             X
+             (walk (/. Z (macroexpand Z)) Y))))
 
 (define error-macro
   [error String | Args] -> [simple-error (mkstr String Args)]
@@ -60,21 +57,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
 
 (define compose
-   [] X -> X
-   [F | Fs] X -> (compose Fs (F X)))
+  [] X -> X
+  [F | Fs] X -> (compose Fs (F X)))
 
 (define compile-macro
-  [compile F X] -> [compile F X [lambda (protect E) [if [cons? (protect E)]
-                                   [error "parse error here: ~S~%" (protect E)]
-                                              [error "parse error~%"]]]]
+  [compile F X] -> [compile F X [lambda (protect E)
+                                  [if [cons? (protect E)]
+                                      [error "parse error here: ~S~%" (protect E)]
+                                      [error "parse error~%"]]]]
   X -> X)
 
 (define prolog-macro
-  [prolog? | Literals] -> (let F (gensym f)
-                               Receive (receive-terms Literals)
-                               PrologDef (eval (append [defprolog F] Receive [<--] (pass-literals Literals) [;]))
-                               Query [F | (append Receive [[start-new-prolog-process] [freeze true]])]
-                               Query)
+  [prolog? | Literals]
+  -> (let F (gensym f)
+          Receive (receive-terms Literals)
+          PrologDef (eval (append [defprolog F] Receive [<--]
+                                  (pass-literals Literals) [;]))
+          Query [F | (append Receive [[start-new-prolog-process]
+                                      [freeze true]])]
+        Query)
   X -> X)
 
 (define receive-terms
@@ -88,14 +89,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [Literal | Literals] -> [Literal | (pass-literals Literals)])
 
 (define defprolog-macro
-  [defprolog F | X] -> (compile (/. Y (<defprolog> Y)) [F | X] (/. Y (prolog-error F Y)))
+  [defprolog F | X] -> (compile (/. Y (<defprolog> Y))
+                                [F | X]
+                                (/. Y (prolog-error F Y)))
   X -> X)
 
 (define datatype-macro
   [datatype F | Rules]
-   -> (protect [process-datatype (intern-type F)
-        [compile [lambda X [<datatype-rules> X]]
-                 (rcons_form Rules) [function datatype-error]]])
+  -> (protect [process-datatype (intern-type F)
+                                [compile [lambda X [<datatype-rules> X]]
+                                         (rcons_form Rules)
+                                         [function datatype-error]]])
   X -> X)
 
 (define intern-type
@@ -104,9 +108,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define @s-macro
   [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]
   [@s X Y] -> (let E (explode X)
-                   (if (> (length E) 1)
-                       (@s-macro [@s | (append E [Y])])
-                       [@s X Y]))   where (string? X)
+                (if (> (length E) 1)
+                    (@s-macro [@s | (append E [Y])])
+                    [@s X Y]))
+      where (string? X)
   X -> X)
 
 (define synonyms-macro
@@ -122,17 +127,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define assoc-macro
   [F W X Y | Z] -> [F W (assoc-macro [F X Y | Z])]
-                        where (element? F [@p @v append and or + * do])
+      where (element? F [@p @v append and or + * do])
   X -> X)
 
 (define let-macro
-   [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
-   X -> X)
+  [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
+  X -> X)
 
 (define abs-macro
-   [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
-   [/. X Y] -> [lambda X Y]
-   X -> X)
+  [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
+  [/. X Y] -> [lambda X Y]
+  X -> X)
 
 (define cases-macro
   [cases true X | _] -> X
@@ -142,17 +147,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> X)
 
 (define timer-macro
-   [time Process] -> (let-macro
-                        [let (protect Start) [get-time run]
-                             (protect Result) Process
-                             (protect Finish) [get-time run]
-                             (protect Time) [- (protect Finish) (protect Start)]
-                             (protect Message) [prhush [cn "c#10;run time: "
-                                                       [cn [str (protect Time)]
-                                                           " secsc#10;"]]
-                                                   [stoutput]]
-                             (protect Result)])
-    X -> X)
+  [time Process] -> (let-macro
+                     [let (protect Start) [get-time run]
+                          (protect Result) Process
+                          (protect Finish) [get-time run]
+                          (protect Time) [- (protect Finish) (protect Start)]
+                          (protect Message) [prhush [cn "c#10;run time: "
+                                                        [cn [str (protect Time)]
+                                                            " secsc#10;"]]
+                                                    [stoutput]]
+                       (protect Result)])
+  X -> X)
 
 (define tuple-up
   [X | Y] -> [@p X (tuple-up Y)]
@@ -183,7 +188,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
             Pos (findpos F MacroReg)
             Remove1 (set *macroreg* (remove F MacroReg))
             Remove2 (set *macros* (remove-nth Pos (value *macros*)))
-            F))
+          F))
 
 (define findpos
   F [] -> (error "~A is not a macro~%" F)
@@ -192,5 +197,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define remove-nth
   1 [_ | Y] -> Y
-  N [X | Y] -> [X | (remove-nth (- N 1) Y)]))
+  N [X | Y] -> [X | (remove-nth (- N 1) Y)])
 
+)

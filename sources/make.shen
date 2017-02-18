@@ -12,10 +12,11 @@
 (systemf <!>)
 
 (define make
-  -> (map (function make-file) ["core.shen" "declarations.shen" "load.shen" "macros.shen"
-                                "prolog.shen" "reader.shen" "sequent.shen" "sys.shen" "t-star.shen"
-                                "toplevel.shen"  "track.shen"  "types.shen" "writer.shen"
-                                "yacc.shen"]))
+  -> (map (function make-file)
+          ["core.shen" "declarations.shen" "load.shen" "macros.shen"
+           "prolog.shen" "reader.shen" "sequent.shen" "sys.shen" "t-star.shen"
+           "toplevel.shen"  "track.shen"  "types.shen" "writer.shen"
+           "yacc.shen"]))
 
 (defcc shen.<name>
   X := (if (symbol? X)
@@ -29,7 +30,7 @@
                    StringKL (@s (license) (list->string KL))
                    KLFile (klfile ShenFile)
                    Write (write-to-file KLFile StringKL)
-                   KLFile))
+                 KLFile))
 
 (define make-kl-code
   [define F | Rules] -> (shen.elim-def [define F | Rules])

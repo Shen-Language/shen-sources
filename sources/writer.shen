@@ -23,21 +23,23 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
+
 (package shen []
 
 (define pr
-  String Sink -> (trap-error (prh String Sink 0) (/. E String)))
+  String Sink -> (trap-error
+                  (prh String Sink 0)
+                  (/. E String)))
 
 (define prh
   String Sink N -> (prh String Sink (write-char-and-inc String Sink N)))
 
 (define write-char-and-inc
-  String Sink N -> (do (write-byte (string->n (pos String N)) Sink) (+ N 1)))
+  String Sink N -> (do (write-byte (string->n (pos String N)) Sink)
+                       (+ N 1)))
 
 (define print
   X -> (let String (insert X "~S")
@@ -69,9 +71,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Cn -> Cn)
 
 (define proc-nl
- "" -> ""
- (@s "~%" Ss) -> (cn (n->string 10) (proc-nl Ss))
- (@s S Ss) -> (cn S (proc-nl Ss)))
+  "" -> ""
+  (@s "~%" Ss) -> (cn (n->string 10) (proc-nl Ss))
+  (@s S Ss) -> (cn S (proc-nl Ss)))
 
 (define mkstr-r
   String [] -> String
@@ -91,7 +93,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Arg String Mode -> (cn (arg->str Arg Mode) String))
 
 (define arg->str
-  F _ -> "..."	   		  where (= F (fail))
+  F _ -> "..."                    where (= F (fail))
   L Mode -> (list->str L Mode)    where (list? L)
   S Mode -> (str->str S Mode)  	  where (string? S)
   V Mode -> (vector->str V Mode)  where (absvector? V)
@@ -122,10 +124,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define print-vector?
   P -> (let Zero (<-address P 0)
-                 (cases (= Zero tuple) true
-                        (= Zero pvar) true
-                        (not (number? Zero)) (fbound? Zero)
-                        true false)))
+         (cases (= Zero tuple) true
+                (= Zero pvar) true
+                (not (number? Zero)) (fbound? Zero)
+                true false)))
 
 (define fbound?
   F -> (trap-error (do (ps F) true) (/. E false)))
@@ -137,11 +139,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   _ _ _ 0 -> "... etc"
   V N Mode Max -> (let Item (trap-error (<-address V N) (/. E out-of-bounds))
                        Next (trap-error (<-address V (+ N 1)) (/. E out-of-bounds))
-                       (cases (= Item out-of-bounds) ""
-                              (= Next out-of-bounds) (arg->str Item Mode)
-                              true (@s (arg->str Item Mode)
-                                       " "
-                                       (iter-vector V (+ N 1) Mode (- Max 1))))))
+                    (cases (= Item out-of-bounds) ""
+                           (= Next out-of-bounds) (arg->str Item Mode)
+                           true (@s (arg->str Item Mode)
+                                    " "
+                                    (iter-vector V (+ N 1) Mode (- Max 1))))))
 
 (define atom->str
   At -> (trap-error (str At) (/. E (funexstring))))
@@ -150,4 +152,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   -> (@s "c#16;fune" (arg->str (gensym (intern "x")) a) "c#17;"))
 
 (define list?
-  X -> (or (empty? X) (cons? X)))		)
+  X -> (or (empty? X) (cons? X)))
+
+)

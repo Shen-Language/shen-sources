@@ -22,9 +22,7 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
@@ -35,9 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define eval
   X -> (let Macroexpand (walk (/. Y (macroexpand Y)) X)
-            (if (packaged? Macroexpand)
-                (map (/. Z (eval-without-macros Z)) (package-contents Macroexpand))
-                (eval-without-macros Macroexpand))))
+         (if (packaged? Macroexpand)
+             (map (/. Z (eval-without-macros Z)) (package-contents Macroexpand))
+             (eval-without-macros Macroexpand))))
 
 (define eval-without-macros
   X -> (eval-kl (elim-def (proc-input+ X))))
@@ -53,29 +51,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [defmacro F | Rest] -> (let Default [(protect X) -> (protect X)]
                               Def (elim-def [define F | (append Rest Default)])
                               MacroAdd (add-macro F)
-                              Def)
+                            Def)
   [defcc F | X] -> (elim-def (yacc [defcc F | X]))
   [X | Y] -> (map (/. Z (elim-def Z)) [X | Y])
   X -> X)
 
 (define add-macro
-    F -> (let MacroReg (value *macroreg*)
-              NewMacroReg (set *macroreg* (adjoin F (value *macroreg*)))
-              (if (= MacroReg NewMacroReg)
-                  skip
-                  (set *macros* [(function F) | (value *macros*)]))))
+  F -> (let MacroReg (value *macroreg*)
+            NewMacroReg (set *macroreg* (adjoin F (value *macroreg*)))
+         (if (= MacroReg NewMacroReg)
+             skip
+             (set *macros* [(function F) | (value *macros*)]))))
 
 (define packaged?
   [package P E | _] -> true
   _ -> false)
 
 (define external
-  Package -> (trap-error (get Package external-symbols)
-                         (/. E (error "package ~A has not been used.~%" Package))))
+  Package -> (trap-error
+              (get Package external-symbols)
+              (/. E (error "package ~A has not been used.~%" Package))))
 
 (define internal
-  Package -> (trap-error (get Package internal-symbols)
-                         (/. E (error "package ~A has not been used.~%" Package))))
+  Package -> (trap-error
+              (get Package internal-symbols)
+              (/. E (error "package ~A has not been used.~%" Package))))
 
 (define package-contents
   [package null _ | Contents] -> Contents
@@ -86,10 +86,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   F X -> (F X))
 
 (define compile
-   F X Err -> (let O (F [X []])
-                   (if (or (= (fail) O) (not (empty? (hd O))))
-                       (Err O)
-                       (hdtl O))))
+  F X Err -> (let O (F [X []])
+               (if (or (= (fail) O) (not (empty? (hd O))))
+                   (Err O)
+                   (hdtl O))))
 
 (define fail-if
   F X -> (if (F X) (fail) X))
@@ -101,23 +101,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   -> (value *tc*))
 
 (define ps
-  Name -> (trap-error (get Name source) (/. E (error "~A not found.~%" Name))))
+  Name -> (trap-error
+           (get Name source)
+           (/. E (error "~A not found.~%" Name))))
 
 (define stinput
   -> (value *stinput*))
 
 (define +vector?
- X -> (and (absvector? X) (> (<-address X 0) 0)))
+  X -> (and (absvector? X) (> (<-address X 0) 0)))
 
 (define vector
-   N -> (let Vector (absvector (+ N 1))
-             ZeroStamp (address-> Vector 0 N)
-             Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
-             Standard))
+  N -> (let Vector (absvector (+ N 1))
+            ZeroStamp (address-> Vector 0 N)
+            Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
+          Standard))
 
 (define fillvector
   Vector N N X -> (address-> Vector N X)
-  Vector Counter N X -> (fillvector (address-> Vector Counter X) (+ 1 Counter) N X))
+  Vector Counter N X -> (fillvector (address-> Vector Counter X)
+                                    (+ 1 Counter) N X))
 
 (define vector?
   X -> (and (absvector? X) (trap-error (>= (<-address X 0) 0) (/. E false))))
@@ -131,9 +134,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Vector N -> (if (= N 0)
                   (error "cannot access 0th element of a vector~%")
                   (let VectorElement (<-address Vector N)
-                      (if (= VectorElement (fail))
-                          (error "vector element not found~%")
-                          VectorElement))))
+                    (if (= VectorElement (fail))
+                        (error "vector element not found~%")
+                        VectorElement))))
 
 (define posint?
   X -> (and (integer? X) (>= X 0)))
@@ -144,7 +147,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define symbol?
   X -> false where (or (boolean? X) (number? X) (string? X))
   X -> (trap-error (let String (str X)
-                        (analyse-symbol? String)) (/. E false)))
+                     (analyse-symbol? String)) (/. E false)))
 
 (define analyse-symbol?
   (@s S Ss) -> (and (alpha? S)
@@ -171,11 +174,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define variable?
   X -> false where (or (boolean? X) (number? X) (string? X))
   X -> (trap-error (let String (str X)
-                        (analyse-variable? String)) (/. E false)))
+                     (analyse-variable? String)) (/. E false)))
 
 (define analyse-variable?
   (@s S Ss) -> (and (uppercase? S)
-                   (alphanums? Ss)))
+                    (alphanums? Ss)))
 
 (define uppercase?
   S ->  (element? S ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
@@ -192,7 +195,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               Tag (address-> Vector 0 tuple)
               Fst (address-> Vector 1 X)
               Snd (address-> Vector 2 Y)
-              Vector))
+            Vector))
 
 (define fst
   X -> (<-address X 1))
@@ -201,7 +204,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X -> (<-address X 2))
 
 (define tuple?
-  X -> (trap-error (and (absvector? X) (= tuple (<-address X 0))) (/. E false)))
+  X -> (trap-error
+        (and (absvector? X) (= tuple (<-address X 0)))
+        (/. E false)))
 
 (define append
   [] X -> X
@@ -211,32 +216,39 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X Vector -> (let Limit (limit Vector)
                    NewVector (vector (+ Limit 1))
                    X+NewVector (vector-> NewVector 1 X)
-                   (if (= Limit 0)
-                       X+NewVector
-                       (@v-help Vector 1 Limit X+NewVector))))
+                (if (= Limit 0)
+                    X+NewVector
+                    (@v-help Vector 1 Limit X+NewVector))))
 
 (define @v-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (+ N 1))
   OldVector N Limit NewVector -> (@v-help OldVector (+ N 1) Limit
-                                     (copyfromvector OldVector NewVector N (+ N 1))))
+                                          (copyfromvector
+                                           OldVector NewVector N (+ N 1))))
 
 (define copyfromvector
-  OldVector NewVector From To -> (trap-error (vector-> NewVector To (<-vector OldVector From)) (/. E NewVector)))
+  OldVector NewVector From To -> (trap-error
+                                  (vector-> NewVector To
+                                            (<-vector OldVector From))
+                                  (/. E NewVector)))
 
 (define hdv
-  Vector -> (trap-error (<-vector Vector 1) (/. E (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
+  Vector -> (trap-error
+             (<-vector Vector 1)
+             (/. E (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
 
 (define tlv
   Vector -> (let Limit (limit Vector)
-                 (cases (= Limit 0) (error "cannot take the tail of the empty vector~%")
-                        (= Limit 1) (vector 0)
-                        true (let NewVector (vector (- Limit 1))
-                                  (tlv-help Vector 2 Limit (vector (- Limit 1)))))))
+              (cases (= Limit 0) (error "cannot take the tail of the empty vector~%")
+                     (= Limit 1) (vector 0)
+                     true (let NewVector (vector (- Limit 1))
+                            (tlv-help Vector 2 Limit (vector (- Limit 1)))))))
 
 (define tlv-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (- N 1))
   OldVector N Limit NewVector -> (tlv-help OldVector (+ N 1) Limit
-                                     (copyfromvector OldVector NewVector N (- N 1))))
+                                           (copyfromvector
+                                            OldVector NewVector N (- N 1))))
 
 (define assoc
   _ [] -> []
@@ -278,14 +290,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define put
   X Pointer Y Vector -> (let N (hash X (limit Vector))
                              Entry (trap-error (<-vector Vector N) (/. E []))
-                             Change (vector-> Vector N (change-pointer-value X Pointer Y Entry))
-                             Y))
+                             Change (vector-> Vector N (change-pointer-value
+                                                        X Pointer Y Entry))
+                           Y))
 
 (define unput
   X Pointer Vector -> (let N (hash X (limit Vector))
                            Entry (trap-error (<-vector Vector N) (/. E []))
-                           Change (vector-> Vector N (remove-pointer X Pointer Entry))
-                           X))
+                           Change (vector-> Vector N (remove-pointer
+                                                      X Pointer Entry))
+                         X))
 
 (define remove-pointer
   X Pointer [] -> []
@@ -299,16 +313,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define get
   X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error (<-vector Vector N)
-                                      (/. E (error "pointer not found~%")))
+                           Entry (trap-error
+                                  (<-vector Vector N)
+                                  (/. E (error "pointer not found~%")))
                            Result (assoc [X Pointer] Entry)
-                           (if (empty? Result) (error "value not found~%") (tl Result))))
+                        (if (empty? Result)
+                            (error "value not found~%")
+                            (tl Result))))
 
 (define hash
   S Limit -> (let Hash (mod (sum (map (/. X (string->n X)) (explode S))) Limit)
-                  (if (= 0 Hash)
-                      1
-                      Hash)))
+               (if (= 0 Hash)
+                   1
+                   Hash)))
 
 (define mod
   N Div -> (modh N (multiples N [Div])))
@@ -318,12 +335,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   N [M | Ms] -> (multiples N [(* 2 M) M | Ms]))
 
 (define modh
-   0 _ -> 0
-   N [] -> N
-   N [M | Ms] -> (if (empty? Ms)
-                           N
-                           (modh N Ms))   where (> M N)
-   N [M | Ms] -> (modh (- N M) [M | Ms]))
+  0 _ -> 0
+  N [] -> N
+  N [M | Ms] -> (if (empty? Ms)
+                    N
+                    (modh N Ms))
+      where (> M N)
+  N [M | Ms] -> (modh (- N M) [M | Ms]))
 
 (define sum
   [] -> 0
@@ -342,7 +360,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define intersection
   [] _ -> []
-  [X | Y] Z -> (if (element? X Z) [X | (intersection Y Z)] (intersection Y Z)))
+  [X | Y] Z -> (if (element? X Z)
+                   [X | (intersection Y Z)]
+                   (intersection Y Z)))
 
 (define reverse
   X -> (reverse_help X []))
@@ -353,16 +373,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define union
   [] X -> X
-  [X | Y] Z -> (if (element? X Z) (union Y Z) [X | (union Y Z)]))
+  [X | Y] Z -> (if (element? X Z)
+                   (union Y Z)
+                   [X | (union Y Z)]))
 
 (define y-or-n?
   String -> (let Message (output String)
                  Y-or-N (output " (y/n) ")
                  Input (make-string "~S" (read (stinput)))
-                 (cases (= "y" Input) true
-                        (= "n" Input) false
-                        true (do (output "please answer y or n~%")
-                                 (y-or-n? String)))))
+              (cases (= "y" Input) true
+                     (= "n" Input) false
+                     true (do (output "please answer y or n~%")
+                              (y-or-n? String)))))
 
 (define not
   X -> (if X false true))
@@ -413,17 +435,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define magless
   Abs N -> (let Nx2 (* N 2)
-                (if (> Nx2 Abs)
-                    N
-                    (magless Abs Nx2))))
+             (if (> Nx2 Abs)
+                 N
+                 (magless Abs Nx2))))
 
 (define integer-test?
   0 _ -> true
   Abs _ -> false    where (> 1 Abs)
   Abs N -> (let Abs-N (- Abs N)
-                (if (> 0 Abs-N)
-                    (integer? Abs)
-                    (integer-test? Abs-N N))))
+             (if (> 0 Abs-N)
+                 (integer? Abs)
+                 (integer-test? Abs-N N))))
 
 (define mapcan
   _ [] -> []
@@ -439,9 +461,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define bound?
   Sym -> (and (symbol? Sym)
               (let Val (trap-error (value Sym) (/. E this-symbol-is-unbound))
-                          (if (= Val this-symbol-is-unbound)
-                              false
-                              true))))
+                (if (= Val this-symbol-is-unbound)
+                    false
+                    true))))
 
 (define string->bytes
   "" -> []
@@ -461,9 +483,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define string->symbol
   S -> (let Symbol (intern S)
-          (if (symbol? Symbol)
-              Symbol
-              (error "cannot intern ~S to a symbol" S))))
+         (if (symbol? Symbol)
+             Symbol
+             (error "cannot intern ~S to a symbol" S))))
 
 (define optimise
   + -> (set *optimise* true)
@@ -500,10 +522,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define lookup-func
   F [] -> (error "~A has no lambda expansion~%" F)
   F [[F | Lambda] | _] -> Lambda
-  F [_ | SymbolTable] -> (lookup-func F SymbolTable)) )
+  F [_ | SymbolTable] -> (lookup-func F SymbolTable))
 
-
-
-
-
-
+)

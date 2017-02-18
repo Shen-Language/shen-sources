@@ -23,28 +23,28 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
 (package shen []
 
 (define read-file-as-bytelist
- File -> (let Stream (open File in)
+  File -> (let Stream (open File in)
                Byte (read-byte Stream)
                Bytes (read-file-as-bytelist-help Stream Byte [])
                Close (close Stream)
-               (reverse Bytes)))
+            (reverse Bytes)))
 
 (define read-file-as-bytelist-help
   Stream -1 Bytes -> Bytes
-  Stream Byte Bytes -> (read-file-as-bytelist-help Stream (read-byte Stream) [Byte | Bytes]))
+  Stream Byte Bytes -> (read-file-as-bytelist-help Stream
+                                                   (read-byte Stream)
+                                                   [Byte | Bytes]))
 
 (define read-file-as-string
-   File -> (let Stream (open File in)
-               (rfas-h Stream (read-byte Stream) "")))
+  File -> (let Stream (open File in)
+            (rfas-h Stream (read-byte Stream) "")))
 
 (define rfas-h
   Stream -1 String -> (do (close Stream) String)
@@ -56,9 +56,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define input+
   Type Stream -> (let Mono? (monotype Type)
                       Input (read Stream)
-                      (if (= false (typecheck Input (demodulate Type)))
-                          (error "type error: ~R is not of type ~R~%" Input Type)
-                          (eval-kl Input))))
+                   (if (= false (typecheck Input (demodulate Type)))
+                       (error "type error: ~R is not of type ~R~%" Input Type)
+                       (eval-kl Input))))
 
 (define monotype
   [X | Y] -> (map (/. Z (monotype Z)) [X | Y])
@@ -75,12 +75,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   _ -1 Bytes -> (if (empty? Bytes)
                     (simple-error "error: empty stream")
                     (compile (/. X (<st_input> X)) Bytes (/. E E)))
-  Stream Byte Bytes -> (let AllBytes (append Bytes [Byte])
-                            It (record-it AllBytes)
-                            Read (compile (/. X (<st_input> X)) AllBytes (/. E nextbyte))
-                            (if (or (= Read nextbyte) (empty? Read))
-                                (read-loop Stream (read-byte Stream) AllBytes)
-                                Read))    where (terminator? Byte)
+  Stream Byte Bytes
+  -> (let AllBytes (append Bytes [Byte])
+          It (record-it AllBytes)
+          Read (compile (/. X (<st_input> X)) AllBytes (/. E nextbyte))
+       (if (or (= Read nextbyte) (empty? Read))
+           (read-loop Stream (read-byte Stream) AllBytes)
+           Read))
+      where (terminator? Byte)
   Stream Byte Bytes -> (read-loop Stream (read-byte Stream) (append Bytes [Byte])))
 
 (define terminator?
@@ -94,18 +96,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
                          (simple-error "empty stream")
                          (compile (/. X (<st_input> X)) Bytes (/. E E)))
   Byte _ Stream -> (error "line read aborted")  where (= Byte (hat))
-  Byte Bytes Stream -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
-                            It (record-it Bytes)
-                            (if (or (= Line nextline) (empty? Line))
-                                (lineread-loop (read-byte Stream) (append Bytes [Byte]) Stream)
-                                Line))	where (element? Byte [(newline) (carriage-return)])
-  Byte Bytes Stream -> (lineread-loop (read-byte Stream) (append Bytes [Byte]) Stream))
+  Byte Bytes Stream
+  -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
+          It (record-it Bytes)
+       (if (or (= Line nextline) (empty? Line))
+           (lineread-loop (read-byte Stream) (append Bytes [Byte]) Stream)
+           Line))
+	    where (element? Byte [(newline) (carriage-return)])
+  Byte Bytes Stream -> (lineread-loop (read-byte Stream) (append Bytes [Byte])
+                                      Stream))
 
 (define record-it
   Bytes -> (let TrimLeft (trim-whitespace Bytes)
                 TrimRight (trim-whitespace (reverse TrimLeft))
                 Trimmed (reverse TrimRight)
-                (record-it-h Trimmed)))
+             (record-it-h Trimmed)))
 
 (define trim-whitespace
   [Byte | Bytes] -> (trim-whitespace Bytes)   where (element? Byte [9 10 13 32])
@@ -120,16 +125,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define read-file
   File -> (let Bytelist (read-file-as-bytelist File)
-               (compile (/. X (<st_input> X)) Bytelist (/. X (read-error X)))))
+            (compile (/. X (<st_input> X)) Bytelist (/. X (read-error X)))))
 
 (define read-from-string
   S -> (let Ns (map (/. X (string->n X)) (explode S))
-            (compile (/. X (<st_input> X))
-                     Ns
-                     (/. X (read-error X)))))
+         (compile (/. X (<st_input> X))
+                  Ns
+                  (/. X (read-error X)))))
 
 (define read-error
-  [[Byte | Bytes] _] -> (error "read error here:~%~% ~A~%" (compress-50 50 [Byte | Bytes]))
+  [[Byte | Bytes] _] -> (error "read error here:~%~% ~A~%"
+                               (compress-50 50 [Byte | Bytes]))
   _ -> (error "read error~%"))
 
 (define compress-50
@@ -139,9 +145,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (defcc <st_input>
   <lsb> <st_input1> <rsb> <st_input2>
-    := [(macroexpand (cons_form <st_input1>)) | <st_input2>];
+      := [(macroexpand (cons_form <st_input1>)) | <st_input2>];
   <lrb>  <st_input1> <rrb> <st_input2>
-   := (package-macro (macroexpand <st_input1>) <st_input2>);
+      := (package-macro (macroexpand <st_input1>) <st_input2>);
   <lcurly> <st_input> := [{ | <st_input>];
   <rcurly> <st_input> := [} | <st_input>];
   <bar> <st_input> := [bar! | <st_input>];
@@ -156,10 +162,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   <e> := [];)
 
 (defcc <lsb>
-   91 := skip;)
+  91 := skip;)
 
 (defcc <rsb>
-   93 := skip;)
+  93 := skip;)
 
 (defcc <lcurly>
   123 := skip;)
@@ -201,21 +207,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define control-chars
   [] -> ""
   ["c" "#" | Ss]
-   -> (let CodePoint (code-point Ss)
-           AfterCodePoint (after-codepoint Ss)
-           (@s (n->string (decimalise CodePoint)) (control-chars AfterCodePoint)))
+  -> (let CodePoint (code-point Ss)
+          AfterCodePoint (after-codepoint Ss)
+       (@s (n->string (decimalise CodePoint)) (control-chars AfterCodePoint)))
   [S | Ss] -> (@s S (control-chars Ss)))
 
 (define code-point
   [";" | _] -> ""
   [S | Ss] -> [S | (code-point Ss)]
-                     where (element? S ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"])
+  where (element? S ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0"])
   S -> (error "code point parse error ~A~%" S))
 
 (define after-codepoint
-   [] -> []
-   [";" | Ss] -> Ss
-   [_ | Ss] -> (after-codepoint Ss))
+  [] -> []
+  [";" | Ss] -> Ss
+  [_ | Ss] -> (after-codepoint Ss))
 
 (define decimalise
   S -> (pre (reverse (digits->integers S)) 0))
@@ -231,18 +237,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   ["7" | S] -> [7 | (digits->integers S)]
   ["8" | S] -> [8 | (digits->integers S)]
   ["9" | S] -> [9 | (digits->integers S)]
-   _ -> [])
+  _ -> [])
 
 (defcc <sym>
   <alpha> <alphanums> := (@s <alpha> <alphanums>);)
 
 (defcc <alphanums>
-   <alphanum> <alphanums> := (@s <alphanum> <alphanums>);
-   <e> := "";)
+  <alphanum> <alphanums> := (@s <alphanum> <alphanums>);
+  <e> := "";)
 
 (defcc <alphanum>
-    <alpha> := <alpha>;
-    <num> := <num>;)
+  <alpha> := <alpha>;
+  <num> := <num>;)
 
 (defcc <num>
   Byte := (n->string Byte)    where (numbyte? Byte);)
@@ -288,17 +294,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Byte := (n->string Byte)	where (not (= Byte 34));)
 
 (defcc <number>
-   <minus> <number> := (- 0 <number>);
-   <plus> <number> := <number>;
-   <predigits> <stop> <postdigits> <E> <log10>
-   := (* (expt 10 <log10>) (+ (pre (reverse <predigits>) 0) (post <postdigits> 1)));
-   <digits> <E> <log10> := (* (expt 10 <log10>) (pre (reverse <digits>) 0));
-   <predigits> <stop> <postdigits>
-   := (+ (pre (reverse <predigits>) 0) (post <postdigits> 1));
-   <digits> := (pre (reverse <digits>) 0);)
+  <minus> <number> := (- 0 <number>);
+  <plus> <number> := <number>;
+  <predigits> <stop> <postdigits> <E> <log10>
+      := (* (expt 10 <log10>)
+            (+ (pre (reverse <predigits>) 0)
+               (post <postdigits> 1)));
+  <digits> <E> <log10> := (* (expt 10 <log10>) (pre (reverse <digits>) 0));
+  <predigits> <stop> <postdigits>
+      := (+ (pre (reverse <predigits>) 0) (post <postdigits> 1));
+  <digits> := (pre (reverse <digits>) 0);)
 
 (defcc <E>
-   101 := skip;)
+  101 := skip;)
 
 (defcc <log10>
   <minus> <digits> := (- 0 (pre (reverse <digits>) 0));
@@ -311,15 +319,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Byte := Byte 	where (= Byte 46);)
 
 (defcc <predigits>
-    <digits> := <digits>;
-    <e> := [];)
+  <digits> := <digits>;
+  <e> := [];)
 
 (defcc <postdigits>
   <digits> := <digits>;)
 
 (defcc <digits>
-   <digit> <digits> := [<digit> | <digits>];
-   <digit> := [<digit>];)
+  <digit> <digits> := [<digit> | <digits>];
+  <digit> := [<digit>];)
 
 (defcc <digit>
   X := (byte->digit X)  where (numbyte? X);)
@@ -366,11 +374,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   92 := skip;)
 
 (defcc <anysingle>
-   <non-return> <anysingle> := skip;
-   <e> := skip;)
+  <non-return> <anysingle> := skip;
+  <e> := skip;)
 
 (defcc <non-return>
-   X :=  skip   where (not (element? X [10 13]));)
+  X :=  skip   where (not (element? X [10 13]));)
 
 (defcc <return>
   X  := skip  where (element? X [10 13]);)
@@ -392,10 +400,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (defcc <whitespace>
   X := skip     where (let Case X
-                      (or (= Case 32)
-                          (= Case 13)
-                          (= Case 10)
-                          (= Case 9)));)
+                        (or (= Case 32)
+                            (= Case 13)
+                            (= Case 10)
+                            (= Case 9)));)
 
 (define cons_form
   [] -> []
@@ -403,47 +411,56 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [X | Y] -> [cons X (cons_form Y)])
 
 (define package-macro
-    [$ S] Stream -> (append (explode S) Stream)
-    [package null _ | Code] Stream -> (append Code Stream)
-    [package PackageName Exceptions | Code] Stream
-     -> (let ListofExceptions (eval-without-macros Exceptions)
-             External (record-exceptions ListofExceptions PackageName)
-             PackageNameDot (intern (cn (str PackageName) "."))
-             ExpPackageName (explode PackageName)
-             Packaged (packageh PackageNameDot ListofExceptions Code ExpPackageName)
-             Internal (record-internal PackageName (internal-symbols ExpPackageName Packaged))
-             (append Packaged Stream))
-    X Stream -> [X | Stream])
+  [$ S] Stream -> (append (explode S) Stream)
+  [package null _ | Code] Stream -> (append Code Stream)
+  [package PackageName Exceptions | Code] Stream
+  -> (let ListofExceptions (eval-without-macros Exceptions)
+          External (record-exceptions ListofExceptions PackageName)
+          PackageNameDot (intern (cn (str PackageName) "."))
+          ExpPackageName (explode PackageName)
+          Packaged (packageh PackageNameDot ListofExceptions Code ExpPackageName)
+          Internal (record-internal PackageName
+                                    (internal-symbols ExpPackageName Packaged))
+       (append Packaged Stream))
+  X Stream -> [X | Stream])
 
 (define record-exceptions
   ListofExceptions PackageName
-   -> (let CurrExceptions (trap-error (get PackageName external-symbols) (/. E []))
-           AllExceptions (union ListofExceptions CurrExceptions)
-           (put PackageName external-symbols AllExceptions)))
+  -> (let CurrExceptions (trap-error (get PackageName external-symbols) (/. E []))
+          AllExceptions (union ListofExceptions CurrExceptions)
+       (put PackageName external-symbols AllExceptions)))
 
 (define record-internal
-  PackageName Internal -> (put PackageName internal-symbols (union Internal (trap-error (get PackageName internal-symbols) (/. E [])))))
+  PackageName Internal -> (put PackageName internal-symbols
+                               (union Internal
+                                      (trap-error
+                                       (get PackageName internal-symbols)
+                                       (/. E [])))))
 
 (define internal-symbols
-  ExpPackageName PackageSymbol -> [PackageSymbol]  where (and (symbol? PackageSymbol) (prefix? ExpPackageName (explode PackageSymbol)))
-  ExpPackageName [X | Y] -> (union (internal-symbols ExpPackageName X) (internal-symbols ExpPackageName Y))
+  ExpPackageName PackageSymbol -> [PackageSymbol]
+      where (and (symbol? PackageSymbol)
+                 (prefix? ExpPackageName (explode PackageSymbol)))
+  ExpPackageName [X | Y] -> (union (internal-symbols ExpPackageName X)
+                                   (internal-symbols ExpPackageName Y))
   _ _ -> [])
 
 (define packageh
-    PackageNameDot Exceptions [X | Y] ExpPackageName
-      -> [(packageh PackageNameDot Exceptions X ExpPackageName) | (packageh PackageNameDot Exceptions Y ExpPackageName)]
-    PackageNameDot Exceptions X ExpPackageName -> X
-                 where (or (sysfunc? X)
-                           (variable? X)
-                           (element? X Exceptions)
-                           (doubleunderline? X)
-                           (singleunderline? X))
-    PackageNameDot Exceptions X ExpPackageName -> (concat PackageNameDot X)
-             where (and (symbol? X)
-                        (let ExplodeX (explode X)
-                             (and (not (prefix? [($ shen.)] ExplodeX))
-                                  (not (prefix? ExpPackageName ExplodeX)))))
-    _ _ X _ -> X)
+  PackageNameDot Exceptions [X | Y] ExpPackageName
+  -> [(packageh PackageNameDot Exceptions X ExpPackageName) |
+      (packageh PackageNameDot Exceptions Y ExpPackageName)]
+  PackageNameDot Exceptions X ExpPackageName -> X
+      where (or (sysfunc? X)
+                (variable? X)
+                (element? X Exceptions)
+                (doubleunderline? X)
+                (singleunderline? X))
+  PackageNameDot Exceptions X ExpPackageName -> (concat PackageNameDot X)
+      where (and (symbol? X)
+                 (let ExplodeX (explode X)
+                   (and (not (prefix? [($ shen.)] ExplodeX))
+                        (not (prefix? ExpPackageName ExplodeX)))))
+  _ _ X _ -> X)
 
-        )
+)
 
