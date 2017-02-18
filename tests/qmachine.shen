@@ -11,14 +11,14 @@
 (define delay
   {(progression A) --> (progression A)}
     [X S E] -> [(S X) S E])
- 
+
 (define end?
   {(progression A) --> boolean}
-   [X S E] -> (E X)) 
+   [X S E] -> (E X))
 
 (define push
   {A --> (progression A) --> (progression A)}
-  X [Y S E] -> [X (/. Z (if (= Z X) Y (S Z))) E]) 
+  X [Y S E] -> [X (/. Z (if (= Z X) Y (S Z))) E])
 
 (define forall
   {(progression A) --> (A --> boolean) --> boolean}
@@ -34,11 +34,11 @@
 
 (define forall
   {(progression A) --> (A --> boolean) --> boolean}
-   Progression P -> (super Progression P (function and) true)) 
+   Progression P -> (super Progression P (function and) true))
 
 (define exists
   {(progression A) --> (A --> boolean) --> boolean}
-   Progression P -> (super Progression P (function or) false)) 
+   Progression P -> (super Progression P (function or) false))
 
 (define for
   {(progression A) --> (A --> B) --> number}

@@ -41,7 +41,7 @@
 (define deal-whist
   {number --> (list card) --> ((list card) * (list card)) -->  ((list card) * (list card))}
   0 _ (@p Computer Player) -> (@p Computer Player)
-  N Deck  (@p Computer Player) 
+  N Deck  (@p Computer Player)
   -> (let CCard (deal-card Deck)
           Deck-1 (remove CCard Deck)
           PCard (deal-card Deck-1)
@@ -54,54 +54,54 @@
 
 (define random
   {A --> A}
-   X -> X) 
+   X -> X)
 
 (define whist-loop
   {((list card) * (list card)) --> cscore --> pscore --> lead --> string}
-  Hands Cscore Pscore _ 
+  Hands Cscore Pscore _
   -> (if (> Cscore Pscore)
          (output "~%Computer tricks: ~A, Player tricks: ~A; ~%Computer wins!~%"
                  Cscore Pscore)
-         (output "~%Computer tricks: ~A, Player tricks: ~A; ~%You win!~%" 
-                 Cscore Pscore))      
-			where (game-over? Hands) 
+         (output "~%Computer tricks: ~A, Player tricks: ~A; ~%You win!~%"
+                 Cscore Pscore))
+			where (game-over? Hands)
   (@p Computer Player) Cscore Pscore computer
-       -> (let Ccard (computer-shows (play-computer-lead Computer)) 
+       -> (let Ccard (computer-shows (play-computer-lead Computer))
                Pcard (determine-legal (play-player Player) Ccard Player)
                Winner (return-winner (determine-winner Ccard Pcard computer))
                Computer-1 (remove Ccard Computer)
                Player-1 (remove Pcard Player)
                (if (= Winner computer)
-                   (whist-loop (@p Computer-1 Player-1) 
-                               (+ 1 Cscore) 
-                               Pscore 
-                               computer) 
-                   (whist-loop (@p Computer-1 Player-1) 
-                               Cscore 
-                               (+ Pscore 1) 
+                   (whist-loop (@p Computer-1 Player-1)
+                               (+ 1 Cscore)
+                               Pscore
+                               computer)
+                   (whist-loop (@p Computer-1 Player-1)
+                               Cscore
+                               (+ Pscore 1)
                                player)))
-     (@p Computer Player) Cscore Pscore player 
+     (@p Computer Player) Cscore Pscore player
           -> (let Pcard (play-player Player)
                   Ccard (computer-shows (play-computer-follow Computer Pcard))
                   Winner (return-winner (determine-winner Ccard Pcard player))
                   Computer-1 (remove Ccard Computer)
                   Player-1 (remove Pcard Player)
                   (if (= Winner computer)
-                      (whist-loop (@p Computer-1 Player-1) 
-                                  (+ 1 Cscore) 
-                                  Pscore 
-                                  computer) 
-                      (whist-loop (@p Computer-1 Player-1) 
-                                  Cscore 
-                                  (+ Pscore 1) 
-                                  player)))) 
+                      (whist-loop (@p Computer-1 Player-1)
+                                  (+ 1 Cscore)
+                                  Pscore
+                                  computer)
+                      (whist-loop (@p Computer-1 Player-1)
+                                  Cscore
+                                  (+ Pscore 1)
+                                  player))))
 
 (define determine-legal
     {card --> card --> (list card) --> card}
       Pcard Ccard Player -> Pcard		where (legal? Pcard Ccard Player)
-      _ Ccard Player -> (do (output "You must follow suit!" []) 
-		                    (determine-legal (play-player Player) 
-                                             Ccard 
+      _ Ccard Player -> (do (output "You must follow suit!" [])
+		                    (determine-legal (play-player Player)
+                                             Ccard
                                              Player)))
 
 (define legal?
@@ -126,25 +126,25 @@
 
 (define return-winner
   {lead --> lead}
-  computer -> (do (output "~%Computer wins the trick.~%____________________________________________~%" []) 
+  computer -> (do (output "~%Computer wins the trick.~%____________________________________________~%" [])
                                     computer)
-    player -> (do (output "~%Player wins the trick.~%____________________________________________~%" []) 
+    player -> (do (output "~%Player wins the trick.~%____________________________________________~%" [])
                                      player))
 
 (define game-over?
   {((list card) * (list card)) --> boolean}
   (@p [] []) -> true
   _ -> false)
- 
+
 (define play-computer-lead
   {(list card) --> card}
   Cards -> (select-highest Cards))
 
 (define computer-shows
   {card --> card}
-  (@p Rank Suit) -> (do (output "~%Computer plays the ~A of ~A~%" 
+  (@p Rank Suit) -> (do (output "~%Computer plays the ~A of ~A~%"
                                 (map-rank Rank) (map-suit Suit))
-                        (@p Rank Suit))) 
+                        (@p Rank Suit)))
 
 (define map-rank
   {rank --> string}
@@ -152,7 +152,7 @@
   13 -> "king"
   12 -> "queen"
   11 -> "jack"
-  N -> (make-string "~A" N)) 
+  N -> (make-string "~A" N))
 
 (define map-suit
   {suit --> string}
@@ -160,7 +160,7 @@
   d -> "c#4;"
   h -> "c#3;"
   s -> "c#6;")
- 
+
 (define select-highest
  {(list card) --> card}
  [Card | Cards] -> (select-highest-help Card Cards))
@@ -168,7 +168,7 @@
 (define select-highest-help
   {card --> (list card) --> card}
   Card [] -> Card
-  Card1 [Card2  | Cards] 
+  Card1 [Card2  | Cards]
 	-> (select-highest-help Card2 Cards)  where (higher? Card2 Card1)
   Card [_ | Cards] -> (select-highest-help Card Cards))
 
@@ -178,7 +178,7 @@
 
 (define play-computer-follow
   {(list card) --> card --> card}
-   Cards (@p Rank Suit) 
+   Cards (@p Rank Suit)
      -> (let FollowSuit (sort lower? (same-suit Cards Suit))
             (if (empty? FollowSuit)
                 (select-lowest Cards)
@@ -196,7 +196,7 @@
   _ [] -> []
   _ [X] -> [X]
   R [X Y | Z] -> [Y | (sort-help R [X | Z])]	where (R Y X)
-  R [X | Y] -> [X | (sort-help R Y)]) 
+  R [X | Y] -> [X | (sort-help R Y)])
 
 (define select-higher
   {card --> (list card) --> card}
@@ -207,11 +207,11 @@
 (define select-lowest
   {(list card) --> card}
   [Card | Cards] -> (select-lowest-help Card Cards))
- 
-(define select-lowest-help 
+
+(define select-lowest-help
   {card --> (list card) --> card}
   Card [] -> Card
-  Card1 [Card2  | Cards] 
+  Card1 [Card2  | Cards]
     -> (select-lowest-help Card2 Cards)   where (lower? Card2 Card1)
   Card [_ | Cards] -> (select-lowest-help Card Cards))
 
@@ -231,10 +231,10 @@
 (define show-cards
   {number --> (list card) --> string}
   _ [] -> (output "~%~%Choose a Card: ")
-  N [(@p Rank Suit) | Cards] 
-  -> (do (output "~%~A. ~A of ~A" N (map-rank Rank) (map-suit Suit)) 
+  N [(@p Rank Suit) | Cards]
+  -> (do (output "~%~A. ~A of ~A" N (map-rank Rank) (map-suit Suit))
          (show-cards (+ N 1) Cards)))
 
 (define in-range?
   {number --> (list card) --> boolean}
-  N Cards -> (and (integer? N) (and (> N 0) (<= N (length Cards))))) 
+  N Cards -> (and (integer? N) (and (> N 0) (<= N (length Cards)))))

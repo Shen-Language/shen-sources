@@ -12,7 +12,7 @@
       X : variable;
       _____________
       X : primitive_object;
-     
+
       X : symbol;
       ___________
       X : primitive_object;
@@ -37,11 +37,11 @@
    X : primitive_object;
    ___________
    X : pattern;
-      
+
    P1 : pattern; P2 : pattern;
    ===========================
    [cons P1 P2] : pattern;
-    
+
    P1 : pattern; P2 : pattern;
    ===========================
    [@p P1 P2] : pattern;)
@@ -51,7 +51,7 @@
    X : pattern;
    _____________
    X : l_formula;
-      
+
    X : l_formula; Y : l_formula; Z : l_formula;
    =================================
    [if X Y Z] : l_formula;
@@ -59,61 +59,61 @@
    X : variable; Y : l_formula; Z : l_formula;
    ================================
    [let X Y Z] : l_formula;
-      
+
    X : l_formula; Y : l_formula;
    ======================
    [cons X Y] : l_formula;
-      
+
    X : l_formula; Y : l_formula;
    ======================
    [@p X Y] : l_formula;
-   
+
    X : l_formula; Y : l_formula;
    ======================
    [where X Y] : l_formula;
-      
+
    X : l_formula; Y : l_formula;
    ======================
    [= X Y] : l_formula;
-      
+
    X : l_formula; Y : l_formula;
    ======================
    [X Y] : l_formula;
-      
+
    Xn : (list l_formula);
    ===================
    [cases | Xn] : l_formula;
-      
+
    P : pattern; X : l_formula;
    ===========================
    [/. P X] : l_formula;)
 
 (define l_interpreter
   {A --> B}
-  _ -> (read_eval_print_loop (output "~%L interpreter ~%~%~%~%l-interp --> ~A~%" 
+  _ -> (read_eval_print_loop (output "~%L interpreter ~%~%~%~%l-interp --> ~A~%"
                                      (normal_form (input+ l_formula)))))
 
 (define read_eval_print_loop
   {string --> A}
-  _ -> (read_eval_print_loop 
+  _ -> (read_eval_print_loop
            (output "l-interp --> ~A~%"
-              (normal_form (input+ l_formula))))) 
+              (normal_form (input+ l_formula)))))
 
 (define normal_form
   {l_formula --> l_formula}
-   X -> (fix (function ==>>) X))                 
-    
+   X -> (fix (function ==>>) X))
+
 (define ==>>
    {l_formula --> l_formula}
-   [= X Y] -> (let X* (normal_form X) 
-                   (let Y* (normal_form Y) 
+   [= X Y] -> (let X* (normal_form X)
+                   (let Y* (normal_form Y)
                         (if (or (eval_error? X*) (eval_error? Y*))
                             "error!"
                             (if (= X* Y*) true false))))
    [[/. P X] Y] -> (let Match (match P (normal_form Y))
-                        (if (no_match? Match) 
+                        (if (no_match? Match)
                             "no match"
-                            (sub Match X))) 
+                            (sub Match X)))
    [if X Y Z] -> (let X* (normal_form X)
                       (if (= X* true)
                           Y
@@ -137,7 +137,7 @@
                            (if (= Case1 "no match")
                                [cases | Xn]
                                Case1))
-   [cases] -> "error!"            
+   [cases] -> "error!"
    [where X Y] -> [if X Y "no match"]
    [y-combinator [/. X Y]] -> (replace X [y-combinator [/. X Y]] Y)
    [X Y] -> (let X* (normal_form X)
@@ -151,7 +151,7 @@
   {l_formula --> boolean}
    "error!" -> true
    "no match" -> true
-   _ -> false)  
+   _ -> false)
 
 (define successor
   {A --> l_formula}
@@ -188,7 +188,7 @@
 						(append Match1 Match2)))))
 
     _ _ -> [(@p no matching)])
-      
+
 (define no_match?
   {(list (pattern * l_formula)) --> boolean}
    [(@p no matching)] -> true
@@ -206,12 +206,12 @@
     V W [cons X Y] -> [cons (replace V W X) (replace V W Y)]
     V W [cases | Xn] -> [cases | (map (/. Xi (replace V W Xi)) Xn)]
     V W [where X Y] -> [where (replace V W X) (replace V W Y)]
-    V W [X Y] -> [(replace V W X) (replace V W Y)] 
-    _ _ X -> X) 	
+    V W [X Y] -> [(replace V W X) (replace V W Y)]
+    _ _ X -> X)
 
 (define free?
   {pattern --> pattern --> boolean}
-   P P -> false 
+   P P -> false
    P [cons P1 P2] -> (and (free? P P1) (free? P P2))
    P [@p P1 P2] -> (and (free? P P1) (free? P P2))
    _ _ -> true)

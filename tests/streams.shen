@@ -2,12 +2,12 @@
 
     X : (A * (A --> A) * (A --> boolean));
     ======================================
-    X : (progression A);)    
+    X : (progression A);)
 
 (define delay
    {(progression A) --> (progression A)}
-   (@p X F E) -> (if (not (E X)) 
-                     (@p (F X) F E) 
+   (@p X F E) -> (if (not (E X))
+                     (@p (F X) F E)
                      (error "progression exhausted!~%")))
 
 (define force
@@ -17,4 +17,3 @@
 (define end?
     {(progression A) --> boolean}
      (@p X _ E) -> (E X))
-

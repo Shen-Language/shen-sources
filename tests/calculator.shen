@@ -2,7 +2,7 @@
 
     X : number;
     ====================
-    [num X] : arith-expr; 
+    [num X] : arith-expr;
 
     if (element? Op [+ - * /])
     X : arith-expr; Y : arith-expr;
@@ -16,6 +16,3 @@
   [X * Y] -> (* (do-calculation X) (do-calculation Y))
   [X / Y] -> (/ (do-calculation X) (do-calculation Y))
   [num X] -> X)
-
-
-

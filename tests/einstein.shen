@@ -31,4 +31,3 @@
 (defprolog iright
   L R (mode [L | [R | _]] -) <--;
   L R (mode [_ | Rest] -) <-- (iright L R Rest);)
-

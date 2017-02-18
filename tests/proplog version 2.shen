@@ -1,4 +1,4 @@
-(define backchain  
+(define backchain
    Conc Assumptions -> (backchain* Conc Assumptions Assumptions))
 
 (define backchain*
@@ -10,18 +10,3 @@
    <- (fail-if (/. X (= X false)) (backchain* Q Assumptions Assumptions))
    P [_ | Rest] Assumptions -> (backchain* P Rest Assumptions)
    _ _ _ -> false)
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-

@@ -1,6 +1,6 @@
 (define breadth-first
    {state --> (state --> (list state)) --> (state --> boolean) --> boolean}
-    Start F Test -> (b* F Test (F Start))) 
+    Start F Test -> (b* F Test (F Start)))
 
 (define b*
    {(state --> (list state)) --> (state --> boolean) --> (list state) --> boolean}
@@ -18,7 +18,7 @@
 (define depth
   {state --> (state --> (list state)) --> (state --> boolean) --> boolean}
     Start _ Test -> true 	where (Test Start)
-    Start F Test -> (d* F Test (F Start))) 
+    Start F Test -> (d* F Test (F Start)))
 
 (define d*
    {(state --> (list state)) --> (state --> boolean) --> (list state) --> boolean}
@@ -30,16 +30,16 @@
 (define hill
   {(state --> number) --> state --> (state --> (list state)) --> (state --> boolean) --> boolean}
     _ Start _ Test -> true 	where (Test Start)
-    E Start F Test -> (h* E F Test (order_states E (F Start))))  
+    E Start F Test -> (h* E F Test (order_states E (F Start))))
 
 (define h*
    {(state --> number) --> (state --> (list state)) --> (state --> boolean) --> (list state) --> boolean}
     _ _ Test [State | _] -> true 	where (Test State)
-    E F Test [State | States] 
+    E F Test [State | States]
     <- (fail-if (/. X (= X false)) (h* E F Test (order_states E (F State))))
     E F Test [_ | States] -> (h* E F Test States)
-    _ _ _ _ -> false)    
-    
+    _ _ _ _ -> false)
+
 (define order_states
   {(state --> number) --> (list state) --> (list state)}
    E States -> (sort (/. S1 (/. S2 (> (E S1) (E S2)))) States))

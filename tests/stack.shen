@@ -10,12 +10,12 @@
    _ -> (/.  X (if (or (= X pop) (= X top))
                         (error "this stack is empty~%")
                         (error "~A is not an operation on stacks.~%" X))))
-                        
+
 (define push
-   X S -> (/. Y (if (= Y pop) 
-                    S 
-                   (if (= Y top) 
-                       X 
+   X S -> (/. Y (if (= Y pop)
+                    S
+                   (if (= Y top)
+                       X
                        (error "~A is not an operation on stacks.~%" Y)))))
 
 (define top
@@ -23,5 +23,3 @@
 
 (define pop
    S -> (S pop))
-
-

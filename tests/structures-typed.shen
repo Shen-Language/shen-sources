@@ -1,5 +1,5 @@
 (define defstruct
-  Name Slots 
+  Name Slots
   -> (let Attributes (map (function fst) Slots)
           Types (map (function snd) Slots)
           Selectors (selectors Name Attributes)
@@ -12,9 +12,9 @@
 
 (define selector-types
   _ [] [] -> (gensym (protect X))
-  Name [Attribute | Attributes] [Type | Types] 
+  Name [Attribute | Attributes] [Type | Types]
   -> (let Selector (concat Name (concat - Attribute))
-          SelectorType [Name --> Type] 
+          SelectorType [Name --> Type]
           TypeDecl (declare Selector SelectorType)
           (selector-types Name Attributes Types)))
 
@@ -37,22 +37,22 @@
     Name Attributes -> (map (/. A (selector Name A)) Attributes))
 
 (define selector
-    Name Attribute 
+    Name Attribute
     -> (let SelectorName (concat Name (concat - Attribute))
            (eval [define SelectorName
                    (protect Structure) -> [let (protect LookUp) [assoc Attribute (protect Structure)]
                                      [if [empty? (protect LookUp)]
-                                         [error "~A is not an attribute of ~A.~%" 
+                                         [error "~A is not an attribute of ~A.~%"
                                                     Attribute Name]
                                          [tail (protect LookUp)]]]])))
 
 (define constructor
-   Name Attributes 
+   Name Attributes
    -> (let ConstructorName (concat make- Name)
            Parameters (params Attributes)
            (eval [define ConstructorName |
-                    (append Parameters 
-                            [-> [cons [cons structure Name] 
+                    (append Parameters
+                            [-> [cons [cons structure Name]
                                       (make-association-list Attributes
                                                              Parameters)]])])))
 
@@ -66,6 +66,6 @@
 
 (define recognisor
   Name -> (let RecognisorName (concat Name ?)
-               (eval [define RecognisorName 
+               (eval [define RecognisorName
                        [cons [cons structure Name] _] -> true
                         _ -> false])))
