@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -30,48 +30,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (package shen []
 
-(define shen 
+(define shen
   -> (do (credits) (loop)))
 
 (define loop
    -> (do (initialise_environment)
-          (prompt) 
-          (trap-error (read-evaluate-print) (/. E (pr (error-to-string E) (stoutput)))) 
+          (prompt)
+          (trap-error (read-evaluate-print) (/. E (pr (error-to-string E) (stoutput))))
           (loop)))
 
 (define credits
  -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
-        (output "www.shenlanguage.org, ~A~%" (value *version*)) 
+        (output "www.shenlanguage.org, ~A~%" (value *version*))
         (output "running under ~A, implementation: ~A" (value *language*) (value *implementation*))
         (output "~%port ~A ported by ~A~%" (value *port*) (value *porters*))))
 
-(define initialise_environment 
-  -> (multiple-set [*call* 0 *infs* 0 *process-counter* 0 *catch* 0]))  
+(define initialise_environment
+  -> (multiple-set [*call* 0 *infs* 0 *process-counter* 0 *catch* 0]))
 
 (define multiple-set
   [] -> []
   [S V | M] -> (do (set S V) (multiple-set M)))
-                 
+
 (define destroy
   F -> (declare F symbol))
 
 (set *history* [])
 
-(define read-evaluate-print 
-  -> (let Lineread (toplineread)  
+(define read-evaluate-print
+  -> (let Lineread (toplineread)
           History (value *history*)
           NewLineread (retrieve-from-history-if-needed Lineread History)
           NewHistory (update_history NewLineread History)
-          Parsed (fst NewLineread)         
+          Parsed (fst NewLineread)
           (toplevel Parsed)))
 
 (define retrieve-from-history-if-needed
-   (@p Line [C | Cs]) H -> (retrieve-from-history-if-needed (@p Line Cs) H)  
-						where (element? C [(space) (newline)]) 
+   (@p Line [C | Cs]) H -> (retrieve-from-history-if-needed (@p Line Cs) H)
+						where (element? C [(space) (newline)])
    (@p _ [C1 C2]) [H | _] -> (let PastPrint (prbytes (snd H))
                                     H)  where (and (= C1 (exclamation)) (= C2 (exclamation)))
    (@p _ [C | Key]) H -> (let Key? (make-key Key H)
-                                Find (head (find-past-inputs Key? H)) 
+                                Find (head (find-past-inputs Key? H))
                                 PastPrint (prbytes (snd Find))
                                 Find)   where (= C (exclamation))
    (@p _ [C]) H -> (do (print-past-inputs (/. X true) (reverse H) 0)
@@ -85,14 +85,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   -> 37)
 
 (define exclamation
-  ->  33) 
+  ->  33)
 
 (define prbytes
-  Bytes -> (do (map (/. Byte (pr (n->string Byte) (stoutput))) Bytes) 
+  Bytes -> (do (map (/. Byte (pr (n->string Byte) (stoutput))) Bytes)
                (nl)))
 
-(define update_history 
-  Lineread History -> (set *history* [Lineread  | History]))   
+(define update_history
+  Lineread History -> (set *history* [Lineread  | History]))
 
 (define toplineread
   -> (toplineread_loop (read-byte (stinput)) []))
@@ -112,10 +112,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define newline
    -> 10)
-     
+
 (define carriage-return
-    -> 13)    
-  
+    -> 13)
+
 (define tc
   + -> (set *tc* true)
   - -> (set *tc* false)
@@ -130,8 +130,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Parsed -> (toplevel_evaluate Parsed (value *tc*)))
 
 (define find-past-inputs
-  Key? H -> (let F (find Key? H) 
-              (if (empty? F) 
+  Key? H -> (let F (find Key? H)
+              (if (empty? F)
                   (error "input not found~%")
                   F)))
 
@@ -148,10 +148,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [C | X] -> (trim-gubbins X)  where (= C (tab))
   [C | X] -> (trim-gubbins X)  where (= C (left-round))
   X -> X)
-  
+
 (define space
-   -> 32)  
- 
+   -> 32)
+
 (define tab
    -> 9)
 
@@ -171,12 +171,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define print-past-inputs
   _ [] _ -> _
   Key? [H | Hs] N -> (print-past-inputs Key? Hs (+ N 1)) 	where (not (Key? H))
-  Key? [(@p _ Cs) | Hs] N -> (do (output "~A. " N) 
-                                 (do (prbytes Cs) 
+  Key? [(@p _ Cs) | Hs] N -> (do (output "~A. " N)
+                                 (do (prbytes Cs)
                                      (print-past-inputs Key? Hs (+ N 1)))))
-                                 
+
 (define toplevel_evaluate
-  [X : A] true -> (typecheck-and-evaluate X A)  
+  [X : A] true -> (typecheck-and-evaluate X A)
   [X Y | Z] Boolean -> (do (toplevel_evaluate [X] Boolean)
                             (nl)
                             (toplevel_evaluate [Y | Z] Boolean))
