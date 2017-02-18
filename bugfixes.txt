@@ -193,3 +193,10 @@ Shen 19.2
 receive made external
 callfailure in shen.next-50 corrected
 
+Shen 19.3
+
+Fixed prolog tests
+Fixed untrack function
+Made <!> external and declared arity
+*home-directory* is not set anymore if it already has a value
+

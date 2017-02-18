@@ -66,7 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "Shen 19.2")
+(set *version* "Shen 19.3")
 
 (define initialise_arity_table
   [] -> []
