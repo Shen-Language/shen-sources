@@ -254,18 +254,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   (mode [] -) Hyp Hyp <--;
   (mode [V | Vs] -) Hyp [[V : A] | NewHyp]  <-- (newhyps Vs Hyp NewHyp);)
 
-\\(defprolog patthyps
- \\ (mode [] -) _ Hyp Hyp <--;
- \\ (mode [Pattern | Patterns] -) (mode [A --> B] -) [[Pattern : A] | PattHyp] Hyp
-  \\ <-- (patthyps Patterns B PattHyp Hyp);)
-
 (define patthyps
   [] _ Hyp -> Hyp
   [Pattern | Patterns] [A --> B] Hyp -> (adjoin [Pattern : A] (patthyps Patterns B Hyp)))
-
-\\(defprolog result-type
-  \\(mode [] -) B B <--;
-  \\(mode [_ | Patterns] -) (mode [A --> B] -) C <-- (result-type Patterns B C);)
 
 (define result-type
   [] [--> A] -> A

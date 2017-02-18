@@ -4,9 +4,6 @@
 \\
 \\ (c) Mark Tarver 2015, all rights reserved
 
-\\(systemf sum)
-\\(systemf *stoutput*)
-\\(systemf package?)
 (systemf internal)
 (systemf receive)
 (systemf <!>)
