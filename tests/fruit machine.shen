@@ -1,19 +1,19 @@
 (define return-fruit
-   0 -> cherry
-   1 -> cherry
-   2 -> cherry
-   3 -> cherry
-   4 -> cherry
-   5 -> pear
-   6 -> pear
-   7 -> pear
-   8 -> pear
-   9 -> orange
-   10 -> orange
-   11 -> orange
-   12 -> pineapple
-   13 -> pineapple
-   14 -> lemon)
+  0 -> cherry
+  1 -> cherry
+  2 -> cherry
+  3 -> cherry
+  4 -> cherry
+  5 -> pear
+  6 -> pear
+  7 -> pear
+  8 -> pear
+  9 -> orange
+  10 -> orange
+  11 -> orange
+  12 -> pineapple
+  13 -> pineapple
+  14 -> lemon)
 
 (define spin-wheel
   -> (return-fruit (random 14)))
@@ -37,9 +37,9 @@
   X Y Z -> 0)
 
 (define fruit-machine
-   start -> (announce-payoff  (spin-wheel) (spin-wheel) (spin-wheel)))
+  start -> (announce-payoff  (spin-wheel) (spin-wheel) (spin-wheel)))
 
 (define announce-payoff
-   Fruit1 Fruit2 Fruit3
-   -> (output "~A ~A ~A~%You win ~A pence~%"
-                     Fruit1 Fruit2 Fruit3 (payoff Fruit1 Fruit2 Fruit3)))
+  Fruit1 Fruit2 Fruit3
+  -> (output "~A ~A ~A~%You win ~A pence~%"
+             Fruit1 Fruit2 Fruit3 (payoff Fruit1 Fruit2 Fruit3)))

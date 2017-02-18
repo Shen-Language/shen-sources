@@ -19,8 +19,8 @@
   Vertex -> (get-prop Vertex type_of []))
 
 (define assert
-   [Object is_a Type] -> (put Object is_a [Type | (is_links Object)])
-   [Type1 type_of Type2] -> (put Type1 type_of [Type2 | (type_links Type1)]))
+  [Object is_a Type] -> (put Object is_a [Type | (is_links Object)])
+  [Type1 type_of Type2] -> (put Type1 type_of [Type2 | (type_links Type1)]))
 
 (define get-prop
   Ob Pointer Default -> (trap-error (get Ob Pointer) (/. E Default)))
