@@ -51,5 +51,5 @@
   (quote X) : symbol;)
 
 (define mk_lambda
-   [X] Body -> [lambda' [X] Body]
-   [X | Y] Body -> [lambda' [X] (mk_lambda Y Body)])
+  [X] Body -> [lambda' [X] Body]
+  [X | Y] Body -> [lambda' [X] (mk_lambda Y Body)])

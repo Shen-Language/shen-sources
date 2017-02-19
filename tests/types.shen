@@ -2,10 +2,6 @@
 
 (datatype fruit
 
-   if (element? Fruit [cherry pear orange pineapple lemon])
-   _____________
-   Fruit : fruit;)
-
-
-
-
+  if (element? Fruit [cherry pear orange pineapple lemon])
+  _____________
+  Fruit : fruit;)
