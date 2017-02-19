@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -23,7 +23,7 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
@@ -36,34 +36,36 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
               Variancy (trap-error (variancy-test F A) (/. E skip))
               Type (rcons_form (demodulate A))
               F* (concat type-signature-of- F)
-              Parameters (parameters 1)       
+              Parameters (parameters 1)
               Clause [[F* (protect X)] :- [[unify! (protect X) Type]]]
               AUM_instruction (aum Clause Parameters)
-              Code (aum_to_shen AUM_instruction) 
-              ShenDef [define F* | (append Parameters 
-                                           [(protect ProcessN) (protect Continuation)] 
+              Code (aum_to_shen AUM_instruction)
+              ShenDef [define F* | (append Parameters
+                                           [(protect ProcessN) (protect Continuation)]
                                            [-> Code])]
               Eval (eval-without-macros ShenDef)
-              F)) 
+            F))
 
 (define demodulate
   X -> (trap-error (let Demod (walk (/. Y (demod Y)) X)
-                       (if (= Demod X)
-                           X
-                           (demodulate Demod))) (/. E X)))  
+                     (if (= Demod X)
+                         X
+                         (demodulate Demod))) (/. E X)))
 
-(define variancy-test 
-  F A -> (let TypeF (typecheck F (protect B)) 
+(define variancy-test
+  F A -> (let TypeF (typecheck F (protect B))
               Check (cases (= symbol TypeF) skip
                            (variant? TypeF A) skip
                            true (output "warning: changing the type of ~A may create errors~%" F))
               skip))
-              
+
 (define variant?
   X X -> true
   [X | Y] [X | Z] -> (variant? Y Z)
-  [X | Y] [W | Z] -> (variant? (subst a X Y) (subst a W Z))  where (and (pvar? X) (variable? W))
-  [[X | Y] | Z] [[X* | Y*] | Z*] -> (variant? (append [X | Y] Z) (append [X* | Y*] Z*))
+  [X | Y] [W | Z] -> (variant? (subst a X Y) (subst a W Z))
+      where (and (pvar? X) (variable? W))
+  [[X | Y] | Z] [[X* | Y*] | Z*] -> (variant? (append [X | Y] Z)
+                                              (append [X* | Y*] Z*))
   _ _ -> false)
 
 (declare absvector? [A --> boolean])
@@ -73,60 +75,60 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare append [[list A] --> [[list A] --> [list A]]])
 (declare arity [A --> number])
 (declare assoc [A --> [[list [list A]] --> [list A]]])
-(declare boolean? [A --> boolean])    
+(declare boolean? [A --> boolean])
 (declare bound? [symbol --> boolean])
-(declare cd [string --> string]) 
+(declare cd [string --> string])
 (declare close [[stream A] --> [list B]])
 (declare cn [string --> [string --> string]])
 (declare compile [[A ==> B] --> [A --> [[A --> B] --> B]]])
 (declare cons? [A --> boolean])
 (declare destroy [[A --> B] --> symbol])
-(declare difference [[list A] --> [[list A] --> [list A]]]) 
+(declare difference [[list A] --> [[list A] --> [list A]]])
 (declare do [A --> [B --> B]])
 (declare <e> [[list A] ==> [list B]])
 (declare <!> [[list A] ==> [list A]])
-(declare element? [A --> [[list A] --> boolean]]) 
-(declare empty? [A --> boolean]) 
-(declare enable-type-theory [symbol --> boolean]) 
+(declare element? [A --> [[list A] --> boolean]])
+(declare empty? [A --> boolean])
+(declare enable-type-theory [symbol --> boolean])
 (declare external [symbol --> [list symbol]])
 (declare error-to-string [exception --> string])
 (declare explode [A --> [list string]])
 (declare fail [--> symbol])
-(declare fail-if [[symbol --> boolean] --> [symbol --> symbol]])  
-(declare fix [[A --> A] --> [A --> A]])  
+(declare fail-if [[symbol --> boolean] --> [symbol --> symbol]])
+(declare fix [[A --> A] --> [A --> A]])
 (declare freeze [A --> [lazy A]])
-(declare fst [[A * B] --> A]) 
+(declare fst [[A * B] --> A])
 (declare function [[A --> B] --> [A --> B]])
 (declare gensym [symbol --> symbol])
-(declare <-vector [[vector A] --> [number --> A]]) 
-(declare vector-> [[vector A] --> [number --> [A --> [vector A]]]]) 
-(declare vector [number --> [vector A]]) 
+(declare <-vector [[vector A] --> [number --> A]])
+(declare vector-> [[vector A] --> [number --> [A --> [vector A]]]])
+(declare vector [number --> [vector A]])
 (declare get-time [symbol --> number])
 (declare hash [A --> [number --> number]])
-(declare head [[list A] --> A]) 
+(declare head [[list A] --> A])
 (declare hdv [[vector A] --> A])
 (declare hdstr [string --> string])
-(declare if [boolean --> [A --> [A --> A]]]) 
+(declare if [boolean --> [A --> [A --> A]]])
 (declare it [--> string])
 (declare implementation [--> string])
 (declare include [[list symbol] --> [list symbol]])
-(declare include-all-but [[list symbol] --> [list symbol]]) 
-(declare inferences [--> number]) 
+(declare include-all-but [[list symbol] --> [list symbol]])
+(declare inferences [--> number])
 (declare insert [A --> [string --> string]])
 (declare integer? [A --> boolean])
 (declare internal [symbol --> [list symbol]])
 (declare intersection [[list A] --> [[list A] --> [list A]]])
 (declare kill [--> A])
-(declare language [--> string])  
+(declare language [--> string])
 (declare length [[list A] --> number])
 (declare limit [[vector A] --> number])
 (declare load [string --> symbol])
-(declare map [[A --> B] --> [[list A] --> [list B]]]) 
+(declare map [[A --> B] --> [[list A] --> [list B]]])
 (declare mapcan [[A --> [list B]] --> [[list A] --> [list B]]])
-(declare maxinferences [number --> number]) 
+(declare maxinferences [number --> number])
 (declare n->string [number --> string])
 (declare nl [number --> number])
-(declare not [boolean --> boolean]) 
+(declare not [boolean --> boolean])
 (declare nth [number --> [[list A] --> A]])
 (declare number? [A --> boolean])
 (declare occurrences [A --> [B --> number]])
@@ -140,10 +142,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare pos [string --> [number --> string]])
 (declare pr [string --> [[stream out] --> string]])
 (declare print [A --> A])
-(declare profile [[A --> B] --> [A --> B]]) 
+(declare profile [[A --> B] --> [A --> B]])
 (declare preclude [[list symbol] --> [list symbol]])
 (declare proc-nl [string --> string])
-(declare profile-results [[A --> B] --> [[A --> B] * number]]) 
+(declare profile-results [[A --> B] --> [[A --> B] * number]])
 (declare protect [symbol --> symbol])
 (declare preclude-all-but [[list symbol] --> [list symbol]])
 (declare prhush [string --> [[stream out] --> string]])
@@ -155,8 +157,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare read-file [string --> [list unit]])
 (declare read-from-string [string --> [list unit]])
 (declare release [--> string])
-(declare remove [A --> [[list A] --> [list A]]]) 
-(declare reverse [[list A] --> [list A]]) 
+(declare remove [A --> [[list A] --> [list A]]])
+(declare reverse [[list A] --> [list A]])
 (declare simple-error [string --> A])
 (declare snd [[A * B] --> B])
 (declare specialise [symbol --> symbol])
@@ -170,20 +172,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare string->symbol [string --> symbol])
 (declare sum [[list number] --> number])
 (declare symbol? [A --> boolean])
-(declare systemf [symbol --> symbol])   
-(declare tail [[list A] --> [list A]]) 
+(declare systemf [symbol --> symbol])
+(declare tail [[list A] --> [list A]])
 (declare tlstr [string --> string])
 (declare tlv [[vector A] --> [vector A]])
-(declare tc [symbol --> boolean]) 
+(declare tc [symbol --> boolean])
 (declare tc? [--> boolean])
 (declare thaw [[lazy A] --> A])
-(declare track [symbol --> symbol]) 
+(declare track [symbol --> symbol])
 (declare trap-error [A --> [[exception --> A] --> A]])
 (declare tuple? [A --> boolean])
-(declare undefmacro [symbol --> symbol]) 
+(declare undefmacro [symbol --> symbol])
 (declare union [[list A] --> [[list A] --> [list A]]])
-(declare unprofile [[A --> B] --> [A --> B]]) 
-(declare untrack [symbol --> symbol])  
+(declare unprofile [[A --> B] --> [A --> B]])
+(declare untrack [symbol --> symbol])
 (declare unspecialise [symbol --> symbol])
 (declare variable? [A --> boolean])
 (declare vector? [A --> boolean])
@@ -200,9 +202,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (declare / [number --> [number --> number]])
 (declare - [number --> [number --> number]])
 (declare * [number --> [number --> number]])
-(declare == [A --> [B --> boolean]]) 
+(declare == [A --> [B --> boolean]])
 
 )
-
-
-

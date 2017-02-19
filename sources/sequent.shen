@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -23,15 +23,13 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
 (package shen []
 
-(define datatype-error 
+(define datatype-error
   [D _] -> (error "datatype syntax error here:~%~% ~A~%" (next-50 50 D)))
 
 (defcc <datatype-rules>
@@ -40,9 +38,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (defcc <datatype-rule>
   <side-conditions> <premises> <singleunderline> <conclusion>
-  := (sequent single [<side-conditions> <premises> <conclusion>]);
+      := (sequent single [<side-conditions> <premises> <conclusion>]);
   <side-conditions> <premises> <doubleunderline> <conclusion>
-  := (sequent double [<side-conditions> <premises> <conclusion>]);)
+      := (sequent double [<side-conditions> <premises> <conclusion>]);)
 
 (defcc <side-conditions>
   <side-condition> <side-conditions> := [<side-condition> | <side-conditions>];
@@ -56,8 +54,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X := X	where (variable? X);)
 
 (defcc <expr>
-  X := (remove-bar X) where (not (or (element? X [>> ;]) 
-                                     (singleunderline? X) 
+  X := (remove-bar X) where (not (or (element? X [>> ;])
+                                     (singleunderline? X)
                                      (doubleunderline? X)));)
 
 (define remove-bar
@@ -73,7 +71,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   X := skip	where (= X ;);)
 
 (defcc <premise>
-  ! := !; 
+  ! := !;
   <formulae> >> <formula> := (sequent <formulae> <formula>);
   <formula> := (sequent [] <formula>);)
 
@@ -85,24 +83,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Formulae Formula -> (@p Formulae Formula))
 
 (defcc <formulae>
-   <formula> <comma-symbol> <formulae> := [<formula> | <formulae>];
-   <formula> := [<formula>];
-   <e> := [];)
+  <formula> <comma-symbol> <formulae> := [<formula> | <formulae>];
+  <formula> := [<formula>];
+  <e> := [];)
 
 (defcc <comma-symbol>
   X := skip 	where (= X (intern ","));)
 
 (defcc <formula>
-   <expr> : <type> := [(curry <expr>) : (demodulate <type>)];
-   <expr> := <expr>;)
+  <expr> : <type> := [(curry <expr>) : (demodulate <type>)];
+  <expr> := <expr>;)
 
 (defcc <type>
-   <expr> := (curry-type <expr>);)
+  <expr> := (curry-type <expr>);)
 
 (defcc <doubleunderline>
   X := X	where (doubleunderline? X);)
 
-(defcc <singleunderline> 
+(defcc <singleunderline>
   X := X	where (singleunderline? X);)
 
 (define singleunderline?
@@ -111,7 +109,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define sh?
   "_" -> true
   S -> (and (= (pos S 0) "_") (sh? (tlstr S))))
-            
+
 (define doubleunderline?
   S -> (and (symbol? S) (dh? (str S))))
 
@@ -119,20 +117,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   "=" -> true
   S -> (and (= (pos S 0) "=") (dh? (tlstr S))))
 
-(define process-datatype 
+(define process-datatype
   D Rules -> (remember-datatype (s-prolog (rules->horn-clauses D Rules))))
 
-(define remember-datatype 
+(define remember-datatype
   [D | _] -> (do (set *datatypes* (adjoin D (value *datatypes*)))
-                 (set *alldatatypes* (adjoin D (value *alldatatypes*))) 
+                 (set *alldatatypes* (adjoin D (value *alldatatypes*)))
                  D))
 
 (define rules->horn-clauses
-   _ [] -> []
-   D [(@p single Rule) | Rules] 
-    -> [(rule->horn-clause D Rule) | (rules->horn-clauses D Rules)]
-   D [(@p double Rule) | Rules] 
-   -> (rules->horn-clauses D (append (double->singles Rule) Rules)))
+  _ [] -> []
+  D [(@p single Rule) | Rules]
+  -> [(rule->horn-clause D Rule) | (rules->horn-clauses D Rules)]
+  D [(@p double Rule) | Rules]
+  -> (rules->horn-clauses D (append (double->singles Rule) Rules)))
 
 (define double->singles
   Rule -> [(right-rule Rule) (left-rule Rule)])
@@ -144,11 +142,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [S P (@p [] C)] -> (let Q (gensym (protect Qv))
                           NewConclusion (@p [C] Q)
                           NewPremises [(@p (map (/. X (right->left X)) P) Q)]
-                          (@p single [S NewPremises NewConclusion])))
+                       (@p single [S NewPremises NewConclusion])))
 
 (define right->left
   (@p [] C) -> C
-  _ -> (error "syntax error with ==========~%")) 
+  _ -> (error "syntax error with ==========~%"))
 
 (define rule->horn-clause
   D [S P (@p A C)] -> [(rule->horn-clause-head D C) :- (rule->horn-clause-body S P A)])
@@ -157,43 +155,50 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   D C -> [D (mode-ify C) (protect Context_1957)])
 
 (define mode-ify
-  [X : A] -> [mode [X : [mode A +]] -]  
+  [X : A] -> [mode [X : [mode A +]] -]
   X -> X)
 
 (define rule->horn-clause-body
   S P A -> (let Variables (map (/. X (extract_vars X)) A)
                 Predicates (map (/. X (gensym cl)) A)
-                SearchLiterals (construct-search-literals 
-                                       Predicates Variables (protect Context_1957) (protect Context1_1957))
+                SearchLiterals (construct-search-literals
+                                Predicates Variables
+                                (protect Context_1957)
+                                (protect Context1_1957))
                 SearchClauses (construct-search-clauses Predicates A Variables)
                 SideLiterals (construct-side-literals S)
-                PremissLiterals (map (/. X (construct-premiss-literal X (empty? A))) P)
-                (append SearchLiterals SideLiterals PremissLiterals)))
+                PremissLiterals (map (/. X (construct-premiss-literal
+                                            X (empty? A)))
+                                     P)
+             (append SearchLiterals SideLiterals PremissLiterals)))
 
 (define construct-search-literals
   [] [] _ _ -> []
-  Predicates Variables Context Context1 
+  Predicates Variables Context Context1
   -> (csl-help Predicates Variables Context Context1))
- 
+
 (define csl-help
   [] [] In _ -> [[bind (protect ContextOut_1957) In]]
-  [P | Ps] [V | Vs] In Out -> [[P In Out | V] | (csl-help Ps Vs Out (gensym (protect Context)))])
+  [P | Ps] [V | Vs] In Out -> [[P In Out | V] |
+                               (csl-help Ps Vs Out (gensym (protect Context)))])
 
 (define construct-search-clauses
   [] [] [] -> skip
   [Pred | Preds] [A | As] [V | Vs] -> (do (construct-search-clause Pred A V)
                                           (construct-search-clauses Preds As Vs)))
 
-(define construct-search-clause 
+(define construct-search-clause
   Pred A V -> (s-prolog [(construct-base-search-clause Pred A V)
                          (construct-recursive-search-clause Pred A V)]))
 
 (define construct-base-search-clause
-  Pred A V -> [[Pred [(mode-ify A) | (protect In_1957)] (protect In_1957) | V] :- []])
+  Pred A V -> [[Pred [(mode-ify A) | (protect In_1957)] (protect In_1957) | V]
+               :- []])
 
 (define construct-recursive-search-clause
-  Pred A V -> [[Pred [(protect Assumption_1957) | (protect Assumptions_1957)] [(protect Assumption_1957) | (protect Out_1957)] | V] 
-                 :- [[Pred (protect Assumptions_1957) (protect Out_1957) | V]]])
+  Pred A V -> [[Pred [(protect Assumption_1957) | (protect Assumptions_1957)]
+                     [(protect Assumption_1957) | (protect Out_1957)] | V]
+               :- [[Pred (protect Assumptions_1957) (protect Out_1957) | V]]])
 
 (define construct-side-literals
   [] -> []
@@ -212,53 +217,58 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 (define recursive_cons_form
   [X | Y] -> [cons (recursive_cons_form X) (recursive_cons_form Y)]
-  X -> X) 
+  X -> X)
 
 (define preclude
   Types -> (preclude-h (map (/. X (intern-type X)) Types)))
 
 (define preclude-h
-   Types -> (let FilterDatatypes (set *datatypes* (difference (value *datatypes*) Types))
-                 (value *datatypes*)))
+  Types -> (let FilterDatatypes (set *datatypes*
+                                     (difference (value *datatypes*) Types))
+             (value *datatypes*)))
 
 (define include
   Types -> (include-h (map (/. X (intern-type X)) Types)))
-             
+
 (define include-h
-   Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
-                 NewDatatypes (set *datatypes* (union ValidTypes (value *datatypes*)))
-                 (value *datatypes*)))
+  Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
+                NewDatatypes (set *datatypes*
+                                  (union ValidTypes (value *datatypes*)))
+             (value *datatypes*)))
 
 (define preclude-all-but
-  Types -> (preclude-h (difference (value *alldatatypes*) (map (/. X (intern-type X)) Types))))
+  Types -> (preclude-h (difference (value *alldatatypes*)
+                                   (map (/. X (intern-type X)) Types))))
 
 (define include-all-but
-  Types -> (include-h (difference (value *alldatatypes*) (map (/. X (intern-type X)) Types))))
+  Types -> (include-h (difference (value *alldatatypes*)
+                                  (map (/. X (intern-type X)) Types))))
 
 (define synonyms-help
-  [] -> (demodulation-function (value *tc*) 
-                      (mapcan (/. X (demod-rule X)) (value *synonyms*)))
+  [] -> (demodulation-function (value *tc*)
+                               (mapcan (/. X (demod-rule X)) (value *synonyms*)))
   [S1 S2 | S] -> (let Vs (difference (extract_vars S2) (extract_vars S1))
-                      (if (empty? Vs)
-                          (do (pushnew [S1 S2] *synonyms*)
-                              (synonyms-help S))
-                          (free_variable_warnings S2 Vs)))
+                   (if (empty? Vs)
+                       (do (pushnew [S1 S2] *synonyms*)
+                           (synonyms-help S))
+                       (free_variable_warnings S2 Vs)))
   _ -> (error "odd number of synonyms~%"))
 
 (define pushnew
-   X Global -> (if (element? X (value Global))
-                   (value Global)
-                   (set Global [X | (value Global)])))
-                   
+  X Global -> (if (element? X (value Global))
+                  (value Global)
+                  (set Global [X | (value Global)])))
+
 (define demod-rule
-  [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])                               
+  [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])
 
 (define demodulation-function
-  TC? Rules -> (do (tc -) 
-                   (eval [define demod | (append Rules (default-rule))]) 
-                   (if TC? (tc +) skip) 
+  TC? Rules -> (do (tc -)
+                   (eval [define demod | (append Rules (default-rule))])
+                   (if TC? (tc +) skip)
                    synonyms))
-                
+
 (define default-rule
   -> (protect [X -> X]))
-                  )           
+
+)

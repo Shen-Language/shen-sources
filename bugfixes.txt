@@ -169,7 +169,7 @@ Shen 17.2
 
 result-type debugged
 
-Shen 17.4 
+Shen 17.4
 abort and absvector? given arities
 function designed to work with symbol table
 

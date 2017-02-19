@@ -1,6 +1,8 @@
 (define parse
   D Sentence -> (let Parse (D [Sentence []])
-                   (if (parsed? Parse) (output_parse Parse) ungrammatical)))
+                  (if (parsed? Parse)
+                      (output_parse Parse)
+                      ungrammatical)))
 
 (define parsed?
   [[] Output] -> true
@@ -10,7 +12,8 @@
   [_ Output] -> Output)
 
 (define generate_parser
-  Grammar -> (map (/. X (compile_rules X)) (group_rules (parenthesise_rules Grammar))))
+  Grammar -> (map (/. X (compile_rules X))
+                  (group_rules (parenthesise_rules Grammar))))
 
 (define parenthesise_rules
   [S --> | Rest] -> (parenthesise_rules1 [S -->] Rest))
@@ -30,7 +33,7 @@
 (define place_in_group
   Rule [] -> [[Rule]]
   Rule [Group | Groups] -> [[Rule | Group] | Groups]
-        where (belongs-in? Rule Group)
+      where (belongs-in? Rule Group)
   Rule [Group | Groups] -> [Group | (place_in_group Rule Groups)])
 
 (define belongs-in?
@@ -47,8 +50,8 @@
   _ -> false)
 
 (define generate_code_for_nonlex
-  Rules -> (eval (append [define (get_characteristic_non_terminal Rules) 
-                                   | (mapapp (function gcfn_help) Rules)] 
+  Rules -> (eval (append [define (get_characteristic_non_terminal Rules)
+                                   | (mapapp (function gcfn_help) Rules)]
                          [(protect X) -> [fail]])))
 
 (define mapapp
@@ -63,9 +66,9 @@
             <-
             (apply_expansion Rule
                              [listit [head (protect Parameter)]
-                                   [cons [listit | Rule]
-                                         [head [tail (protect Parameter)]]]])])
- 
+                                     [cons [listit | Rule]
+                                           [head [tail (protect Parameter)]]]])])
+
 (define apply_expansion
    [CNT --> | Expansion] Parameter -> (ae_help Expansion Parameter))
 
@@ -74,12 +77,13 @@
    [NT | Expansion] Code -> (ae_help Expansion [NT Code]))
 
 (define generate_code_for_lex
-  Rules -> (eval (append [define (get_characteristic_non_terminal Rules)
-                                   (protect X) -> [fail]  where [= (protect X) [fail]]
-                                   | (mapapp (function gcfl_help) Rules)]
-                                   [(protect X) -> [fail]])))
+  Rules -> (eval (append
+                  [define (get_characteristic_non_terminal Rules)
+                    (protect X) -> [fail]  where [= (protect X) [fail]]
+                    | (mapapp (function gcfl_help) Rules)]
+                  [(protect X) -> [fail]])))
 
 (define gcfl_help
-  [CNT --> Terminal] -> [[cons [cons Terminal (protect P)] [cons (protect Parse) []]]
-                          -> [listit (protect P) [cons [listit CNT --> Terminal] (protect Parse)]]])
-
+  [CNT --> Terminal]
+  -> [[cons [cons Terminal (protect P)] [cons (protect Parse) []]]
+      -> [listit (protect P) [cons [listit CNT --> Terminal] (protect Parse)]]])

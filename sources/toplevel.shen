@@ -1,4 +1,4 @@
-\*                                                   
+\*
 
 Copyright (c) 2010-2015, Mark Tarver
 
@@ -23,76 +23,82 @@ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
-
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 *\
 
 (package shen []
 
-(define shen 
+(define shen
   -> (do (credits) (loop)))
 
 (define loop
-   -> (do (initialise_environment)
-          (prompt) 
-          (trap-error (read-evaluate-print) (/. E (pr (error-to-string E) (stoutput)))) 
-          (loop)))
+  -> (do (initialise_environment)
+         (prompt)
+         (trap-error
+          (read-evaluate-print)
+          (/. E (pr (error-to-string E) (stoutput))))
+         (loop)))
 
 (define credits
- -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
-        (output "www.shenlanguage.org, ~A~%" (value *version*)) 
-        (output "running under ~A, implementation: ~A" (value *language*) (value *implementation*))
-        (output "~%port ~A ported by ~A~%" (value *port*) (value *porters*))))
+  -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
+         (output "www.shenlanguage.org, ~A~%" (value *version*))
+         (output "running under ~A, implementation: ~A"
+                 (value *language*) (value *implementation*))
+         (output "~%port ~A ported by ~A~%" (value *port*) (value *porters*))))
 
-(define initialise_environment 
-  -> (multiple-set [*call* 0 *infs* 0 *process-counter* 0 *catch* 0]))  
+(define initialise_environment
+  -> (multiple-set [*call* 0 *infs* 0 *process-counter* 0 *catch* 0]))
 
 (define multiple-set
   [] -> []
   [S V | M] -> (do (set S V) (multiple-set M)))
-                 
+
 (define destroy
   F -> (declare F symbol))
 
 (set *history* [])
 
-(define read-evaluate-print 
-  -> (let Lineread (toplineread)  
+(define read-evaluate-print
+  -> (let Lineread (toplineread)
           History (value *history*)
           NewLineread (retrieve-from-history-if-needed Lineread History)
           NewHistory (update_history NewLineread History)
-          Parsed (fst NewLineread)         
-          (toplevel Parsed)))
+          Parsed (fst NewLineread)
+       (toplevel Parsed)))
 
 (define retrieve-from-history-if-needed
-   (@p Line [C | Cs]) H -> (retrieve-from-history-if-needed (@p Line Cs) H)  
-						where (element? C [(space) (newline)]) 
-   (@p _ [C1 C2]) [H | _] -> (let PastPrint (prbytes (snd H))
-                                    H)  where (and (= C1 (exclamation)) (= C2 (exclamation)))
-   (@p _ [C | Key]) H -> (let Key? (make-key Key H)
-                                Find (head (find-past-inputs Key? H)) 
-                                PastPrint (prbytes (snd Find))
-                                Find)   where (= C (exclamation))
-   (@p _ [C]) H -> (do (print-past-inputs (/. X true) (reverse H) 0)
-                         (abort))       where (= C (percent))
-   (@p _ [C | Key]) H -> (let Key? (make-key Key H)
-                                Pastprint (print-past-inputs Key? (reverse H) 0)
-                                (abort))  where (= C (percent))
-   Lineread _ -> Lineread)
+  (@p Line [C | Cs]) H -> (retrieve-from-history-if-needed (@p Line Cs) H)
+      where (element? C [(space) (newline)])
+  (@p _ [C1 C2]) [H | _] -> (let PastPrint (prbytes (snd H))
+                               H)
+      where (and (= C1 (exclamation)) (= C2 (exclamation)))
+  (@p _ [C | Key]) H -> (let Key? (make-key Key H)
+                             Find (head (find-past-inputs Key? H))
+                             PastPrint (prbytes (snd Find))
+                           Find)
+      where (= C (exclamation))
+  (@p _ [C]) H -> (do (print-past-inputs (/. X true) (reverse H) 0)
+                      (abort))
+      where (= C (percent))
+  (@p _ [C | Key]) H -> (let Key? (make-key Key H)
+                             Pastprint (print-past-inputs Key? (reverse H) 0)
+                          (abort))
+      where (= C (percent))
+  Lineread _ -> Lineread)
 
 (define percent
   -> 37)
 
 (define exclamation
-  ->  33) 
+  ->  33)
 
 (define prbytes
-  Bytes -> (do (map (/. Byte (pr (n->string Byte) (stoutput))) Bytes) 
+  Bytes -> (do (map (/. Byte (pr (n->string Byte) (stoutput))) Bytes)
                (nl)))
 
-(define update_history 
-  Lineread History -> (set *history* [Lineread  | History]))   
+(define update_history
+  Lineread History -> (set *history* [Lineread  | History]))
 
 (define toplineread
   -> (toplineread_loop (read-byte (stinput)) []))
@@ -101,21 +107,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Byte _ -> (error "line read aborted")  where (= Byte (hat))
   Byte Bytes -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
                      It (record-it Bytes)
-                    (if (or (= Line nextline) (empty? Line))
-                        (toplineread_loop (read-byte (stinput)) (append Bytes [Byte]))
-                        (@p Line Bytes)))
-                            	where (element? Byte [(newline) (carriage-return)])
+                  (if (or (= Line nextline) (empty? Line))
+                      (toplineread_loop (read-byte (stinput))
+                                        (append Bytes [Byte]))
+                      (@p Line Bytes)))
+      where (element? Byte [(newline) (carriage-return)])
   Byte Bytes -> (toplineread_loop (read-byte (stinput)) (append Bytes [Byte])))
 
 (define hat
   -> 94)
 
 (define newline
-   -> 10)
-     
+  -> 10)
+
 (define carriage-return
-    -> 13)    
-  
+  -> 13)
+
 (define tc
   + -> (set *tc* true)
   - -> (set *tc* false)
@@ -130,16 +137,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   Parsed -> (toplevel_evaluate Parsed (value *tc*)))
 
 (define find-past-inputs
-  Key? H -> (let F (find Key? H) 
-              (if (empty? F) 
+  Key? H -> (let F (find Key? H)
+              (if (empty? F)
                   (error "input not found~%")
                   F)))
 
 (define make-key
   Key H -> (let Atom (hd (compile (/. X (<st_input> X)) Key))
-              (if (integer? Atom)
-                  (/. X (= X (nth (+ Atom 1) (reverse H))))
-                  (/. X (prefix? Key (trim-gubbins (snd X)))))))
+             (if (integer? Atom)
+                 (/. X (= X (nth (+ Atom 1) (reverse H))))
+                 (/. X (prefix? Key (trim-gubbins (snd X)))))))
 
 (define trim-gubbins
   [C | X] -> (trim-gubbins X)  where (= C (space))
@@ -148,12 +155,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
   [C | X] -> (trim-gubbins X)  where (= C (tab))
   [C | X] -> (trim-gubbins X)  where (= C (left-round))
   X -> X)
-  
+
 (define space
-   -> 32)  
- 
+  -> 32)
+
 (define tab
-   -> 9)
+  -> 9)
 
 (define left-round
   -> 40)
@@ -171,26 +178,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define print-past-inputs
   _ [] _ -> _
   Key? [H | Hs] N -> (print-past-inputs Key? Hs (+ N 1)) 	where (not (Key? H))
-  Key? [(@p _ Cs) | Hs] N -> (do (output "~A. " N) 
-                                 (do (prbytes Cs) 
-                                     (print-past-inputs Key? Hs (+ N 1)))))
-                                 
+  Key? [(@p _ Cs) | Hs] N -> (do (output "~A. " N)
+                                 (prbytes Cs)
+                                 (print-past-inputs Key? Hs (+ N 1))))
+
 (define toplevel_evaluate
-  [X : A] true -> (typecheck-and-evaluate X A)  
+  [X : A] true -> (typecheck-and-evaluate X A)
   [X Y | Z] Boolean -> (do (toplevel_evaluate [X] Boolean)
-                            (nl)
-                            (toplevel_evaluate [Y | Z] Boolean))
+                           (nl)
+                           (toplevel_evaluate [Y | Z] Boolean))
   [X] true -> (typecheck-and-evaluate X (gensym (protect A)))
   [X] false -> (let Eval (eval-without-macros X)
-                    (print Eval)))
+                 (print Eval)))
 
 (define typecheck-and-evaluate
   X A -> (let Typecheck (typecheck X A)
-              (if (= Typecheck false)
-                  (error "type error~%")
-                  (let Eval (eval-without-macros X)
-                       Type (pretty-type Typecheck)
-                       (output "~S : ~R" Eval Type)))))
+           (if (= Typecheck false)
+               (error "type error~%")
+               (let Eval (eval-without-macros X)
+                    Type (pretty-type Typecheck)
+                 (output "~S : ~R" Eval Type)))))
 
 (define pretty-type
   Type -> (mult_subst (value *alphabet*) (extract-pvars Type) Type))
@@ -203,4 +210,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 (define mult_subst
   [] _ X -> X
   _ [] X -> X
-  [X | Y] [W | Z] A -> (mult_subst Y Z (subst X W A))))
+  [X | Y] [W | Z] A -> (mult_subst Y Z (subst X W A)))
+
+)
