@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
-## [Unreleased]
+## [19.3.1] - 2017-02-19
 
 ### Added
 - New `CHANGELOG.md` file with new format.
@@ -96,7 +96,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 For changes in older releases (pre-BSD) please see `bugfixes.txt`.
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3.1...HEAD
+[19.3.1]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3...shen-19.3.1
 [19.3]: https://github.com/Shen-Language/shen-sources/compare/shen-19.2...shen-19.3
 [19.2]: https://github.com/Shen-Language/shen-sources/compare/shen-19.1...shen-19.2
 [19.1]: https://github.com/Shen-Language/shen-sources/compare/shen-19...shen-19.1
