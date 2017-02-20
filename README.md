@@ -4,7 +4,7 @@
 
 # Official Shen Sources
 
-This is the official repository for the open-source development of [Mark Tarver's](http://www.shenlanguage.org/lambdassociates/htdocs/index.htm) Shen. Bug reports, suggested enhancements and pull requests are welcome here.
+This is the official repository for the open-source development of [Mark Tarver's](http://www.marktarver.com/) Shen. Bug reports, suggested enhancements and pull requests are welcome here.
 
 Note that this repository does not contain a runnable implementation of Shen. Certified implementations can be obtained from the [download page](http://www.shenlanguage.org/download_form.html) on [the Shen website](http://www.shenlanguage.org).
 
