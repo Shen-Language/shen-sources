@@ -130,7 +130,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 true false)))
 
 (define fbound?
-  F -> (trap-error (do (ps F) true) (/. E false)))
+  F -> (trap-error
+        (do (lookup-func F (value *symbol-table*)) true)
+        (/. E false)))
 
 (define tuple
   P -> (make-string "(@p ~S ~S)" (<-address P 1) (<-address P 2)))
