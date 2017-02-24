@@ -84,13 +84,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define apply
   F Arguments -> (let FSym (maplispsym F)
                    (trap-error
-                    ((protect APPLY) FSym Arguments)
-                    (/. E (analyse-application F FSym Arguments
-                                               (error-to-string E))))))
-
-(define apply
-  F Arguments -> (let FSym (maplispsym F)
-                   (trap-error
                     (apply-help FSym Arguments)
                     (/. E (analyse-application F FSym Arguments
                                                (error-to-string E))))))
