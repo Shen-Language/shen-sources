@@ -7,7 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 
 ### Fixed
-- Added `error-to-string` to `initialise_arity_table`.
+- Added to `initialise_arity_table`:
+  - `bound?`
+  - `close`
+  - `error-to-string`
+  - `ln`
+  - `limit`
+  - `open`
+  - `str`
+  - `vector?`
 
 ## [19.3.1] - 2017-02-19
 
