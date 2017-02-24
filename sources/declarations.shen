@@ -115,12 +115,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   read 1 read-byte 1 read-from-string 1
   receive 1 release 0 remove 2 require 3 reverse 1 set 2
   simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0
-  string->n 1 string->symbol 1 string? 1 subst 3 sum 1
+  string->n 1 string->symbol 1 string? 1 str 1 subst 3 sum 1
   symbol? 1 systemf 1 tail 1 tl 1 tc 1 tc? 0
   thaw 1 tlstr 1 track 1 trap-error 2 tuple? 1 type 2
   return 3 undefmacro 1 unput 3 unprofile 1 unify 4 unify! 4
   union 2 untrack 1 unspecialise 1 undefmacro 1
-  vector 1 vector-> 3 value 1 variable? 1 version 0
+  vector 1 vector? 1 vector-> 3 value 1 variable? 1 version 0
   write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1])
