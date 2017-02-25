@@ -570,8 +570,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F -> (lookup-func F (value *symbol-table*)))
 
 (define lookup-func
-  F [] -> (error "~A has no lambda expansion~%" F)
-  F [[F | Lambda] | _] -> Lambda
-  F [_ | SymbolTable] -> (lookup-func F SymbolTable))
+  F Dict -> (trap-error
+             (<-dict Dict F)
+             (/. E (error "~A has no lambda expansion~%" F))))
 
 )

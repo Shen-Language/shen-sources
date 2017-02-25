@@ -185,12 +185,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [F | Y] X -> (append [F | Y] [X])
   F X -> [F X])
 
-(set *symbol-table*
-      [[datatype-error | (/. X (datatype-error X))]
-       [tuple | (/. X (tuple X))]
-       [pvar | (/. X (pvar X))]
-       |
-       (mapcan (/. X (symbol-table-entry X)) (external (intern "shen")))])
+(if (not (bound? *symbol-table*))
+    (set *symbol-table* (dict 5000 (/. V N (hash V N))))
+    skip)
+
+(define initialize-symbol-table
+  Entries -> (let D (value *symbol-table*)
+               (map (/. S (add-symbol-table-entry S D))
+                    Entries)))
+
+(define add-symbol-table-entry
+  [S | Lambda] Dict -> (dict-> Dict S Lambda))
+
+(initialize-symbol-table
+ [[datatype-error | (/. X (datatype-error X))]
+  [tuple | (/. X (tuple X))]
+  [pvar | (/. X (pvar X))]
+  |
+  (mapcan (/. X (symbol-table-entry X))
+          (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))
