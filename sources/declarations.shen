@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *installing-kl* false)
 (set *history* [])
 (set *tc* false)
-(set *property-vector* (vector 20000))
+(set *property-vector* (dict 20000 (/. V N (hash V N))))
 (set *process-counter* 0)
 (set *varcounter* (vector 1000))
 (set *prologvectors* (vector 1000))
