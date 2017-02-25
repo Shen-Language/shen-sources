@@ -375,10 +375,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                           (tl Result))))
 
 (define hash
-  S Limit -> (let Hash (mod (sum (map (/. X (string->n X)) (explode S))) Limit)
-               (if (= 0 Hash)
-                   1
-                   Hash)))
+  S Limit -> (mod (sum (map (/. X (string->n X)) (explode S))) Limit))
 
 (define mod
   N Div -> (modh N (multiples N [Div])))
