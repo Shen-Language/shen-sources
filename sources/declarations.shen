@@ -170,7 +170,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       boolean? boolean bar! assoc arity
       append and adjoin <-address address-> absvector? absvector abort])
 
-(define symbol-table-entry
+(define lambda-form-entry
   F -> (let ArityF (arity F)
          (cases (= ArityF -1) []
                 (= ArityF 0) [] \\ change to [[F | F]] for CL if wanted
@@ -185,12 +185,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [F | Y] X -> (append [F | Y] [X])
   F X -> [F X])
 
-(set *symbol-table*
-      [[datatype-error | (/. X (datatype-error X))]
-       [tuple | (/. X (tuple X))]
-       [pvar | (/. X (pvar X))]
-       |
-       (mapcan (/. X (symbol-table-entry X)) (external (intern "shen")))])
+(define set-lambda-form-entry
+  [F | LambdaForm] -> (put F lambda-form LambdaForm))
+
+(map (/. Entry (set-lambda-form-entry Entry))
+     [[datatype-error | (/. X (datatype-error X))]
+      [tuple | (/. X (tuple X))]
+      [pvar | (/. X (pvar X))]
+      |
+      (mapcan (/. X (lambda-form-entry X)) (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))

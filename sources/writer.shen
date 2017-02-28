@@ -131,7 +131,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define fbound?
   F -> (trap-error
-        (do (lookup-func F (value *symbol-table*)) true)
+        (do (lookup-func F) true)
         (/. E false)))
 
 (define tuple

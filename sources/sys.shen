@@ -567,11 +567,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   Package -> (trap-error (do (external Package) true) (/. E false)))
 
 (define function
-  F -> (lookup-func F (value *symbol-table*)))
+  F -> (lookup-func F))
 
 (define lookup-func
-  F [] -> (error "~A has no lambda expansion~%" F)
-  F [[F | Lambda] | _] -> Lambda
-  F [_ | SymbolTable] -> (lookup-func F SymbolTable))
+  F -> (trap-error
+        (get F lambda-form)
+        (/. E (error "~A has no lambda expansion~%" F))))
 
 )
