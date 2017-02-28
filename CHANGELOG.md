@@ -7,15 +7,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 
 ### Fixed
-- Added to `initialise_arity_table`:
+- Declared arity for:
   - `bound?`
   - `close`
   - `error-to-string`
-  - `ln`
+  - `nl`
   - `limit`
   - `open`
   - `str`
   - `vector?`
+- Fixes package prefix handling for internal package symbols.
 
 ## [19.3.1] - 2017-02-19
 
