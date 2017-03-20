@@ -564,8 +564,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F -> (lookup-func F))
 
 (define lookup-func
-  F -> (trap-error
-        (get F lambda-form)
-        (/. E (error "~A has no lambda expansion~%" F))))
+  F -> (get/or F lambda-form
+               (freeze (error "~A has no lambda expansion~%" F))
+               (value *property-vector*)))
 
 )
