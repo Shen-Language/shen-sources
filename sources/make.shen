@@ -7,6 +7,7 @@
 (systemf internal)
 (systemf receive)
 (systemf <!>)
+(systemf get/or)
 
 (define make
   -> (map (function make-file)

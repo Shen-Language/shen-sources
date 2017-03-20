@@ -166,6 +166,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define put/get-macro
   [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]]
   [get X Pointer] -> [get X Pointer [value *property-vector*]]
+  [get/or X Pointer Or] -> [get/or X Pointer Or [value *property-vector*]]
   [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
   X -> X)
 

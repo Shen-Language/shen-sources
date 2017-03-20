@@ -92,7 +92,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                          (initialise_arity_table Table)))
 
 (define arity
-  F -> (trap-error (get F arity) (/. E -1)))
+  F -> (get/or F arity (freeze -1)))
 
 (initialise_arity_table
  [abort 0 absvector? 1 absvector 1 adjoin 2 and 2 append 2 arity 1
@@ -100,7 +100,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
   eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
-  findall 5 freeze 1 fst 1 gensym 1 get 3
+  findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
   get-time 1 address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2
   hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
   intern 1 identical 4 inferences 0 input 1 input+ 2 implementation 0
@@ -160,7 +160,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       limit length let lazy lambda language kill is
       intersection inferences intern integer? input input+ include
       include-all-but it in internal implementation if identical head
-      hd hdv hdstr hash get get-time gensym function fst freeze fix
+      hd hdv hdstr hash get get/or get-time gensym function fst freeze fix
       file fail fail-if fwhen findall
       false enable-type-theory explode external exception eval-kl eval
       error-to-string error empty?

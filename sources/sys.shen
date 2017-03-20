@@ -565,7 +565,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define lookup-func
   F -> (get/or F lambda-form
-               (freeze (error "~A has no lambda expansion~%" F))
-               (value *property-vector*)))
+               (freeze (error "~A has no lambda expansion~%" F))))
 
 )
