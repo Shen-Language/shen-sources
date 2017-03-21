@@ -108,9 +108,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define stinput
   -> (value *stinput*))
 
-(define +vector?
-  X -> (and (absvector? X) (> (<-address X 0) 0)))
-
 (define vector
   N -> (let Vector (absvector (+ N 1))
             ZeroStamp (address-> Vector 0 N)

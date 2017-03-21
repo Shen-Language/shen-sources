@@ -335,9 +335,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   "" -> false
   X -> (string? X))
 
-(define +vector
-  X -> false where (= X (vector 0))
-  X -> (vector? X))
+(define +vector?
+  X -> (and (absvector? X) (> (<-address X 0) 0)))
 
 (define ebr
   A B B -> A
