@@ -123,7 +123,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   vector 1 vector? 1 vector-> 3 value 1 variable? 1 version 0
   write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
-  preclude-all-but 1 include-all-but 1])
+  preclude-all-but 1 include-all-but 1
+  dict 1 dict? 1 dict-> 3 <-dict/or 3 <-dict 2 dict-rm 2
+  ])
 
 (define systemf
   F -> (let Shen (intern "shen")
@@ -168,7 +170,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       defprolog declare datatype cut cn
       cons? cons cond concat compile cd cases call close bind bound?
       boolean? boolean bar! assoc arity
-      append and adjoin <-address address-> absvector? absvector abort])
+      append and adjoin <-address address-> absvector? absvector abort
+      dict dict? dict-> <-dict/or <-dict dict-rm
+      ])
 
 (define lambda-form-entry
   F -> (let ArityF (arity F)
