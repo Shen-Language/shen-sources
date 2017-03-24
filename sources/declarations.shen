@@ -101,7 +101,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
   eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
   findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
-  get-time 1 address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2
+  get-time 1 address-> 3 <-address 2 <-address/or 3 <-vector 2 <-vector/or 3
+  > 2 >= 2 = 2
   hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
   intern 1 identical 4 inferences 0 input 1 input+ 2 implementation 0
   intersection 2 internal 1 it 0 kill 0 language 0
@@ -120,7 +121,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   thaw 1 tlstr 1 track 1 trap-error 2 tuple? 1 type 2
   return 3 undefmacro 1 unput 3 unprofile 1 unify 4 unify! 4
   union 2 untrack 1 unspecialise 1 undefmacro 1
-  vector 1 vector? 1 vector-> 3 value 1 variable? 1 version 0
+  vector 1 vector? 1 vector-> 3 value 1 value/or 2 variable? 1 version 0
   write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1
@@ -143,8 +144,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       *port* *porters* *hush*
       @v @p @s
       <- -> <e> <!> == = >= > /. =! $ - / * + <= < >> <>
-      y-or-n? write-to-file write-byte where when warn version
-      verified variable? value vector-> <-vector vector vector?
+      y-or-n? write-to-file write-byte where when warn version verified
+      variable? value value/or vector-> <-vector <-vector/or vector vector?
       unspecialise untrack unit unix union unify
       unify! unput unprofile undefmacro return type tuple? true
       trap-error track time thaw tc? tc tl tlstr tlv
@@ -169,8 +170,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       element? do difference destroy defun define defmacro defcc
       defprolog declare datatype cut cn
       cons? cons cond concat compile cd cases call close bind bound?
-      boolean? boolean bar! assoc arity
-      append and adjoin <-address address-> absvector? absvector abort
+      boolean? boolean bar! assoc arity abort
+      append and adjoin <-address <-address/or address-> absvector? absvector
       dict dict? dict-> <-dict/or <-dict dict-rm
       ])
 

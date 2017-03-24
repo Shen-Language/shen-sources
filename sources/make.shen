@@ -7,13 +7,16 @@
 (systemf internal)
 (systemf receive)
 (systemf <!>)
-(systemf get/or)
 (systemf dict)
 (systemf dict?)
 (systemf dict->)
 (systemf <-dict/or)
 (systemf <-dict)
 (systemf dict-rm)
+(systemf <-vector/or)
+(systemf <-address/or)
+(systemf value/or)
+(systemf get/or)
 
 (define make
   -> (map (function make-file)

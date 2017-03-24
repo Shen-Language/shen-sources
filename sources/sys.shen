@@ -108,6 +108,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define stinput
   -> (value *stinput*))
 
+(define <-address/or
+  Vector N Or -> (trap-error
+                  (<-address Vector N)
+                  (/. E (thaw Or))))
+
+(define value/or
+  Sym Or -> (trap-error
+             (value Sym)
+             (/. E (thaw Or))))
+
 (define vector
   N -> (let Vector (absvector (+ N 1))
             ZeroStamp (address-> Vector 0 N)
@@ -134,6 +144,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     (if (= VectorElement (fail))
                         (error "vector element not found~%")
                         VectorElement))))
+
+(define <-vector/or
+  Vector N Or -> (if (= N 0)
+                     (error "cannot access 0th element of a vector~%")
+                     (let VectorElement (<-address/or Vector N Or)
+                       (if (= VectorElement (fail))
+                           (thaw Or)
+                           VectorElement))))
 
 (define posint?
   X -> (and (integer? X) (>= X 0)))
