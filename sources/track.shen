@@ -133,7 +133,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          (@p F Results)))
 
 (define get-profile
-  F -> (trap-error (get F profile) (/. E 0)))
+  F -> (get/or F profile (freeze 0)))
 
 (define put-profile
   F Time -> (put F profile Time))

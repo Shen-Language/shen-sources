@@ -427,16 +427,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define record-exceptions
   ListofExceptions PackageName
-  -> (let CurrExceptions (trap-error (get PackageName external-symbols) (/. E []))
+  -> (let CurrExceptions (get/or PackageName external-symbols (freeze []))
           AllExceptions (union ListofExceptions CurrExceptions)
        (put PackageName external-symbols AllExceptions)))
 
 (define record-internal
   PackageName Internal -> (put PackageName internal-symbols
                                (union Internal
-                                      (trap-error
-                                       (get PackageName internal-symbols)
-                                       (/. E [])))))
+                                      (get/or PackageName internal-symbols
+                                              (freeze [])))))
 
 (define internal-symbols
   ExpPackageNameDot PackageSymbol -> [PackageSymbol]

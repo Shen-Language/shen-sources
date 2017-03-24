@@ -68,14 +68,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   _ -> false)
 
 (define external
-  Package -> (trap-error
-              (get Package external-symbols)
-              (/. E (error "package ~A has not been used.~%" Package))))
+  Package -> (get/or
+              Package external-symbols
+              (freeze (error "package ~A has not been used.~%" Package))))
 
 (define internal
-  Package -> (trap-error
-              (get Package internal-symbols)
-              (/. E (error "package ~A has not been used.~%" Package))))
+  Package -> (get/or
+               Package internal-symbols
+               (freeze (error "package ~A has not been used.~%" Package))))
 
 (define package-contents
   [package null _ | Contents] -> Contents
@@ -101,9 +101,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (value *tc*))
 
 (define ps
-  Name -> (trap-error
-           (get Name source)
-           (/. E (error "~A not found.~%" Name))))
+  Name -> (get/or Name source
+                  (freeze (error "~A not found.~%" Name))))
 
 (define stinput
   -> (value *stinput*))
@@ -130,7 +129,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     (+ 1 Counter) N X))
 
 (define vector?
-  X -> (and (absvector? X) (trap-error (>= (<-address X 0) 0) (/. E false))))
+  X -> (and (absvector? X)
+            (>= (<-address/or X 0 (freeze -1)) 0)))
 
 (define vector->
   Vector N X -> (if (= N 0)
@@ -219,9 +219,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> (<-address X 2))
 
 (define tuple?
-  X -> (trap-error
-        (and (absvector? X) (= tuple (<-address X 0)))
-        (/. E false)))
+  X -> (and (absvector? X)
+            (= tuple (<-address/or X 0 (freeze not-tuple)))))
 
 (define append
   [] X -> X
@@ -248,9 +247,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                   (/. E NewVector)))
 
 (define hdv
-  Vector -> (trap-error
-             (<-vector Vector 1)
-             (/. E (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
+  Vector -> (<-vector/or
+             Vector 1
+             (freeze (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
 
 (define tlv
   Vector -> (let Limit (limit Vector)
@@ -311,9 +310,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define dict?
   X -> (and (absvector? X)
-            (trap-error
-             (= (<-address X 0) dictionary)
-             (/. E false))))
+            (= (<-address/or X 0 (freeze not-dictionary)) dictionary)))
 
 (define dict-capacity
   Dict -> (<-address Dict 1))
@@ -519,7 +516,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define bound?
   Sym -> (and (symbol? Sym)
-              (let Val (trap-error (value Sym) (/. E this-symbol-is-unbound))
+              (let Val (value/or Sym (freeze this-symbol-is-unbound))
                 (if (= Val this-symbol-is-unbound)
                     false
                     true))))
