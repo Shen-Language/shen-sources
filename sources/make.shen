@@ -19,6 +19,8 @@
 (systemf value/or)
 (systemf get/or)
 (systemf for-each)
+(systemf fold-left)
+(systemf fold-right)
 
 (define make
   -> (map (function make-file)

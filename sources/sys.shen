@@ -480,6 +480,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F [] -> true
   F [X | Xs] -> (let _ (F X)
                   (for-each F Xs)))
+
+(define fold-right
+  F [] Acc -> Acc
+  F [X | Rest] Acc -> (F X (fold-right F Rest Acc)))
+
+(define fold-left
+  F Acc [] -> Acc
+  F Acc [X | Rest] -> (fold-left F (F Acc X) Rest))
+
 (define map
   F X -> (map-h F X []))
 
