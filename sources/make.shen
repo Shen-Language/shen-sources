@@ -9,6 +9,7 @@
 (systemf <!>)
 (systemf dict)
 (systemf dict?)
+(systemf dict-count)
 (systemf dict->)
 (systemf <-dict/or)
 (systemf <-dict)

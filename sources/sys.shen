@@ -303,10 +303,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F _ X -> (fix-help F X (F X)))
 
 (define dict
-  Size -> (let D (absvector (+ 2 Size))
+  Size -> (let D (absvector (+ 3 Size))
                Tag (address-> D 0 dictionary)
                Capacity (address-> D 1 Size)
-               Fill (fillvector D 2 (+ 1 Size) [])
+               Count (address-> D 2 0)
+               Fill (fillvector D 3 (+ 2 Size) [])
              D))
 
 (define dict?
@@ -316,11 +317,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict-capacity
   Dict -> (<-address Dict 1))
 
+(define dict-count
+  Dict -> (<-address Dict 2))
+
+(define dict-count->
+  Dict Count -> (address-> Dict 2 Count))
+
 (define <-dict-slot
-  Dict N -> (<-address Dict (+ 2 N)))
+  Dict N -> (<-address Dict (+ 3 N)))
 
 (define dict-slot->
-  Dict N Slot -> (address-> Dict (+ 2 N) Slot))
+  Dict N Slot -> (address-> Dict (+ 3 N) Slot))
 
 (define set-key-entry-value
   Key Value [] -> [[Key | Value]]
@@ -332,11 +339,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   Key [[Key | _] | Slot] -> Slot
   Key [Z | Slot] -> [Z | (remove-key-entry-value Key Slot)])
 
+(define dict-update-count
+  Dict OldSlot NewSlot -> (let Diff (- (length NewSlot) (length OldSlot))
+                            (dict-count-> Dict (+ Diff (dict-count Dict)))))
+
 (define dict->
   Dict Key Value -> (let N (hash Key (dict-capacity Dict))
                          Slot (<-dict-slot Dict N)
-                         Change (dict-slot-> Dict N (set-key-entry-value
-                                                     Key Value Slot))
+                         NewSlot (set-key-entry-value Key Value Slot)
+                         Change (dict-slot-> Dict N NewSlot)
+                         Count (dict-update-count Dict Slot NewSlot)
                       Value))
 
 (define <-dict/or
@@ -353,8 +365,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict-rm
   Dict Key -> (let N (hash Key (dict-capacity Dict))
                    Slot (<-dict-slot Dict N)
-                   Change (dict-slot-> Dict N (remove-key-entry-value
-                                               Key Slot))
+                   NewSlot (remove-key-entry-value Key Slot)
+                   Change (dict-slot-> Dict N NewSlot)
+                   Count (dict-update-count Dict Slot NewSlot)
                  Key))
 
 (define put
