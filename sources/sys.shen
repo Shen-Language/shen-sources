@@ -512,6 +512,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F Acc [] -> Acc
   F Acc [X | Rest] -> (fold-left F (F Acc X) Rest))
 
+(define filter
+  F Xs -> (filter-h F [] Xs))
+
+(define filter-h
+  _ Acc [] -> (reverse Acc)
+  F Acc [X | Xs] -> (filter-h F [X | Acc] Xs) where (F X)
+  F Acc [_ | Xs] -> (filter-h F Acc Xs))
+
 (define map
   F X -> (map-h F X []))
 

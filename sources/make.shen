@@ -25,6 +25,7 @@
 (systemf for-each)
 (systemf fold-left)
 (systemf fold-right)
+(systemf filter)
 
 (define make
   -> (map (function make-file)

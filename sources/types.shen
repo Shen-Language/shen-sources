@@ -139,6 +139,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare for-each [[A --> B] --> [[list A] --> unit]])
 (declare map [[A --> B] --> [[list A] --> [list B]]])
 (declare mapcan [[A --> [list B]] --> [[list A] --> [list B]]])
+(declare filter [[A --> boolean] --> [[list A] --> [list A]]])
 (declare maxinferences [number --> number])
 (declare n->string [number --> string])
 (declare nl [number --> number])
