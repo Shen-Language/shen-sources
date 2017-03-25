@@ -101,6 +101,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare function [[A --> B] --> [A --> B]])
 (declare gensym [symbol --> symbol])
 (declare <-vector [[vector A] --> [number --> A]])
+(declare <-vector/or [[vector A] --> [number --> [[lazy A] --> A]]])
 (declare vector-> [[vector A] --> [number --> [A --> [vector A]]]])
 (declare vector [number --> [vector A]])
 (declare get-time [symbol --> number])
