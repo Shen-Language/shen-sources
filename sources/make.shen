@@ -17,7 +17,6 @@
 (systemf dict-fold)
 (systemf dict-keys)
 (systemf dict-values)
-(systemf dict->alist)
 (systemf <-vector/or)
 (systemf <-address/or)
 (systemf value/or)

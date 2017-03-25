@@ -386,9 +386,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F [] Acc -> Acc
   F [[K | V] | Rest] Acc -> (F K V (fold-right F Rest Acc)))
 
-(define dict->alist
-  Dict -> (dict-fold (/. K V Acc [[K | V] | Acc]) Dict []))
-
 (define dict-keys
   Dict -> (dict-fold (/. K _ Acc [K | Acc]) Dict []))
 
