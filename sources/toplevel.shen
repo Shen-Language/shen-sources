@@ -94,7 +94,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   ->  33)
 
 (define prbytes
-  Bytes -> (do (map (/. Byte (pr (n->string Byte) (stoutput))) Bytes)
+  Bytes -> (do (for-each (/. Byte (pr (n->string Byte) (stoutput))) Bytes)
                (nl)))
 
 (define update_history

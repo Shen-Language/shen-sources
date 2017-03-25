@@ -124,7 +124,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define compile_to_lambda+
   Name Rules -> (let Arity (aritycheck Name Rules)
                      UpDateSymbolTable (update-symbol-table Name Arity)
-                     Free (map (/. Rule (free_variable_check Name Rule)) Rules)
+                     Free (for-each (/. Rule (free_variable_check Name Rule))
+                                    Rules)
                      Variables (parameters Arity)
                      Strip (map (/. X (strip-protect X)) Rules)
                      Abstractions (map (/. X (abstract_rule X)) Strip)
@@ -214,7 +215,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          Arity))
 
 (define aritycheck-action
-  [F | X] -> (do (aah F X) (map (/. Y (aritycheck-action Y)) [F | X]))
+  [F | X] -> (do (aah F X)
+                 (for-each (/. Y (aritycheck-action Y)) [F | X]))
   _ -> skip)
 
 (define aah

@@ -193,12 +193,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define set-lambda-form-entry
   [F | LambdaForm] -> (put F lambda-form LambdaForm))
 
-(map (/. Entry (set-lambda-form-entry Entry))
-     [[datatype-error | (/. X (datatype-error X))]
-      [tuple | (/. X (tuple X))]
-      [pvar | (/. X (pvar X))]
-      |
-      (mapcan (/. X (lambda-form-entry X)) (external (intern "shen")))])
+(for-each
+ (/. Entry (set-lambda-form-entry Entry))
+ [[datatype-error | (/. X (datatype-error X))]
+  [tuple | (/. X (tuple X))]
+  [pvar | (/. X (pvar X))]
+  |
+  (mapcan (/. X (lambda-form-entry X)) (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))
