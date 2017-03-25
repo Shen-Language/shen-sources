@@ -105,7 +105,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare vector-> [[vector A] --> [number --> [A --> [vector A]]]])
 (declare vector [number --> [vector A]])
 (declare dict [number --> [dict K V]])
-(declare dict? [[dict K V] --> boolean])
+(declare dict? [A --> boolean])
 (declare dict-count [[dict K V] --> number])
 (declare <-dict [[dict K V] --> [K --> V]])
 (declare <-dict/or [[dict K V] --> [K --> [[lazy V] --> V]]])
