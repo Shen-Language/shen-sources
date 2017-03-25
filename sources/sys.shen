@@ -476,6 +476,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define cd
   Path -> (set *home-directory* (if (= Path "") "" (make-string "~A/" Path))))
 
+(define for-each
+  F [] -> true
+  F [X | Xs] -> (let _ (F X)
+                  (for-each F Xs)))
 (define map
   F X -> (map-h F X []))
 

@@ -18,6 +18,7 @@
 (systemf <-address/or)
 (systemf value/or)
 (systemf get/or)
+(systemf for-each)
 
 (define make
   -> (map (function make-file)

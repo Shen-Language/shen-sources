@@ -100,7 +100,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
   eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
-  findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
+  for-each 2 findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
   get-time 1 address-> 3 <-address 2 <-address/or 3 <-vector 2 <-vector/or 3
   > 2 >= 2 = 2
   hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
@@ -164,7 +164,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       intersection inferences intern integer? input input+ include
       include-all-but it in internal implementation if identical head
       hd hdv hdstr hash get get/or get-time gensym function fst freeze fix
-      file fail fail-if fwhen findall
+      file fail fail-if fwhen findall for-each
       false enable-type-theory explode external exception eval-kl eval
       error-to-string error empty?
       element? do difference destroy defun define defmacro defcc
