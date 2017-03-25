@@ -14,6 +14,7 @@
 (systemf <-dict/or)
 (systemf <-dict)
 (systemf dict-rm)
+(systemf dict-fold)
 (systemf <-vector/or)
 (systemf <-address/or)
 (systemf value/or)

@@ -372,6 +372,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                    Count (dict-update-count Dict Bucket NewBucket)
                  Key))
 
+(define dict-fold
+  F Dict Acc -> (let Limit (dict-capacity Dict)
+                  (dict-fold-h F Dict Acc 0 Limit)))
+
+(define dict-fold-h
+  F Dict Acc End End -> Acc
+  F Dict Acc Counter End -> (let B (<-dict-bucket Dict Counter)
+                                 Acc (bucket-fold F B Acc)
+                              (dict-fold-h F Dict Acc (+ 1 Counter) End)))
+
+(define bucket-fold
+  F [] Acc -> Acc
+  F [[K | V] | Rest] Acc -> (F K V (fold-right F Rest Acc)))
+
 (define put
   X Pointer Y Dict -> (let Curr (<-dict/or Dict X (freeze []))
                            Added (set-key-entry-value Pointer Y Curr)

@@ -127,6 +127,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1
   dict 1 dict? 1 dict-count 1 dict-> 3 <-dict/or 3 <-dict 2 dict-rm 2
+  dict-fold 3
   ])
 
 (define systemf
@@ -173,7 +174,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       cons? cons cond concat compile cd cases call close bind bound?
       boolean? boolean bar! assoc arity abort
       append and adjoin <-address <-address/or address-> absvector? absvector
-      dict dict? dict-count dict-> <-dict/or <-dict dict-rm
+      dict dict? dict-count dict-> <-dict/or <-dict dict-rm dict-fold
       ])
 
 (define lambda-form-entry
