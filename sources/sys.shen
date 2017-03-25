@@ -323,38 +323,40 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict-count->
   Dict Count -> (address-> Dict 2 Count))
 
-(define <-dict-slot
+(define <-dict-bucket
   Dict N -> (<-address Dict (+ 3 N)))
 
-(define dict-slot->
-  Dict N Slot -> (address-> Dict (+ 3 N) Slot))
+(define dict-bucket->
+  Dict N Bucket -> (address-> Dict (+ 3 N) Bucket))
 
 (define set-key-entry-value
   Key Value [] -> [[Key | Value]]
-  Key Value [[Key | _] | Slot] -> [[Key | Value] | Slot]
-  Key Value [Z | Slot] -> [Z | (set-key-entry-value Key Value Slot)])
+  Key Value [[Key | _] | Rest] -> [[Key | Value] | Rest]
+  Key Value [Z | Rest] -> [Z | (set-key-entry-value Key Value Rest)])
 
 (define remove-key-entry-value
   Key [] -> []
-  Key [[Key | _] | Slot] -> Slot
-  Key [Z | Slot] -> [Z | (remove-key-entry-value Key Slot)])
+  Key [[Key | _] | Rest] -> Rest
+  Key [Z | Rest] -> [Z | (remove-key-entry-value Key Rest)])
 
 (define dict-update-count
-  Dict OldSlot NewSlot -> (let Diff (- (length NewSlot) (length OldSlot))
-                            (dict-count-> Dict (+ Diff (dict-count Dict)))))
+  Dict OldBucket NewBucket -> (let Diff (- (length NewBucket)
+                                           (length OldBucket))
+                                (dict-count->
+                                 Dict (+ Diff (dict-count Dict)))))
 
 (define dict->
   Dict Key Value -> (let N (hash Key (dict-capacity Dict))
-                         Slot (<-dict-slot Dict N)
-                         NewSlot (set-key-entry-value Key Value Slot)
-                         Change (dict-slot-> Dict N NewSlot)
-                         Count (dict-update-count Dict Slot NewSlot)
+                         Bucket (<-dict-bucket Dict N)
+                         NewBucket (set-key-entry-value Key Value Bucket)
+                         Change (dict-bucket-> Dict N NewBucket)
+                         Count (dict-update-count Dict Bucket NewBucket)
                       Value))
 
 (define <-dict/or
   Dict Key Or -> (let N (hash Key (dict-capacity Dict))
-                      Slot (<-dict-slot Dict N)
-                      Result (assoc Key Slot)
+                      Bucket (<-dict-bucket Dict N)
+                      Result (assoc Key Bucket)
                    (if (empty? Result)
                        (thaw Or)
                        (tl Result))))
@@ -364,10 +366,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define dict-rm
   Dict Key -> (let N (hash Key (dict-capacity Dict))
-                   Slot (<-dict-slot Dict N)
-                   NewSlot (remove-key-entry-value Key Slot)
-                   Change (dict-slot-> Dict N NewSlot)
-                   Count (dict-update-count Dict Slot NewSlot)
+                   Bucket (<-dict-bucket Dict N)
+                   NewBucket (remove-key-entry-value Key Bucket)
+                   Change (dict-bucket-> Dict N NewBucket)
+                   Count (dict-update-count Dict Bucket NewBucket)
                  Key))
 
 (define put
