@@ -130,7 +130,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define vector?
   X -> (and (absvector? X)
-            (>= (<-address/or X 0 (freeze -1)) 0)))
+            (let X (<-address/or X 0 (freeze -1))
+              (and (number? X) (>= X 0)))))
 
 (define vector->
   Vector N X -> (if (= N 0)
