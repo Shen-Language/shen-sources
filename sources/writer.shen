@@ -126,6 +126,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   P -> (let Zero (<-address P 0)
          (cases (= Zero tuple) true
                 (= Zero pvar) true
+                (= Zero dictionary) true
                 (not (number? Zero)) (fbound? Zero)
                 true false)))
 
@@ -136,6 +137,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define tuple
   P -> (make-string "(@p ~S ~S)" (<-address P 1) (<-address P 2)))
+
+(define dictionary
+  D -> (make-string "(dict ...)"))
 
 (define iter-vector
   _ _ _ 0 -> "... etc"

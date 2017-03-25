@@ -200,6 +200,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  [[datatype-error | (/. X (datatype-error X))]
   [tuple | (/. X (tuple X))]
   [pvar | (/. X (pvar X))]
+  [dictionary | (/. X (dictionary X))]
   |
   (mapcan (/. X (lambda-form-entry X)) (external (intern "shen")))])
 
