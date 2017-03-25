@@ -174,6 +174,75 @@ Top level form for Shen Prolog definitions.
 Receives the name of a function and removes it and its type from the environment.
 
 
+## dict
+
+**Type:** **`number --> (dict K V)`**
+
+Takes the size of the underlying storage size and returns a new empty dictionary object.
+
+
+## dict?
+
+**Type:** **`A --> boolean`**
+
+Returns **true** iff the input is a dictionary object.
+
+## dict-count
+
+**Type:** **`(dict K V) --> number`**
+
+Returns the amount of bindings in the dictionary.
+
+
+## dict->
+
+**Type:** **`(dict K V) --> K --> V --> V`**
+
+Adds or replaces a binding of the third input (the value) to the second input (the key) in the first input (a dictionary).
+
+
+## <-dict
+
+**Type**: **`(dict K V) --> K --> V`**
+
+Retrieves the value bound to the second input (the key) in the first input (a dictionary). If no binding is found, raises an error.
+
+
+## <-dict/or
+
+**Type**: **`(dict K V) --> K --> (lazy V) --> V`**
+
+Retrieves the value bound to a key (second input) in a dictionary (first input). If no binding is found, the third input is thawed and used as the result.
+
+
+## dict-rm
+
+**Type**: **`(dict K V) --> K --> K`**
+
+Removes a binding for the second input (a key) in the first input (a dictionary).
+
+
+## dict-fold
+
+**Type**: **`(K --> V --> A --> A) --> (dict K V) --> A --> A)`
+
+Takes a inputs a function of type `(Key --> Value --> Result --> Result)`, a dictionary, and an accumulator of the same type of the result. Walks over the dictionary calling the input function one time for each/key value binding, and using the result as the input accumulator parameter for the next interation. Returns the result of the last iteration call.
+
+
+## dict-keys
+
+**Type**: **`(dict K V) --> (list K)`**
+
+Returns a list containing all keys in the dictionary.
+
+
+## dict-values
+
+**Type**: **`(dict K V) --> (list V)`**
+
+Returns a list containing all values in the dictionary.
+
+
 ## difference
 
 **Type:** **`(list A) --> (list A) --> (list A)`**
@@ -257,6 +326,12 @@ Constructor for the **failure object**.
 
 Given a function *f* and an object *x*. If the result of `(f x)` is **true** then the **failure object** is returned, otherwise *x* is returned.
 
+
+## filter
+
+**Type:** **`(A --> boolean) --> (list A) --> (list A)`**
+
+The first input is applied to each member of the second input, and the return value is a list containing only the elements for which the result of the application was `true`.
 
 ## fix
 
