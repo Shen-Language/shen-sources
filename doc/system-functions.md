@@ -41,6 +41,13 @@ Given a native vector *A*, a positive integer *i* and a value *V* places *V* in 
 Given an absolute vector *A*, a positive integer *i* retrieves *V* from the *A[i]*th position.
 
 
+## <-address/or
+
+**Type:** *none*
+
+Given an absolute vector *A*, a positive integer *i*, and a frozen expression *O* retrieves *V* from the *A[i]*th position. If there is no value in that position, the result of thawing *O* is returned.
+
+
 ## adjoin
 
 **Type:** **`A --> (list A) --> (list A)`**
@@ -205,28 +212,27 @@ Adds or replaces a binding of the third input (the value) to the second input (t
 
 **Type**: **`(dict K V) --> K --> V`**
 
-Retrieves the value bound to the second input (the key) in the first input (a dictionary). If no binding is found, raises an error.
-
+Given a dict *D* and an key *k*, retrieves the value stored in *V[k]*. Raises an error if no value is bound to *k*.
 
 ## <-dict/or
 
 **Type**: **`(dict K V) --> K --> (lazy V) --> V`**
 
-Retrieves the value bound to a key (second input) in a dictionary (first input). If no binding is found, the third input is thawed and used as the result.
+Given a dict *D*, an key *k* and a frozen expression *O*, retrieves the value stored in *V[k]*. If no value is found, the result of thawing *O* is returned.
 
 
 ## dict-rm
 
 **Type**: **`(dict K V) --> K --> K`**
 
-Removes a binding for the second input (a key) in the first input (a dictionary).
+Given a dict *D* and an key *k*, removes the binding in *D[k]*.
 
 
 ## dict-fold
 
 **Type**: **`(K --> V --> A --> A) --> (dict K V) --> A --> A)`
 
-Takes a inputs a function of type `(Key --> Value --> Result --> Result)`, a dictionary, and an accumulator of the same type of the result. Walks over the dictionary calling the input function one time for each/key value binding, and using the result as the input accumulator parameter for the next interation. Returns the result of the last iteration call.
+Given a function *F*, a dict *D* and an accumulator *R*, walks over the dictionary calling *F* one time for each key/value binding passing as inputs the key, the value associated to it and the accumulator. The result of each call to *F* replaces the accumulator using in the successive calls. Returns the result of the last call to *F*.
 
 
 ## dict-keys
@@ -331,7 +337,7 @@ Given a function *f* and an object *x*. If the result of `(f x)` is **true** the
 
 **Type:** **`(A --> boolean) --> (list A) --> (list A)`**
 
-The first input is applied to each member of the second input, and the return value is a list containing only the elements for which the result of the application was `true`.
+Given a function *F* and a list *L*, applies *F* to each element in *L* and returns a new list containing only the values for which applying *F* returned `true`.
 
 ## fix
 
@@ -380,6 +386,14 @@ For the argument run or real returns a number representing the real or run time 
 **Type:** *none*
 
 Takes a symbol *S*, a pointer *P* and optionally a vector *V* and returns the value in *V* pointed by *P* from *S* (if one exists) or an error otherwise. If *V* is omitted the global property vector is used.
+
+
+## get/or
+
+**Type:** *none*
+
+Takes a symbol *S*, a pointer *P*, a frozen expression *O* and optionally a vector *V* and returns the value in *V* pointed by *P* from *S* (if one exists) or the result of thawing *O* otherwise. If *V* is omitted the global property vector is used.
+
 
 ## hash
 
@@ -1072,6 +1086,13 @@ Untracks a function.
 Applied to a symbol, returns the global value assigned to it.
 
 
+## value/or
+
+**Type:** *none*
+
+Applied to a symbol and a frozen expression, returns the global value assigned to it. Otherwise the result of thawing the frozen expression is returned.
+
+
 ## variable?
 
 **Type:** **`A --> boolean`**
@@ -1111,7 +1132,14 @@ Given a vector *V* and an index *i* and object *o*, assigns *o* to *V[i]*.
 
 **Type:** **`(vector A) --> number -->  A`**
 
-Given a vector *V* and an index *i*, retrueves the value stored in *V[i]*.
+Given a vector *V* and an index *i*, retrieves the value stored in *V[i]*.
+
+
+## <-vector/or
+
+**Type:** **`(vector A) --> number -->  (lazy A) --> A`**
+
+Given a vector *V*, an index *i* and a frozen expression *O*, retrieves the value stored in *V[i]*. If no value is found, the result of thawing *O* is returned.
 
 
 ## write-byte
