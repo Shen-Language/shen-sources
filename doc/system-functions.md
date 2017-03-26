@@ -499,6 +499,13 @@ forall _x_ (_x_: boolean v _x_ : symbol) => (intern (str _x_)) = _x_
 **Optional:** In some platforms **intern** will also map an embedded number to a number; i.e. `(intern "123")` = **123**. Note that Shen reads certain symbols of special significance (viz. { } ; , :) by inserting whitespace; `{a --> b}` is read as `{ a --> b }` and `foo;` as `foo ;`. It may be possible to use intern to create composite objects containing these characters which do not qualify as Shen symbols.
 
 
+## internal
+
+**Type:** **`symbol --> (list symbol)`**
+
+Given a package name, returns the list of symbols internal to that package.
+
+
 ## intersection
 
 **Type:** **`(list A) --> (list A) --> (list A)`**
