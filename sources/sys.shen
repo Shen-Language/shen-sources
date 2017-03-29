@@ -594,6 +594,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define stoutput
   -> (value *stoutput*))
 
+(define sterror
+  -> (value *sterror*))
+
 (define string->symbol
   S -> (let Symbol (intern S)
          (if (symbol? Symbol)

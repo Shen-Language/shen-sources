@@ -121,7 +121,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   address-> 3 put 4 reassemble 2 read-file-as-string 1 read-file 1
   read 1 read-byte 1 read-from-string 1
   receive 1 release 0 remove 2 require 3 reverse 1 set 2
-  simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0
+  simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0 sterror 0
   string->n 1 string->symbol 1 string? 1 str 1 subst 3 sum 1
   symbol? 1 systemf 1 tail 1 tl 1 tc 1 tc? 0
   thaw 1 tlstr 1 track 1 trap-error 2 tuple? 1 type 2
@@ -146,7 +146,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (put (intern "shen") external-symbols
      [! } { --> <-- && : ; :- := _
-      *language* *implementation* *stinput* *stoutput* *home-directory* *version*
+      *language* *implementation* *stinput* *stoutput* *sterror*
+      *home-directory* *version*
       *maximum-print-sequence-size* *macros* *os* *release* *property-vector*
       *port* *porters* *hush*
       @v @p @s
@@ -157,7 +158,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       unify! unput unprofile undefmacro return type tuple? true
       trap-error track time thaw tc? tc tl tlstr tlv
       tail systemf synonyms symbol symbol? string->symbol sum subst
-      string? string->n stream string stinput
+      string? string->n stream string stinput sterror
       stoutput step spy specialise snd simple-error set save str run
       reverse remove release read receive
       read-file read-file-as-bytelist read-file-as-string read-byte

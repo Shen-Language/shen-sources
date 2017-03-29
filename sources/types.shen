@@ -181,6 +181,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare spy [symbol --> boolean])
 (declare step [symbol --> boolean])
 (declare stinput [--> [stream in]])
+(declare sterror [--> [stream out]])
 (declare stoutput [--> [stream out]])
 (declare string? [A --> boolean])
 (declare str [A --> string])
