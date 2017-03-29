@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *continue-repl-loop* true)
 
 (define exit
-  Code -> (set *end-repl-loop* false))
+  Code -> (set *continue-repl-loop* false))
 
 (define loop
   -> (do (initialise_environment)
@@ -44,8 +44,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           (read-evaluate-print)
           (/. E (pr (error-to-string E) (stoutput))))
          (if (value *continue-repl-loop*)
-             exit
-             (loop))))
+             (loop)
+             exit)))
 
 (define credits
   -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
