@@ -82,8 +82,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *hush* false)
 (set *optimise* false)
 (set *version* "Shen 19.3.1")
+
 (if (not (bound? *home-directory*))
     (set *home-directory* "")
+    skip)
+
+(if (not (bound? *sterror*))
+    (set *sterror* (value *stoutput*))
     skip)
 
 (define initialise_arity_table
