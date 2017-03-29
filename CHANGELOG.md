@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Added `(fold-right F List Acc)`. Calls `(F Elt Acc)` for every `Elt` element in `List`. The result of each call to `F` is used as the new `Acc` for the next call. The final result is the return value of the last call to `F`.
 - Added `(for-each F List)`. Calls `F` on every element of `List` (in order), ignoring the results.
 - Added `(filter Predicate List)`. Returns a new lost with all elements to which `(Predicate Elt)` returns true.
+- Added `(exit ExitCode)`. Exits the program using the specified error code. The default implementation just ends the REPL loop, ports have to override `exit` if they want the exit code to have any effect.
+- Added `*sterror*`, STDERR port. Defaults to an alias of `*stoutput*`.
 
 ### Changed
 - Changed `hash` so that 0 is a valid return value.
