@@ -305,6 +305,12 @@ Evaluates the input.
 Evaluates the input as a KLambda expression.
 
 
+## exit
+
+**Type:** **`number --> unit`**
+
+Given an exit code, exits the program using the specified exit code.
+
 ## explode
 
 **Type:** **`A --> (list string)`**
