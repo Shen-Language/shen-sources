@@ -114,6 +114,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare dict-fold [[K --> [V --> [A --> A]]] --> [[dict K V] --> [A --> A]]])
 (declare dict-keys [[dict K V] --> [list K]])
 (declare dict-values [[dict K V] --> [list V]])
+(declare exit [number --> unit])
 (declare get-time [symbol --> number])
 (declare hash [A --> [number --> number]])
 (declare head [[list A] --> A])
