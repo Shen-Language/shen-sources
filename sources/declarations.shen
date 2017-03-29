@@ -104,7 +104,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   assoc 2 boolean? 1 bound? 1 cd 1 close 1 compile 3 concat 2 cons 2 cons? 1
   cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
-  eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
+  eval-kl 1 exit 1 explode 1 external 1 fail-if 2 fail 0 fix 2
   fold-left 3 fold-right 3 filter 2
   for-each 2 findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
   get-time 1 address-> 3 <-address 2 <-address/or 3 <-vector 2 <-vector/or 3
@@ -173,7 +173,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       hd hdv hdstr hash get get/or get-time gensym function fst freeze fix
       file fail fail-if fwhen findall for-each fold-right fold-left filter
       false enable-type-theory explode external exception eval-kl eval
-      error-to-string error empty?
+      error-to-string error empty? exit
       element? do difference destroy defun define defmacro defcc
       defprolog declare datatype cut cn
       cons? cons cond concat compile cd cases call close bind bound?

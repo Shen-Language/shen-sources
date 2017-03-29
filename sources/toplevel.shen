@@ -32,13 +32,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define shen
   -> (do (credits) (loop)))
 
+(set *continue-repl-loop* true)
+
+(define exit
+  Code -> (set *end-repl-loop* false))
+
 (define loop
   -> (do (initialise_environment)
          (prompt)
          (trap-error
           (read-evaluate-print)
           (/. E (pr (error-to-string E) (stoutput))))
-         (loop)))
+         (if (value *continue-repl-loop*)
+             exit
+             (loop))))
 
 (define credits
   -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")

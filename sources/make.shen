@@ -25,6 +25,7 @@
 (systemf fold-left)
 (systemf fold-right)
 (systemf filter)
+(systemf exit)
 
 (define make
   -> (map (function make-file)
