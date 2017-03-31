@@ -47,7 +47,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             F))
 
 (define demodulate
-  X -> (let Demod (walk (/. Y (demod Y)) X)
+  X -> (let Demod (walk (value *demodulation-function*) X)
          (if (= Demod X)
              X
              (demodulate Demod))))

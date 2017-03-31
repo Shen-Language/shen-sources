@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *process-counter* 0)
 (set *varcounter* (vector 1000))
 (set *prologvectors* (vector 1000))
+(set *demodulation-function* (/. X X))
 (set *macroreg* [timer-macro cases-macro abs-macro put/get-macro
                  compile-macro datatype-macro let-macro assoc-macro
                  make-string-macro output-macro input-macro error-macro
