@@ -47,10 +47,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             F))
 
 (define demodulate
-  X -> (trap-error (let Demod (walk (/. Y (demod Y)) X)
-                     (if (= Demod X)
-                         X
-                         (demodulate Demod))) (/. E X)))
+  X -> (let Demod (walk (/. Y (demod Y)) X)
+         (if (= Demod X)
+             X
+             (demodulate Demod))))
 
 (define variancy-test
   F A -> (let TypeF (typecheck F (protect B))

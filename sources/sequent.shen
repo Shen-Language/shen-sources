@@ -271,4 +271,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define default-rule
   -> (protect [X -> X]))
 
+(define demod
+  X -> X)
+
 )
