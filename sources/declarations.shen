@@ -186,6 +186,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       ])
 
 (define lambda-form-entry
+  \* package and receive are not real functions, but have arity *\
+  package -> []
+  receive -> []
   F -> (let ArityF (arity F)
          (cases (= ArityF -1) []
                 (= ArityF 0) [] \\ change to [[F | F]] for CL if wanted
@@ -210,7 +213,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [pvar | (/. X (pvar X))]
   [dictionary | (/. X (dictionary X))]
   |
-  (mapcan (/. X (lambda-form-entry X)) (external (intern "shen")))])
+  (mapcan (/. X (lambda-form-entry X))
+          (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))
