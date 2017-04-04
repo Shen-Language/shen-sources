@@ -43,9 +43,22 @@ The rest are optional. By default `<-dict` is implemented on top of `<-dict/or` 
 
 ### File I/O
 
-**TODO**
+Some I/O functions implemented in Shen that are good candidates to override with native versions:
+
+- `(read-file-as-bytelist Filename)`
+- `(read-file-as-string Filename)`
+
+The implementations in Shen read the file bytes one by one using `read-byte`, but most platforms probably have the possibility of reading the whole file in big chunks.
 
 ### Exception-less `*/or` functions
 
-**TODO**
+ShenOS 20 adds some new functions with names ending in `/or`. These functions are variants of their regular versions that raise an error when they fail. The `/or` versions instead, take an extra parameter (a frozen expression), and thaw it to get the result instead of raising an error.
 
+In platforms whith expensive exception handling, these exception-less variants will be faster, but some have to be implemented natively to become faster because by default they are implemented on top of their exception-raising counterparts.
+
+- `get/or`: doesn't need to be implemented natively, and `get` is implemented on top of it.
+- `value/or`: implemented on top of `value`, needs to be implemented natively to be fast.
+- `<-address/or`: implemented on top of `<-address`, needs to be implemented natively to be fast.
+- `<-vector/or`: doesn't need to be implemented natively.
+
+These functions are used internally by the kernel, on platforms with expensive exception handling, providing faster versions of these functions will improve the performance of other parts of the system.
