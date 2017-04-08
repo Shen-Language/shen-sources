@@ -1,12 +1,18 @@
 # Port implementation performance recommendations
 
+## Dynamic function applications
+
+**TODO:** explain what kind of dynamic functions applications have to be supported by ports, and which ones are unnecessary.
+
 ## Currying and partial applications
 
-**TODO**
+**TODO:** explain how to handle currying and partial applications, and how it can be done statically, with no need for runtime support.
 
 ## Equality checks
 
-**TODO**
+Shen's equality check function `=` is very general can compare any two values. Because of this, it has to do more work than necessary in most situations. Many platforms offer specialized equality check functions that perform better.
+
+When the type of both values being compared is known, the compiler can replace the call to `=` with a more specialized one. When the type of one of the values is known, and it is of a type for which a reference check will be enough (examples of such cases in some platforms: empty lists, small numbers, fail object, and symbols), then a reference equality check can be used.
 
 ## Peephole optimizations
 
