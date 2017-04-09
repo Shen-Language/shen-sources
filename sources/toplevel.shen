@@ -111,6 +111,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (toplineread_loop (read-byte (stinput)) []))
 
 (define toplineread_loop
+  -1 _ -> (do (output "~%EOF.~%") (exit 0))
   Byte _ -> (error "line read aborted")  where (= Byte (hat))
   Byte Bytes -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
                      It (record-it Bytes)
