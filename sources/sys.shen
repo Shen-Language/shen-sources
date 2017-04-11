@@ -287,45 +287,95 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   _ X X -> X
   F _ X -> (fix-help F X (F X)))
 
+(define dict
+  Size HashFunc -> (let D (absvector (+ 3 Size))
+                        Tag (address-> D 0 dictionary)
+                        Capacity (address-> D 1 Size)
+                        Hash (address-> D 2 HashFunc)
+                        Fill (fillvector D 3 (+ 2 Size) [])
+                     D))
+
+(define dict?
+  X -> (and (absvector? X)
+            (trap-error
+             (= (<-address X 0) dictionary)
+             (/. E false))))
+
+(define dict-capacity
+  Dict -> (<-address Dict 1))
+
+(define dict-hash-function
+  Dict -> (<-address Dict 2))
+
+(define <-dict-slot
+  Dict N -> (<-address Dict (+ 3 N)))
+
+(define dict-slot->
+  Dict N Slot -> (address-> Dict (+ 3 N) Slot))
+
+(define set-key-entry-value
+  Key Value [] -> [[Key | Value]]
+  Key Value [[Key | _] | Slot] -> [[Key | Value] | Slot]
+  Key Value [Z | Slot] -> [Z | (set-key-entry-value Key Value Slot)])
+
+(define remove-key-entry-value
+  Key [] -> []
+  Key [[Key | _] | Slot] -> Slot
+  Key [Z | Slot] -> [Z | (remove-key-entry-value Key Slot)])
+
+(define dict->
+  Dict Key Value -> (let HashFunc (dict-hash-function Dict)
+                         Capacity (<-address Dict 1)
+                         N (HashFunc Key Capacity)
+                         Slot (<-dict-slot Dict N)
+                         Change (dict-slot-> Dict N (set-key-entry-value
+                                                     Key Value Slot))
+                      Value))
+
+(define <-dict
+  Dict Key -> (let HashFunc (dict-hash-function Dict)
+                   N (HashFunc Key (dict-capacity Dict))
+                   Slot (<-dict-slot Dict N)
+                   Result (assoc Key Slot)
+                (if (empty? Result)
+                    (error "value not found~%")
+                    (tl Result))))
+
+(define dict-rm
+  Dict Key -> (let HashFunc (dict-hash-function Dict)
+                   N (HashFunc Key (dict-capacity Dict))
+                   Slot (<-dict-slot Dict N)
+                   Change (dict-slot-> Dict N (remove-key-entry-value
+                                               Key Slot))
+                 Key))
+
 (define put
-  X Pointer Y Vector -> (let N (hash X (limit Vector))
-                             Entry (trap-error (<-vector Vector N) (/. E []))
-                             Change (vector-> Vector N (change-pointer-value
-                                                        X Pointer Y Entry))
-                           Y))
+  X Pointer Y Dict -> (let Curr (trap-error
+                                 (<-dict Dict X)
+                                 (/. E []))
+                           Added (set-key-entry-value Pointer Y Curr)
+                           Update (dict-> Dict X Added)
+                        Y))
 
 (define unput
-  X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error (<-vector Vector N) (/. E []))
-                           Change (vector-> Vector N (remove-pointer
-                                                      X Pointer Entry))
-                         X))
-
-(define remove-pointer
-  X Pointer [] -> []
-  X Pointer [[[X Pointer] | _] | Entry] -> Entry
-  X Pointer [Z | Entry] -> [Z | (remove-pointer X Pointer Entry)])
-
-(define change-pointer-value
-  X Pointer Y [] -> [[[X Pointer] | Y]]
-  X Pointer Y [[[X Pointer] | _] | Entry] -> [[[X Pointer] | Y] | Entry]
-  X Pointer Y [Z | Entry] -> [Z | (change-pointer-value X Pointer Y Entry)])
+  X Pointer Dict -> (let Curr (trap-error
+                               (<-dict Dict X)
+                               (/. E []))
+                         Removed (remove-key-entry-value Pointer Curr)
+                         Update (dict-> Dict X Removed)
+                      X))
 
 (define get
-  X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error
-                                  (<-vector Vector N)
-                                  (/. E (error "pointer not found~%")))
-                           Result (assoc [X Pointer] Entry)
-                        (if (empty? Result)
-                            (error "value not found~%")
-                            (tl Result))))
+  X Pointer Dict -> (let Entry (trap-error
+                                (<-dict Dict X)
+                                (/. E (error "pointer not found~%")))
+                         Result (assoc Pointer Entry)
+                      (if (empty? Result)
+                          (error "value not found~%")
+                          (tl Result))))
 
 (define hash
-  S Limit -> (let Hash (mod (sum (map (/. X (string->n X)) (explode S))) Limit)
-               (if (= 0 Hash)
-                   1
-                   Hash)))
+  S Limit -> (mod (sum (map (/. X (string->n X)) (explode S))) Limit))
 
 (define mod
   N Div -> (modh N (multiples N [Div])))
