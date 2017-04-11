@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *installing-kl* false)
 (set *history* [])
 (set *tc* false)
-(set *property-vector* (vector 20000))
+(set *property-vector* (dict 20000 (/. V N (hash V N))))
 (set *process-counter* 0)
 (set *varcounter* (vector 1000))
 (set *prologvectors* (vector 1000))
@@ -102,7 +102,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
   findall 5 freeze 1 fst 1 gensym 1 get 3
   get-time 1 address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2
-  hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
+  hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
   intern 1 identical 4 inferences 0 input 1 input+ 2 implementation 0
   intersection 2 internal 1 it 0 kill 0 language 0
   length 1 limit 1 lineread 1 load 1 < 2 <= 2 vector 1 macroexpand 1 map 2
@@ -185,12 +185,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [F | Y] X -> (append [F | Y] [X])
   F X -> [F X])
 
-(set *symbol-table*
-      [[datatype-error | (/. X (datatype-error X))]
-       [tuple | (/. X (tuple X))]
-       [pvar | (/. X (pvar X))]
-       |
-       (mapcan (/. X (symbol-table-entry X)) (external (intern "shen")))])
+(if (not (bound? *symbol-table*))
+    (set *symbol-table* (dict 5000 (/. V N (hash V N))))
+    skip)
+
+(define initialize-symbol-table
+  Entries -> (let D (value *symbol-table*)
+               (map (/. S (add-symbol-table-entry S D))
+                    Entries)))
+
+(define add-symbol-table-entry
+  [S | Lambda] Dict -> (dict-> Dict S Lambda))
+
+(initialize-symbol-table
+ [[datatype-error | (/. X (datatype-error X))]
+  [tuple | (/. X (tuple X))]
+  [pvar | (/. X (pvar X))]
+  |
+  (mapcan (/. X (symbol-table-entry X))
+          (external (intern "shen")))])
 
 (define specialise
   F -> (do (set *special* [F | (value *special*)]) F))

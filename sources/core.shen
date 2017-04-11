@@ -134,19 +134,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   [Variables Applications]))
 
 (define update-symbol-table
-  Name Arity -> (set *symbol-table*
-                      (update-symbol-table-h
-                       Name Arity (value *symbol-table*) [])))
-
-(define update-symbol-table-h
-  Name Arity [] SymbolTable
-  -> (let NewEntry [Name | (eval-kl (lambda-form Name Arity))]
-       [NewEntry | SymbolTable])
-  Name Arity [[Name | _] | Entries] SymbolTable
-  -> (let ChangedEntry [Name | (eval-kl (lambda-form Name Arity))]
-       (append Entries [ChangedEntry | SymbolTable]))
-  Name Arity [Entry | Entries] SymbolTable
-  -> (update-symbol-table-h Name Arity Entries [Entry | SymbolTable]))
+  Name 0 -> skip
+  Name Arity -> (dict-> (value *symbol-table*)
+                        Name
+                        (eval-kl (lambda-form Name Arity))))
 
 (define free_variable_check
   Name [Patts Action] -> (let Bound (extract_vars Patts)
