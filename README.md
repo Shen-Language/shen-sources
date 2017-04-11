@@ -1,6 +1,6 @@
 [![Current Release](https://img.shields.io/badge/release-19.3.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
-[![Shen Logo](http://www.shenlanguage.org/malcolm_logo_grey.gif)](http://www.shenlanguage.org)
+[![Shen Logo](https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png)](http://www.shenlanguage.org)
 
 # Official Shen Sources
 
