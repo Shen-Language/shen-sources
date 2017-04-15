@@ -54,6 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [read] -> [read [stinput]]
   [input+ Type] -> [input+ Type [stinput]]
   [read-byte] -> [read-byte [stinput]]
+  [read-char-code] -> [read-char-code [stinput]]
   X -> X)
 
 (define compose

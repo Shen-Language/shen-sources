@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Added
 - Documentation for system functions (`doc/system-functions.md`).
+- Character based I/O, makes Shen work on environments where I/O streams are multibyte encoded (SBCL >= 1.1.2 on Windows).
 - Dict datatype with API:
   - `(dict Size)` — returns dictionary object.
   - `(dict? Dict)` — predicate.
@@ -19,8 +20,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
   - `(dict-fold F Dict Acc)` — walks the dictionary, calling `(F Key Value Acc)` for each item in it. The result of each call is the new value of `Acc`, once no more items are left, the final value of `Acc` is returned.
   - `(dict-keys Dict)` — Returns  a list containing all keys in `Dict`.
   - `(dict-values Dict)` — Returns a list containing all values in `Dict`.
-- Reimplemented `put` and `get` on top of dicts.
-- Reimplemented runtime function lookup using `put` and `get`.
 - Added `get/or`, `value/or`, `<-address/or` and `<-vector/or`. These work like their `/or`-less counterparts, but accept as an extra argument a continuation (`(freeze ...)`). Whenever their original versions would raise an exception, these variants will instead `thaw` the continuation and return it's result.
 - Added `(fold-left F Acc List)`. Calls `(F Acc Elt)` for every `Elt` element in `List`. The result of each call to `F` is used as the new `Acc` for the next call. The final result is the return value of the last call to `F`.
 - Added `(fold-right F List Acc)`. Calls `(F Elt Acc)` for every `Elt` element in `List`. The result of each call to `F` is used as the new `Acc` for the next call. The final result is the return value of the last call to `F`.
@@ -28,10 +27,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Added `(filter Predicate List)`. Returns a new lost with all elements to which `(Predicate Elt)` returns true.
 - Added `(exit ExitCode)`. Exits the program using the specified error code. The default implementation just ends the REPL loop, ports have to override `exit` if they want the exit code to have any effect.
 - Added `*sterror*` and `(sterror)`, STDERR port. Defaults to an alias of `*stoutput*`.
+- Added `(read-char-code Stream)`. Reads a character from a stream, and returns its numeric value.
+- Added `(read-file-as-charlist Name)`. Reads the contents of a file as a sequence of characters. The result if a list of numeric character codes.
 
 ### Changed
+- Reader is now built on top of `read-char-code` instead of `read-byte`. As a result, Shen's REPL now works on multibyte environmnents, like SBCL >= 1.1.2 on Windows.
+- Reimplemented `put` and `get` on top of dicts.
+- Reimplemented runtime function lookup using `put` and `get`.
 - Changed `hash` so that 0 is a valid return value.
 - Changed `make.shen` so that 19.2 can correctly compile the new version without needing two passes.
+- Ctrl+D (EOF) in the REPL when the line is empty, exits Shen.
 
 ### Fixed
 - Declared arity for system functions that were missing it.

@@ -798,6 +798,13 @@ Takes a stream and reads off the first Shen token; defaults with zero arguments 
 Takes a source and reads the first byte off it; defaults with zero arguments to standard input.
 
 
+## read-char-code
+
+**Type:** **`(stream in) --> number`**
+
+Takes a source and reads the first character off it, returning its numeric value; defaults with zero arguments to standard input.
+
+
 ## read-file
 
 **Type:** **`string --> (list unit)`**
@@ -810,6 +817,13 @@ Returns the contents of an ASCII file designated by a string. Returns a list of 
 **Type:** **`string --> (list number)`**
 
 Returns the contents of an ASCII file designated by a string as a list of bytes.
+
+
+## read-file-as-charlist
+
+**Type:** **`string --> (list number)`**
+
+Returns the contents of an ASCII file designated by a string as a list of character numeric codes.
 
 
 ## read-file-as-string

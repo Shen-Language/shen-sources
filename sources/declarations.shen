@@ -120,7 +120,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   port 0 porters 0 pos 2 print 1 profile 1 profile-results 1 pr 2
   ps 1 preclude 1 preclude-all-but 1 protect 1
   address-> 3 put 4 reassemble 2 read-file-as-string 1 read-file 1
-  read 1 read-byte 1 read-from-string 1
+  read-file-as-charlist 1 read-file-as-bytelist 1
+  read 1 read-byte 1 read-from-string 1 read-char-code 1
   receive 1 release 0 remove 2 require 3 reverse 1 set 2
   simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0 sterror 0
   string->n 1 string->symbol 1 string? 1 str 1 subst 3 sum 1
@@ -163,7 +164,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       stoutput step spy specialise snd simple-error set save str run
       reverse remove release read receive
       read-file read-file-as-bytelist read-file-as-string read-byte
-      read-from-string package? put preclude
+      read-file-as-charlist
+      read-char-code read-from-string package? put preclude
       preclude-all-but ps prolog? protect profile-results profile print
       pr pos porters port package output out os or
       optimise open occurrences occurs-check n->string number? number

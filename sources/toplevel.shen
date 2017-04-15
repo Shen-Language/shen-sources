@@ -108,22 +108,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   Lineread History -> (set *history* [Lineread  | History]))
 
 (define toplineread
-  -> (toplineread_loop (read-byte (stinput)) []))
+  -> (toplineread_loop (read-char-code (stinput)) []))
 
 (define toplineread_loop
   -1 [] -> (exit 0)
-  Byte _ -> (error "line read aborted")  where (= Byte (hat))
-  Byte Bytes -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
-                     It (record-it Bytes)
+  Char _ -> (error "line read aborted")  where (= Char (hat))
+  Char Chars -> (let Line (compile (/. X (<st_input> X)) Chars (/. E nextline))
+                     It (record-it Chars)
                   (if (or (= Line nextline) (empty? Line))
-                      (toplineread_loop (read-byte (stinput))
-                                        (append Bytes [Byte]))
-                      (@p Line Bytes)))
-      where (element? Byte [(newline) (carriage-return)])
-  Byte Bytes -> (toplineread_loop (read-byte (stinput))
-                                  (if (= Byte -1)
-                                      Bytes
-                                      (append Bytes [Byte]))))
+                      (toplineread_loop (read-char-code (stinput))
+                                        (append Chars [Char]))
+                      (@p Line Chars)))
+      where (element? Char [(newline) (carriage-return)])
+  Char Chars -> (toplineread_loop (read-char-code (stinput))
+                                  (if (= Char -1)
+                                      Chars
+                                      (append Chars [Char]))))
 
 (define hat
   -> 94)

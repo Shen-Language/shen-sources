@@ -166,6 +166,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                      (analyse-symbol? String)) (/. E false)))
 
 (define analyse-symbol?
+  "" -> false
   (@s S Ss) -> (and (alpha? S)
                     (alphanums? Ss)))
 
