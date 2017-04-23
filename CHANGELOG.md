@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [20.0] - 2017-04-23
+
 ### Added
 - Documentation for system functions (`doc/system-functions.md`).
 - Character based I/O, makes Shen work on environments where I/O streams are multibyte encoded (SBCL >= 1.1.2 on Windows).
@@ -134,7 +136,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 For changes in older releases (pre-BSD) please see `bugfixes.txt`.
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-20.0...HEAD
+[20.0]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3.1...shen-20.0
 [19.3.1]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3...shen-19.3.1
 [19.3]: https://github.com/Shen-Language/shen-sources/compare/shen-19.2...shen-19.3
 [19.2]: https://github.com/Shen-Language/shen-sources/compare/shen-19.1...shen-19.2
