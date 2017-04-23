@@ -245,8 +245,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                   (map (/. X (intern-type X)) Types))))
 
 (define synonyms-help
-  [] -> (demodulation-function (value *tc*)
-                               (mapcan (/. X (demod-rule X)) (value *synonyms*)))
+  [] -> (update-demodulation-function
+         (value *tc*)
+         (mapcan (/. X (demod-rule X)) (value *synonyms*)))
   [S1 S2 | S] -> (let Vs (difference (extract_vars S2) (extract_vars S1))
                    (if (empty? Vs)
                        (do (pushnew [S1 S2] *synonyms*)
@@ -262,9 +263,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define demod-rule
   [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])
 
-(define demodulation-function
+(define lambda-of-defun
+  [defun _ [Var] Body] -> (eval [/. Var Body]))
+
+(define update-demodulation-function
   TC? Rules -> (do (tc -)
-                   (eval [define demod | (append Rules (default-rule))])
+                   (set *demodulation-function*
+                         (lambda-of-defun
+                          (elim-def [define demod
+                                      | (append Rules (default-rule))])))
                    (if TC? (tc +) skip)
                    synonyms))
 

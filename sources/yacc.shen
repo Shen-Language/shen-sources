@@ -72,7 +72,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define semantic-completion-warning
   true RevSyntax -> (do (output "warning: ")
-                        (map (/. X (output "~A " X)) (reverse RevSyntax))
+                        (for-each (/. X (output "~A " X)) (reverse RevSyntax))
                         (output "has no semantics.~%"))
   _ _ -> skip)
 

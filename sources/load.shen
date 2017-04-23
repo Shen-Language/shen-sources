@@ -38,12 +38,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                  loaded))
 
 (define load-help
-  false File -> (map (/. X (output "~S~%" (eval-without-macros X))) File)
+  false File -> (for-each (/. X (output "~S~%" (eval-without-macros X))) File)
   _ File -> (let RemoveSynonyms (mapcan (/. X (remove-synonyms X)) File)
                  Table (mapcan (/. X (typetable X)) RemoveSynonyms)
-                 Assume (map (/. X (assumetype X)) Table)
+                 Assume (for-each (/. X (assumetype X)) Table)
               (trap-error
-               (map (/. X (typecheck-and-load X)) RemoveSynonyms)
+               (for-each (/. X (typecheck-and-load X)) RemoveSynonyms)
                (/. E (unwind-types E Table)))))
 
 

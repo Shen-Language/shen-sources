@@ -54,6 +54,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [read] -> [read [stinput]]
   [input+ Type] -> [input+ Type [stinput]]
   [read-byte] -> [read-byte [stinput]]
+  [read-char-code] -> [read-char-code [stinput]]
   X -> X)
 
 (define compose
@@ -166,6 +167,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define put/get-macro
   [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]]
   [get X Pointer] -> [get X Pointer [value *property-vector*]]
+  [get/or X Pointer Or] -> [get/or X Pointer Or [value *property-vector*]]
   [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
   X -> X)
 

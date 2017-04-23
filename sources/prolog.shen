@@ -418,9 +418,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   N -> (address-> (address-> (absvector 2) 0 pvar) 1 N))
 
 (define pvar?
-  X -> (trap-error
-        (and (absvector? X) (= (<-address X 0) pvar))
-        (/. E false)))
+  X -> (and (absvector? X)
+            (= (<-address/or X 0 (freeze not-pvar)) pvar)))
 
 (define bindv
   Var Val N -> (let Vector (<-address (value *prologvectors*) N)

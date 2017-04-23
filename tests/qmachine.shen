@@ -48,7 +48,7 @@
   {A --> B --> B}
   X Y -> Y)
 
-(define filter
+(define pfilter
   {(progression A) --> (A --> boolean) --> (list A)}
   Progression P -> (super Progression (/. X (if (P X) [X] [])) append []))
 
