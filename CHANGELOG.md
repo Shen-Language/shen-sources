@@ -33,7 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Added `(read-file-as-charlist Name)`. Reads the contents of a file as a sequence of characters. The result if a list of numeric character codes.
 
 ### Changed
-- Reader is now built on top of `read-char-code` instead of `read-byte`. As a result, Shen's REPL now works on multibyte environmnents, like SBCL >= 1.1.2 on Windows.
+- Reader is now built on top of `read-char-code` instead of `read-byte`. As a result, Shen's REPL now works on multibyte environments, like SBCL >= 1.1.2 on Windows.
 - Reimplemented `put` and `get` on top of dicts.
 - Reimplemented runtime function lookup using `put` and `get`.
 - Changed `hash` so that 0 is a valid return value.
