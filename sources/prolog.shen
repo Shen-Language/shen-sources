@@ -115,8 +115,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [H :- B] -> [H :- (map (/. X (s-prolog_literal X)) B)])
 
 (define head_abstraction
-  [H :- B] -> [[H :- B]]  where (< (complexity_head H)
-                                   (value *maxcomplexity*))
+  [H :- B] -> [[H :- B]]  where (trap-error
+                                   (< (complexity_head H)
+                                      (value *maxcomplexity*))
+                                   (/. _ false))
   [[F | X] :- B] -> (let Terms (map (/. Y (gensym (protect V))) X)
                          XTerms (rcons_form (remove_modes X))
                          Literal [unify (cons_form Terms) XTerms]
@@ -126,10 +128,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define complexity_head
   [_ | Terms] -> (product (map (/. X (complexity X)) Terms)))
 
+(define safe-*
+  X Y -> (let M (* X Y)
+                (if (and (not (= X 0)) (not (= (/ M X) Y)))
+                  (error "Integer overflow in safe-*")
+                  M)))
+
 (define complexity
   [mode [mode X Mode] _] -> (complexity [mode X Mode])
-  [mode [X | Y] +] -> (* 2 (complexity [mode X +]) (complexity [mode Y +]))
-  [mode [X | Y] -] -> (* (complexity [mode X -]) (complexity [mode Y -]))
+  [mode [X | Y] +] -> (safe-* 2 (safe-* (complexity [mode X +]) (complexity [mode Y +])))
+  [mode [X | Y] -] -> (safe-* (complexity [mode X -]) (complexity [mode Y -]))
   [mode X _] -> 1	      where (variable? X)
   [mode _ +] -> 2
   [mode _ -] -> 1
@@ -137,7 +145,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define product
   [] -> 1
-  [X | Y] -> (* X (product Y)))
+  [X | Y] -> (safe-* X (product Y)))
 
 (define s-prolog_literal
   [is X Y] -> [bind X (insert_deref Y)]
