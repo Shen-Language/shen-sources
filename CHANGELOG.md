@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+- Handle integer overflows in prolog's complexity calculation function. Solves issues in ports with 32bit integers.
+
 ## [20.0] - 2017-04-23
 
 ### Added
