@@ -92,6 +92,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (set *sterror* (value *stoutput*))
     skip)
 
+(if (not (bound? *argv*))
+    (set *argv* ["shen"])
+    skip)
+
 (define initialise_arity_table
   [] -> []
   [F Arity | Table] -> (let DecArity (put F arity Arity)
@@ -149,7 +153,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (put (intern "shen") external-symbols
      [! } { --> <-- && : ; :- := _
       *language* *implementation* *stinput* *stoutput* *sterror*
-      *home-directory* *version*
+      *home-directory* *version* *argv*
       *maximum-print-sequence-size* *macros* *os* *release* *property-vector*
       *port* *porters* *hush*
       @v @p @s
@@ -185,6 +189,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       append and adjoin <-address <-address/or address-> absvector? absvector
       dict dict? dict-count dict-> <-dict/or <-dict dict-rm dict-fold
       dict-keys dict-values
+      command-line
       ])
 
 (define lambda-form-entry
