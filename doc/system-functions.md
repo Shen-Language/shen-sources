@@ -118,6 +118,20 @@ Closes a stream returning the empty list.
 Concatenates two strings.
 
 
+## command-line
+
+**Type:** **`--> (list string)`**
+
+Returns a list of command line fragments, with the first element being the program executable.
+
+Examples:
+
+```
+shen -> ["shen"]
+shen script.shen -> ["script.shen"]
+shen script.shen --flag -v arg1 arg2 -> ["script.shen" "--flag" "-v" "arg1" "arg2"]
+```
+
 ## compile
 
 **Type:** **`(A ==> B) --> A --> (A --> B) --> B`**
