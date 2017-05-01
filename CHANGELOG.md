@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 
 ### Fixed
+- Fixed `dict-fold`.
 - Handle integer overflows in prolog's complexity calculation function. Solves issues in ports with 32bit integers.
 - In the 20.0 release, `*sterror*` was not properly set as external in `make.shen`, fixed now.
 
