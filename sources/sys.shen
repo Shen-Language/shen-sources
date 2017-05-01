@@ -598,6 +598,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define sterror
   -> (value *sterror*))
 
+(define command-line
+  -> (value *argv*))
+
 (define string->symbol
   S -> (let Symbol (intern S)
          (if (symbol? Symbol)

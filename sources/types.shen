@@ -80,6 +80,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare cd [string --> string])
 (declare close [[stream A] --> [list B]])
 (declare cn [string --> [string --> string]])
+(declare command-line [--> [list string]])
 (declare compile [[A ==> B] --> [A --> [[A --> B] --> B]]])
 (declare cons? [A --> boolean])
 (declare destroy [[A --> B] --> symbol])
