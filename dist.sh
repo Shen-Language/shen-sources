@@ -7,7 +7,7 @@ NAME="ShenOSKernel-${VERSION}"
 git archive --format=tar --prefix="$NAME/" $TAG | (cd _dist && tar xf -)
 cp -R klambda/ "_dist/${NAME}/klambda"
 rm -f "_dist/${NAME}/".git*
-ls -a "_dist/${NAME}"
+rm "_dist/${NAME}/dist.sh"
 
 pushd _dist
 
