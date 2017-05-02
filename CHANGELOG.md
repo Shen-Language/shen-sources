@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [20.1] - 2017-05-01
+
+### Added
+- `(command-line)` function that returns a list of command line fragments. By default it returns `["shen"]`, ports can override this function or set the value of the `*argv*` variable on startup.
+
 ### Fixed
 - Fixed `dict-fold`.
 - Handle integer overflows in prolog's complexity calculation function. Solves issues in ports with 32bit integers.
