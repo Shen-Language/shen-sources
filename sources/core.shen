@@ -124,7 +124,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define compile_to_lambda+
   Name Rules -> (let Arity (aritycheck Name Rules)
                      UpDateSymbolTable (update-symbol-table Name Arity)
-                     Free (map (/. Rule (free_variable_check Name Rule)) Rules)
+                     Free (for-each (/. Rule (free_variable_check Name Rule))
+                                    Rules)
                      Variables (parameters Arity)
                      Strip (map (/. X (strip-protect X)) Rules)
                      Abstractions (map (/. X (abstract_rule X)) Strip)
@@ -134,19 +135,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   [Variables Applications]))
 
 (define update-symbol-table
-  Name Arity -> (set *symbol-table*
-                      (update-symbol-table-h
-                       Name Arity (value *symbol-table*) [])))
-
-(define update-symbol-table-h
-  Name Arity [] SymbolTable
-  -> (let NewEntry [Name | (eval-kl (lambda-form Name Arity))]
-       [NewEntry | SymbolTable])
-  Name Arity [[Name | _] | Entries] SymbolTable
-  -> (let ChangedEntry [Name | (eval-kl (lambda-form Name Arity))]
-       (append Entries [ChangedEntry | SymbolTable]))
-  Name Arity [Entry | Entries] SymbolTable
-  -> (update-symbol-table-h Name Arity Entries [Entry | SymbolTable]))
+  Name 0 -> skip
+  Name Arity -> (put Name lambda-form (eval-kl (lambda-form Name Arity))))
 
 (define free_variable_check
   Name [Patts Action] -> (let Bound (extract_vars Patts)
@@ -225,7 +215,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          Arity))
 
 (define aritycheck-action
-  [F | X] -> (do (aah F X) (map (/. Y (aritycheck-action Y)) [F | X]))
+  [F | X] -> (do (aah F X)
+                 (for-each (/. Y (aritycheck-action Y)) [F | X]))
   _ -> skip)
 
 (define aah
@@ -346,9 +337,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   "" -> false
   X -> (string? X))
 
-(define +vector
-  X -> false where (= X (vector 0))
-  X -> (vector? X))
+(define +vector?
+  X -> (and (absvector? X) (> (<-address X 0) 0)))
 
 (define ebr
   A B B -> A

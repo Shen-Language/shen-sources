@@ -29,26 +29,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (package shen []
 
-(define read-file-as-bytelist
-  File -> (let Stream (open File in)
-               Byte (read-byte Stream)
-               Bytes (read-file-as-bytelist-help Stream Byte [])
-               Close (close Stream)
-            (reverse Bytes)))
+(define read-char-code
+  Stream -> (read-byte Stream))
 
-(define read-file-as-bytelist-help
-  Stream -1 Bytes -> Bytes
-  Stream Byte Bytes -> (read-file-as-bytelist-help Stream
-                                                   (read-byte Stream)
-                                                   [Byte | Bytes]))
+(define read-file-as-bytelist
+  File -> (read-file-as-Xlist File (/. S (read-byte S))))
+
+(define read-file-as-charlist
+  File -> (read-file-as-Xlist File (/. S (read-char-code S))))
+
+(define read-file-as-Xlist
+  File F -> (let Stream (open File in)
+                 X (F Stream)
+                 Xs (read-file-as-Xlist-help Stream F X [])
+                 Close (close Stream)
+              (reverse Xs)))
+
+(define read-file-as-Xlist-help
+  Stream F -1 Xs -> Xs
+  Stream F X Xs -> (read-file-as-Xlist-help Stream
+                                            F
+                                            (F Stream)
+                                            [X | Xs]))
 
 (define read-file-as-string
   File -> (let Stream (open File in)
-            (rfas-h Stream (read-byte Stream) "")))
+            (rfas-h Stream (read-char-code Stream) "")))
 
 (define rfas-h
   Stream -1 String -> (do (close Stream) String)
-  Stream N String -> (rfas-h Stream (read-byte Stream) (cn String (n->string N))))
+  Stream N String -> (rfas-h Stream (read-char-code Stream)
+                             (cn String (n->string N))))
 
 (define input
   Stream -> (eval-kl (read Stream)))
@@ -65,67 +76,69 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> (if (variable? X) (error "input+ expects a monotype: not ~A~%" X) X))
 
 (define read
-  Stream -> (hd (read-loop Stream (read-byte Stream) [])))
+  Stream -> (hd (read-loop Stream (read-char-code Stream) [])))
 
 (define it
   -> (value *it*))
 
 (define read-loop
-  _ 94 Bytes -> (error "read aborted")
-  _ -1 Bytes -> (if (empty? Bytes)
+  _ 94 Chars -> (error "read aborted")
+  _ -1 Chars -> (if (empty? Chars)
                     (simple-error "error: empty stream")
-                    (compile (/. X (<st_input> X)) Bytes (/. E E)))
-  Stream Byte Bytes
-  -> (let AllBytes (append Bytes [Byte])
-          It (record-it AllBytes)
-          Read (compile (/. X (<st_input> X)) AllBytes (/. E nextbyte))
+                    (compile (/. X (<st_input> X)) Chars (/. E E)))
+  Stream Char Chars
+  -> (let AllChars (append Chars [Char])
+          It (record-it AllChars)
+          Read (compile (/. X (<st_input> X)) AllChars (/. E nextbyte))
        (if (or (= Read nextbyte) (empty? Read))
-           (read-loop Stream (read-byte Stream) AllBytes)
+           (read-loop Stream (read-char-code Stream) AllChars)
            Read))
-      where (terminator? Byte)
-  Stream Byte Bytes -> (read-loop Stream (read-byte Stream) (append Bytes [Byte])))
+      where (terminator? Char)
+  Stream Char Chars -> (read-loop Stream (read-char-code Stream)
+                                  (append Chars [Char])))
 
 (define terminator?
-  Byte -> (element? Byte [9 10 13 32 34 41 93]))
+  Char -> (element? Char [9 10 13 32 34 41 93]))
 
 (define lineread
-  Stream -> (lineread-loop (read-byte Stream) [] Stream))
+  Stream -> (lineread-loop (read-char-code Stream) [] Stream))
 
 (define lineread-loop
-  -1 Bytes Stream -> (if (empty? Bytes)
+  -1 Chars Stream -> (if (empty? Chars)
                          (simple-error "empty stream")
-                         (compile (/. X (<st_input> X)) Bytes (/. E E)))
-  Byte _ Stream -> (error "line read aborted")  where (= Byte (hat))
-  Byte Bytes Stream
-  -> (let Line (compile (/. X (<st_input> X)) Bytes (/. E nextline))
-          It (record-it Bytes)
+                         (compile (/. X (<st_input> X)) Chars (/. E E)))
+  Char _ Stream -> (error "line read aborted")  where (= Char (hat))
+  Char Chars Stream
+  -> (let Line (compile (/. X (<st_input> X)) Chars (/. E nextline))
+          It (record-it Chars)
        (if (or (= Line nextline) (empty? Line))
-           (lineread-loop (read-byte Stream) (append Bytes [Byte]) Stream)
+           (lineread-loop (read-char-code Stream) (append Chars [Char]) Stream)
            Line))
-	    where (element? Byte [(newline) (carriage-return)])
-  Byte Bytes Stream -> (lineread-loop (read-byte Stream) (append Bytes [Byte])
+	    where (element? Char [(newline) (carriage-return)])
+  Char Chars Stream -> (lineread-loop (read-char-code Stream)
+                                      (append Chars [Char])
                                       Stream))
 
 (define record-it
-  Bytes -> (let TrimLeft (trim-whitespace Bytes)
+  Chars -> (let TrimLeft (trim-whitespace Chars)
                 TrimRight (trim-whitespace (reverse TrimLeft))
                 Trimmed (reverse TrimRight)
              (record-it-h Trimmed)))
 
 (define trim-whitespace
-  [Byte | Bytes] -> (trim-whitespace Bytes)   where (element? Byte [9 10 13 32])
-  Bytes -> Bytes)
+  [Char | Chars] -> (trim-whitespace Chars)   where (element? Char [9 10 13 32])
+  Chars -> Chars)
 
 (define record-it-h
-  Bytes -> (do (set *it* (cn-all (map (/. X (n->string X)) Bytes))) Bytes))
+  Chars -> (do (set *it* (cn-all (map (/. X (n->string X)) Chars))) Chars))
 
 (define cn-all
   [] -> ""
   [S | Ss] -> (cn S (cn-all Ss)))
 
 (define read-file
-  File -> (let Bytelist (read-file-as-bytelist File)
-            (compile (/. X (<st_input> X)) Bytelist (/. X (read-error X)))))
+  File -> (let Charlist (read-file-as-charlist File)
+            (compile (/. X (<st_input> X)) Charlist (/. X (read-error X)))))
 
 (define read-from-string
   S -> (let Ns (map (/. X (string->n X)) (explode S))
@@ -134,14 +147,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   (/. X (read-error X)))))
 
 (define read-error
-  [[Byte | Bytes] _] -> (error "read error here:~%~% ~A~%"
-                               (compress-50 50 [Byte | Bytes]))
+  [[Char | Chars] _] -> (error "read error here:~%~% ~A~%"
+                               (compress-50 50 [Char | Chars]))
   _ -> (error "read error~%"))
 
 (define compress-50
   _ [] -> ""
   0 _ -> ""
-  N [Byte | Bytes] -> (cn (n->string Byte) (compress-50 (- N 1) Bytes)))
+  N [Char | Chars] -> (cn (n->string Char) (compress-50 (- N 1) Chars)))
 
 (defcc <st_input>
   <lsb> <st_input1> <rsb> <st_input2>
@@ -251,7 +264,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <num> := <num>;)
 
 (defcc <num>
-  Byte := (n->string Byte)    where (numbyte? Byte);)
+  Char := (n->string Char)    where (numbyte? Char);)
 
 (define numbyte?
   48 -> true
@@ -267,7 +280,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   _ -> false)
 
 (defcc <alpha>
-  Byte := (n->string Byte)	  where (symbol-code? Byte);)
+  Char := (n->string Char)	  where (symbol-code? Char);)
 
 (define symbol-code?
   N -> (or (= N 126)
@@ -281,17 +294,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <dbq> <strcontents> <dbq> := <strcontents>;)
 
 (defcc <dbq>
-  Byte := Byte	where (= Byte 34);)
+  Char := Char	where (= Char 34);)
 
 (defcc <strcontents>
   <strc> <strcontents> := [<strc> | <strcontents>];
   <e> := [];)
 
 (defcc <byte>
-  Byte := (n->string Byte);)
+  Char := (n->string Char);)
 
 (defcc <strc>
-  Byte := (n->string Byte)	where (not (= Byte 34));)
+  Char := (n->string Char)	where (not (= Char 34));)
 
 (defcc <number>
   <minus> <number> := (- 0 <number>);
@@ -313,10 +326,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <digits> := (pre (reverse <digits>) 0);)
 
 (defcc <plus>
-  Byte := Byte 	where (= Byte 43);)
+  Char := Char 	where (= Char 43);)
 
 (defcc <stop>
-  Byte := Byte 	where (= Byte 46);)
+  Char := Char 	where (= Char 46);)
 
 (defcc <predigits>
   <digits> := <digits>;
@@ -427,16 +440,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define record-exceptions
   ListofExceptions PackageName
-  -> (let CurrExceptions (trap-error (get PackageName external-symbols) (/. E []))
+  -> (let CurrExceptions (get/or PackageName external-symbols (freeze []))
           AllExceptions (union ListofExceptions CurrExceptions)
        (put PackageName external-symbols AllExceptions)))
 
 (define record-internal
   PackageName Internal -> (put PackageName internal-symbols
                                (union Internal
-                                      (trap-error
-                                       (get PackageName internal-symbols)
-                                       (/. E [])))))
+                                      (get/or PackageName internal-symbols
+                                              (freeze [])))))
 
 (define internal-symbols
   ExpPackageNameDot PackageSymbol -> [PackageSymbol]

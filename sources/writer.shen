@@ -126,21 +126,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   P -> (let Zero (<-address P 0)
          (cases (= Zero tuple) true
                 (= Zero pvar) true
+                (= Zero dictionary) true
                 (not (number? Zero)) (fbound? Zero)
                 true false)))
 
 (define fbound?
   F -> (trap-error
-        (do (lookup-func F (value *symbol-table*)) true)
+        (do (lookup-func F) true)
         (/. E false)))
 
 (define tuple
   P -> (make-string "(@p ~S ~S)" (<-address P 1) (<-address P 2)))
 
+(define dictionary
+  D -> (make-string "(dict ...)"))
+
 (define iter-vector
   _ _ _ 0 -> "... etc"
-  V N Mode Max -> (let Item (trap-error (<-address V N) (/. E out-of-bounds))
-                       Next (trap-error (<-address V (+ N 1)) (/. E out-of-bounds))
+  V N Mode Max -> (let Item (<-address/or V N (freeze out-of-bounds))
+                       Next (<-address/or V (+ N 1) (freeze out-of-bounds))
                     (cases (= Item out-of-bounds) ""
                            (= Next out-of-bounds) (arg->str Item Mode)
                            true (@s (arg->str Item Mode)

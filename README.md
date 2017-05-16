@@ -1,4 +1,4 @@
-[![Current Release](https://img.shields.io/badge/release-19.3.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
+[![Current Release](https://img.shields.io/badge/release-20.0-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 [![Shen Logo](https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png)](http://www.shenlanguage.org)
 
@@ -10,7 +10,7 @@ Note that this repository does not contain a runnable implementation of Shen. Ce
 
 ## Generating Kλ
 
-To generate Kλ from the Shen sources, acquire a certified port of Shen, version 17 or greater. The SBCL port is recommended as it is the de facto standard port and is typically the fastest.
+To generate Kλ from the Shen sources, acquire a certified port of Shen, version 19.2 or greater. The SBCL port is recommended as it is the de facto standard port and is typically the fastest.
 
 In the Shen REPL, navigate to the `sources/` directory and enter `(load "make.shen")`. Then enter `(make)` and the `*.kl` files will be emitted into the working directory.
 
