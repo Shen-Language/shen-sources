@@ -32,6 +32,10 @@
 (systemf *sterror*)
 (systemf *argv*)
 (systemf command-line)
+(systemf read-doc)
+(systemf write-doc)
+(systemf info)
+(systemf function?)
 
 (define make
   -> (map (function make-file)

@@ -110,11 +110,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   command-line 0 cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
   eval-kl 1 exit 1 explode 1 external 1 fail-if 2 fail 0 fix 2
-  fold-left 3 fold-right 3 filter 2
+  fold-left 3 fold-right 3 filter 2 function? 1
   for-each 2 findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
   get-time 1 address-> 3 <-address 2 <-address/or 3 <-vector 2 <-vector/or 3
   > 2 >= 2 = 2
-  hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
+  hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 info 1 integer? 1
   intern 1 identical 4 inferences 0 input 1 input+ 2 implementation 0
   intersection 2 internal 1 it 0 kill 0 language 0
   length 1 limit 1 lineread 1 load 1 < 2 <= 2 vector 1 macroexpand 1 map 2
@@ -123,7 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   open 2 optimise 1 or 2 os 0 package 3 package? 1
   port 0 porters 0 pos 2 print 1 profile 1 profile-results 1 pr 2
   ps 1 preclude 1 preclude-all-but 1 protect 1
-  address-> 3 put 4 reassemble 2 read-file-as-string 1 read-file 1
+  address-> 3 put 4 read-doc 1 reassemble 2 read-file-as-string 1 read-file 1
   read-file-as-charlist 1 read-file-as-bytelist 1
   read 1 read-byte 1 read-from-string 1 read-char-code 1
   receive 1 release 0 remove 2 require 3 reverse 1 set 2
@@ -134,7 +134,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   return 3 undefmacro 1 unput 3 unprofile 1 unify 4 unify! 4
   union 2 untrack 1 unspecialise 1 undefmacro 1
   vector 1 vector? 1 vector-> 3 value 1 value/or 2 variable? 1 version 0
-  write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
+  write-doc 2 write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1
   dict 1 dict? 1 dict-count 1 dict-> 3 <-dict/or 3 <-dict 2 dict-rm 2
@@ -189,7 +189,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       append and adjoin <-address <-address/or address-> absvector? absvector
       dict dict? dict-count dict-> <-dict/or <-dict dict-rm dict-fold
       dict-keys dict-values
-      command-line
+      command-line read-doc write-doc info function?
       ])
 
 (define lambda-form-entry

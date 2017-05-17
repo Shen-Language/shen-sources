@@ -160,6 +160,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define limit
   Vector -> (<-address Vector 0))
 
+(define function?
+  F -> (posint? (arity F)))
+
 (define symbol?
   X -> false where (or (boolean? X) (number? X) (string? X))
   X -> (trap-error (let String (str X)
