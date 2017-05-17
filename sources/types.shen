@@ -69,7 +69,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   _ _ -> false)
 
 (define read-doc
-  Name -> (get/or Name docs (freeze "No documentation available.")))
+  Name -> (get/or Name doc (freeze "No documentation available.")))
 
 (define write-doc
   Name Content -> (put Name doc Content))
