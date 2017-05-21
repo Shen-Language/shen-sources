@@ -33,9 +33,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   FileName -> (let Load (if (value *echo*)
                             (time (load-help (value *tc*) (read-file FileName)))
                             (load-help (value *tc*) (read-file FileName)))
-                   Infs (if (value *tc*)
-                            (output "~%typechecked in ~A inferences~%"
-                                    (inferences))
+                   Infs (if (and (value *tc*) (value *echo*))
+                            (output "~%typechecked in ~A inferences~%" (inferences))
                             skip)
                  loaded))
 
