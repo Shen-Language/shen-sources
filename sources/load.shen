@@ -30,7 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (package shen []
 
 (define load
-  FileName -> (let Load (time (load-help (value *tc*) (read-file FileName)))
+  FileName -> (let Load (if (value *echo*)
+                            (time (load-help (value *tc*) (read-file FileName)))
+                            (load-help (value *tc*) (read-file FileName)))
                    Infs (if (value *tc*)
                             (output "~%typechecked in ~A inferences~%"
                                     (inferences))
