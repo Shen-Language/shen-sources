@@ -200,15 +200,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                            (toplevel_evaluate [Y | Z] Boolean))
   [X] true -> (typecheck-and-evaluate X (gensym (protect A)))
   [X] false -> (let Eval (eval-without-macros X)
-                 (print Eval)))
+                 (if (value *echo*) (print Eval) Eval)))
 
 (define typecheck-and-evaluate
   X A -> (let Typecheck (typecheck X A)
            (if (= Typecheck false)
                (error "type error~%")
                (let Eval (eval-without-macros X)
-                    Type (pretty-type Typecheck)
-                 (output "~S : ~R" Eval Type)))))
+                 (if (value *echo*)
+                   (let Type (pretty-type Typecheck)
+                     (output "~S : ~R" Eval Type))
+                   Eval)))))
 
 (define pretty-type
   Type -> (mult_subst (value *alphabet*) (extract-pvars Type) Type))
@@ -222,5 +224,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [] _ X -> X
   _ [] X -> X
   [X | Y] [W | Z] A -> (mult_subst Y Z (subst X W A)))
+
+(define echo
+  + -> (set *echo* true)
+  - -> (set *echo* false)
+  _ -> (error "echo expects a + or -"))
 
 )

@@ -88,6 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare do [A --> [B --> B]])
 (declare <e> [[list A] ==> [list B]])
 (declare <!> [[list A] ==> [list A]])
+(declare echo [symbol --> boolean])
 (declare element? [A --> [[list A] --> boolean]])
 (declare empty? [A --> boolean])
 (declare enable-type-theory [symbol --> boolean])
