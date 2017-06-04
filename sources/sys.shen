@@ -306,6 +306,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F _ X -> (fix-help F X (F X)))
 
 (define dict
+  Size -> (error "invalid initial dict size: ~S" Size) where (< Size 1)
   Size -> (let D (absvector (+ 3 Size))
                Tag (address-> D 0 dictionary)
                Capacity (address-> D 1 Size)
