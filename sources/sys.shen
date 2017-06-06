@@ -79,7 +79,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define package-contents
   [package null _ | Contents] -> Contents
-  [package P E | Contents] -> (packageh P E Contents))
+  [package P E | Contents] -> (let PackageNameDot (intern (cn (str P) "."))
+                                   ExpPackageNameDot (explode PackageNameDot)
+                                (packageh P E Contents ExpPackageNameDot)))
 
 (define walk
   F [X | Y] -> (F (map (/. Z (walk F Z)) [X | Y]))
@@ -304,6 +306,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F _ X -> (fix-help F X (F X)))
 
 (define dict
+  Size -> (error "invalid initial dict size: ~S" Size) where (< Size 1)
   Size -> (let D (absvector (+ 3 Size))
                Tag (address-> D 0 dictionary)
                Capacity (address-> D 1 Size)
