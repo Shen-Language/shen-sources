@@ -32,6 +32,7 @@
 (systemf *sterror*)
 (systemf *argv*)
 (systemf command-line)
+(systemf echo)
 
 (define make
   -> (map (function make-file)

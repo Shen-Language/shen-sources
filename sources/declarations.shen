@@ -96,6 +96,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (set *argv* ["shen"])
     skip)
 
+(if (not (bound? *echo*))
+    (set *echo* true)
+    skip)
+
 (define initialise_arity_table
   [] -> []
   [F Arity | Table] -> (let DecArity (put F arity Arity)
@@ -138,7 +142,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1
   dict 1 dict? 1 dict-count 1 dict-> 3 <-dict/or 3 <-dict 2 dict-rm 2
-  dict-fold 3 dict-keys 1 dict-values 1
+  dict-fold 3 dict-keys 1 dict-values 1 echo 1
   ])
 
 (define systemf
@@ -189,7 +193,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       append and adjoin <-address <-address/or address-> absvector? absvector
       dict dict? dict-count dict-> <-dict/or <-dict dict-rm dict-fold
       dict-keys dict-values
-      command-line
+      command-line echo
       ])
 
 (define lambda-form-entry

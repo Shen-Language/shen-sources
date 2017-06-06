@@ -30,15 +30,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (package shen []
 
 (define load
-  FileName -> (let Load (time (load-help (value *tc*) (read-file FileName)))
-                   Infs (if (value *tc*)
-                            (output "~%typechecked in ~A inferences~%"
-                                    (inferences))
+  FileName -> (let Load (if (value *echo*)
+                            (time (load-help (value *tc*) (read-file FileName)))
+                            (load-help (value *tc*) (read-file FileName)))
+                   Infs (if (and (value *tc*) (value *echo*))
+                            (output "~%typechecked in ~A inferences~%" (inferences))
                             skip)
                  loaded))
 
 (define load-help
-  false File -> (for-each (/. X (output "~S~%" (eval-without-macros X))) File)
+  false File -> (for-each (/. X (load-expr-untyped X)) File)
   _ File -> (let RemoveSynonyms (mapcan (/. X (remove-synonyms X)) File)
                  Table (mapcan (/. X (typetable X)) RemoveSynonyms)
                  Assume (for-each (/. X (assumetype X)) Table)
@@ -46,6 +47,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                (for-each (/. X (typecheck-and-load X)) RemoveSynonyms)
                (/. E (unwind-types E Table)))))
 
+(define load-expr-untyped
+  Expr ->
+    (let Result (eval-without-macros Expr)
+      (if (value *echo*)
+        (output "~S~%" Result)
+        Result)))
 
 (define remove-synonyms
   [synonyms-help | S] -> (do (eval [synonyms-help | S]) [])
