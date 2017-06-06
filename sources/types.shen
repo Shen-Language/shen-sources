@@ -68,6 +68,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                               (append [X* | Y*] Z*))
   _ _ -> false)
 
+(define read-doc
+  Name -> (get/or Name doc (freeze "No documentation available.")))
+
+(define write-doc
+  Name Content -> (put Name doc Content))
+
+(define info
+  Name ->
+    (do
+      (output "~A~%~%~A~%~%~A~%~%"
+        (let TypeSig (get-type Name)
+          (if (= shen.skip TypeSig)
+            "No type signature defined."
+            TypeSig))
+        (read-doc Name)
+        (get/or Name source (freeze "No source available.")))
+      ()))
+
 (declare absvector? [A --> boolean])
 (declare adjoin [A --> [[list A] --> [list A]]])
 (declare and [boolean --> [boolean --> boolean]])
@@ -100,6 +118,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare freeze [A --> [lazy A]])
 (declare fst [[A * B] --> A])
 (declare function [[A --> B] --> [A --> B]])
+(declare function? [A --> boolean])
 (declare gensym [symbol --> symbol])
 (declare <-vector [[vector A] --> [number --> A]])
 (declare <-vector/or [[vector A] --> [number --> [[lazy A] --> A]]])
@@ -116,6 +135,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare dict-keys [[dict K V] --> [list K]])
 (declare dict-values [[dict K V] --> [list V]])
 (declare exit [number --> unit])
+(declare filter [[A --> boolean] --> [[list A] --> [list A]]])
+(declare fold-left [[B --> [A --> B]] --> [B --> [[list A] --> B]]])
+(declare fold-right [[A --> [B --> B]] --> [[list A] --> [B --> B]]])
+(declare for-each [[A --> B] --> [[list A] --> unit]])
 (declare get-time [symbol --> number])
 (declare hash [A --> [number --> number]])
 (declare head [[list A] --> A])
@@ -127,6 +150,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare include [[list symbol] --> [list symbol]])
 (declare include-all-but [[list symbol] --> [list symbol]])
 (declare inferences [--> number])
+(declare info [symbol --> unit])
 (declare insert [A --> [string --> string]])
 (declare integer? [A --> boolean])
 (declare internal [symbol --> [list symbol]])
@@ -136,12 +160,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare length [[list A] --> number])
 (declare limit [[vector A] --> number])
 (declare load [string --> symbol])
-(declare fold-left [[B --> [A --> B]] --> [B --> [[list A] --> B]]])
-(declare fold-right [[A --> [B --> B]] --> [[list A] --> [B --> B]]])
-(declare for-each [[A --> B] --> [[list A] --> unit]])
 (declare map [[A --> B] --> [[list A] --> [list B]]])
 (declare mapcan [[A --> [list B]] --> [[list A] --> [list B]]])
-(declare filter [[A --> boolean] --> [[list A] --> [list A]]])
 (declare maxinferences [number --> number])
 (declare n->string [number --> string])
 (declare nl [number --> number])
@@ -170,6 +190,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare read [[stream in] --> unit])
 (declare read-byte [[stream in] --> number])
 (declare read-char-code [[stream in] --> number])
+(declare read-doc [symbol --> string])
 (declare read-file-as-bytelist [string --> [list number]])
 (declare read-file-as-charlist [string --> [list number]])
 (declare read-file-as-string [string --> string])
@@ -210,6 +231,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare variable? [A --> boolean])
 (declare vector? [A --> boolean])
 (declare version [--> string])
+(declare write-doc [symbol --> [string --> string]])
 (declare write-to-file [string --> [A --> A]])
 (declare write-byte [number --> [[stream out] --> number]])
 (declare y-or-n? [string --> boolean])
@@ -223,5 +245,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (declare - [number --> [number --> number]])
 (declare * [number --> [number --> number]])
 (declare == [A --> [B --> boolean]])
+
+(write-doc absvector? "Returns true if argument is a primitive absvector; false otherwise.")
+(write-doc adjoin "Appends value to head of list if value is not already an element of list.")
+(write-doc and "Returns true if all arguments are true. Made variadic via macro.")
+(write-doc app "Used in string formatting ???")
+(write-doc append "Concatenates two lists into a single list.")
+(write-doc arity "Returns the arity of the given function.")
+(write-doc assoc "Retrieves sub-list that starts with key.")
+(write-doc boolean? "Returns true if argument is a boolean; false otherwise.")
+(write-doc bound? "Returns true if symbol has a value assigned to it.")
+(write-doc cd "Changes the current directory for reading/writing files.")
+(write-doc close "Closes a stream, returning unit.")
+(write-doc cn "Concatenates two strings into a single string.")
+(write-doc command-line "Returns list of command line arguments used to start this process.")
+(write-doc compile "Applies Shen-YACC rule to text input and returns parse result.")
+(write-doc cons? "Returns true if argument is a cons pair; false otherwise.")
+
+(write-doc do "Returns the second of two argument values.")
+
+(write-doc function? "Returns true if argument is a symbol that represents a defined function; false otherwise.")
+
+(write-doc info "Prints type signature, documentation string and source for function.")
+
+(write-doc or "Returns true if any argument is true. Made variadic via macro.")
+
+(write-doc read-doc "Retrieves documentation string for function.")
+
+(write-doc tail "Returns list except for the first element. Raises error for empty list.")
+
+(write-doc variable? "Returns true if argument is a symbol that could be a variable (starts with an upper-case letter); false otherwise.")
+(write-doc vector? "Returns true if argument is a vector; false otherwise.")
+(write-doc version "Returns the version of the Shen kernel as a string.")
+(write-doc write-doc "Assigns documentation string to function.")
 
 )
