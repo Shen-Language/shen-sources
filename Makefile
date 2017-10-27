@@ -43,9 +43,10 @@ ShenClTag=v$(ShenClVersion)
 ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
 ShenClArchiveName=$(ShenClFolderName)$(ArchiveSuffix)
 ShenClArchiveUrl=$(UrlRoot)/$(ShenClTag)/$(ShenClArchiveName)
-BinaryName=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
+Shen=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
 
-ReleaseArchiveName=ShenOSKernel-$(GitVersion)$(ArchiveSuffix)
+ReleaseZip=ShenOSKernel-$(GitVersion).zip
+ReleaseTar=ShenOSKernel-$(GitVersion).tar.gz
 
 #
 # KLambda rendering
@@ -61,7 +62,7 @@ else
 	rm -rf klambda
 	mkdir -p klambda
 endif
-	$(BinaryName) -e "(do (load \"make.shen\") (make))"
+	$(Shen) -e "(do (load \"make.shen\") (make))"
 
 #
 # Dependency retrieval
@@ -91,12 +92,12 @@ endif
 release:
 ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
-	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseArchiveName) -LiteralPath klambda, tests, license.txt"
-	# TODO: generate tar
+	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath klambda, tests, license.txt"
+	7z a release$(Slash)$(ReleaseTar) klambda tests license.txt
 else
 	mkdir -p release
-	# TODO: generate zip
-	tar -vczf release/$(ReleaseArchiveName) klambda tests license.txt
+	zip release/$(ReleaseZip) klambda tests license.txt
+	tar -vczf release/$(ReleaseTar) klambda tests license.txt
 endif
 
 #
