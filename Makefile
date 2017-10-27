@@ -46,7 +46,8 @@ ShenClArchiveUrl=$(UrlRoot)/$(ShenClTag)/$(ShenClArchiveName)
 Shen=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
 
 ReleaseZip=ShenOSKernel-$(GitVersion).zip
-ReleaseTar=ShenOSKernel-$(GitVersion).tar.gz
+ReleaseTar=ShenOSKernel-$(GitVersion).tar
+ReleaseTarGz=$(ReleaseTar).gz
 
 #
 # KLambda rendering
@@ -92,12 +93,12 @@ endif
 release:
 ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
-	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath klambda, tests, license.txt"
-	7z a release$(Slash)$(ReleaseTar) klambda tests license.txt
+	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath klambda, tests, sources, license.txt"
+	7z a -ttar -so $(ReleaseTar) klambda tests sources license.txt | 7z a -si release\\\\$(ReleaseTarGz)
 else
 	mkdir -p release
 	zip release/$(ReleaseZip) klambda tests license.txt
-	tar -vczf release/$(ReleaseTar) klambda tests license.txt
+	tar -vczf release/$(ReleaseTarGz) klambda tests license.txt
 endif
 
 #
