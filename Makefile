@@ -10,6 +10,12 @@ else
 	OSName=linux
 endif
 
+GitVersion=$($(shell git tag -l --contains HEAD):shen-%=%)
+
+ifeq ("$(GitVersion)","")
+	GitVersion=$(shell git rev-parse --short HEAD)
+endif
+
 #
 # Set OS-specific variables
 #
@@ -36,6 +42,8 @@ ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
 ShenClArchiveName=$(ShenClFolderName)$(ArchiveSuffix)
 ShenClArchiveUrl=$(UrlRoot)/$(ShenClTag)/$(ShenClArchiveName)
 BinaryName=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
+
+ReleaseArchiveName=ShenOSKernel-$(GitVersion)$(ArchiveSuffix)
 
 #
 # KLambda rendering
@@ -74,6 +82,20 @@ else
 endif
 
 #
+# Packging
+#
+
+.PHONY: release
+release:
+ifeq ($(OSName),windows)
+	$(PS) "New-Item -Path release -Force -ItemType Directory"
+	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseArchiveName) -LiteralPath klambda, tests, license.txt"
+else
+	mkdir -p release
+	tar -vczf release/$(ReleaseArchiveName) klambda tests license.txt
+endif
+
+#
 # Cleanup
 #
 
@@ -81,8 +103,9 @@ endif
 clean:
 ifeq ($(OSName),windows)
 	$(PS) "if (Test-Path klambda) { Remove-Item klambda -Recurse -Force -ErrorAction Ignore }"
+	$(PS) "if (Test-Path release) { Remove-Item release -Recurse -Force -ErrorAction Ignore }"
 else
-	rm -rf klambda
+	rm -rf klambda release
 endif
 
 .PHONY: pure
