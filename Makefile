@@ -43,10 +43,14 @@ ShenClTag=v$(ShenClVersion)
 ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
 ShenClArchiveName=$(ShenClFolderName)$(ArchiveSuffix)
 ShenClArchiveUrl=$(UrlRoot)/$(ShenClTag)/$(ShenClArchiveName)
-Shen=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
 
-ReleaseZip=ShenOSKernel-$(GitVersion).zip
-ReleaseTar=ShenOSKernel-$(GitVersion).tar
+ifndef Shen
+	Shen=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
+endif
+
+ReleaseFolderName=ShenOSKernel-$(GitVersion)
+ReleaseZip=$(ReleaseFolderName).zip
+ReleaseTar=$(ReleaseFolderName).tar
 ReleaseTarGz=$(ReleaseTar).gz
 
 #
@@ -93,12 +97,23 @@ endif
 release:
 ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
-	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath klambda, tests, sources, license.txt"
-	7z a -ttar -so $(ReleaseTar) klambda tests sources license.txt | 7z a -si release\\\\$(ReleaseTarGz)
+	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
+	$(PS) "New-Item -Path $(ReleaseFolderName) -Force -ItemType Directory"
+	$(PS) "Copy-Item -Recurse klambda $(ReleaseFolderName)"
+	$(PS) "Copy-Item -Recurse sources $(ReleaseFolderName)"
+	$(PS) "Copy-Item -Recurse tests $(ReleaseFolderName)"
+	$(PS) "Copy-Item license.txt $(ReleaseFolderName)"
+	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath $(ReleaseFolderName)"
+	7z a -ttar -so $(ReleaseTar) $(ReleaseFolderName) | 7z a -si release\\\\$(ReleaseTarGz)
+	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
 else
 	mkdir -p release
-	zip release/$(ReleaseZip) klambda tests license.txt
-	tar -vczf release/$(ReleaseTarGz) klambda tests license.txt
+	rm -rf $(ReleaseFolderName)
+	mkdir -p $(ReleaseFolderName)
+	cp -rf klambda tests license.txt $(ReleaseFolderName)
+	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
+	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
+	rm -rf $(ReleaseFolderName)
 endif
 
 #
