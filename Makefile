@@ -83,7 +83,8 @@ ifeq ($(OSName),windows)
 	$(PS) "Rename-Item $(ShenClFolderName) shen-cl -ErrorAction Ignore"
 else
 	wget $(ShenClArchiveUrl)
-	tar xf $(ShenClArchiveName)
+	mkdir -p $(ShenClFolderName)
+	tar xf $(ShenClArchiveName) -C $(ShenClFolderName)
 	rm -f $(ShenClArchiveName)
 	rm -rf shen-cl
 	mv $(ShenClFolderName) shen-cl
@@ -110,7 +111,7 @@ else
 	mkdir -p release
 	rm -rf $(ReleaseFolderName)
 	mkdir -p $(ReleaseFolderName)
-	cp -rf klambda tests license.txt $(ReleaseFolderName)
+	cp -rf klambda sources tests license.txt $(ReleaseFolderName)
 	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
 	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
 	rm -rf $(ReleaseFolderName)
