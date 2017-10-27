@@ -10,10 +10,12 @@ else
 	OSName=linux
 endif
 
-GitVersion=$($(shell git tag -l --contains HEAD):shen-%=%)
+Tag=$(shell git tag -l --contains HEAD)
 
-ifeq ("$(GitVersion)","")
+ifeq ("$(Tag)","")
 	GitVersion=$(shell git rev-parse --short HEAD)
+else
+	GitVersion=$(Tag:shen-%=%)
 endif
 
 #
