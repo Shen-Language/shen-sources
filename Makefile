@@ -90,8 +90,10 @@ release:
 ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
 	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseArchiveName) -LiteralPath klambda, tests, license.txt"
+	# TODO: generate tar
 else
 	mkdir -p release
+	# TODO: generate zip
 	tar -vczf release/$(ReleaseArchiveName) klambda tests license.txt
 endif
 
