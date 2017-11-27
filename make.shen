@@ -1,44 +1,70 @@
-\\ License Note:  this code is used to generate KLambda from Shen source under the 3-clause BSD license.  The code may be changed but
-\\ the license attached to the generated KLambda may **not** be changed.  The KLambda produced is a direct derivative of the Shen sources
-\\ which are 3 clause BSD licensed.  Please look at the file license.pdf for an accompanying discussion.
-\\
+\\ License Note:  this code is used to generate KLambda from
+\\ Shen source under the 3-clause BSD license. The code may
+\\ be changed but the license attached to the generated KLambda
+\\ may **not** be changed. The KLambda produced is a direct
+\\ derivative of the Shen sources which are 3 clause BSD licensed.
+\\ Please look at the file license.pdf for an accompanying discussion.
+
 \\ (c) Mark Tarver 2015, all rights reserved
 
-(systemf internal)
-(systemf receive)
-(systemf <!>)
-(systemf dict)
-(systemf dict?)
-(systemf dict-count)
-(systemf dict->)
-(systemf <-dict/or)
-(systemf <-dict)
-(systemf dict-rm)
-(systemf dict-fold)
-(systemf dict-keys)
-(systemf dict-values)
-(systemf <-vector/or)
-(systemf <-address/or)
-(systemf value/or)
-(systemf get/or)
-(systemf for-each)
-(systemf fold-left)
-(systemf fold-right)
-(systemf filter)
-(systemf exit)
-(systemf sterror)
-(systemf read-char-code)
-(systemf read-file-as-charlist)
-(systemf *sterror*)
-(systemf *argv*)
-(systemf command-line)
+(do
+  (systemf internal)
+  (systemf receive)
+  (systemf <!>)
+  (systemf dict)
+  (systemf dict?)
+  (systemf dict-count)
+  (systemf dict->)
+  (systemf <-dict/or)
+  (systemf <-dict)
+  (systemf dict-rm)
+  (systemf dict-fold)
+  (systemf dict-keys)
+  (systemf dict-values)
+  (systemf <-vector/or)
+  (systemf <-address/or)
+  (systemf value/or)
+  (systemf get/or)
+  (systemf for-each)
+  (systemf fold-left)
+  (systemf fold-right)
+  (systemf filter)
+  (systemf exit)
+  (systemf sterror)
+  (systemf read-char-code)
+  (systemf read-file-as-charlist)
+  (systemf *sterror*)
+  (systemf *argv*)
+  (systemf command-line)
+  ())
 
-(define make
-  -> (map (function make-file)
-          ["core.shen" "declarations.shen" "load.shen" "macros.shen"
-           "prolog.shen" "reader.shen" "sequent.shen" "sys.shen" "t-star.shen"
-           "toplevel.shen"  "track.shen"  "types.shen" "writer.shen"
-           "yacc.shen"]))
+(set *sources-directory* "sources/")
+(set *klambda-directory* "klambda/")
+
+(define make ->
+  (do
+    (output "sources directory: ~S~%" (value *sources-directory*))
+    (output "klambda directory: ~S~%" (value *klambda-directory*))
+    (output "~%")
+    (map
+      (function make-file)
+      ["core"
+       "declarations"
+       "load"
+       "macros"
+       "prolog"
+       "reader"
+       "sequent"
+       "sys"
+       "t-star"
+       "toplevel"
+       "track"
+       "types"
+       "writer"
+       "yacc"])
+    (output "~%")
+    (output "compilation complete.~%")
+    ()))
 
 \* Required to avoid errors when processing functions with system names *\
 (defcc shen.<name>
@@ -55,22 +81,20 @@
   X -> X)
 
 (define make-file
-  ShenFile -> (let Message (output "compiling ~A~%" ShenFile)
-                   Shen (read-file ShenFile)
-                   KL (map (function make-kl-code) Shen)
-                   StringKL (@s (license) (list->string KL))
-                   KLFile (klfile ShenFile)
-                   Write (write-to-file KLFile StringKL)
-                 KLFile))
+  File ->
+    (let _ (output "compiling ~A~%" File)
+         ShenFile (make-string "~A~A.shen" (value *sources-directory*) File)
+         KlFile (make-string "~A~A.kl" (value *klambda-directory*) File)
+         ShenCode (read-file ShenFile)
+         KlCode (map (function make-kl-code) ShenCode)
+         KlString (@s (license) (list->string KlCode))
+         Write (write-to-file KlFile KlString)
+      KlFile))
 
 (define make-kl-code
   [define F | Rules] -> (shen.elim-def [define F | Rules])
   [defcc F | Rules] -> (shen.elim-def [defcc F | Rules])
   Code -> Code)
-
-(define klfile
-  ".shen" -> ".kl"
-  (@s S Ss) -> (@s S (klfile Ss)))
 
 (define list->string
   [] -> ""
@@ -110,5 +134,3 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.c#34;
 
 ")
-
-
