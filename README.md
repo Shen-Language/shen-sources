@@ -38,7 +38,7 @@ Building release packages on Windows currently requires the [7-zip](http://www.7
 
 ## Porting Shen
 
-Refer to `specification/` for instructions on building a certifiable port of Shen. See `certification.pdf` on accreditation of your port.
+Refer to `specification/`, `doc/` and [the wiki](https://github.com/Shen-Language/wiki/wiki) for instructions on building a certifiable port of Shen. If you get your port to run the standard test suite successfully, let us know on [the mailing list](https://groups.google.com/forum/#!forum/qilang) and your port will be certified.
 
 Happy Programming!
 
