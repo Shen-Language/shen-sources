@@ -34,6 +34,8 @@ make klambda
 make release
 ```
 
+Building release packages on Windows currently requires the [7-zip](http://www.7-zip.org/) command `7z` to be accessible from the command line. 
+
 ## Porting Shen
 
 Refer to `specification/` for instructions on building a certifiable port of Shen. See `certification.pdf` on accreditation of your port.
