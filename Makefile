@@ -100,10 +100,14 @@ ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
 	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
 	$(PS) "New-Item -Path $(ReleaseFolderName) -Force -ItemType Directory"
+	$(PS) "Copy-Item -Recurse assets $(ReleaseFolderName)"
+	$(PS) "Copy-Item -Recurse doc $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse klambda $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse sources $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse tests $(ReleaseFolderName)"
-	$(PS) "Copy-Item license.txt $(ReleaseFolderName)"
+	$(PS) "Copy-Item CHANGELOG.md $(ReleaseFolderName)"
+	$(PS) "Copy-Item LICENSE.txt $(ReleaseFolderName)"
+	$(PS) "Copy-Item README.md $(ReleaseFolderName)"
 	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath $(ReleaseFolderName)"
 	7z a -ttar -so $(ReleaseTar) $(ReleaseFolderName) | 7z a -si release\\\\$(ReleaseTarGz)
 	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
@@ -111,7 +115,7 @@ else
 	mkdir -p release
 	rm -rf $(ReleaseFolderName)
 	mkdir -p $(ReleaseFolderName)
-	cp -rf klambda sources tests license.txt $(ReleaseFolderName)
+	cp -rf assets doc klambda sources tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
 	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
 	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
 	rm -rf $(ReleaseFolderName)
