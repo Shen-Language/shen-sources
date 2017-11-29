@@ -26,19 +26,3 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-Comment on BSD, GPL and Copyright
-
-This license applies to all derived versions of Shen, including all versions derived from the sources
-provided whatever the method of compilation and the object code generated. This is the reason for
-clause 2 in the BSD. Such derived works should carry the above license on those source files
-generated – or with the files if they are binary. Any original code specifically written by the
-programmer which not derived from the sources supplied is and should be copyrighted to that
-programmer. This work may be placed under any license of choice except GPL because of the viral
-condition. There is no legal right to relicense or sublicense BSD code or any derived version to
-another license (e.g. GPL). The power to place a license on a work belongs to the copyright holder.
-
-A person does not assume copyright over a work by making a small change to it. Only if the change
-is substantial to be deemed intellectually significant can such a claim be made and then only over the
-change itself. Hence if changing code, if you wish to retain copyright over your changes and they are
-intellectually significant, offset these changes under your copyright.
