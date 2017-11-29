@@ -1,5 +1,3 @@
-<div style="color: red;">This document may be out of date or contain redundant information</div>
-
 # Porting Shen
 
 The document you are reading is in the folder Porting Instructions. This document explains what you need to do to port Shen to your platform.
