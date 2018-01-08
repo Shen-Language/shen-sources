@@ -34,8 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *tc* false)
 (set *property-vector* (dict 20000))
 (set *process-counter* 0)
-(set *varcounter* (vector 1000))
-(set *prologvectors* (vector 1000))
+(set *varcounter* (vector 10000))
+(set *prologvectors* (vector 10000))
 (set *demodulation-function* (/. X X))
 (set *macroreg* [timer-macro cases-macro abs-macro put/get-macro
                  compile-macro datatype-macro let-macro assoc-macro
