@@ -92,27 +92,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     (set *sterror* (value *stoutput*))
     skip)
 
-(if (not (bound? *argv*))
-    (set *argv* ["shen"])
-    skip)
-
 (define initialise_arity_table
   [] -> []
   [F Arity | Table] -> (let DecArity (put F arity Arity)
                          (initialise_arity_table Table)))
 
 (define arity
-  F -> (get/or F arity (freeze -1)))
+  F -> (get/or F arity (freeze -1) (value *property-vector*)))
 
 (initialise_arity_table
  [abort 0 absvector? 1 absvector 1 adjoin 2 and 2 append 2 arity 1
   assoc 2 boolean? 1 bound? 1 cd 1 close 1 compile 3 concat 2 cons 2 cons? 1
-  command-line 0 cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
+  cn 2 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1
   enable-type-theory 1 error-to-string 1 interror 2 eval 1
-  eval-kl 1 exit 1 explode 1 external 1 fail-if 2 fail 0 fix 2
-  fold-left 3 fold-right 3 filter 2
-  for-each 2 findall 5 freeze 1 fst 1 gensym 1 get 3 get/or 4
-  get-time 1 address-> 3 <-address 2 <-address/or 3 <-vector 2 <-vector/or 3
+  eval-kl 1 explode 1 external 1 fail-if 2 fail 0 fix 2
+  findall 5 freeze 1 fst 1 gensym 1 get 3
+  get-time 1 address-> 3 <-address 2 <-vector 2
   > 2 >= 2 = 2
   hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 integer? 1
   intern 1 identical 4 inferences 0 input 1 input+ 2 implementation 0
@@ -124,8 +119,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   port 0 porters 0 pos 2 print 1 profile 1 profile-results 1 pr 2
   ps 1 preclude 1 preclude-all-but 1 protect 1
   address-> 3 put 4 reassemble 2 read-file-as-string 1 read-file 1
-  read-file-as-charlist 1 read-file-as-bytelist 1
-  read 1 read-byte 1 read-from-string 1 read-char-code 1
+  read-file-as-bytelist 1
+  read 1 read-byte 1 read-from-string 1
   receive 1 release 0 remove 2 require 3 reverse 1 set 2
   simple-error 1 snd 1 specialise 1 spy 1 step 1 stinput 0 stoutput 0 sterror 0
   string->n 1 string->symbol 1 string? 1 str 1 subst 3 sum 1
@@ -133,12 +128,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   thaw 1 tlstr 1 track 1 trap-error 2 tuple? 1 type 2
   return 3 undefmacro 1 unput 3 unprofile 1 unify 4 unify! 4
   union 2 untrack 1 unspecialise 1 undefmacro 1
-  vector 1 vector? 1 vector-> 3 value 1 value/or 2 variable? 1 version 0
+  vector 1 vector? 1 vector-> 3 value 1 variable? 1 version 0
   write-byte 2 write-to-file 2 y-or-n? 1 + 2 * 2 / 2 - 2 == 2
   <e> 1 <!> 1 @p 2 @v 2 @s 2 preclude 1 include 1
   preclude-all-but 1 include-all-but 1
-  dict 1 dict? 1 dict-count 1 dict-> 3 <-dict/or 3 <-dict 2 dict-rm 2
-  dict-fold 3 dict-keys 1 dict-values 1
   ])
 
 (define systemf
@@ -153,13 +146,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (put (intern "shen") external-symbols
      [! } { --> <-- && : ; :- := _
       *language* *implementation* *stinput* *stoutput* *sterror*
-      *home-directory* *version* *argv*
+      *home-directory* *version*
       *maximum-print-sequence-size* *macros* *os* *release* *property-vector*
       *port* *porters* *hush*
       @v @p @s
       <- -> <e> <!> == = >= > /. =! $ - / * + <= < >> <>
       y-or-n? write-to-file write-byte where when warn version verified
-      variable? value value/or vector-> <-vector <-vector/or vector vector?
+      variable? value vector-> <-vector vector vector?
       unspecialise untrack unit unix union unify
       unify! unput unprofile undefmacro return type tuple? true
       trap-error track time thaw tc? tc tl tlstr tlv
@@ -168,8 +161,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       stoutput step spy specialise snd simple-error set save str run
       reverse remove release read receive
       read-file read-file-as-bytelist read-file-as-string read-byte
-      read-file-as-charlist
-      read-char-code read-from-string package? put preclude
+      read-from-string package? put preclude
       preclude-all-but ps prolog? protect profile-results profile print
       pr pos porters port package output out os or
       optimise open occurrences occurs-check n->string number? number
@@ -178,18 +170,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       limit length let lazy lambda language kill is
       intersection inferences intern integer? input input+ include
       include-all-but it in internal implementation if identical head
-      hd hdv hdstr hash get get/or get-time gensym function fst freeze fix
-      file fail fail-if fwhen findall for-each fold-right fold-left filter
+      hd hdv hdstr hash get get-time gensym function fst freeze fix
+      file fail fail-if fwhen findall
       false enable-type-theory explode external exception eval-kl eval
-      error-to-string error empty? exit
+      error-to-string error empty?
       element? do difference destroy defun define defmacro defcc
       defprolog declare datatype cut cn
       cons? cons cond concat compile cd cases call close bind bound?
       boolean? boolean bar! assoc arity abort
-      append and adjoin <-address <-address/or address-> absvector? absvector
-      dict dict? dict-count dict-> <-dict/or <-dict dict-rm dict-fold
-      dict-keys dict-values
-      command-line
+      append and adjoin <-address address-> absvector? absvector
       ])
 
 (define lambda-form-entry

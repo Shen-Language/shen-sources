@@ -34,9 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (set *continue-repl-loop* true)
 
-(define exit
-  Code -> (set *continue-repl-loop* false))
-
 (define loop
   -> (do (initialise_environment)
          (prompt)
@@ -111,7 +108,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (toplineread_loop (read-char-code (stinput)) []))
 
 (define toplineread_loop
-  -1 [] -> (exit 0)
+  -1 [] -> (set *continue-repl-loop* false)
   Char _ -> (error "line read aborted")  where (= Char (hat))
   Char Chars -> (let Line (compile (/. X (<st_input> X)) Chars (/. E nextline))
                      It (record-it Chars)

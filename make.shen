@@ -11,31 +11,29 @@
   (systemf internal)
   (systemf receive)
   (systemf <!>)
-  (systemf dict)
-  (systemf dict?)
-  (systemf dict-count)
-  (systemf dict->)
-  (systemf <-dict/or)
-  (systemf <-dict)
-  (systemf dict-rm)
-  (systemf dict-fold)
-  (systemf dict-keys)
-  (systemf dict-values)
-  (systemf <-vector/or)
-  (systemf <-address/or)
-  (systemf value/or)
-  (systemf get/or)
-  (systemf for-each)
-  (systemf fold-left)
-  (systemf fold-right)
-  (systemf filter)
-  (systemf exit)
   (systemf sterror)
-  (systemf read-char-code)
-  (systemf read-file-as-charlist)
   (systemf *sterror*)
-  (systemf *argv*)
-  (systemf command-line)
+  ())
+
+\* Previously systemf'd functions have to be reverted if compiling
+   with Shen versions that still have these as system functions *\
+
+(define unsystemf
+  Sym -> (put shen shen.external-symbols
+              (remove Sym (get shen shen.external-symbols))))
+
+(do
+  (map (function unsystemf) [
+     command-line *argv*
+     fold-righ fold-left
+     filter
+     for-each
+     exit
+     read-file-as-charlist read-charcode
+     get/or value/or <-address/or <-vector/or
+     dict dict? dict-count dict-> <-dict <-dict/or dict-rm
+     dict-fold dict-keys dict-values
+  ])
   ())
 
 (set *sources-directory* "sources/")
@@ -56,6 +54,7 @@
        "reader"
        "sequent"
        "sys"
+       "dict"
        "t-star"
        "toplevel"
        "track"
@@ -71,14 +70,6 @@
   X := (if (symbol? X)
            X
            (error "~A is not a legitimate function name.~%" X)))
-
-\* Required so that older versions process get/or correctly *\
-(define shen.put/get-macro
-  [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]]
-  [get X Pointer] -> [get X Pointer [value *property-vector*]]
-  [get/or X Pointer Or] -> [get/or X Pointer Or [value *property-vector*]]
-  [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
-  X -> X)
 
 (define make-file
   File ->

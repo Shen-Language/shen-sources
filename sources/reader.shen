@@ -440,7 +440,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define record-exceptions
   ListofExceptions PackageName
-  -> (let CurrExceptions (get/or PackageName external-symbols (freeze []))
+  -> (let CurrExceptions (get/or PackageName external-symbols (freeze [])
+                                 (value *property-vector*))
           AllExceptions (union ListofExceptions CurrExceptions)
        (put PackageName external-symbols AllExceptions)))
 
@@ -448,7 +449,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   PackageName Internal -> (put PackageName internal-symbols
                                (union Internal
                                       (get/or PackageName internal-symbols
-                                              (freeze [])))))
+                                              (freeze [])
+                                              (value *property-vector*)))))
 
 (define internal-symbols
   ExpPackageNameDot PackageSymbol -> [PackageSymbol]

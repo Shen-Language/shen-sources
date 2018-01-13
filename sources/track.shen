@@ -133,7 +133,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          (@p F Results)))
 
 (define get-profile
-  F -> (get/or F profile (freeze 0)))
+  F -> (get/or F profile (freeze 0) (value *property-vector*)))
 
 (define put-profile
   F Time -> (put F profile Time))
