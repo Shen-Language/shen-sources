@@ -10,10 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - `command-line` function and `*argv*` variable.
 - `fold-right` and `fold-left`.
 - `filter`.
-- `for-each`.
 - `exit`.
 
 ### Changed
+- `for-each` was made internal to the `shen` package.
 - `get/or`, `value/or`, `<-address/or` and `<-vector/or` made internal to the `shen` package.
 - `dict`, `dict?`, `dict-count`, `dict->`, `<-dict`, `<-dict/or`, `dict-rm`, `dict-fold`, `dict-keys` and `dict-values` made internal to the `shen` package.
 
