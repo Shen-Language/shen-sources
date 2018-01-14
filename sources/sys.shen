@@ -256,6 +256,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X [[X | Y] | _] -> [X | Y]
   X [_ | Y] -> (assoc X Y))
 
+(define assoc-set
+  Key Value [] -> [[Key | Value]]
+  Key Value [[Key | _] | Rest] -> [[Key | Value] | Rest]
+  Key Value [Z | Rest] -> [Z | (assoc-set Key Value Rest)])
+
+(define assoc-rm
+  Key [] -> []
+  Key [[Key | _] | Rest] -> Rest
+  Key [Z | Rest] -> [Z | (assoc-rm Key Rest)])
+
 (define boolean?
   true -> true
   false -> true
@@ -290,13 +300,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define put
   X Pointer Y Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
-                           Added (set-key-entry-value Pointer Y Curr)
+                           Added (assoc-set Pointer Y Curr)
                            Update (dict-> Dict X Added)
                         Y))
 
 (define unput
   X Pointer Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
-                         Removed (remove-key-entry-value Pointer Curr)
+                         Removed (assoc-rm Pointer Curr)
                          Update (dict-> Dict X Removed)
                       X))
 

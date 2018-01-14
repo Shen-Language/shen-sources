@@ -58,16 +58,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict-bucket->
   Dict N Bucket -> (address-> Dict (+ 3 N) Bucket))
 
-(define set-key-entry-value
-  Key Value [] -> [[Key | Value]]
-  Key Value [[Key | _] | Rest] -> [[Key | Value] | Rest]
-  Key Value [Z | Rest] -> [Z | (set-key-entry-value Key Value Rest)])
-
-(define remove-key-entry-value
-  Key [] -> []
-  Key [[Key | _] | Rest] -> Rest
-  Key [Z | Rest] -> [Z | (remove-key-entry-value Key Rest)])
-
 (define dict-update-count
   Dict OldBucket NewBucket -> (let Diff (- (length NewBucket)
                                            (length OldBucket))
@@ -77,7 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict->
   Dict Key Value -> (let N (hash Key (dict-capacity Dict))
                          Bucket (<-dict-bucket Dict N)
-                         NewBucket (set-key-entry-value Key Value Bucket)
+                         NewBucket (assoc-set Key Value Bucket)
                          Change (dict-bucket-> Dict N NewBucket)
                          Count (dict-update-count Dict Bucket NewBucket)
                       Value))
@@ -93,7 +83,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define dict-rm
   Dict Key -> (let N (hash Key (dict-capacity Dict))
                    Bucket (<-dict-bucket Dict N)
-                   NewBucket (remove-key-entry-value Key Bucket)
+                   NewBucket (assoc-rm Key Bucket)
                    Change (dict-bucket-> Dict N NewBucket)
                    Count (dict-update-count Dict Bucket NewBucket)
                  Key))
