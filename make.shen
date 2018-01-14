@@ -29,7 +29,7 @@
      filter
      for-each
      exit
-     read-file-as-charlist read-charcode
+     read-file-as-charlist read-char-code
      get/or value/or <-address/or <-vector/or
      dict dict? dict-count dict-> <-dict <-dict/or dict-rm
      dict-fold dict-keys dict-values
