@@ -98,7 +98,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                          (initialise_arity_table Table)))
 
 (define arity
-  F -> (get/or F arity (freeze -1) (value *property-vector*)))
+  F -> (trap-error (get F arity) (/. E -1)))
 
 (initialise_arity_table
  [abort 0 absvector? 1 absvector 1 adjoin 2 and 2 append 2 arity 1

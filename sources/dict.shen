@@ -40,7 +40,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define dict?
   X -> (and (absvector? X)
-            (= (<-address/or X 0 (freeze not-dictionary)) dictionary)))
+            (= (trap-error (<-address X 0) (/. E not-dictionary))
+               dictionary)))
 
 (define dict-capacity
   Dict -> (<-address Dict 1))
@@ -81,16 +82,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                          Count (dict-update-count Dict Bucket NewBucket)
                       Value))
 
-(define <-dict/or
-  Dict Key Or -> (let N (hash Key (dict-capacity Dict))
-                      Bucket (<-dict-bucket Dict N)
-                      Result (assoc Key Bucket)
-                   (if (empty? Result)
-                       (thaw Or)
-                       (tl Result))))
-
 (define <-dict
-  Dict Key -> (<-dict/or Dict Key (freeze (error "value not found~%"))))
+  Dict Key -> (let N (hash Key (dict-capacity Dict))
+                   Bucket (<-dict-bucket Dict N)
+                   Result (assoc Key Bucket)
+                (if (empty? Result)
+                    (error "value ~A not found in dict~%" Key)
+                    (tl Result))))
 
 (define dict-rm
   Dict Key -> (let N (hash Key (dict-capacity Dict))

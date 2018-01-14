@@ -68,16 +68,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   _ -> false)
 
 (define external
-  Package -> (get/or
-              Package external-symbols
-              (freeze (error "package ~A has not been used.~%" Package))
-              (value *property-vector*)))
+  Package -> (trap-error
+              (get Package external-symbols)
+              (/. E (error "package ~A has not been used.~%" Package))))
 
 (define internal
-  Package -> (get/or
-               Package internal-symbols
-               (freeze (error "package ~A has not been used.~%" Package))
-               (value *property-vector*)))
+  Package -> (trap-error
+              (get Package internal-symbols)
+              (/. E (error "package ~A has not been used.~%" Package))))
 
 (define package-contents
   [package null _ | Contents] -> Contents
@@ -105,22 +103,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (value *tc*))
 
 (define ps
-  Name -> (get/or Name source
-                  (freeze (error "~A not found.~%" Name))
-                  (value *property-vector*)))
+  Name -> (trap-error
+           (get Name source)
+           (/. E (error "~A not found.~%" Name))))
 
 (define stinput
   -> (value *stinput*))
-
-(define <-address/or
-  Vector N Or -> (trap-error
-                  (<-address Vector N)
-                  (/. E (thaw Or))))
-
-(define value/or
-  Sym Or -> (trap-error
-             (value Sym)
-             (/. E (thaw Or))))
 
 (define vector
   N -> (let Vector (absvector (+ N 1))
@@ -135,7 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define vector?
   X -> (and (absvector? X)
-            (let X (<-address/or X 0 (freeze -1))
+            (let X (trap-error (<-address X 0) (/. E -1))
               (and (number? X) (>= X 0)))))
 
 (define vector->
@@ -150,14 +138,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     (if (= VectorElement (fail))
                         (error "vector element not found~%")
                         VectorElement))))
-
-(define <-vector/or
-  Vector N Or -> (if (= N 0)
-                     (error "cannot access 0th element of a vector~%")
-                     (let VectorElement (<-address/or Vector N Or)
-                       (if (= VectorElement (fail))
-                           (thaw Or)
-                           VectorElement))))
 
 (define posint?
   X -> (and (integer? X) (>= X 0)))
@@ -227,7 +207,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define tuple?
   X -> (and (absvector? X)
-            (= tuple (<-address/or X 0 (freeze not-tuple)))))
+            (= tuple (trap-error (<-address X 0) (/. E not-tuple)))))
 
 (define append
   [] X -> X
@@ -254,9 +234,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                   (/. E NewVector)))
 
 (define hdv
-  Vector -> (<-vector/or
-             Vector 1
-             (freeze (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
+  Vector -> (trap-error
+             (<-vector Vector 1)
+             (/. E (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
 
 (define tlv
   Vector -> (let Limit (limit Vector)
@@ -309,28 +289,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F _ X -> (fix-help F X (F X)))
 
 (define put
-  X Pointer Y Dict -> (let Curr (<-dict/or Dict X (freeze []))
+  X Pointer Y Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
                            Added (set-key-entry-value Pointer Y Curr)
                            Update (dict-> Dict X Added)
                         Y))
 
 (define unput
-  X Pointer Dict -> (let Curr (<-dict/or Dict X (freeze []))
+  X Pointer Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
                          Removed (remove-key-entry-value Pointer Curr)
                          Update (dict-> Dict X Removed)
                       X))
 
-(define get/or
-  X Pointer Or Dict -> (let Entry (<-dict/or Dict X (freeze []))
-                            Result (assoc Pointer Entry)
-                         (if (empty? Result)
-                             (thaw Or)
-                             (tl Result))))
-
 (define get
-  X Pointer Dict -> (get/or X Pointer
-                            (freeze (error "value not found~%"))
-                            Dict))
+  X Pointer Dict -> (let Entry (trap-error (<-dict Dict X) (/. E []))
+                         Result (assoc Pointer Entry)
+                      (if (empty? Result)
+                          (error "value not found~%")
+                          (tl Result))))
 
 (define hash
   S Limit -> (mod (sum (map (/. X (string->n X)) (explode S))) Limit))
@@ -473,7 +448,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define bound?
   Sym -> (and (symbol? Sym)
-              (let Val (value/or Sym (freeze this-symbol-is-unbound))
+              (let Val (trap-error (value Sym) (/. E this-symbol-is-unbound))
                 (if (= Val this-symbol-is-unbound)
                     false
                     true))))
@@ -536,8 +511,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   F -> (lookup-func F))
 
 (define lookup-func
-  F -> (get/or F lambda-form
-               (freeze (error "~A has no lambda expansion~%" F))
-               (value *property-vector*)))
+  F -> (trap-error
+        (get F lambda-form)
+        (/. E (error "~A has no lambda expansion~%" F))))
 
 )
