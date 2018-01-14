@@ -144,7 +144,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X Y -> (if (element? X Y) Y [X | Y]))
 
 (put (intern "shen") external-symbols
-     [! } { --> <-- && : ; :- := _
+     [! } { --> <-- && : ; :- := _ ,
       *language* *implementation* *stinput* *stoutput* *sterror*
       *home-directory* *version*
       *maximum-print-sequence-size* *macros* *os* *release* *property-vector*
