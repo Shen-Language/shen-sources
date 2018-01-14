@@ -13,6 +13,7 @@
   (systemf <!>)
   (systemf sterror)
   (systemf *sterror*)
+  (systemf ,)
   ())
 
 \* Previously systemf'd functions have to be reverted if compiling
