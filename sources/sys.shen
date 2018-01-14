@@ -413,7 +413,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define nth
   1 [X | _] -> X
-  N [_ | Y] -> (nth (- N 1) Y))
+  N [_ | Y] -> (nth (- N 1) Y)
+  N X -> (error "nth applied to ~A, ~A~%" N X))
 
 (define integer?
   N -> (and (number? N) (let Abs (abs N) (integer-test? Abs (magless Abs 1)))))
