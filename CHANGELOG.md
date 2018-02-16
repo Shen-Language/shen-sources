@@ -6,12 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Moved code that prints errors at the toplevel to the `shen.toplevel-display-exception` function that can be overrided by ports to customize printing of errors (to for example, include error location).
+
 ### Removed
 - `command-line` function and `*argv*` variable.
 - `fold-right` and `fold-left`.
 - `get/or`, `value/or`, `<-address/or`, `<-vector/or` and `<-dict/or`.
 - `filter`.
 - `exit`.
+- Handling of EOF in the REPL.
 
 ### Changed
 - `for-each` was made internal to the `shen` package.
