@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [21.0]
+
 ### Added
 - Moved code that prints errors at the toplevel to the `shen.toplevel-display-exception` function that can be overrided by ports to customize printing of errors (to for example, include error location).
 
@@ -291,7 +293,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-20.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...HEAD
+[21.0]: https://github.com/Shen-Language/shen-sources/compare/shen-20.1...shen-21.0
+[20.1]: https://github.com/Shen-Language/shen-sources/compare/shen-20.0...shen-20.1
 [20.0]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3.1...shen-20.0
 [19.3.1]: https://github.com/Shen-Language/shen-sources/compare/shen-19.3...shen-19.3.1
 [19.3]: https://github.com/Shen-Language/shen-sources/compare/shen-19.2...shen-19.3
