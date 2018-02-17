@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
-## [21.0]
+## [21.0] - 2018-02-17
 
 ### Added
 - Moved code that prints errors at the toplevel to the `shen.toplevel-display-exception` function that can be overrided by ports to customize printing of errors (to for example, include error location).
