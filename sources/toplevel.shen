@@ -32,20 +32,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define shen
   -> (do (credits) (loop)))
 
-(set *continue-repl-loop* true)
-
-(define exit
-  Code -> (set *continue-repl-loop* false))
-
 (define loop
   -> (do (initialise_environment)
          (prompt)
          (trap-error
           (read-evaluate-print)
-          (/. E (pr (error-to-string E) (stoutput))))
-         (if (value *continue-repl-loop*)
-             (loop)
-             exit)))
+          (/. E (toplevel-display-exception E)))
+         (loop)))
+
+(define toplevel-display-exception
+  E -> (pr (error-to-string E) (stoutput)))
 
 (define credits
   -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
@@ -111,7 +107,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (toplineread_loop (read-char-code (stinput)) []))
 
 (define toplineread_loop
-  -1 [] -> (exit 0)
   Char _ -> (error "line read aborted")  where (= Char (hat))
   Char Chars -> (let Line (compile (/. X (<st_input> X)) Chars (/. E nextline))
                      It (record-it Chars)

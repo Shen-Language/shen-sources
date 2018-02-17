@@ -41,13 +41,6 @@ Given a native vector *A*, a positive integer *i* and a value *V* places *V* in 
 Given an absolute vector *A*, a positive integer *i* retrieves *V* from the *A[i]*th position.
 
 
-## <-address/or
-
-**Type:** *none*
-
-Given an absolute vector *A*, a positive integer *i*, and a frozen expression *O* retrieves *V* from the *A[i]*th position. If there is no value in that position, the result of thawing *O* is returned.
-
-
 ## adjoin
 
 **Type:** **`A --> (list A) --> (list A)`**
@@ -118,20 +111,6 @@ Closes a stream returning the empty list.
 Concatenates two strings.
 
 
-## command-line
-
-**Type:** **`--> (list string)`**
-
-Returns a list of command line fragments, with the first element being the program executable.
-
-Examples:
-
-```
-shen -> ["shen"]
-shen script.shen -> ["script.shen"]
-shen script.shen --flag -v arg1 arg2 -> ["script.shen" "--flag" "-v" "arg1" "arg2"]
-```
-
 ## compile
 
 **Type:** **`(A ==> B) --> A --> (A --> B) --> B`**
@@ -195,74 +174,6 @@ Top level form for Shen Prolog definitions.
 Receives the name of a function and removes it and its type from the environment.
 
 
-## dict
-
-**Type:** **`number --> (dict K V)`**
-
-Takes the size of the underlying storage size and returns a new empty dictionary object.
-
-
-## dict?
-
-**Type:** **`A --> boolean`**
-
-Returns **true** iff the input is a dictionary object.
-
-## dict-count
-
-**Type:** **`(dict K V) --> number`**
-
-Returns the amount of bindings in the dictionary.
-
-
-## dict->
-
-**Type:** **`(dict K V) --> K --> V --> V`**
-
-Adds or replaces a binding of the third input (the value) to the second input (the key) in the first input (a dictionary).
-
-
-## <-dict
-
-**Type**: **`(dict K V) --> K --> V`**
-
-Given a dict *D* and an key *k*, retrieves the value stored in *V[k]*. Raises an error if no value is bound to *k*.
-
-## <-dict/or
-
-**Type**: **`(dict K V) --> K --> (lazy V) --> V`**
-
-Given a dict *D*, an key *k* and a frozen expression *O*, retrieves the value stored in *V[k]*. If no value is found, the result of thawing *O* is returned.
-
-
-## dict-rm
-
-**Type**: **`(dict K V) --> K --> K`**
-
-Given a dict *D* and an key *k*, removes the binding in *D[k]*.
-
-
-## dict-fold
-
-**Type**: **`(K --> V --> A --> A) --> (dict K V) --> A --> A)`
-
-Given a function *F*, a dict *D* and an accumulator *R*, walks over the dictionary calling *F* one time for each key/value binding passing as inputs the key, the value associated to it and the accumulator. The result of each call to *F* replaces the accumulator using in the successive calls. Returns the result of the last call to *F*.
-
-
-## dict-keys
-
-**Type**: **`(dict K V) --> (list K)`**
-
-Returns a list containing all keys in the dictionary.
-
-
-## dict-values
-
-**Type**: **`(dict K V) --> (list V)`**
-
-Returns a list containing all values in the dictionary.
-
-
 ## difference
 
 **Type:** **`(list A) --> (list A) --> (list A)`**
@@ -319,12 +230,6 @@ Evaluates the input.
 Evaluates the input as a KLambda expression.
 
 
-## exit
-
-**Type:** **`number --> unit`**
-
-Given an exit code, exits the program using the specified exit code.
-
 ## explode
 
 **Type:** **`A --> (list string)`**
@@ -352,12 +257,6 @@ Constructor for the **failure object**.
 
 Given a function *f* and an object *x*. If the result of `(f x)` is **true** then the **failure object** is returned, otherwise *x* is returned.
 
-
-## filter
-
-**Type:** **`(A --> boolean) --> (list A) --> (list A)`**
-
-Given a function *F* and a list *L*, applies *F* to each element in *L* and returns a new list containing only the values for which applying *F* returned `true`.
 
 ## fix
 
@@ -406,13 +305,6 @@ For the argument run or real returns a number representing the real or run time 
 **Type:** *none*
 
 Takes a symbol *S*, a pointer *P* and optionally a vector *V* and returns the value in *V* pointed by *P* from *S* (if one exists) or an error otherwise. If *V* is omitted the global property vector is used.
-
-
-## get/or
-
-**Type:** *none*
-
-Takes a symbol *S*, a pointer *P*, a frozen expression *O* and optionally a vector *V* and returns the value in *V* pointed by *P* from *S* (if one exists) or the result of thawing *O* otherwise. If *V* is omitted the global property vector is used.
 
 
 ## hash
@@ -812,13 +704,6 @@ Takes a stream and reads off the first Shen token; defaults with zero arguments 
 Takes a source and reads the first byte off it; defaults with zero arguments to standard input.
 
 
-## read-char-code
-
-**Type:** **`(stream in) --> number`**
-
-Takes a source and reads the first character off it, returning its numeric value; defaults with zero arguments to standard input.
-
-
 ## read-file
 
 **Type:** **`string --> (list unit)`**
@@ -831,13 +716,6 @@ Returns the contents of an ASCII file designated by a string. Returns a list of 
 **Type:** **`string --> (list number)`**
 
 Returns the contents of an ASCII file designated by a string as a list of bytes.
-
-
-## read-file-as-charlist
-
-**Type:** **`string --> (list number)`**
-
-Returns the contents of an ASCII file designated by a string as a list of character numeric codes.
 
 
 ## read-file-as-string
@@ -1072,7 +950,7 @@ Tracks the I/O behaviour of a function.
 Recognises tuples.
 
 
-## type 
+## type
 
 **Type:** *none*
 
@@ -1127,13 +1005,6 @@ Untracks a function.
 Applied to a symbol, returns the global value assigned to it.
 
 
-## value/or
-
-**Type:** *none*
-
-Applied to a symbol and a frozen expression, returns the global value assigned to it. Otherwise the result of thawing the frozen expression is returned.
-
-
 ## variable?
 
 **Type:** **`A --> boolean`**
@@ -1174,13 +1045,6 @@ Given a vector *V* and an index *i* and object *o*, assigns *o* to *V[i]*.
 **Type:** **`(vector A) --> number -->  A`**
 
 Given a vector *V* and an index *i*, retrieves the value stored in *V[i]*.
-
-
-## <-vector/or
-
-**Type:** **`(vector A) --> number -->  (lazy A) --> A`**
-
-Given a vector *V*, an index *i* and a frozen expression *O*, retrieves the value stored in *V[i]*. If no value is found, the result of thawing *O* is returned.
 
 
 ## write-byte

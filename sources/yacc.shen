@@ -113,12 +113,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define list-stream
   S Syntax Stream Semantics
-  -> (let Test [and [cons? [hd Stream]] [cons? [hd [hd Stream]]]]
+  -> (let Test [and [cons? [hd Stream]] [cons? [hdhd Stream]]]
           Placeholder (gensym place)
-          RunOn (syntax Syntax [pair [tl [hd Stream]] [hd [tl Stream]]] Semantics)
+          RunOn (syntax Syntax [pair [tlhd Stream] [hdtl Stream]] Semantics)
           Action (insert-runon RunOn Placeholder
                                (syntax S
-                                       [pair [hd [hd Stream]] [hd [tl Stream]]]
+                                       [pair [hdhd Stream] [hdtl Stream]]
                                        Placeholder))
        [if Test
            Action
@@ -152,8 +152,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define variable-match
   [S | Syntax] Stream Semantics
   -> (let Test [cons? [hd Stream]]
-          Action [let (concat (protect Parse_) S) [hd [hd Stream]]
-                   (syntax Syntax [pair [tl [hd Stream]]
+          Action [let (concat (protect Parse_) S) [hdhd Stream]
+                   (syntax Syntax [pair [tlhd Stream]
                                         [hdtl Stream]] Semantics)]
           Else [fail]
        [if Test Action Else]))
@@ -169,16 +169,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define check_stream
   [S | Syntax] Stream Semantics
-  -> (let Test [and [cons? [hd Stream]] [= S [hd [hd Stream]]]]
-          Action (syntax Syntax [pair [tl [hd Stream]]
-                                      [hdtl Stream]] Semantics)
+  -> (let Test [and [cons? [hd Stream]] [= S [hdhd Stream]]]
+          NewStr (gensym (protect NewStream))
+          Action [let NewStr [pair [tlhd Stream]
+                                   [hdtl Stream]]
+                   (syntax Syntax NewStr Semantics)]
           Else [fail]
        [if Test Action Else]))
 
 (define jump_stream
   [S | Syntax] Stream Semantics
   -> (let Test [cons? [hd Stream]]
-          Action (syntax Syntax [pair [tl [hd Stream]]
+          Action (syntax Syntax [pair [tlhd Stream]
                                       [hdtl Stream]] Semantics)
           Else [fail]
        [if Test Action Else]))
@@ -190,18 +192,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [X | Y] -> (map (/. Z (semantics Z)) [X | Y])
   X -> X)
 
+(define pair
+  X Y -> [X Y])
+
+(define hdtl
+  X -> (hd (tl X)))
+
+(define hdhd
+  X -> (hd (hd X)))
+
+(define tlhd
+  X -> (tl (hd X)))
+
 (define snd-or-fail
   [_ Y] -> Y
   _ -> (fail))
 
 (define fail
   -> fail!)
-
-(define pair
-  X Y -> [X Y])
-
-(define hdtl
-  X -> (hd (tl X)))
 
 (define <!>
   [X _] -> [[] X]
