@@ -28,7 +28,7 @@ Packages can be created for any version, but when uploading to the releases page
 
 ```
 make pure
-git checkout shen-20.1
+git checkout shen-21.0
 make fetch
 make klambda
 make release
