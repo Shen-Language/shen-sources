@@ -208,14 +208,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define ue
   [P X] -> [P X]	where (= P protect)
-  [X | Y] -> (map (/. Z (ue Z)) [X | Y])
+  [X | Y] -> (dotmap (/. Z (ue Z)) [X | Y])
   X -> (concat && X)        where (variable? X)
   X -> X)
 
 (define ue-sig
-  [X | Y] -> (map (/. Z (ue-sig Z)) [X | Y])
+  [X | Y] -> (dotmap (/. Z (ue-sig Z)) [X | Y])
   X -> (concat &&& X)        where (variable? X)
   X -> X)
+
+(define dotmap
+  _ [] -> []
+  F [X | Y] -> [(F X) | (dotmap F Y)]
+  F X -> (F X))
+
+(define dotwalk
+  F [X | Y] -> (F (dotmap (/. Z (dotwalk F Z)) [X | Y]))
+  F X -> (F X))
 
 (define ues
   X -> [X]   where (ue? X)
