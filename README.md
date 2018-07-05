@@ -6,7 +6,7 @@
 
 This is the official repository for the open-source development of [Mark Tarver's](http://www.marktarver.com/) Shen. Bug reports, suggested enhancements and pull requests are welcome here.
 
-Note that this repository does not contain a runnable implementation of Shen. Downloads for the [de-facto reference implementation](https://github.com/Shen-Language/shen-cl) are available on its [releases page](https://github.com/Shen-Language/shen-cl/releases). Other certified implementations are linked from the [download page](http://www.shenlanguage.org/download_form.html) on [the Shen website](http://www.shenlanguage.org).
+Note that this repository does not contain a runnable implementation of Shen. Downloads for the [de-facto reference implementation](https://github.com/Shen-Language/shen-cl) are available on its [releases page](https://github.com/Shen-Language/shen-cl/releases). Other certified implementations are linked on [the Shen Open Source website](http://shen-language.github.io).
 
 ## Generating Kλ
 
