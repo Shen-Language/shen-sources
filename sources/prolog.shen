@@ -550,6 +550,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define call
   [F | X] ProcessN Continuation
   -> (call-help (function (lazyderef F ProcessN)) X ProcessN Continuation)
+  F ProcessN Continuation
+  -> (call (lazyderef F ProcessN) ProcessN Continuation)
+     where (pvar? F)
   _ _ _ -> false)
 
 (define call-help
