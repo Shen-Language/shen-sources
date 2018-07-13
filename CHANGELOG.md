@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Support for cons syntax in type signatures (via Mark)
+
 ## [21.0] - 2018-02-17
 
 ### Added
