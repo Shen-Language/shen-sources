@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+- Make prolog's `call` work with properly with pvars.
+
 ## [21.0] - 2018-02-17
 
 ### Added
