@@ -52,9 +52,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   { <signature-help> } := (demodulate (curry-type <signature-help>));)
 
 (define curry-type
-  [A --> B --> | C] -> (curry-type [A --> [B --> | C]])
-  [A * B * | C] -> (curry-type [A * [B * | C]])
-  [X | Y] -> (map (/. Z (curry-type Z)) [X | Y])
+  A -> (active-cons (curry-type-h A)))
+
+(define active-cons
+  [X Bar Y] -> [(active-cons X) | (active-cons Y)]
+      where (= Bar bar!)
+  [X | Y] -> [(active-cons X) | (active-cons Y)]
+  X -> X)
+
+(define curry-type-h
+  [A --> B --> | C] -> (curry-type-h [A --> [B --> | C]])
+  [A * B * | C] -> (curry-type-h [A * [B * | C]])
+  [X | Y] -> (dotmap (/. Z (curry-type-h Z)) [X | Y])
   X -> X)
 
 (defcc <signature-help>
