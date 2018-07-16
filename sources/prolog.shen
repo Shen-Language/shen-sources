@@ -156,11 +156,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define insert_deref
   V -> [deref V (protect ProcessN)]	 where (variable? V)
+  [lambda V Body] -> [deref [lambda V Body] (protect ProcessN)]
   [X | Y] -> [(insert_deref X) | (insert_deref Y)]
   X -> X)
 
 (define insert_lazyderef
   V -> [lazyderef V (protect ProcessN)]	 where (variable? V)
+  [lambda V Body] -> [lazyderef [lambda V Body] (protect ProcessN)]
   [X | Y] -> [(insert_lazyderef X) | (insert_lazyderef Y)]
   X -> X)
 
@@ -259,7 +261,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define continuation_call
   Terms Body -> (let VTerms [(protect ProcessN) | (extract_vars Terms)]
-                     VBody (extract_vars Body)
+                     VBody (extract_free_vars [] Body)
                      Free (remove (protect Throwcontrol) (difference VBody VTerms))
                   (cc_help Free Body)))
 
