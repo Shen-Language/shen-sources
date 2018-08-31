@@ -148,21 +148,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [X | Y] -> (safe-multiply X (safe-product Y)))
 
 (define s-prolog_literal
-  [is X Y] -> [bind X (insert_deref Y)]
-  [when X] -> [fwhen (insert_deref X)]
-  [bind X Y] -> [bind X (insert_lazyderef Y)]
-  [fwhen X] -> [fwhen (insert_lazyderef X)]
+  [is X Y] -> [bind X (insert-deref Y (protect ProcessN))]
+  [when X] -> [fwhen (insert-deref X (protect ProcessN))]
+  [bind X Y] -> [bind X (insert-lazyderef Y (protect ProcessN))]
+  [fwhen X] -> [fwhen (insert-lazyderef X (protect ProcessN))]
   [F | X] -> [F | X])
 
-(define insert_deref
-  V -> [deref V (protect ProcessN)]	 where (variable? V)
-  [X | Y] -> [(insert_deref X) | (insert_deref Y)]
-  X -> X)
+(define insert-deref
+  V NPP -> [deref V NPP]	 where (variable? V)
+  [X | Y] NPP -> [(insert-deref X NPP) | (insert-deref Y NPP)]
+  X _ -> X)
 
-(define insert_lazyderef
-  V -> [lazyderef V (protect ProcessN)]	 where (variable? V)
-  [X | Y] -> [(insert_lazyderef X) | (insert_lazyderef Y)]
-  X -> X)
+(define insert-lazyderef
+  V NPP -> [lazyderef V NPP]	 where (variable? V)
+  [X | Y] NPP -> [(insert-lazyderef X NPP) | (insert-lazyderef Y NPP)]
+  X _ -> X)
 
 (define group_clauses
   [] -> []
