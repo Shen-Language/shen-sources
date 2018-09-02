@@ -403,11 +403,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   (for-each F Xs)))
 
 (define map
-  F X -> (map-h F X []))
-
-(define map-h
-  _ [] X -> (reverse X)
-  F [X | Y] Z -> (map-h F Y [(F X) | Z]))
+   _ [] -> []
+   F [X | Y] -> [(F X) | (map F Y)]
+   F X -> (F X))
 
 (define length
   X -> (length-h X 0))
