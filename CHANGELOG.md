@@ -7,10 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 
 ### Added
-- Support for cons syntax in type signatures (via Mark)
+- Support for cons syntax in type signatures (via Mark).
 
 ### Fixed
 - Make prolog's `call` work with properly with pvars.
+
+### Changed
+- `prolog?` macro now expands code inline like in SP instead of using `defprolog` (via Mark).
 
 ## [21.0] - 2018-02-17
 
