@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Changed
 - `prolog?` macro now expands code inline like in SP instead of using `defprolog` (via Mark).
+- `(map F X)` now returns `(F X)` when `X` is not a list. The type signature of `map` remains unchanged. Matches SP's behaviour.
+- `map` is no longer tail-recursive. Matches SP's behaviour.
 
 ## [21.0] - 2018-02-17
 
