@@ -73,7 +73,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 Vs (extract_vars Lits)
                                 External (externally-bound Lits)
                                 PrologVs (difference Vs External)
-                                _ (print [External Vs])
                                 (locally-bind-prolog-vs (protect NPP)
                                                         PrologVs
                                                         Calls))]
