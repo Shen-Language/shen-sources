@@ -156,11 +156,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define insert-deref
   V NPP -> [deref V NPP]	 where (variable? V)
+  [lambda V Body] NPP -> [lambda V (insert-deref Body NPP)]
+  [let V X Body] NPP -> [let V (insert-deref X NPP)
+                          (insert-deref Body NPP)]
   [X | Y] NPP -> [(insert-deref X NPP) | (insert-deref Y NPP)]
   X _ -> X)
 
 (define insert-lazyderef
   V NPP -> [lazyderef V NPP]	 where (variable? V)
+  [lambda V Body] NPP -> [lambda V (insert-lazyderef Body NPP)]
+  [let V X Body] NPP -> [let V (insert-lazyderef X NPP)
+                          (insert-lazyderef Body NPP)]
   [X | Y] NPP -> [(insert-lazyderef X NPP) | (insert-lazyderef Y NPP)]
   X _ -> X)
 
