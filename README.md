@@ -1,4 +1,4 @@
-[![Current Release](https://img.shields.io/badge/release-21.0-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
+[![Current Release](https://img.shields.io/badge/release-21.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 [![Shen Logo](https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png)](http://www.shenlanguage.org)
 
@@ -28,7 +28,7 @@ Packages can be created for any version, but when uploading to the releases page
 
 ```
 make pure
-git checkout shen-21.0
+git checkout shen-21.1
 make fetch
 make klambda
 make release
