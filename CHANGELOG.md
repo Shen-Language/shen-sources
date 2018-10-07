@@ -306,7 +306,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...HEAD
 [21.1]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...shen-21.1
 [21.0]: https://github.com/Shen-Language/shen-sources/compare/shen-20.1...shen-21.0
 [20.1]: https://github.com/Shen-Language/shen-sources/compare/shen-20.0...shen-20.1
