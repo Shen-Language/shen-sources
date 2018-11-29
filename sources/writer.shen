@@ -122,13 +122,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                    (vector? V) (@s "<" (iter-vector V 1 Mode (maxseq)) ">")
                    true (@s "<<" (iter-vector V 0 Mode (maxseq)) ">>")))
 
+(set *empty-absvector* (absvector 0))
+
+(define empty-absvector?
+  X -> (= P (value *empty-absvector*)))
+
 (define print-vector?
-  P -> (let Zero (<-address P 0)
-         (cases (= Zero tuple) true
-                (= Zero pvar) true
-                (= Zero dictionary) true
-                (not (number? Zero)) (fbound? Zero)
-                true false)))
+  P -> (and (not (empty-absvector? P))
+            (let First (<-address P 0)
+              (or (= First tuple)
+                  (= First pvar)
+                  (= First dictionary)
+                  (and (not (number? First)) (fbound? First))))))
 
 (define fbound?
   F -> (trap-error
