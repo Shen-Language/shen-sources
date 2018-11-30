@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
-### Changed
+### Fixed
 - `print-vector?` will now handle empty absvectors, returning `false`.
 
 ## [21.1] - 2018-10-06
