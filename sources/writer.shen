@@ -125,7 +125,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *empty-absvector* (absvector 0))
 
 (define empty-absvector?
-  X -> (= P (value *empty-absvector*)))
+  P -> (= P (value *empty-absvector*)))
 
 (define print-vector?
   P -> (and (not (empty-absvector? P))
