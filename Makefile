@@ -37,7 +37,7 @@ endif
 # Set shared variables
 #
 
-ShenClVersion=2.2.0
+ShenClVersion=2.4.0
 UrlRoot=https://github.com/Shen-Language/shen-cl/releases/download
 ShenClTag=v$(ShenClVersion)
 ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
