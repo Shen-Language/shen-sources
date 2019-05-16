@@ -351,11 +351,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define ebr
   A B B -> A
-  A B [/. C D] -> [/. C D]	   where (> (occurrences B C) 0)
-  A B [lambda C D] -> [lambda C D] where (> (occurrences B C) 0)
-  A B [let B C D] -> [let B (ebr A B C) D]
+  A B [lambda C D] -> [lambda C D] where (clash? C B)
+  A B [let V C D] -> [let V (ebr A B C) D]	where (clash? V B)
   A B [C | D] -> [(ebr A B C) | (ebr A B D)]
   _ _ C -> C)
+
+(define clash?
+  V V -> true
+  V [X | Y] -> (or (clash? V X) (clash? V Y))
+  _ _ -> false)
 
 (define add_test
   Test -> (set *teststack* [Test | (value *teststack*)]))
