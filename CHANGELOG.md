@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 
 ### Fixed
+- variables that shadow a pattern match variable no longer get ebr'd.
 - `print-vector?` will now handle empty absvectors, returning `false`.
 
 ## [21.1] - 2018-10-06
