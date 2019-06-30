@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
 - variables that shadow a pattern match variable no longer get ebr'd.
 - `print-vector?` will now handle empty absvectors, returning `false`.
+- Removed `<>` from initialisation of `shen.external-symbols`.
 
 ## [21.1] - 2018-10-06
 
@@ -17,7 +18,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Fixed
 - Make prolog's `call` work with properly with pvars.
-- Removed `<>` from initialisation of `shen.external-symbols`.
 
 ### Changed
 - `prolog?` macro now expands code inline like in SP instead of using `defprolog` (via Mark).
