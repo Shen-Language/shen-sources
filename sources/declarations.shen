@@ -150,7 +150,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       *maximum-print-sequence-size* *macros* *os* *release* *property-vector*
       *port* *porters* *hush*
       @v @p @s
-      <- -> <e> <!> == = >= > /. =! $ - / * + <= < >> <>
+      <- -> <e> <!> == = >= > /. =! $ - / * + <= < >>
       y-or-n? write-to-file write-byte where when warn version verified
       variable? value vector-> <-vector vector vector?
       unspecialise untrack unit unix union unify

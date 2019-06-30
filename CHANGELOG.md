@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Fixed
 - Make prolog's `call` work with properly with pvars.
+- Removed `<>` from initialisation of `shen.external-symbols`.
 
 ### Changed
 - `prolog?` macro now expands code inline like in SP instead of using `defprolog` (via Mark).
