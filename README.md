@@ -1,8 +1,10 @@
 [![Current Release](https://img.shields.io/badge/release-21.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
-[![Shen Logo](https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png)](http://www.shenlanguage.org)
-
 # Official Shen Sources
+
+<a href="http://www.shenlanguage.org">
+  <img src="https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png" align="right">
+</a>
 
 This is the official repository for the open-source development of [Mark Tarver's](http://www.marktarver.com/) Shen. Bug reports, suggested enhancements and pull requests are welcome here.
 
