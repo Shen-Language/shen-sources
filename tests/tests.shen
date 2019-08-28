@@ -1,3 +1,5 @@
+(reset)
+
 (maxinferences 10000000000)
 
 (report
@@ -263,5 +265,3 @@
  (tc +) true
  (load "TinyLispFunctions.txt") loaded
  (tc -) false)
-
-(reset) 
