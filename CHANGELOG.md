@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - `print-vector?` will now handle empty absvectors, returning `false`.
 - Removed `<>` from initialisation of `shen.external-symbols`.
 
+### Changed
+- `tests.shen` no longer resets pass/fail counters when test suite is finished.
+
 ## [21.1] - 2018-10-06
 
 ### Added
