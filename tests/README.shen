@@ -14,6 +14,8 @@ following.
 (define reset
   -> (set *passed* (set *failed* 0)))
 
+(reset)
+
 (defmacro exec-macro
   [exec Name Expr Prediction]
   -> [trap-error [let (protect Output) [output "~%~A: ~R = ~S" Name (rcons Expr) Prediction]
@@ -28,23 +30,17 @@ following.
   X -> X)
 
 (define passed
-  -> (do (trap-error
-          (set *passed* (+ 1 (value *passed*)))
-          (/. E (set *passed* 1)))
+  -> (do (set *passed* (+ 1 (value *passed*)))
          (print passed)))
 
 (define failed
-  Result -> (let Fail+ (trap-error
-                        (set *failed* (+ 1 (value *failed*)))
-                        (/. E (set *failed* 1)))
-                 ShowResult (output "~S returned~%" Result)
-              (if (y-or-n? "failed; continue?") ok (error "kill"))))
+  Result -> (do (set *failed* (+ 1 (value *failed*)))
+                (output "~S returned~%" Result)
+                (if (y-or-n? "failed; continue?") ok (error "kill"))))
 
 (define err
-  E -> (error "")  where (= (error-to-string E) "kill")
-  E -> (do (trap-error
-            (set *failed* (+ 1 (value *failed*)))
-            (/. E (set *failed* 1)))
+  E -> (error "") where (= (error-to-string E) "kill")
+  E -> (do (set *failed* (+ 1 (value *failed*)))
            (output "~%failed with error ~A~%" (error-to-string E))))
 
 (defmacro report-results-macro
@@ -56,8 +52,8 @@ following.
   Name [Test Prediction | Tests] -> [[exec Name Test Prediction] | (create-tests Name Tests)])
 
 (define results
-  -> (let Passed (trap-error (value *passed*) (/. E 0))
-          Failed (trap-error (value *failed*) (/. E 0))
+  -> (let Passed (value *passed*)
+          Failed (value *failed*)
           Percent (* (/ Passed (+ Passed Failed)) 100)
        (output "~%passed ... ~A~%failed ...~A~%pass rate ...~A%~%~%"
                Passed Failed Percent))))
