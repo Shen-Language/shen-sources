@@ -67,7 +67,7 @@ else
 	rm -rf klambda
 	mkdir -p klambda
 endif
-	$(Shen) -e "(do (load \"make.shen\") (make))"
+	$(Shen) -l make.shen -e "(make)"
 
 #
 # Dependency retrieval
