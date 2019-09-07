@@ -107,14 +107,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define datatype-macro
   [datatype F | Rules]
-  -> (protect [process-datatype (intern-type F)
+  -> (protect [process-datatype F
                                 [compile [lambda X [<datatype-rules> X]]
                                          (rcons_form Rules)
                                          [function datatype-error]]])
   X -> X)
-
-(define intern-type
-  F -> (intern (cn "type#" (str F))))
 
 (define @s-macro
   [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]

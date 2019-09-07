@@ -220,29 +220,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> X)
 
 (define preclude
-  Types -> (preclude-h (map (/. X (intern-type X)) Types)))
-
-(define preclude-h
   Types -> (let FilterDatatypes (set *datatypes*
                                      (difference (value *datatypes*) Types))
              (value *datatypes*)))
 
 (define include
-  Types -> (include-h (map (/. X (intern-type X)) Types)))
-
-(define include-h
   Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
                 NewDatatypes (set *datatypes*
                                   (union ValidTypes (value *datatypes*)))
              (value *datatypes*)))
 
 (define preclude-all-but
-  Types -> (preclude-h (difference (value *alldatatypes*)
-                                   (map (/. X (intern-type X)) Types))))
+  Types -> (preclude (difference (value *alldatatypes*) Types)))
 
 (define include-all-but
-  Types -> (include-h (difference (value *alldatatypes*)
-                                  (map (/. X (intern-type X)) Types))))
+  Types -> (include (difference (value *alldatatypes*) Types)))
 
 (define synonyms-help
   [] -> (update-demodulation-function
