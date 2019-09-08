@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - variables that shadow a pattern match variable no longer get ebr'd.
 - `print-vector?` will now handle empty absvectors, returning `false`.
 - Removed `<>` from initialisation of `shen.external-symbols`.
+- Fix `preclude*` and `include*` not working for datatypes defined inside packages. 
 
 ### Changed
 - `tests.shen` no longer resets pass/fail counters when test suite is finished.
