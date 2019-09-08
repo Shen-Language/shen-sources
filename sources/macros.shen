@@ -114,7 +114,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> X)
 
 (define intern-type
-  F -> (intern (cn "type#" (str F))))
+  F -> (intern (cn (str F) "#type")))
 
 (define @s-macro
   [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]
