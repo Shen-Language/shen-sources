@@ -3,7 +3,7 @@
 
 \\ See docs at the end of the file
 
-(package launch-shen [*argv* success error launch-repl show-help unknown-arguments]
+(package shen/launcher [*argv* success error launch-repl show-help unknown-arguments]
 
 (define quiet-load
   File -> (let Contents (read-file File)
@@ -99,7 +99,7 @@ commands:
   [Exe "eval" | Args] -> (eval-command Args)
   [Exe UnknownCommandOrFlag | Args] -> [unknown-arguments Exe UnknownCommandOrFlag | Args])
 
-(define default-handle-launch-shen-result
+(define default-handle-result
   [success] -> done
   [success Message] -> (output "~A~%" Message)
   [error Message] -> (output "ERROR: ~A~%" Message)
@@ -110,14 +110,21 @@ commands:
              UnknownCommandOrFlag
              Exe))
 
+(define main
+  Argv -> (default-handle-result (launch-shen Argv)))
+
 )
 
 \\ How to use:
 \\
-\\ Instead of using `shen.shen` as an entry point, use `launch-shen.launch-shen`.
+\\ Instead of using `shen.shen` as an entry point, use either `shen/launcher.main`
+\\ or `shen/launcher.launch-shen` if more control is wanted.
 \\
-\\ `launch-shen.launch-shen` accepts as an argument a list containing
+\\ `shen/launcher.main` accepts as an argument a list containing
 \\ all the command line arguments, with the program name as the first argument.
+\\ It provides default behaviour for processing those arguments and handling the
+\\ result.
+\\
 \\ For example:
 \\     my-shen eval -e "(+ 1 2)"
 \\ should be represented by the list:
@@ -127,7 +134,12 @@ commands:
 \\ by the list:
 \\     ["/path/to/shen" "repl"]
 \\
-\\ The possible results `(launch-shen.launch-shen ArgList)` are the lists:
+\\ `shen/launcher.launch-shen` takes the same input as `shen/launcher.main`
+\\ but returns a value so that the caller is able perform custom actions
+\\ (like for example processing extra arguments, or extending the help
+\\ message).
+\\
+\\ The possible results `(shen/launcher.launch-shen ArgList)` are the lists:
 \\ - [success]
 \\       All arguments processed without errors.
 \\ - [success Message]
@@ -148,7 +160,7 @@ commands:
 \\       it should let the user know aand exit with an error status code
 \\       if the platform supports it.
 \\
-\\ The `launch-shen.default-handle-launch-shen-result` implements a portable
+\\ The `shen/launcher.default-handle-result` implements a portable
 \\ default behaviour for these results. Ports can use this directly or
 \\ process the results they are interested in and pass the rest to
 \\ this function.
@@ -156,11 +168,11 @@ commands:
 \\ Example (default behaviour with correct exit codes):
 \\
 \\     (define my-handle-result
-\\       [error Message] -> (do (launch-shen.default-handle-launch-shen-result [error Message])
+\\       [error Message] -> (do (shen/launcher.default-handle-result [error Message])
 \\                              (scm.exit 1))
 \\       [unknown-arguments | Rest]
-\\       -> (do (launch-shen.default-handle-launch-shen-result [unknown-arguments | Rest])
+\\       -> (do (shen/launcher.default-handle-result [unknown-arguments | Rest])
 \\              (scm.exit 1))
-\\       Other -> (launch-shen.default-handle-launch-shen-result Other))
+\\       Other -> (shen/launcher.default-handle-result Other))
 \\
-\\     (my-handle-result (launch-shen.launch-shen ["my-shen" "eval" "-e" "(+ 1 2)"]))
+\\     (my-handle-result (shen/launcher.launch-shen ["my-shen" "eval" "-e" "(+ 1 2)"]))
