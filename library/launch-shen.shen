@@ -31,13 +31,16 @@ commands:
         Evaluates expressions and files. ARGS are evaluated from
         left to right and can be a combination of:
             -e, --eval <EXPR>
-                Evaluates EXPR and prints result
+                Evaluates EXPR and prints result.
             -l, --load <FILE>
-                Reads and evaluates FILE
+                Reads and evaluates FILE.
             -q, --quiet
-                Silences interactive output
+                Silences interactive output.
             -s, --set <KEY> <VALUE>
-                Evaluates KEY, VALUE and sets as global" Exe))
+                Evaluates KEY, VALUE and sets as global.
+            -r, --repl
+                Launches the interactive REPL after evaluating
+                all the previous expresions." Exe))
 
 (define execute-all
   [] -> [success]
@@ -52,6 +55,7 @@ commands:
   "-l" -> "--load"
   "-q" -> "--quiet"
   "-s" -> "--set"
+  "-r" -> "--repl"
   _ -> false)
 
 (define eval-command-h
@@ -70,6 +74,8 @@ commands:
                                      [(freeze (set (eval-string Key)
                                                    (eval-string Value)))
                                       | Acc])
+  ["--repl" | Args] Acc -> (do (eval-command-h [] Acc)
+                               [launch-repl | Args])
   [Short | Rest] Acc <- (let Long (eval-flag-map Short)
                           (if (= false Long)
                               (fail)
