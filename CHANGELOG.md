@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Premature expansion of some dynamic code when generating `.kl` files so that it doesn't have to be evaluated during startup. Some ports should see a huge speedup in startup times from this change.
+
 ## [21.2] - 2019-09-17
 
 ### Fixed

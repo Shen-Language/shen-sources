@@ -7,6 +7,10 @@
 
 \\ (c) Mark Tarver 2015, all rights reserved
 
+(load "extensions/expand-dynamic.shen")
+
+(set *init-code* [])
+
 (define make ->
   (do
     (output "~%")
@@ -15,7 +19,8 @@
     (map (function make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (let License (read-file-as-string "LICENSE.txt")
       (map
-        (/. File (do (output "  - ~A~%" File) (make.make-file License File)))
+        (/. File (do (output "  - ~A~%" File)
+                     (make.make-file License File)))
         ["core"
          "declarations"
          "load"
@@ -30,9 +35,10 @@
          "track"
          "types"
          "writer"
-         "yacc"]))
+         "yacc"
+         "init"]))
     (output "compilation complete.~%")
-    ()))
+    done))
 
 (define make.unsystemf
   Sym -> (put shen shen.external-symbols
@@ -45,14 +51,26 @@
            (error "~A is not a legitimate function name.~%" X)))
 
 (define make.make-file
-  License File ->
-    (let ShenFile (make-string "sources/~A.shen" File)
-         KlFile (make-string "klambda/~A.kl" File)
-         ShenCode (read-file ShenFile)
-         KlCode (map (function make.make-kl-code) ShenCode)
-         KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string KlCode))
-         Write (write-to-file KlFile KlString)
-      KlFile))
+  License "init"
+  -> (let KlFile "klambda/init.kl"
+          InitCode (value *init-code*)
+          Defun (shen.x.expand-dynamic.wrap-in-defun shen.initialize [] InitCode)
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string [Defun]))
+          Write (write-to-file KlFile KlString)
+       KlFile)
+
+  License File
+  -> (let ShenFile (make-string "sources/~A.shen" File)
+          KlFile (make-string "klambda/~A.kl" File)
+          ShenCode (read-file ShenFile)
+          KlCode* (map (function make.make-kl-code) ShenCode)
+          KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
+          Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
+          Defuns (fst Defuns+Init)
+          Init (set *init-code* (append (value *init-code*) (snd Defuns+Init)))
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
+          Write (write-to-file KlFile KlString)
+       KlFile))
 
 (define make.make-kl-code
   [define F | Rules] -> (shen.elim-def [define F | Rules])
