@@ -7,6 +7,8 @@
 
 \\ (c) Mark Tarver 2015, all rights reserved
 
+(load "extensions/expand-dynamic.shen")
+
 (define make ->
   (do
     (output "~%")
@@ -49,7 +51,8 @@
     (let ShenFile (make-string "sources/~A.shen" File)
          KlFile (make-string "klambda/~A.kl" File)
          ShenCode (read-file ShenFile)
-         KlCode (map (function make.make-kl-code) ShenCode)
+         KlCode* (map (function make.make-kl-code) ShenCode)
+         KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string KlCode))
          Write (write-to-file KlFile KlString)
       KlFile))
