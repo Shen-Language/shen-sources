@@ -76,4 +76,11 @@
 (define split-defuns
   Exps -> (split-defuns-h Exps (@p [] [])))
 
+(define wrap-in-defun
+  Name Args Exprs -> [defun Name Args (to-single-expression Exprs)])
+
+(define to-single-expression
+  [Exp] -> Exp
+  [Exp | Exps] -> [do Exp (to-single-expression Exps)])
+
 )

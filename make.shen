@@ -18,26 +18,25 @@
     (map (function systemf) [internal receive <!> sterror *sterror* ,])
     (map (function make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (let License (read-file-as-string "LICENSE.txt")
-         _ (map
-             (/. File (do (output "  - ~A~%" File)
-                          (make.make-file License File)))
-             ["core"
-              "declarations"
-              "load"
-              "macros"
-              "prolog"
-              "reader"
-              "sequent"
-              "sys"
-              "dict"
-              "t-star"
-              "toplevel"
-              "track"
-              "types"
-              "writer"
-              "yacc"])
-         _ (output "  - init~%")
-      (make.make-init-file License))
+      (map
+        (/. File (do (output "  - ~A~%" File)
+                     (make.make-file License File)))
+        ["core"
+         "declarations"
+         "load"
+         "macros"
+         "prolog"
+         "reader"
+         "sequent"
+         "sys"
+         "dict"
+         "t-star"
+         "toplevel"
+         "track"
+         "types"
+         "writer"
+         "yacc"
+         "init"]))
     (output "compilation complete.~%")
     done))
 
@@ -52,18 +51,26 @@
            (error "~A is not a legitimate function name.~%" X)))
 
 (define make.make-file
-  License File ->
-    (let ShenFile (make-string "sources/~A.shen" File)
-         KlFile (make-string "klambda/~A.kl" File)
-         ShenCode (read-file ShenFile)
-         KlCode* (map (function make.make-kl-code) ShenCode)
-         KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
-         Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
-         Defuns (fst Defuns+Init)
-         Init (set *init-code* (append (value *init-code*) (snd Defuns+Init)))
-         KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
-         Write (write-to-file KlFile KlString)
-      KlFile))
+  License "init"
+  -> (let KlFile "klambda/init.kl"
+          InitCode (value *init-code*)
+          Defun (shen.x.expand-dynamic.wrap-in-defun shen.initialize [] InitCode)
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string [Defun]))
+          Write (write-to-file KlFile KlString)
+       KlFile)
+
+  License File
+  -> (let ShenFile (make-string "sources/~A.shen" File)
+          KlFile (make-string "klambda/~A.kl" File)
+          ShenCode (read-file ShenFile)
+          KlCode* (map (function make.make-kl-code) ShenCode)
+          KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
+          Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
+          Defuns (fst Defuns+Init)
+          Init (set *init-code* (append (value *init-code*) (snd Defuns+Init)))
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
+          Write (write-to-file KlFile KlString)
+       KlFile))
 
 (define make.make-kl-code
   [define F | Rules] -> (shen.elim-def [define F | Rules])
@@ -75,16 +82,3 @@
   \* shen.fail! prints as "...", needs to be handled separately *\
   [[defun fail | _] | Y] -> (@s "(defun fail () shen.fail!)" (make.list->string Y))
   [X | Y] -> (@s (make-string "~R~%~%" X) (make.list->string Y)))
-
-(define make.merge-expressions
-  [Exp] -> Exp
-  [Exp | Exps] -> [do Exp (make.merge-expressions Exps)])
-
-(define make.make-init-file
-  License
-  -> (let KlFile "klambda/init.kl"
-          InitCode (value *init-code*)
-          Defuns [[defun shen.initialize [] (make.merge-expressions InitCode)]]
-          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
-          Write (write-to-file KlFile KlString)
-       KlFile))
