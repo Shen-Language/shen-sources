@@ -1,5 +1,5 @@
- \* Copyright (c) 2019 Bruno Deferrari. *\
- \* BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause *\
+\* Copyright (c) 2019 Bruno Deferrari. *\
+\* BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause *\
 
 \\ Documentation: docs/extensions/expand-dynamic.md
 
@@ -12,15 +12,18 @@
   [] -> []
   [[declare Name Sig] | Exps] -> (append (expand-declare [declare Name Sig])
                                          (expand-dynamic Exps))
+
   \\ Store the external symbols for use in the expansion of lambda forms
   [[put [intern "shen"] shen.external-symbols Symbols PVec] | Exps]
   -> (do (set *external-symbols* (eval-kl Symbols))
          [[put [intern "shen"] shen.external-symbols Symbols PVec]
           | (expand-dynamic Exps)])
+
   \\ Store arities for use in the expansion of lambda forms
   [[shen.initialise_arity_table Arities] | Exps]
   -> (do (set *arities* (eval-kl Arities))
          [[shen.initialise_arity_table Arities] | (expand-dynamic Exps)])
+
   [[shen.for-each [lambda Entry [shen.set-lambda-form-entry Entry]] Entries] | Exps]
   -> (append (expand-lambda-entries Entries)
              (expand-dynamic Exps))
