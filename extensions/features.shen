@@ -1,10 +1,12 @@
 \* Copyright (c) 2019 Bruno Deferrari. *\
 \* BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause *\
 
-(package shen/features []
+\\ Documentation: docs/extensions/features.md
+
+(package shen.x.features []
 
 (defmacro cond-expand-macro
-  [cond-expand] -> (error "Unfulfilled shen/features.cond-expand clause.")
+  [cond-expand] -> (error "Unfulfilled shen.x.features.cond-expand clause.")
   [cond-expand true Body]
     -> Body
   [cond-expand [and] Body | MoreClauses]
