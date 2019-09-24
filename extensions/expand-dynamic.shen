@@ -24,18 +24,25 @@
   -> (do (set *arities* (eval-kl Arities))
          [[shen.initialise_arity_table Arities] | (expand-dynamic Exps)])
 
-  [[shen.for-each [lambda Entry [shen.set-lambda-form-entry Entry]] Entries] | Exps]
+  [[shen.for-each
+     [lambda Entry [shen.set-lambda-form-entry Entry]]
+     Entries]
+   | Exps]
   -> (append (expand-lambda-entries Entries)
              (expand-dynamic Exps))
   [Exp | Exps] -> [Exp | (expand-dynamic Exps)])
 
 (define expand-declare
-  [declare Name Sig] -> (let Eval (eval-kl [declare Name Sig])
-                             F* (concat shen.type-signature-of- Name)
-                             KlDef (ps F*)
-                             RecordSig [set shen.*signedfuncs* [cons [cons Name Sig] [value shen.*signedfuncs*]]]
-                             RecordLambda [shen.set-lambda-form-entry [cons F* (shen.lambda-form F* 3)]]
-                          [KlDef RecordSig RecordLambda]))
+  [declare Name Sig]
+  -> (let Eval (eval-kl [declare Name Sig])
+          F* (concat shen.type-signature-of- Name)
+          KlDef (ps F*)
+          RecordSig [set shen.*signedfuncs*
+                         [cons [cons Name Sig]
+                               [value shen.*signedfuncs*]]]
+          RecordLambda [shen.set-lambda-form-entry
+                        [cons F* (shen.lambda-form F* 3)]]
+       [KlDef RecordSig RecordLambda]))
 
 (define expand-lambda-entries
   [] -> []
@@ -56,6 +63,17 @@
   F -> (let ArityF (get-arity F (value *arities*))
          (cases (= ArityF -1) []
                 (= ArityF 0) []
-                true [[shen.set-lambda-form-entry [cons F (shen.lambda-form F ArityF)]]])))
+                true [[shen.set-lambda-form-entry
+                        [cons F (shen.lambda-form F ArityF)]]])))
+
+(define split-defuns-h
+  [[defun | Defun] | Exps] (@p Defuns Other)
+  -> (split-defuns-h Exps (@p [[defun | Defun] | Defuns] Other))
+  [Exp | Exps] (@p Defuns Other)
+  -> (split-defuns-h Exps (@p Defuns [Exp | Other]))
+  [] (@p Defuns Other) -> (@p (reverse Defuns) (reverse Other)))
+
+(define split-defuns
+  Exps -> (split-defuns-h Exps (@p [] [])))
 
 )

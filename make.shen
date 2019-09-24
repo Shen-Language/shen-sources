@@ -9,6 +9,8 @@
 
 (load "extensions/expand-dynamic.shen")
 
+(set *init-code* [])
+
 (define make ->
   (do
     (output "~%")
@@ -16,25 +18,28 @@
     (map (function systemf) [internal receive <!> sterror *sterror* ,])
     (map (function make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (let License (read-file-as-string "LICENSE.txt")
-      (map
-        (/. File (do (output "  - ~A~%" File) (make.make-file License File)))
-        ["core"
-         "declarations"
-         "load"
-         "macros"
-         "prolog"
-         "reader"
-         "sequent"
-         "sys"
-         "dict"
-         "t-star"
-         "toplevel"
-         "track"
-         "types"
-         "writer"
-         "yacc"]))
+         _ (map
+             (/. File (do (output "  - ~A~%" File)
+                          (make.make-file License File)))
+             ["core"
+              "declarations"
+              "load"
+              "macros"
+              "prolog"
+              "reader"
+              "sequent"
+              "sys"
+              "dict"
+              "t-star"
+              "toplevel"
+              "track"
+              "types"
+              "writer"
+              "yacc"])
+         _ (output "  - init~%")
+      (make.make-init-file License))
     (output "compilation complete.~%")
-    ()))
+    done))
 
 (define make.unsystemf
   Sym -> (put shen shen.external-symbols
@@ -53,7 +58,10 @@
          ShenCode (read-file ShenFile)
          KlCode* (map (function make.make-kl-code) ShenCode)
          KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
-         KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string KlCode))
+         Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
+         Defuns (fst Defuns+Init)
+         Init (set *init-code* (append (value *init-code*) (snd Defuns+Init)))
+         KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
          Write (write-to-file KlFile KlString)
       KlFile))
 
@@ -67,3 +75,16 @@
   \* shen.fail! prints as "...", needs to be handled separately *\
   [[defun fail | _] | Y] -> (@s "(defun fail () shen.fail!)" (make.list->string Y))
   [X | Y] -> (@s (make-string "~R~%~%" X) (make.list->string Y)))
+
+(define make.merge-expressions
+  [Exp] -> Exp
+  [Exp | Exps] -> [do Exp (make.merge-expressions Exps)])
+
+(define make.make-init-file
+  License
+  -> (let KlFile "klambda/init.kl"
+          InitCode (value *init-code*)
+          Defuns [[defun shen.initialize [] (make.merge-expressions InitCode)]]
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
+          Write (write-to-file KlFile KlString)
+       KlFile))
