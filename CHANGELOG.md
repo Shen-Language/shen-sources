@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Premature expansion of some dynamic code when generating `.kl` files so that it doesn't have to be evaluated during startup. Some ports should see a huge speedup in startup times from this change.
+
+## [21.2] - 2019-09-17
+
 ### Fixed
 - variables that shadow a pattern match variable no longer get ebr'd.
 - `print-vector?` will now handle empty absvectors, returning `false`.
 - Removed `<>` from initialisation of `shen.external-symbols`.
-- Fix `preclude*` and `include*` not working for datatypes defined inside packages. 
+- Fix `preclude*` and `include*` not working for datatypes defined inside packages.
 
 ### Changed
 - `tests.shen` no longer resets pass/fail counters when test suite is finished.
@@ -315,7 +320,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.2...HEAD
+[21.2]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...shen-21.2
 [21.1]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...shen-21.1
 [21.0]: https://github.com/Shen-Language/shen-sources/compare/shen-20.1...shen-21.0
 [20.1]: https://github.com/Shen-Language/shen-sources/compare/shen-20.0...shen-20.1
