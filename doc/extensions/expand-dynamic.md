@@ -14,6 +14,11 @@ may want to process them too.
 
 The useful functions are:
 
+### shen.x.expand-dynamic.initialise
+
+Has to be invoked first to set up the global state used by the following
+functions. Takes no inputs.
+
 ### shen.x.expand-dynamic.expand-dynamic
 
 Useful to pre-expand some code that may be expensive to execute

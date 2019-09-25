@@ -5,8 +5,9 @@
 
 (package shen.x.expand-dynamic []
 
-(set *external-symbols* [])
-(set *arities* [])
+(define initialise
+  -> (do (set *external-symbols* [])
+         (set *arities* [])))
 
 (define expand-dynamic
   [] -> []
