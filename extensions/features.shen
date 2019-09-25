@@ -39,7 +39,7 @@
 
 (define initialise
   Features -> (let _ (trap-error
-                      (value *initialised*)
+                      (value *features*)
                       (/. E (do (set *features* [])
                                 (shen.set-lambda-form-entry
                                  [shen.x.features.cond-expand-macro
