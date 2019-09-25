@@ -1,4 +1,4 @@
-See [System Functions document at Shen's website](http://www.shenlanguage.org/learn-shen/system.pdf).
+See [System Functions document at Shen's website](http://www.shenlanguage.org/system.pdf).
 
 In addition to the functions listed in that document, the OS Kernel provides:
 
