@@ -48,6 +48,7 @@ Please refer to `doc/extensions.md`.
 
   - **features**: conditional code expansion at read-time based on platform features.
   - **launcher**: default behaviour command-line handling, with the option of running scripts, evaluating expressions, and loading files in addition to launching the REPL.
+  - **expand-dynamic**: enabled by default, this extension takes care of the dynamic code expansion mentioned in the previous section.
 
 ## 21.2
 
