@@ -10,6 +10,8 @@ This is the official repository for the open-source development of [Mark Tarver'
 
 Note that this repository does not contain a runnable implementation of Shen. Downloads for the [de-facto reference implementation](https://github.com/Shen-Language/shen-cl) are available on its [releases page](https://github.com/Shen-Language/shen-cl/releases). Other certified implementations are linked on [the Shen Open Source website](http://shen-language.github.io).
 
+Documentation for the Shen Language is the [shendoc](http://shenlanguage.org/shendoc.htm) hosted on the [main website](http://www.shenlanguage.org).
+
 ## Generating Kλ
 
 Shen is a self-hosted language, so its kernel implementation is written in Shen. Building Kλ from the Shen sources requires an executable built from the previous release of Shen.
