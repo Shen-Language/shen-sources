@@ -35,11 +35,16 @@
     -> [cond-expand | MoreClauses]
   X -> X)
 
-(define current
-  -> (trap-error (value *features*) (/. _ [])))
+(define current -> (value *features*))
 
 (define initialise
-  Features -> (let _ (shen.add-macro cond-expand-macro)
+  Features -> (let _ (trap-error
+                      (value *initialised*)
+                      (/. E (do (set *features* [])
+                                (shen.set-lambda-form-entry
+                                 [shen.x.features.cond-expand-macro
+                                  | (/. X (cond-expand-macro X))])
+                                 (shen.add-macro cond-expand-macro))))
                    Old (current)
                    _ (set *features* Features)
                 Old))
