@@ -39,10 +39,10 @@
          "yacc"
          "init"]))
     (map
-      (/. File (do (output "  - ~A~%" File)
+      (/. File (do (output "  - extension-~A~%" File)
                    (make.make-extension-file File)))
-      ["extensions/features"
-       "extensions/expand-dynamic"])
+      ["features"
+       "expand-dynamic"])
     (output "compilation complete.~%")
     done))
 
@@ -59,8 +59,8 @@
 
 (define make.make-extension-file
   File
-  -> (let ShenFile (make-string "~A.shen" File)
-          KlFile (make-string "klambda/~A.kl" File)
+  -> (let ShenFile (make-string "extensions/~A.shen" File)
+          KlFile (make-string "klambda/extension-~A.kl" File)
           License (make.file-license ShenFile)
           ShenCode (read-file ShenFile)
           KlCode (map (function make.make-kl-code) ShenCode)
