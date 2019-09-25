@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Extensions (see `doc/extensions.md`).
 - New document with instructions for porters on how to upgrade to new kernel releases (see `doc/port-upgrade.md`).
 
+### Changed
+- `shen.shen` has been renamed to `shen.repl`.
+- A new file `init.kl` has been added and it needs to be included along the other `.kl` files.
+- A new `shen.initialise` function has been added. This function has to be called before anything else.
+- Load order of `.kl` files doesn't matter anymore.
+
 ## [21.2] - 2019-09-17
 
 ### Fixed
