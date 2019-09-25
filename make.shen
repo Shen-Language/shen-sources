@@ -54,7 +54,7 @@
   License "init"
   -> (let KlFile "klambda/init.kl"
           InitCode (value *init-code*)
-          Defun (shen.x.expand-dynamic.wrap-in-defun shen.initialize [] InitCode)
+          Defun (shen.x.expand-dynamic.wrap-in-defun shen.initialise [] InitCode)
           KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string [Defun]))
           Write (write-to-file KlFile KlString)
        KlFile)
