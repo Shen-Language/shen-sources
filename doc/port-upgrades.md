@@ -38,6 +38,17 @@ None: this change doesn't alter kernel behavior and shouldn't break anything a p
 
   - If port's build process was doing anything similar, that step can be removed as the kernel build does this itself.
 
+### Extensions
+
+Starting with these release, the Shen Kernel distribution includes some optional extensions that ports can make use of.
+
+Please refer to `doc/extensions.md`.
+
+**New extensions in this release**:
+
+  - **features**: conditional code expansion at read-time based on platform features.
+  - **launcher**: default behaviour command-line handling, with the option of running scripts, evaluating expressions, and loading files in addition to launching the REPL.
+
 ## 21.2
 
 ### Test Suite Pass/Fail Counters
