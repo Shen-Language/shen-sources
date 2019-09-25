@@ -1,6 +1,6 @@
 # Port Upgrade Guide
 
-As changes are made and new versions of the Shen kernel are released, ports might require modifications to adapt. These adaptations might be necessary to order to continue working - there may be new requirements for the port to satisfy, or there may be impacts on overriden/optimised behavior.
+As changes are made and new versions of the Shen kernel are released, ports might require modifications to adapt. These adaptations might be necessary in order to continue working - there may be new requirements for the port to satisfy, or there may be impacts on overriden/optimised behavior.
 
 This document runs parallel to changes mentioned in the [changelog](../CHANGELOG.md). Versions without notable changes pertinent to upgrading are excluded. Unreleased changes are listing under the [Unreleased](#unreleased) section just like in the changelog.
 
