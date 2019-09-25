@@ -34,7 +34,7 @@
   [cond-expand Feature Body | MoreClauses]
     -> [cond-expand | MoreClauses])
 
-(define initialize
+(define initialise
   Features -> (set *features* Features))
 
 (define add

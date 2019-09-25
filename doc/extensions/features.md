@@ -13,7 +13,7 @@ particular.
 ## How to use
 
 Ports that want to support conditional expansion based on features
-have to call the initialization function `shen.x.features.initialize`
+have to call the initialization function `shen.x.features.initialise`
 with a list of symbols representing the features it provides.
 As a minimum, the list should contain at least one symbol
 that uniquely identifies the port.
