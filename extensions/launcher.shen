@@ -1,7 +1,9 @@
-\* Copyright (c) 2019 Bruno Deferrari. *\
-\* BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause *\
+\\ Copyright (c) 2019 Bruno Deferrari.
+\\ BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause
 
-(package shen/launcher [*argv* success error launch-repl show-help unknown-arguments]
+\\ Documentation: docs/extensions/launcher.md
+
+(package shen.x.launcher [*argv* success error launch-repl show-help unknown-arguments]
 
 (define quiet-load
   File -> (let Contents (read-file File)
