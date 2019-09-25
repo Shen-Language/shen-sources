@@ -63,9 +63,10 @@ klambda:
 ifeq ($(OSName),windows)
 	$(PS) "if (Test-Path klambda) { Remove-Item klambda -Recurse -Force -ErrorAction Ignore }"
 	$(PS) "New-Item -Path klambda -Force -ItemType Directory"
+	$(PS) "New-Item -Path klambda/extensions -Force -ItemType Directory"
 else
 	rm -rf klambda
-	mkdir -p klambda
+	mkdir -p klambda/extensions
 endif
 	$(Shen) -l make.shen -e "(make)"
 
