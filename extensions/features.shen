@@ -34,10 +34,17 @@
   [cond-expand Feature Body | MoreClauses]
     -> [cond-expand | MoreClauses])
 
+(define current
+  -> (trap-error (value *features*) (/. _ [])))
+
 (define initialise
-  Features -> (set *features* Features))
+  Features -> (let Old (current)
+                   _ (set *features* Features)
+                Old))
 
 (define add
-  Feature -> (set *features* (adjoin Feature (value *features*))))
+  Feature -> (let Old (current)
+                  _ (set *features* (adjoin Feature Old))
+               Old)
 
 )
