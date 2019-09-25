@@ -10,6 +10,8 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 `make.shen` now moves all top-level non-`defun` statements into a separate file called `init.kl`. In there, they grouped in a new function called `shen.initialise`. Calling `shen.initialise` sets all of the global symbols and prepares stateful data structures like the `*property-vector*`. Nothing else in the kernel can be expected to work before this function has been called.
 
+Because all of the toplevel forms are grouped in `shen.initialise`, it is no longer necessary to load the klambda files in any particular order, they just all have to be loaded before initialisation.
+
 **Minimum Requirements**
 
   - Port must include `init.kl` as part of the kernel.
@@ -19,6 +21,7 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 **Optimisation Opportunities**
 
   - Port may wish to take this `shen.initialise` function, remove it in its default form and build out the individual statements somehow.
+  - Compilation/loading process can be simplified as load order is no longer important.
 
 ### Dynamic Code Expansion
 
