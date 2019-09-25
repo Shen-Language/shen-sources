@@ -20,9 +20,9 @@ that uniquely identifies the port. The return value is the previous
 list of features.
 
 Shen/CL, in it's SBCL version for example could include these
-symbols: `[shen/cl shen/sbcl]`, while the CLisp version would
-include these: `[shen/cl shen/clisp]`.
-Shen/Scheme: `[shen/scheme shen/chez]`.
+symbols: `[shen/cl shen/cl.sbcl]`, while the CLisp version would
+include these: `[shen/cl shen/cl.clisp]`.
+Shen/Scheme: `[shen/scheme shen/scheme.chez]`.
 
 In addition to this, it is a good idea to also include a symbol
 for the operating system:
