@@ -103,7 +103,7 @@ commands:
   [success] -> done
   [success Message] -> (output "~A~%" Message)
   [error Message] -> (output "ERROR: ~A~%" Message)
-  [launch-repl | _] -> (shen.shen)
+  [launch-repl | _] -> (shen.repl)
   [show-help HelpText] -> (output "~A~%" HelpText)
   [unknown-arguments Exe UnknownCommandOrFlag | Args]
   -> (output "ERROR: Invalid argument: ~A~%Try `~A --help' for more information.~%"

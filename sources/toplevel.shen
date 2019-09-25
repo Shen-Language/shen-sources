@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (package shen []
 
-(define shen
+(define repl
   -> (do (credits) (loop)))
 
 (define loop

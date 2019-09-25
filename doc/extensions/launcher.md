@@ -3,13 +3,13 @@
 This extension provides an alternative entry point for Shen. The alternative
 entry point handles command line arguments, providing defaults for some
 common cases, ports can choose to extend the list of accepted arguments.
-Compared to the default entry-point provided in the kernel (`shen.shen`,
+Compared to the default entry-point provided in the kernel (`shen.repl`,
 which launches the REPL), the entry-point in this extension implements
 basic script running, expression evaluation and file loading.
 
 ## Instructions
 
-Instead of using `shen.shen` as an entry point, use either `shen.x.launcher.main`
+Instead of using `shen.repl` as an entry point, use either `shen.x.launcher.main`
 or `shen.x.launcher.launch-shen` if more control is wanted.
 
 `shen.x.launcher.main` accepts as an argument a list containing
@@ -49,7 +49,7 @@ message).
     the arguments. The port should print this error and exit with
     an error status code if the platform supports it.
 - `[launch-repl | Args]`:
-    Request to launch the repl, can be done by invoking `(shen.shen)`.
+    Request to launch the repl, can be done by invoking `(shen.repl)`.
     `Args` are extra arguments the port may want to do something with.
 - `[show-help HelpText]`:
     Request to print the help text. HelpText contains the default

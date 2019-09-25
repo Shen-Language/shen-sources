@@ -10,6 +10,8 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 `make.shen` now moves all top-level non-`defun` statements into a separate file called `init.kl`. In there, they grouped in a new function called `shen.initialise`. Calling `shen.initialise` sets all of the global symbols and prepares stateful data structures like the `*property-vector*`. Nothing else in the kernel can be expected to work before this function has been called.
 
+The default entry point `shen.shen` has been renamed to `shen.repl`.
+
 Because all of the toplevel forms are grouped in `shen.initialise`, it is no longer necessary to load the klambda files in any particular order, they just all have to be loaded before initialisation.
 
 **Minimum Requirements**
@@ -17,6 +19,7 @@ Because all of the toplevel forms are grouped in `shen.initialise`, it is no lon
   - Port must include `init.kl` as part of the kernel.
   - When creating a Shen environment, `shen.initialise` must be called after all of the `defun`s have been defined and before any user code is run.
   - Overrides can be defined before `shen.initialise` is called, but not if defining them depends on running any Shen code.
+  - The call to the entry point `shen.shen` has been renamed to `shen.repl`.
 
 **Optimisation Opportunities**
 
