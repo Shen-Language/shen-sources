@@ -42,6 +42,7 @@
       (/. File (do (output "  - extension-~A~%" File)
                    (make.make-extension-file File)))
       ["features"
+       "launcher"
        "expand-dynamic"])
     (output "compilation complete.~%")
     done))
