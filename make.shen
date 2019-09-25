@@ -38,7 +38,6 @@
          "writer"
          "yacc"
          "init"]))
-    (output "compiling extensions.~%")
     (map
       (/. File (do (output "  - ~A~%" File)
                    (make.make-extension-file File)))
