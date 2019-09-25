@@ -38,6 +38,11 @@
          "writer"
          "yacc"
          "init"]))
+    (map
+      (/. File (do (output "  - extension-~A~%" File)
+                   (make.make-extension-file File)))
+      ["features"
+       "expand-dynamic"])
     (output "compilation complete.~%")
     done))
 
@@ -50,6 +55,18 @@
   X := (if (symbol? X)
            X
            (error "~A is not a legitimate function name.~%" X)))
+
+
+(define make.make-extension-file
+  File
+  -> (let ShenFile (make-string "extensions/~A.shen" File)
+          KlFile (make-string "klambda/extension-~A.kl" File)
+          License (make.file-license ShenFile)
+          ShenCode (read-file ShenFile)
+          KlCode (map (function make.make-kl-code) ShenCode)
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string KlCode))
+          Write (write-to-file KlFile KlString)
+       KlFile))
 
 (define make.make-file
   License "init"
@@ -83,3 +100,16 @@
   \* shen.fail! prints as "...", needs to be handled separately *\
   [[defun fail | _] | Y] -> (@s "(defun fail () shen.fail!)" (make.list->string Y))
   [X | Y] -> (@s (make-string "~R~%~%" X) (make.list->string Y)))
+
+(define make.file-license
+  File -> (let Contents (read-file-as-bytelist File)
+            (make.extract-license Contents [])))
+
+(define make.extract-license
+  [10 10 | Rest] Acc -> (make.bytes->string (reverse Acc) "")
+  [Byte | Rest] Acc -> (make.extract-license Rest [Byte | Acc]))
+
+(define make.bytes->string
+  [] Acc -> Acc
+  [92 92 32 | Rest] Acc -> (make.bytes->string Rest Acc)
+  [Byte | Rest] Acc -> (make.bytes->string Rest (@s Acc (n->string Byte))))
