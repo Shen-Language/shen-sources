@@ -6,6 +6,8 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 ## Unreleased
 
+## 22.0
+
 ### Kernel Initialisation Function
 
 `make.shen` now moves all top-level non-`defun` statements into a separate file called `init.kl`. In there, they grouped in a new function called `shen.initialise`. Calling `shen.initialise` sets all of the global symbols and prepares stateful data structures like the `*property-vector*`. Nothing else in the kernel can be expected to work before this function has been called.
