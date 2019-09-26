@@ -102,6 +102,7 @@ ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path $(ReleaseFolderName) -Force -ItemType Directory"
 	$(PS) "Copy-Item -Recurse assets $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse doc $(ReleaseFolderName)"
+	$(PS) "Copy-Item -Recurse extensions $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse klambda $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse sources $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse tests $(ReleaseFolderName)"
@@ -115,7 +116,7 @@ else
 	mkdir -p release
 	rm -rf $(ReleaseFolderName)
 	mkdir -p $(ReleaseFolderName)
-	cp -rf assets doc klambda sources tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
+	cp -rf assets doc extensions klambda sources tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
 	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
 	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
 	rm -rf $(ReleaseFolderName)
