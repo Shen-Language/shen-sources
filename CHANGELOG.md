@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [22.0] - 2019-09-26
+
 ### Added
 - Premature expansion of some dynamic code when generating `.kl` files so that it doesn't have to be evaluated during startup. Some ports should see a huge speedup in startup times from this change.
 - Extensions (see `doc/extensions.md`).
@@ -328,7 +330,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-21.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.0...HEAD
+[22.0]: https://github.com/Shen-Language/shen-sources/compare/shen-21.2...shen-22.0
 [21.2]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...shen-21.2
 [21.1]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...shen-21.1
 [21.0]: https://github.com/Shen-Language/shen-sources/compare/shen-20.1...shen-21.0
