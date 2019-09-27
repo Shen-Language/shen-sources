@@ -69,12 +69,52 @@
           Write (write-to-file KlFile KlString)
        KlFile))
 
+(define make.type-signature-name?
+  (@s "shen.type-signature-of-" _) -> true
+  _ -> false)
+
+(define make.initialiser-kind
+  [set shen.*signedfuncs* | _] -> set-signedfuncs
+  [shen.set-lambda-form-entry [cons Name | _]] -> set-signedfunc-lambda-form-entry
+      where (make.type-signature-name? (str Name))
+  [shen.set-lambda-form-entry | _] -> set-lambda-form-entry
+  _ -> environment)
+
+(define make.filter
+  P [] -> []
+  P [X | Xs] -> [X | (make.filter P Xs)] where (P X)
+  P [_ | Xs] -> (make.filter P Xs))
+
 (define make.make-file
   License "init"
   -> (let KlFile "klambda/init.kl"
           InitCode (value *init-code*)
-          Defun (shen.x.expand-dynamic.wrap-in-defun shen.initialise [] InitCode)
-          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string [Defun]))
+          EnvInit (make.filter (/. X (= environment (make.initialiser-kind X))) InitCode)
+          SignedFuncsInit (make.filter (/. X (= set-signedfuncs (make.initialiser-kind X))) InitCode)
+          SignedFuncsLambdaFormsInit (make.filter (/. X (= set-signedfunc-lambda-form-entry (make.initialiser-kind X))) InitCode)
+          LambdaFormsInit (make.filter (/. X (= set-lambda-form-entry (make.initialiser-kind X))) InitCode)
+          KlString (make-string "c#34;~Ac#34;~%~%~A" License
+                     (make.list->string [
+                       (shen.x.expand-dynamic.wrap-in-defun
+                        shen.initialise-environment [] EnvInit)
+
+                       (shen.x.expand-dynamic.wrap-in-defun
+                        shen.initialise-signedfuncs [] SignedFuncsInit)
+
+                       (shen.x.expand-dynamic.wrap-in-defun
+                        shen.initialise-signedfunc-lambda-forms [] SignedFuncsLambdaFormsInit)
+
+                       (shen.x.expand-dynamic.wrap-in-defun
+                        shen.initialise-lambda-forms [] LambdaFormsInit)
+
+                       (shen.x.expand-dynamic.wrap-in-defun
+                        shen.initialise [] [
+                          [shen.initialise-environment]
+                          [shen.initialise-lambda-forms]
+                          [shen.initialise-signedfunc-lambda-forms]
+                          [shen.initialise-signedfuncs]
+                        ])
+                      ]))
           Write (write-to-file KlFile KlString)
        KlFile)
 
