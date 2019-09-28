@@ -48,8 +48,8 @@ passing it a `defun` expression.
 The return value will be the transformed defun, on which these two new special
 forms will show up:
 
-`(##let-label [LabelName | LabelVars] LabelBody CodeBody)`
+`(%%let-label [LabelName | LabelVars] LabelBody CodeBody)`
 
 and
 
-`(##goto-label ##labelNNNN LabelVars)`
+`(%%goto-label %%labelNNNN LabelVars)`
