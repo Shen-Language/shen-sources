@@ -55,18 +55,23 @@
 \\ in the body using `attach-free-variables`.
 (define inline-mono-labels
   [%%let-label Label LabelBody Body] Scope
-  -> (let CleanedUpLabelBody (inline-mono-labels LabelBody Scope)
-       (if (> (occurrences [%%goto-label Label] Body) 1)
-           (attach-free-variables
-              [%%let-label Label CleanedUpLabelBody Body]
-              Scope)
-           (subst CleanedUpLabelBody [%%goto-label Label]
-                  (inline-mono-labels Body Scope))))
+  -> (attach-free-variables
+       [%%let-label Label (inline-mono-labels LabelBody Scope) Body]
+       Scope)
+      where (> (occurrences [%%goto-label Label] Body) 1)
+
+  [%%let-label Label LabelBody Body] Scope
+  -> (subst (inline-mono-labels LabelBody Scope)
+            [%%goto-label Label]
+            (inline-mono-labels Body Scope))
+
   [if Test Then Else] Scope -> [if Test
                                    (inline-mono-labels Then Scope)
                                    (inline-mono-labels Else Scope)]
+
   [let Var Val Body] Scope -> [let Var Val
                                 (inline-mono-labels Body [Var | Scope])]
+
   X _ -> X)
 
 
