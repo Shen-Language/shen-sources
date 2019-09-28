@@ -42,7 +42,8 @@
                       (subst [%%goto-label Label | FreeVars]
                              [%%goto-label Label]
                              Body))
-       [%%let-label [Label | FreeVars] LabelBody NewBody]))
+       [%%let-label [Label | FreeVars] LabelBody
+         (inline-mono-labels NewBody Scope)]))
 
 \\ After the transformation there may remain some
 \\ labels to which there exists a single jump.
@@ -55,15 +56,17 @@
 (define inline-mono-labels
   [%%let-label Label LabelBody Body] Scope
   -> (let CleanedUpLabelBody (inline-mono-labels LabelBody Scope)
-          CleanedUpBody (inline-mono-labels Body Scope)
-          FreeVars (free-variables CleanedUpLabelBody Scope)
-       (if (> (occurrences [%%goto-label Label] CleanedUpBody) 1)
+       (if (> (occurrences [%%goto-label Label] Body) 1)
            (attach-free-variables
-              [%%let-label Label CleanedUpLabelBody CleanedUpBody]
+              [%%let-label Label CleanedUpLabelBody Body]
               Scope)
-           (subst CleanedUpLabelBody [%%goto-label Label] CleanedUpBody)))
-  [if Test Then Else] Scope -> [if Test (inline-mono-labels Then Scope) (inline-mono-labels Else Scope)]
-  [let Var Val Body] Scope -> [let Var Val (inline-mono-labels Body [Var | Scope])]
+           (subst CleanedUpLabelBody [%%goto-label Label]
+                  (inline-mono-labels Body Scope))))
+  [if Test Then Else] Scope -> [if Test
+                                   (inline-mono-labels Then Scope)
+                                   (inline-mono-labels Else Scope)]
+  [let Var Val Body] Scope -> [let Var Val
+                                (inline-mono-labels Body [Var | Scope])]
   X _ -> X)
 
 
