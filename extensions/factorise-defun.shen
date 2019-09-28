@@ -1,11 +1,20 @@
-\* Copyright (c) 2012-2019 Bruno Deferrari.  All rights reserved.    *\
-\* BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause *\
+\\ Copyright (c) 2012-2019 Bruno Deferrari.  All rights reserved.
+\\ BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause
 
-(package shen.x.factorise-cond [%%goto-label %%let-label %%label]
+\\ Documentation: docs/extensions/factorise-defun.md
+
+(package shen.x.factorise-defun [%%goto-label %%let-label %%label]
+
+(define factorise-defun
+  [defun Name Params [cond | Cases]] -> [defun Name Params
+                                          (factorise-cond [cond | Cases]
+                                                          [shen.f_error Name]
+                                                          Params)]
+  X -> X)
 
 (define factorise-cond
-  [cond | Cases] Else -> (inline-mono-labels (rebranch Cases Else))
-  X _ -> X)
+  [cond | Cases] Else Scope -> (inline-mono-labels (rebranch Cases Else) Scope)
+  X _ _ -> X)
 
 (define generate-label
   -> (gensym %%label))
@@ -23,16 +32,40 @@
       where (element? Var Scope)
   _ _ Acc -> Acc)
 
+\\ Attaches free variables to labels and label jumps.
+\\ Useful to have these for some compilation strategies.
+(define attach-free-variables
+  [%%let-label Label LabelBody Body] Scope
+  -> (let FreeVars (free-variables LabelBody Scope)
+          NewBody (if (= [] FreeVars)
+                      Body
+                      (subst [%%goto-label Label | FreeVars]
+                             [%%goto-label Label]
+                             Body))
+       [%%let-label [Label | FreeVars] LabelBody NewBody]))
+
+\\ After the transformation there may remain some
+\\ labels to which there exists a single jump.
+\\ In such cases the label is not necessary.
+\\ This function finds such cases and replaces
+\\ the jump with the inlined body of the label.
+\\ The labels that are not removed are augmented
+\\ to include the list of free variables referenced
+\\ in the body using `attach-free-variables`.
 (define inline-mono-labels
-  [%%let-label Label LabelBody Body]
-  -> (let CleanedUpLabelBody (inline-mono-labels LabelBody)
-          CleanedUpBody (inline-mono-labels Body)
+  [%%let-label Label LabelBody Body] Scope
+  -> (let CleanedUpLabelBody (inline-mono-labels LabelBody Scope)
+          CleanedUpBody (inline-mono-labels Body Scope)
+          FreeVars (free-variables CleanedUpLabelBody Scope)
        (if (> (occurrences [%%goto-label Label] CleanedUpBody) 1)
-           [%%let-label Label CleanedUpLabelBody CleanedUpBody]
+           (attach-free-variables
+              [%%let-label Label CleanedUpLabelBody CleanedUpBody]
+              Scope)
            (subst CleanedUpLabelBody [%%goto-label Label] CleanedUpBody)))
-  [if Test Then Else] -> [if Test (inline-mono-labels Then) (inline-mono-labels Else)]
-  [let Var Val Body] -> [let Var Val (inline-mono-labels Body)]
-  X -> X)
+  [if Test Then Else] Scope -> [if Test (inline-mono-labels Then Scope) (inline-mono-labels Else Scope)]
+  [let Var Val Body] Scope -> [let Var Val (inline-mono-labels Body [Var | Scope])]
+  X _ -> X)
+
 
 (define rebranch
   [] Else -> Else
@@ -44,7 +77,7 @@
   [[Test Result] | Cases] Else
   -> (let TrueBranch (true-branch Test [[Test Result] | Cases])
           FalseBranch (false-branch Test [[Test Result] | Cases])
-      (rebranch-h Test TrueBranch FalseBranch Else)))
+       (rebranch-h Test TrueBranch FalseBranch Else)))
 
 (define rebranch-h
   Test TrueBranch FalseBranch Else
@@ -67,8 +100,12 @@
   Test [[Test Result] | Cases] -> (false-branch Test Cases)
   _ Cases -> Cases)
 
+\\ Generates a new label for some code, except when:
+\\ - code is a literal, a variable reference, or (fail)
+\\ - code is a goto-label jump
 (define with-labelled-else
   Atom F -> (F Atom) where (not (cons? Atom))
+  [fail] F -> (F [fail])
   [%%goto-label Label] F -> (F [%%goto-label Label])
   Body F -> (let Label (generate-label)
               [%%let-label Label Body
