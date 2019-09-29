@@ -112,6 +112,71 @@ After being factorised with `(shen.x.factorise-defun.factorise-defun (ps example
       (%%goto-label %%label1347))))
 ```
 
+The above code, when compiled by Shen/Scheme (which uses tail-calls as a GOTO) results in:
+
+```scheme
+;; Output of (scm.pretty-print (_scm.kl->scheme (ps example)))
+(define (kl:example V1345 V1346)
+  (define (%%label1347) (kl:shen.f_error 'example))
+  (define (%%label1348 V1345/hd V1345/tl)
+    (if (and (kl:= 2 V1345/hd) (pair? V1345/tl))
+        (car V1345/tl)
+        (%%label1347)))
+  (if (pair? V1345)
+      (let* ([V1345/hd (car V1345)]
+             [V1345/tl (cdr V1345)])
+        (if (and (kl:= 1 V1345/hd) (pair? V1345/tl))
+            (if (kl:= 1 V1346)
+                (car V1345/tl)
+                (if (kl:= 2 V1346)
+                    (cdr V1345/tl)
+                    (%%label1348 V1345/hd V1345/tl)))
+            (%%label1348 V1345/hd V1345/tl)))
+      (%%label1347)))
+```
+
+Shen/Scheme does a bit of extra work and hoists the labels into `define`s
+at the root of the function to reduce nesting and increase readability of
+the resulting code, but the following, simpler transformation would
+also work:
+
+```scheme
+(define (kl:example V1345 V1346)
+  (let ((%%label1347 (lambda () (kl:shen.f_error 'example))))
+    (if (pair? V1345)
+        (if (pair? V1345)
+      (let* ([V1345/hd (car V1345)]
+             [V1345/tl (cdr V1345)])
+        (let ((%%label1348 (lambda (V1345/hd V1345/tl)
+                             (if (and (kl:= 2 V1345/hd) (pair? V1345/tl))
+                                 (car V1345/tl)
+                                 (%%label1347)))))
+          (if (and (kl:= 1 V1345/hd) (pair? V1345/tl))
+              (if (kl:= 1 V1346)
+                  (car V1345/tl)
+                  (if (kl:= 2 V1346)
+                      (cdr V1345/tl)
+                      (%%label1348 V1345/hd V1345/tl)))
+              (%%label1348 V1345/hd V1345/tl))))
+      (%%label1347)))))
+```
+
+The conversion here is very simple. The tree is walked and:
+
+```shen
+(%%let-label (<label> ...<args>) <label-body> <body>)
+```
+
+gets translated to:
+
+```scheme
+(let ((<label> (lambda (...<args>)
+                 <label-body>))
+  <body>))
+```
+
+and `(%%goto-label <label> ...<args>)` to `(<label> ...<args>)`.
+
 ## Possibly useful properties of the generated code
 
 - For a given `LabelName`, `%%goto-label` forms that reference it will always show up inside the `CodeBody` of a `%%let-label` that declares `LabelName`, never before, and never inside `LabelBody`.
