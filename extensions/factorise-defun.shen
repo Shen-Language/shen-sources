@@ -3,7 +3,7 @@
 
 \\ Documentation: docs/extensions/factorise-defun.md
 
-(package shen.x.factorise-defun [%%goto-label %%let-label %%label]
+(package shen.x.factorise-defun [%%goto-label %%let-label %%label %%return]
 
 (define factorise-defun
   [defun Name Params [cond | Cases]] -> [defun Name Params
@@ -13,8 +13,14 @@
   X -> X)
 
 (define factorise-cond
-  [cond | Cases] Else Scope -> (inline-mono-labels (rebranch Cases Else) Scope)
+  [cond | Cases] Else Scope -> (inline-mono-labels
+                                (rebranch (add-returns Cases) Else)
+                                Scope)
   X _ _ -> X)
+
+(define add-returns
+  [] -> []
+  [[Test Body] | Rest] -> [[Test [%%return Body]] | (add-returns Rest)])
 
 (define generate-label
   -> (gensym %%label))
