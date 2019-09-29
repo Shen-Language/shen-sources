@@ -6,6 +6,8 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 ## Unreleased
 
+## 22.1
+
 ### Extensions
 
 **New extensions in this release**:

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [22.1] - 2019-09-29
+
 ### Added
 - New `factorise-defun` extension that performs a pattern matching factorisation optimization on defuns.
 
@@ -336,7 +338,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.1...HEAD
+[22.1]: https://github.com/Shen-Language/shen-sources/compare/shen-22.0...shen-22.1
 [22.0]: https://github.com/Shen-Language/shen-sources/compare/shen-21.2...shen-22.0
 [21.2]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...shen-21.2
 [21.1]: https://github.com/Shen-Language/shen-sources/compare/shen-21.0...shen-21.1
