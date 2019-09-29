@@ -62,6 +62,8 @@ and
 - `LabelName` is the name of a label bound by `%%let-label`
 - `LabelVars` is the list of variables that are passed to that label. On platforms with support for GOTO this can be ignored, but is useful on platforms where GOTO's are represented by tail-calls.
 
+`(%%return Expression)` marks a place where the function should return. If the natural flow of code would stop naturally at that point for the underlying platform (normal in expression-oriented languages like Scheme for example), it can be replaced by `Expression`. Other platforms will probably want to insert a return there, `(return Expression)` in Common Lisp, or a `return Result;` in languages like C and Javascript (with `Result` being a variable containing the result of evaluating `Expression`).
+
 The port has to convert these constructs to something suitable for the underlying platform.
 
 ## Example
@@ -97,18 +99,21 @@ After being factorised with `(shen.x.factorise-defun.factorise-defun (ps example
 ```shen
 \\ Output of `(lisp.pprint (shen.x.factorise-defun.factorise-defun (ps example)))`
 (defun example (V1345 V1346)
- (%%let-label (%%label1347) (shen.f_error example)
+ (%%let-label (%%label1347) (%%return (shen.f_error example))
   (if (cons? V1345)
       (let V1345/hd (hd V1345)
-           (let V1345/tl (tl V1345)
-                (%%let-label (%%label1348 V1345/hd V1345/tl)
-                 (if (and (= 2 V1345/hd) (cons? V1345/tl)) (hd V1345/tl)
-                     (%%goto-label %%label1347))
-                 (if (and (= 1 V1345/hd) (cons? V1345/tl))
-                     (if (= 1 V1346) (hd V1345/tl)
-                         (if (= 2 V1346) (tl V1345/tl)
-                             (%%goto-label %%label1348 V1345/hd V1345/tl)))
-                     (%%goto-label %%label1348 V1345/hd V1345/tl)))))
+        (let V1345/tl (tl V1345)
+          (%%let-label (%%label1348 V1345/hd V1345/tl)
+           (if (and (= 2 V1345/hd) (cons? V1345/tl))
+               (%%return (hd V1345/tl))
+               (%%goto-label %%label1347))
+           (if (and (= 1 V1345/hd) (cons? V1345/tl))
+               (if (= 1 V1346)
+                   (%%return (hd V1345/tl))
+                   (if (= 2 V1346)
+                       (%%return (tl V1345/tl))
+                       (%%goto-label %%label1348 V1345/hd V1345/tl)))
+               (%%goto-label %%label1348 V1345/hd V1345/tl)))))
       (%%goto-label %%label1347))))
 ```
 
@@ -176,6 +181,39 @@ gets translated to:
 ```
 
 and `(%%goto-label <label> ...<args>)` to `(<label> ...<args>)`.
+
+In Common Lisp the job is easier, because it provides a GOTO-like construct.
+`(%%return <exp>)` translates directly to `(return <exp>)`,
+`(%%goto-label <label> ...<args>)` to `(go <label>)`,
+and `(%%let-label (<label> ...<args>) <label-body> <body>)` to
+`(tagbody <body> <label> <label-body>)`.
+Then the whole function body is wrapped in `(block nil ...)` so that `(return ...)` expressions work.
+
+```lisp
+(defun example (V1345 V1346)
+  (block nil
+    (tagbody
+     (if (consp V1345)
+         (let ((V1345/hd (car V1345)))
+           (let ((V1345/tl (cdr V1345)))
+             (tagbody
+              (if (and (= 1 V1345/hd) (consp V1345/tl))
+                  (if (= 1 V1346)
+                      (return (car V1345/tl))
+                      (if (= 2 V1346)
+                          (return (cdr V1345/tl))
+                          (go %%label1348)))
+                  (go %%label1348))
+
+              %%label1348
+                (if (and (= 2 V1345/hd) (consp V1345/tl))
+                    (return (car V1345/tl))
+                    (go %%label1347)))))
+         (go %%label1347))
+
+     %%label1347
+       (return (shen.f_error example)))))
+```
 
 ## Possibly useful properties of the generated code
 
