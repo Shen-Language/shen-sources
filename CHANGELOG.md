@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- New `factorise-defun` extension that performs a pattern matching factorisation optimization on defuns.
+
 ## [22.0] - 2019-09-26
 
 ### Added
