@@ -43,6 +43,7 @@
                    (make.make-extension-file File)))
       ["features"
        "launcher"
+       "factorise-defun"
        "expand-dynamic"])
     (output "compilation complete.~%")
     done))
