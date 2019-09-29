@@ -45,11 +45,75 @@ of such selector with a reference to this variable.
 The transformation is performed by calling the `shen.x.factorise-cond.factorise-defun`
 passing it a `defun` expression.
 
-The return value will be the transformed defun, on which these two new special
+The return value will be the transformed `defun`, on which these two new special
 forms will show up:
 
-`(%%let-label [LabelName | LabelVars] LabelBody CodeBody)`
+`(%%let-label [LabelName | LabelVars] LabelBody CodeBody)` declares a label.
+
+- `CodeBody` is code on which jumps to the label being declared will show up.
+- `LabelBody` is the body of the code that has to be executed when a jump to this label happens.
+- `LabelName` is the namame of the label, and will be referenced inside `CodeBody` by instances of the `%%goto-label` form.
+- `LabelVars` is a list of free variables inside `LabelBody`. Added as a convenience for platforms on which this is useful (one without GOTO, but with very efficient tail-calls).
 
 and
 
-`(%%goto-label %%labelNNNN LabelVars)`
+`(%%goto-label LabelName LabelVars)` represents a jump to a previously declared label.
+
+- `LabelName` is the name of a label bound by `%%let-label`
+- `LabelVars` is the list of variables that are passed to that label. On platforms with support for GOTO this can be ignored, but is useful on platforms where GOTO's are represented by tail-calls.
+
+The port has to convert these constructs to something suitable for the underlying platform.
+
+## Example
+
+The following function:
+
+```shen
+(define example
+  [1 X | Xs] 1 -> X
+  [1 X | Xs] 2 -> Xs
+  [2 X | Xs] _ -> X)
+```
+
+When compiled to klambda will look like this (**tip:** In Shen/CL you can pretty-print code with `lisp.pprint`):
+
+```shen
+\\ Output of `(lisp.pprint (ps example))`
+(defun example (V1345 V1346)
+ (cond
+  ((and (cons? V1345)
+        (and (= 1 (hd V1345)) (and (cons? (tl V1345)) (= 1 V1346))))
+   (hd (tl V1345)))
+  ((and (cons? V1345)
+        (and (= 1 (hd V1345)) (and (cons? (tl V1345)) (= 2 V1346))))
+   (tl (tl V1345)))
+  ((and (cons? V1345) (and (= 2 (hd V1345)) (cons? (tl V1345))))
+   (hd (tl V1345)))
+  (true (shen.f_error example))))
+```
+
+After being factorised with `(shen.x.factorise-defun.factorise-defun (ps example))` it looks like:
+
+```shen
+\\ Output of `(lisp.pprint (shen.x.factorise-defun.factorise-defun (ps example)))`
+(defun example (V1345 V1346)
+ (%%let-label (%%label1347) (shen.f_error example)
+  (if (cons? V1345)
+      (let V1345/hd (hd V1345)
+           (let V1345/tl (tl V1345)
+                (%%let-label (%%label1348 V1345/hd V1345/tl)
+                 (if (and (= 2 V1345/hd) (cons? V1345/tl)) (hd V1345/tl)
+                     (%%goto-label %%label1347))
+                 (if (and (= 1 V1345/hd) (cons? V1345/tl))
+                     (if (= 1 V1346) (hd V1345/tl)
+                         (if (= 2 V1346) (tl V1345/tl)
+                             (%%goto-label %%label1348 V1345/hd V1345/tl)))
+                     (%%goto-label %%label1348 V1345/hd V1345/tl)))))
+      (%%goto-label %%label1347))))
+```
+
+## Possibly useful properties of the generated code
+
+- For a given `LabelName`, `%%goto-label` forms that reference it will always show up inside the `CodeBody` of a `%%let-label` that declares `LabelName`, never before, and never inside `LabelBody`.
+- Labels are only declared if there are at least two or more instances of `%%goto-label` referencing that label.
+- The order of `LabelVars` in a `%%let-label` declaration and a `%%goto-label` with matching label names always matches.
