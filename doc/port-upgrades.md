@@ -6,6 +6,16 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 ## Unreleased
 
+### Extensions
+
+**New extensions in this release**:
+
+  - **factorise-defun**: pattern matching factorisation optimisation for defuns.
+
+**Optimisation Opportunities**
+
+  - Ports running on top of platforms providing a GOTO-like construct or optimised tail-calls may be able to take advantage of the `factorise-defun` extension to speed-up pattern matching.
+
 ## 22.0
 
 ### Kernel Initialisation Function
