@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Added
 - New `factorise-defun` extension that performs a pattern matching factorisation optimization on defuns.
 
+### Changed
+- Split initialisation function into many.
+
 ## [22.0] - 2019-09-26
 
 ### Added
