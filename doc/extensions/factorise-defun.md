@@ -190,29 +190,27 @@ and `(%%let-label (<label> ...<args>) <label-body> <body>)` to
 Then the whole function body is wrapped in `(block nil ...)` so that `(return ...)` expressions work.
 
 ```lisp
-(defun example (V1345 V1346)
-  (block nil
-    (tagbody
-     (if (consp V1345)
-         (let ((V1345/hd (car V1345)))
-           (let ((V1345/tl (cdr V1345)))
-             (tagbody
-              (if (and (= 1 V1345/hd) (consp V1345/tl))
-                  (if (= 1 V1346)
-                      (return (car V1345/tl))
-                      (if (= 2 V1346)
-                          (return (cdr V1345/tl))
-                          (go %%label1348)))
-                  (go %%label1348))
-
-              %%label1348
-                (if (and (= 2 V1345/hd) (consp V1345/tl))
-                    (return (car V1345/tl))
-                    (go %%label1347)))))
-         (go %%label1347))
-
+(DEFUN example (V1345 V1346)
+  (BLOCK NIL
+    (TAGBODY
+      (IF (CONSP V1345)
+          (LET ((V1345/hd (CAR V1345)))
+            (LET ((V1345/tl (CDR V1345)))
+              (TAGBODY
+                (IF (AND (EQL V1345/hd 1) (CONSP V1345/tl))
+                    (IF (EQL V1346 1)
+                        (RETURN (CAR V1345/tl))
+                        (IF (EQL V1346 2)
+                            (RETURN (CDR V1345/tl))
+                            (GO %%label1348)))
+                    (GO %%label1348))
+               %%label1348
+                (IF (AND (EQL V1345/hd 2) (CONSP V1345/tl))
+                    (RETURN (CAR V1345/tl))
+                    (GO %%label1347)))))
+          (GO %%label1347))
      %%label1347
-       (return (shen.f_error example)))))
+      (RETURN (shen.f_error 'example)))))
 ```
 
 ## Possibly useful properties of the generated code
