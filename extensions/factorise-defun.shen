@@ -118,7 +118,7 @@
 \\ - code is a literal, a variable reference, or (fail)
 \\ - code is a goto-label jump
 (define with-labelled-else
-  Atom F -> (F Atom) where (not (cons? Atom))
+  [%%return Atom] F -> (F [%%return Atom]) where (not (cons? Atom))
   [fail] F -> (F [fail])
   [%%goto-label Label] F -> (F [%%goto-label Label])
   Body F -> (let Label (generate-label)

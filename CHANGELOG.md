@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+- `factorise-defun` extension: Avoid generating unnecessary labels for `%%return` expresions for literal values or variable references.
+
 ## [22.1] - 2019-09-29
 
 ### Added
