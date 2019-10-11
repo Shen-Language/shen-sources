@@ -82,7 +82,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "Shen 22.1")
+(set *version* "Shen 22.2")
 
 (if (not (bound? *home-directory*))
     (set *home-directory* "")

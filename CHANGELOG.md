@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [22.2] - 2019-10-11
+
 ### Fixed
 - `factorise-defun` extension: Avoid generating unnecessary labels for `%%return` expresions for literal values or variable references.
 
@@ -341,7 +343,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.2...HEAD
+[22.2]: https://github.com/Shen-Language/shen-sources/compare/shen-22.1...shen-22.2
 [22.1]: https://github.com/Shen-Language/shen-sources/compare/shen-22.0...shen-22.1
 [22.0]: https://github.com/Shen-Language/shen-sources/compare/shen-21.2...shen-22.0
 [21.2]: https://github.com/Shen-Language/shen-sources/compare/shen-21.1...shen-21.2
