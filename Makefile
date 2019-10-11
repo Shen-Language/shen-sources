@@ -37,7 +37,7 @@ endif
 # Set shared variables
 #
 
-ShenClVersion=2.6.0
+ShenClVersion=2.7.0
 UrlRoot=https://github.com/Shen-Language/shen-cl/releases/download
 ShenClTag=v$(ShenClVersion)
 ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
@@ -67,7 +67,7 @@ else
 	rm -rf klambda
 	mkdir -p klambda
 endif
-	$(Shen) -l make.shen -e "(make)"
+	$(Shen) eval -l make.shen -e "(make)"
 
 #
 # Dependency retrieval
