@@ -46,8 +46,13 @@
   T 0 -> T
   T N -> (tuple-read T (- N (fst T))))
 
-\\ string prepend 1
-\\ string prepend many
+(define string-prepend-one
+  S 0 -> S
+  S N -> (string-prepend-one (do (cn "a" S) S) (- N 1)))
+
+(define string-prepend-long
+  S 0 -> S
+  S N -> (string-prepend-one (do (cn "abcdefghijklmnopqrstuvwxyz" S) S) (- N 1)))
 
 (define string-read-first
   S 0 -> S
@@ -98,6 +103,18 @@
   (tuple-create (@p 1 2))
   10000000)
 
+(benchmark "string (short) prepend one"
+  (string-prepend-one "string")
+  10000000)
+(benchmark "string (short) prepend long"
+  (string-prepend-long "string")
+  10000000)
+(benchmark "string (long) prepend one"
+  (string-prepend-one "a longer string a longer string a longer string a longer string.")
+  10000000)
+(benchmark "string (long) prepend long"
+  (string-prepend-long "a longer string a longer string a longer string a longer string.")
+  10000000)
 (benchmark "string read first"
   (string-read-first "string")
   100000000)
