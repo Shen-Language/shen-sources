@@ -10,3 +10,4 @@
                           done))
 
 (load "benchmarks/data.shen")
+(load "benchmarks/control-flow.shen")
