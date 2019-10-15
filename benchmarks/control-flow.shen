@@ -14,6 +14,21 @@
           _ (shen.dict-> Dict "exists" 1)
        Dict))
 
+(define thaw-test
+  _ 0 -> ok
+  F N -> (let Result (thaw F)
+           (thaw-test F (- N 1))))
+
+(define lambda/one-arg
+  _ 0 -> ok
+  Lambda N -> (let Result (Lambda 1)
+                (lambda/one-arg Lambda (- N 1))))
+
+(define lambda/many-args
+  _ 0 -> ok
+  Lambda N -> (let Result (Lambda 1 2 3 4 5 6 7 8 9)
+                (lambda/many-args Lambda (- N 1))))
+
 (define trap-error/basic
   _ 0 -> ok
   Raise N -> (let Result (trap-error (control-flow-helper Raise) (/. E N))
@@ -71,6 +86,18 @@
 
 (benchmark "control flow control loop"
   (control-flow-control-loop 0)
+  1000000)
+
+(benchmark "thaw"
+  (thaw-test (freeze 1))
+  1000000)
+
+(benchmark "lambda with one argument"
+  (lambda/one-arg (/. X X))
+  1000000)
+
+(benchmark "lambda with many arguments"
+  (lambda/many-args (/. A B C D E F G H X X))
   1000000)
 
 (benchmark "trap-error basic (no error raised)"
@@ -164,8 +191,3 @@
 (benchmark "trap-error with <-vector and handler that uses error (error raised)"
   (trap-error/<-vector-using-error (@v 1 2 3 4 <>) 10)
   1000000)
-
-\\ TODO
-\\ thaw
-\\ freeze
-\\ dynamic call: (F 1)
