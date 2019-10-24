@@ -7,7 +7,7 @@
 
 (define benchmark
   Description F RunsPower
-  -> (let _ (output "Running: ~S (10^~S runs)~%" Description RunsPower)
+  -> (let _ (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
           Runs (power 10 RunsPower)
           Start (get-time run)
           Result (F Runs)
