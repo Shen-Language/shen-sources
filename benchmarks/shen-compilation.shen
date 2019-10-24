@@ -21,25 +21,25 @@
 
 (benchmark "compilation control loop"
   (shen-compilation-control-loop 0)
-  100000000)
+  8)
 
 (benchmark "shen.pvar? (true)"
   (loop-shen.pvar? (@v 1 <>))
-  100000000)
+  8)
 (benchmark "shen.pvar? (false)"
   (loop-shen.pvar? (@v 1 <>))
-  100000000)
+  8)
 
 (benchmark "variable? (true)"
   (loop-variable? Variable)
-  100000000)
+  8)
 (benchmark "variable? (false)"
   (loop-variable? [not a variable])
-  100000000)
+  8)
 
 (benchmark "symbol? (true)"
   (loop-symbol? symbol)
-  100000000)
+  7)
 (benchmark "symbol? (false)"
   (loop-symbol? [not a symbol])
-  100000000)
+  8)

@@ -86,108 +86,108 @@
 
 (benchmark "control flow control loop"
   (control-flow-control-loop 0)
-  1000000)
+  6)
 
 (benchmark "thaw"
   (thaw-test (freeze 1))
-  1000000)
+  6)
 
 (benchmark "lambda with one argument"
   (lambda/one-arg (/. X X))
-  1000000)
+  6)
 
 (benchmark "lambda with many arguments"
   (lambda/many-args (/. A B C D E F G H X X))
-  1000000)
+  6)
 
 (benchmark "trap-error basic (no error raised)"
   (trap-error/basic false)
-  1000000)
+  6)
 
 (benchmark "trap-error basic (error raised)"
   (trap-error/basic true)
-  1000000)
+  6)
 
 (set exists 1)
 
 (benchmark "trap-error with value and handler to return default (no error raised)"
   (trap-error/value exists)
-  1000000)
+  6)
 
 (benchmark "trap-error with value and handler to return default (error raised)"
   (trap-error/value doesnt-exist)
-  1000000)
+  6)
 
 (benchmark "trap-error with value and handler that uses error (no error raised)"
   (trap-error/value-using-error exists)
-  1000000)
+  6)
 
 (benchmark "trap-error with value and handler that uses error (error raised)"
   (trap-error/value-using-error doesnt-exist)
-  1000000)
+  6)
 
 (put exists exists 1)
 
 (benchmark "trap-error with get and handler to return default value (no error raised)"
   (trap-error/get exists exists)
-  1000000)
+  6)
 
 (benchmark "trap-error with get and handler to return default value (error raised)"
   (trap-error/get exists doesnt-exist)
-  1000000)
+  6)
 
 (benchmark "trap-error with get and handler that uses error (no error raised)"
   (trap-error/get-using-error exists exists)
-  1000000)
+  6)
 
 (benchmark "trap-error with get and handler that uses error (error raised)"
   (trap-error/get-using-error exists doesnt-exist)
-  1000000)
+  6)
 
 (benchmark "trap-error with shen.<-dict and handler to return default value (no error raised)"
   (trap-error/<-dict (control-flow-make-dict) "exists")
-  1000000)
+  6)
 
 (benchmark "trap-error with shen.<-dict and handler to return default value (error raised)"
   (trap-error/<-dict (control-flow-make-dict) "doesnt-exists")
-  1000000)
+  6)
 
 (benchmark "trap-error with shen.<-dict and handler that uses error (no error raised)"
   (trap-error/<-dict-using-error (control-flow-make-dict) "exists")
-  1000000)
+  6)
 
 (benchmark "trap-error with shen.<-dict and handler that uses error (error raised)"
   (trap-error/<-dict-using-error (control-flow-make-dict) "doesnt-exists")
-  1000000)
+  6)
 
 (benchmark "trap-error with <-address and handler to return default value (no error raised)"
   (trap-error/<-address (@v 1 2 3 4 <>) 3)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-address and handler to return default value (error raised)"
   (trap-error/<-address (@v 1 2 3 4 <>) 10)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-address and handler that uses error (no error raised)"
   (trap-error/<-address-using-error (@v 1 2 3 4 <>) 3)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-address and handler that uses error (error raised)"
   (trap-error/<-address-using-error (@v 1 2 3 4 <>) 10)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-vector and handler to return default value (no error raised)"
   (trap-error/<-vector (@v 1 2 3 4 <>) 3)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-vector and handler to return default value (error raised)"
   (trap-error/<-vector (@v 1 2 3 4 <>) 10)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-vector and handler that uses error (no error raised)"
   (trap-error/<-vector-using-error (@v 1 2 3 4 <>) 3)
-  1000000)
+  6)
 
 (benchmark "trap-error with <-vector and handler that uses error (error raised)"
   (trap-error/<-vector-using-error (@v 1 2 3 4 <>) 10)
-  1000000)
+  6)

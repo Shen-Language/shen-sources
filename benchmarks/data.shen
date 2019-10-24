@@ -68,62 +68,62 @@
 
 (benchmark "data control loop"
   (data-control-loop 0)
-  100000000)
+  8)
 
 (benchmark "absvector read"
   (absvector-read (@v 1 <>))
-  100000000)
+  8)
 (benchmark "absvector write"
   (absvector-write (@v 2 <>))
-  100000000)
+  8)
 (benchmark "absvector create (small)"
   (absvector-create-small (absvector 1))
-  10000000)
+  7)
 (benchmark "absvector create (big)"
   (absvector-create-big (absvector 1))
-  10000000)
+  7)
 
 (benchmark "vector read"
   (vector-read (@v 1 <>))
-  100000000)
+  8)
 (benchmark "vector write"
   (vector-write (@v 2 <>))
-  100000000)
+  8)
 (benchmark "vector create (small)"
   (vector-create-small (vector 1))
-  10000000)
+  7)
 (benchmark "vector create (big)"
   (vector-create-big (vector 1))
-  10000000)
+  7)
 
 (benchmark "tuple read"
   (tuple-read (@p 1 2))
-  100000000)
+  8)
 (benchmark "tuple create"
   (tuple-create (@p 1 2))
-  10000000)
+  7)
 
 (benchmark "string (short) prepend one"
   (string-prepend-one "string")
-  10000000)
+  7)
 (benchmark "string (short) prepend long"
   (string-prepend-long "string")
-  10000000)
+  7)
 (benchmark "string (long) prepend one"
   (string-prepend-one "a longer string a longer string a longer string a longer string.")
-  10000000)
+  7)
 (benchmark "string (long) prepend long"
   (string-prepend-long "a longer string a longer string a longer string a longer string.")
-  10000000)
+  7)
 (benchmark "string read first"
   (string-read-first "string")
-  100000000)
+  8)
 (benchmark "string read last"
   (string-read-last "a longer string a longer string a longer string a longer string.")
-  100000000)
+  8)
 (benchmark "string get tail (short)"
   (string-get-tail "string")
-  100000000)
+  8)
 (benchmark "string get tail (longer)"
   (string-get-tail "a longer string a longer string a longer string a longer string.")
-  10000000)
+  7)
