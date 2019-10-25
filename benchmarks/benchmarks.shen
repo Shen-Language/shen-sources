@@ -30,11 +30,13 @@
                  Results (map (run-benchmark Report) Benchmarks)
               done))
 
+(set *hush* true)
 (load "benchmarks/data.shen")
 (load "benchmarks/control-flow.shen")
 (load "benchmarks/shen-compilation.shen")
 (load "benchmarks/pattern-matching.shen")
 (load "benchmarks/equality-check.shen")
+(set *hush* false)
 
 (if (bound? *argv*)
     (run-all-benchmarks (function stoutput-report))
