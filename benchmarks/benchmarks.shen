@@ -19,3 +19,4 @@
 (load "benchmarks/control-flow.shen")
 (load "benchmarks/shen-compilation.shen")
 (load "benchmarks/pattern-matching.shen")
+(load "benchmarks/equality-check.shen")
