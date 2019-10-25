@@ -6,23 +6,23 @@
   C N -> (equality-check-control-loop C (- N 1)))
 
 (define equal-values
-  _ _ _ 0 -> ok
+  _ _ R 0 -> R
   ValA ValB _ N -> (equal-values ValA ValB (= ValA ValB) (- N 1)))
 
 (define equal-symbol-literal
-  _ _ 0 -> ok
+  _ R 0 -> R
   Sym _ N -> (equal-symbol-literal Sym (= Sym symbol) (- N 1)))
 
 (define equal-integer-literal
-  _ _ 0 -> ok
+  _ R 0 -> R
   Num _ N -> (equal-integer-literal Num (= Num 8) (- N 1)))
 
 (define equal-float-literal
-  _ _ 0 -> ok
+  _ R 0 -> R
   Num _ N -> (equal-float-literal Num (= Num 8.0) (- N 1)))
 
 (define equal-string-literal
-  _ _ 0 -> ok
+  _ R 0 -> R
   Str _ N -> (equal-string-literal Str (= Str "string") (- N 1)))
 
 (add-benchmark equality-check

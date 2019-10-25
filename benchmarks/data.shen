@@ -14,8 +14,8 @@
   V N -> (absvector-create-big (absvector 100) (- N 1)))
 
 (define absvector-read
-  V 0 -> V
-  V N -> (absvector-read V (- N (<-address V 1))))
+  _ R 0 -> R
+  V _ N -> (absvector-read V (<-address V 1) (- N 1)))
 
 (define absvector-write
   V 0 -> V
@@ -30,41 +30,40 @@
   V N -> (vector-create-big (vector 100) (- N 1)))
 
 (define vector-read
-  V 0 -> V
-  V N -> (absvector-read V (- N (<-vector V 1))))
+  _ R 0 -> R
+  V _ N -> (absvector-read V (<-vector V 1) (- N 1)))
 
 (define vector-write
   V 0 -> V
   V N -> (absvector-write (vector-> V 1 N) (- N 1)))
 
-
 (define tuple-create
   T 0 -> T
-  T N -> (tuple-read (@p 1 2) (- N 1)))
+  T N -> (tuple-create (@p 1 2) (- N 1)))
 
 (define tuple-read
-  T 0 -> T
-  T N -> (tuple-read T (- N (fst T))))
+  _ R 0 -> R
+  T _ N -> (tuple-read T (fst T) (- N 1)))
 
 (define string-prepend-one
-  S 0 -> S
-  S N -> (string-prepend-one (do (cn "a" S) S) (- N 1)))
+  _ R 0 -> R
+  S _ N -> (string-prepend-one S (cn "a" S) (- N 1)))
 
 (define string-prepend-long
-  S 0 -> S
-  S N -> (string-prepend-one (do (cn "abcdefghijklmnopqrstuvwxyz" S) S) (- N 1)))
+  _ R 0 -> R
+  S _ N -> (string-prepend-long S (cn "abcdefghijklmnopqrstuvwxyz" S) (- N 1)))
 
 (define string-read-first
-  S 0 -> S
-  S N -> (string-read-first (do (hdstr S) S) (- N 1)))
+  _ R 0 -> R
+  S _ N -> (string-read-first S (hdstr S) (- N 1)))
 
 (define string-read-last
-  S 0 -> S
-  S N -> (string-read-last (do (pos S 63) S) (- N 1)))
+  _ R 0 -> R
+  S _ N -> (string-read-last S (pos S 63) (- N 1)))
 
 (define string-get-tail
-  S 0 -> S
-  S N -> (string-get-tail (do (tlstr S) S) (- N 1)))
+  _ R 0 -> R
+  S _ N -> (string-get-tail S (tlstr S) (- N 1)))
 
 (add-benchmark data
   "data control loop"
@@ -73,7 +72,7 @@
 
 (add-benchmark data
   "absvector read"
-  (absvector-read (@v 1 <>))
+  (absvector-read (@v 1 <>) 1)
   8)
 (add-benchmark data
   "absvector write"
@@ -90,7 +89,7 @@
 
 (add-benchmark data
   "vector read"
-  (vector-read (@v 1 <>))
+  (vector-read (@v 1 <>) 1)
   8)
 (add-benchmark data
   "vector write"
@@ -107,7 +106,7 @@
 
 (add-benchmark data
   "tuple read"
-  (tuple-read (@p 1 2))
+  (tuple-read (@p 1 2) 1)
   8)
 (add-benchmark data
   "tuple create"
@@ -116,33 +115,33 @@
 
 (add-benchmark data
   "string (short) prepend one"
-  (string-prepend-one "string")
+  (string-prepend-one "string" "")
   7)
 (add-benchmark data
   "string (short) prepend long"
-  (string-prepend-long "string")
+  (string-prepend-long "string" "")
   7)
 (add-benchmark data
   "string (long) prepend one"
-  (string-prepend-one "a longer string a longer string a longer string a longer string.")
+  (string-prepend-one "a longer string a longer string a longer string a longer string." "")
   7)
 (add-benchmark data
   "string (long) prepend long"
-  (string-prepend-long "a longer string a longer string a longer string a longer string.")
+  (string-prepend-long "a longer string a longer string a longer string a longer string." "")
   7)
 (add-benchmark data
   "string read first"
-  (string-read-first "string")
+  (string-read-first "string" "")
   8)
 (add-benchmark data
   "string read last"
-  (string-read-last "a longer string a longer string a longer string a longer string.")
+  (string-read-last "a longer string a longer string a longer string a longer string." "")
   8)
 (add-benchmark data
   "string get tail (short)"
-  (string-get-tail "string")
+  (string-get-tail "string" "")
   8)
 (add-benchmark data
   "string get tail (longer)"
-  (string-get-tail "a longer string a longer string a longer string a longer string.")
+  (string-get-tail "a longer string a longer string a longer string a longer string." "")
   7)

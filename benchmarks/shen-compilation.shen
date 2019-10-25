@@ -5,18 +5,17 @@
   _ 0 -> ok
   C N -> (shen-compilation-control-loop C (- N 1)))
 
-
 (define loop-shen.pvar?
-  _ 0 -> ok
-  V N -> (loop-shen.pvar? (do (shen.pvar? V) V) (- N 1)))
+  _ R 0 -> R
+  V _ N -> (loop-shen.pvar? V (shen.pvar? V) (- N 1)))
 
 (define loop-variable?
-  _ 0 -> ok
-  V N -> (loop-variable? (do (variable? V) V) (- N 1)))
+  _ R 0 -> R
+  V _ N -> (loop-variable? V (variable? V) (- N 1)))
 
 (define loop-symbol?
-  _ 0 -> ok
-  V N -> (loop-symbol? (do (symbol? V) V) (- N 1)))
+  _ R 0 -> R
+  V _ N -> (loop-symbol? V (symbol? V) (- N 1)))
 
 
 (add-benchmark shen-compilation
@@ -26,27 +25,27 @@
 
 (add-benchmark shen-compilation
   "shen.pvar? (true)"
-  (loop-shen.pvar? (@v 1 <>))
+  (loop-shen.pvar? (@v 1 <>) true)
   8)
 (add-benchmark shen-compilation
   "shen.pvar? (false)"
-  (loop-shen.pvar? (@v 1 <>))
+  (loop-shen.pvar? (@v 1 <>) false)
   8)
 
 (add-benchmark shen-compilation
   "variable? (true)"
-  (loop-variable? Variable)
+  (loop-variable? Variable true)
   8)
 (add-benchmark shen-compilation
   "variable? (false)"
-  (loop-variable? [not a variable])
+  (loop-variable? [not a variable] false)
   8)
 
 (add-benchmark shen-compilation
   "symbol? (true)"
-  (loop-symbol? symbol)
+  (loop-symbol? symbol true)
   7)
 (add-benchmark shen-compilation
   "symbol? (false)"
-  (loop-symbol? [not a symbol])
+  (loop-symbol? [not a symbol] false)
   8)

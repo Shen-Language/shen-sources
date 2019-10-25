@@ -2,16 +2,16 @@
 \\ BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause
 
 (define pattern-matching-control-loop
-  _ 0 -> ok
+  R 0 -> R
   C N -> (pattern-matching-control-loop C (- N 1)))
 
 (define match-list-single
-  _ 0 -> ok
+  R 0 -> R
   [A B C D E F G H I J K L] N -> (match-list-single [A B C D E F G H I J K L] (- N 1))
   Other N -> (match-list-single Other (- N 1)))
 
 (define match-list-multiple
-  _ 0 -> ok
+  R 0 -> R
   [A B C D E F G H I J K 0] N -> (match-list-multiple [A B C D E F G H I J K 0] (- N 1))
   [A B C D E F G H I J K 1] N -> (match-list-multiple [A B C D E F G H I J K 1] (- N 1))
   [A B C D E F G H I J K 2] N -> (match-list-multiple [A B C D E F G H I J K 2] (- N 1))
@@ -26,12 +26,12 @@
   Other N -> (match-list-multiple Other (- N 1)))
 
 (define match-tuple-single
-  _ 0 -> ok
+  R 0 -> R
   (@p A B C D E F G H I J K L) N -> (match-tuple-single (@p A B C D E F G H I J K L) (- N 1))
   Other N -> (match-tuple-single Other (- N 1)))
 
 (define match-tuple-multiple
-  _ 0 -> ok
+  R 0 -> R
   (@p A B C D E F G H I J K 0) N -> (match-tuple-multiple (@p A B C D E F G H I J K 0) (- N 1))
   (@p A B C D E F G H I J K 1) N -> (match-tuple-multiple (@p A B C D E F G H I J K 1) (- N 1))
   (@p A B C D E F G H I J K 2) N -> (match-tuple-multiple (@p A B C D E F G H I J K 2) (- N 1))
@@ -46,12 +46,12 @@
   Other N -> (match-tuple-multiple Other (- N 1)))
 
 (define match-vector-single
-  _ 0 -> ok
+  R 0 -> R
   (@v A B C D E F G H I J K L <>) N -> (match-vector-single (@v A B C D E F G H I J K L <>) (- N 1))
   Other N -> (match-vector-single Other (- N 1)))
 
 (define match-vector-multiple
-  _ 0 -> ok
+  R 0 -> R
   (@v A B C D E F G H I J K 0 <>) N -> (match-vector-multiple (@v A B C D E F G H I J K 0 <>) (- N 1))
   (@v A B C D E F G H I J K 1 <>) N -> (match-vector-multiple (@v A B C D E F G H I J K 1 <>) (- N 1))
   (@v A B C D E F G H I J K 2 <>) N -> (match-vector-multiple (@v A B C D E F G H I J K 2 <>) (- N 1))
@@ -66,12 +66,12 @@
   Other N -> (match-vector-multiple Other (- N 1)))
 
 (define match-string-single
-  _ 0 -> ok
+  R 0 -> R
   (@s A B C D E F G H I J K L "X") N -> (match-string-single (@s A B C D E F G H I J K L "X") (- N 1))
   Other N -> (match-string-single Other (- N 1)))
 
 (define match-string-multiple
-  _ 0 -> ok
+  R 0 -> R
   (@s A B C D E F G H I J K L "A") N -> (match-string-multiple (@s A B C D E F G H I J K L "A") (- N 1))
   (@s A B C D E F G H I J K L "B") N -> (match-string-multiple (@s A B C D E F G H I J K L "B") (- N 1))
   (@s A B C D E F G H I J K L "C") N -> (match-string-multiple (@s A B C D E F G H I J K L "C") (- N 1))
