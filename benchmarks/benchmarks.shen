@@ -22,12 +22,22 @@
        done))
 
 (define stoutput-report
-  begin [Tag Description RunsPower] -> (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
-  finish [Tag Description RunsPower Start End] -> (output "run time: ~S secs~%" (- End Start)))
+  prepare _ -> skip
+  cleanup _ -> skip
+  begin [_ Description RunsPower] -> (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
+  finish [_ _ _ Start End] -> (output "run time: ~S secs~%" (- End Start)))
+
+(define save-report
+  prepare _ -> (set *benchmark-results* [])
+  cleanup _ -> skip
+  begin _ -> skip
+  finish Data -> (set *benchmark-results* [Data | (value *benchmark-results*)]))
 
 (define run-all-benchmarks
   Report -> (let Benchmarks (reverse (value *benchmarks*))
+                 Prepare (Report prepare Benchmarks)
                  Results (map (run-benchmark Report) Benchmarks)
+                 Cleanup (Report cleanup Benchmarks)
               done))
 
 (set *hush* true)
