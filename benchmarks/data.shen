@@ -65,6 +65,18 @@
   _ R 0 -> R
   S _ N -> (string-get-tail S (tlstr S) (- N 1)))
 
+(define dict-create
+  D 0 -> D
+  D N -> (dict-create (shen.dict 100) (- N 1)))
+
+(define dict-read
+  _ R 0 -> R
+  D _ N -> (dict-read D (shen.<-dict D "exists") (- N 1)))
+
+(define dict-write
+  _ 0 -> ok
+  D N -> (dict-write (do (shen.dict-> D "key" 1) D) (- N 1)))
+
 (add-benchmark data
   "data control loop"
   (data-control-loop 0)
@@ -144,4 +156,17 @@
 (add-benchmark data
   "string get tail (longer)"
   (string-get-tail "a longer string a longer string a longer string a longer string." "")
+  7)
+
+(add-benchmark data
+  "dict read"
+  (dict-read (let D (shen.dict 100) _ (shen.dict-> D "exists" 1 ) D) 1)
+  7)
+(add-benchmark data
+  "dict write"
+  (dict-write (shen.dict 100))
+  7)
+(add-benchmark data
+  "dict create"
+  (dict-create (shen.dict 100))
   7)
