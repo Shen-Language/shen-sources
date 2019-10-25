@@ -17,6 +17,9 @@
   _ R 0 -> R
   V _ N -> (loop-symbol? V (symbol? V) (- N 1)))
 
+(define loop-sysfunc?
+  _ R 0 -> R
+  V _ N -> (loop-sysfunc? V (shen.sysfunc? V) (- N 1)))
 
 (add-benchmark shen-compilation
   "compilation control loop"
@@ -49,3 +52,12 @@
   "symbol? (false)"
   (loop-symbol? [not a symbol] false)
   8)
+
+(add-benchmark shen-compilation
+  "shen.sysfunc? (true)"
+  (loop-sysfunc? cons true)
+  5)
+(add-benchmark shen-compilation
+  "shen.sysfunc? (false)"
+  (loop-sysfunc? not-a-sysfunc false)
+  5)
