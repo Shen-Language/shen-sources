@@ -66,64 +66,83 @@
   S 0 -> S
   S N -> (string-get-tail (do (tlstr S) S) (- N 1)))
 
-(benchmark "data control loop"
+(add-benchmark data
+  "data control loop"
   (data-control-loop 0)
   8)
 
-(benchmark "absvector read"
+(add-benchmark data
+  "absvector read"
   (absvector-read (@v 1 <>))
   8)
-(benchmark "absvector write"
+(add-benchmark data
+  "absvector write"
   (absvector-write (@v 2 <>))
   8)
-(benchmark "absvector create (small)"
+(add-benchmark data
+  "absvector create (small)"
   (absvector-create-small (absvector 1))
   7)
-(benchmark "absvector create (big)"
+(add-benchmark data
+  "absvector create (big)"
   (absvector-create-big (absvector 1))
   7)
 
-(benchmark "vector read"
+(add-benchmark data
+  "vector read"
   (vector-read (@v 1 <>))
   8)
-(benchmark "vector write"
+(add-benchmark data
+  "vector write"
   (vector-write (@v 2 <>))
   8)
-(benchmark "vector create (small)"
+(add-benchmark data
+  "vector create (small)"
   (vector-create-small (vector 1))
   7)
-(benchmark "vector create (big)"
+(add-benchmark data
+  "vector create (big)"
   (vector-create-big (vector 1))
   7)
 
-(benchmark "tuple read"
+(add-benchmark data
+  "tuple read"
   (tuple-read (@p 1 2))
   8)
-(benchmark "tuple create"
+(add-benchmark data
+  "tuple create"
   (tuple-create (@p 1 2))
   7)
 
-(benchmark "string (short) prepend one"
+(add-benchmark data
+  "string (short) prepend one"
   (string-prepend-one "string")
   7)
-(benchmark "string (short) prepend long"
+(add-benchmark data
+  "string (short) prepend long"
   (string-prepend-long "string")
   7)
-(benchmark "string (long) prepend one"
+(add-benchmark data
+  "string (long) prepend one"
   (string-prepend-one "a longer string a longer string a longer string a longer string.")
   7)
-(benchmark "string (long) prepend long"
+(add-benchmark data
+  "string (long) prepend long"
   (string-prepend-long "a longer string a longer string a longer string a longer string.")
   7)
-(benchmark "string read first"
+(add-benchmark data
+  "string read first"
   (string-read-first "string")
   8)
-(benchmark "string read last"
+(add-benchmark data
+  "string read last"
   (string-read-last "a longer string a longer string a longer string a longer string.")
   8)
-(benchmark "string get tail (short)"
+(add-benchmark data
+  "string get tail (short)"
   (string-get-tail "string")
   8)
-(benchmark "string get tail (longer)"
+(add-benchmark data
+  "string get tail (longer)"
   (string-get-tail "a longer string a longer string a longer string a longer string.")
   7)

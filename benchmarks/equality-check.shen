@@ -25,69 +25,88 @@
   _ _ 0 -> ok
   Str _ N -> (equal-string-literal Str (= Str "string") (- N 1)))
 
-(benchmark "equality check control loop"
+(add-benchmark equality-check
+  "equality check control loop"
   (equality-check-control-loop 0)
   8)
 
-(benchmark "symbol equality (true)"
+(add-benchmark equality-check
+  "symbol equality (true)"
   (equal-values symbol symbol false)
   8)
-(benchmark "symbol equality (false)"
+(add-benchmark equality-check
+  "symbol equality (false)"
   (equal-values symbol "not a symbol" false)
   8)
 
-(benchmark "literal symbol equality (true)"
+(add-benchmark equality-check
+  "literal symbol equality (true)"
   (equal-symbol-literal symbol true)
   8)
-(benchmark "literal symbol equality (false)"
+(add-benchmark equality-check
+  "literal symbol equality (false)"
   (equal-symbol-literal "not a symbol" false)
   8)
 
-(benchmark "number equality (true)"
+(add-benchmark equality-check
+  "number equality (true)"
   (equal-values 1 1 true)
   8)
-(benchmark "number equality (false)"
+(add-benchmark equality-check
+  "number equality (false)"
   (equal-values 1 "not a number" false)
   8)
 
-(benchmark "literal integer equality (true)"
+(add-benchmark equality-check
+  "literal integer equality (true)"
   (equal-integer-literal 8 true)
   8)
-(benchmark "literal integer equality (false)"
+(add-benchmark equality-check
+  "literal integer equality (false)"
   (equal-integer-literal "not a number" false)
   8)
 
-(benchmark "literal float equality (true)"
+(add-benchmark equality-check
+  "literal float equality (true)"
   (equal-float-literal 8.0 true)
   8)
-(benchmark "literal float equality (false)"
+(add-benchmark equality-check
+  "literal float equality (false)"
   (equal-float-literal "not a number" false)
   8)
 
-(benchmark "string equality (true)"
+(add-benchmark equality-check
+  "string equality (true)"
   (equal-values "string" "string" true)
   8)
-(benchmark "string equality (false)"
+(add-benchmark equality-check
+  "string equality (false)"
   (equal-values "string" [not-a-string] false)
   8)
 
-(benchmark "literal string equality (true)"
+(add-benchmark equality-check
+  "literal string equality (true)"
   (equal-string-literal "string" true)
   8)
-(benchmark "literal string equality (false)"
+(add-benchmark equality-check
+  "literal string equality (false)"
   (equal-string-literal [not-a-string] false)
   8)
 
-(benchmark "list equality (true)"
+(add-benchmark equality-check
+  "list equality (true)"
   (equal-values [a list of symbols] [a list of symbols] true)
   8)
-(benchmark "list equality (false)"
+(add-benchmark equality-check
+  "list equality (false)"
   (equal-values [a list of symbols] "not a list" false)
   8)
 
-(benchmark "vector equality (true)"
+(add-benchmark equality-check
+  "vector equality (true)"
   (equal-values (@v a vector of symbols <>) (@v a vector of symbols <>) true)
   8)
-(benchmark "vector equality (false)"
+(add-benchmark equality-check
+  "vector equality (false)"
   (equal-values (@v a vector of symbols <>) "not a vector" false)
   8)

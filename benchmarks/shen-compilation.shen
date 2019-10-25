@@ -19,27 +19,34 @@
   V N -> (loop-symbol? (do (symbol? V) V) (- N 1)))
 
 
-(benchmark "compilation control loop"
+(add-benchmark shen-compilation
+  "compilation control loop"
   (shen-compilation-control-loop 0)
   8)
 
-(benchmark "shen.pvar? (true)"
+(add-benchmark shen-compilation
+  "shen.pvar? (true)"
   (loop-shen.pvar? (@v 1 <>))
   8)
-(benchmark "shen.pvar? (false)"
+(add-benchmark shen-compilation
+  "shen.pvar? (false)"
   (loop-shen.pvar? (@v 1 <>))
   8)
 
-(benchmark "variable? (true)"
+(add-benchmark shen-compilation
+  "variable? (true)"
   (loop-variable? Variable)
   8)
-(benchmark "variable? (false)"
+(add-benchmark shen-compilation
+  "variable? (false)"
   (loop-variable? [not a variable])
   8)
 
-(benchmark "symbol? (true)"
+(add-benchmark shen-compilation
+  "symbol? (true)"
   (loop-symbol? symbol)
   7)
-(benchmark "symbol? (false)"
+(add-benchmark shen-compilation
+  "symbol? (false)"
   (loop-symbol? [not a symbol])
   8)

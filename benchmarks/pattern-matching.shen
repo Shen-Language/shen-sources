@@ -85,62 +85,79 @@
   (@s A B C D E F G H I J K L "X") N -> (match-string-multiple (@s A B C D E F G H I J K L "X") (- N 1))
   Other N -> (match-string-multiple Other (- N 1)))
 
-(benchmark "pattern-matching control loop"
+(add-benchmark pattern-matching
+  "pattern-matching control loop"
   (pattern-matching-control-loop 0)
   8)
 
-(benchmark "match list (single clause, matching)"
+(add-benchmark pattern-matching
+  "match list (single clause, matching)"
   (match-list-single [0 1 2 3 4 5 6 7 8 9 9 9])
   8)
-(benchmark "match list (single clause, not matching)"
+(add-benchmark pattern-matching
+  "match list (single clause, not matching)"
   (match-list-single other)
   8)
 
-(benchmark "match list (multiple clauses, matching)"
+(add-benchmark pattern-matching
+  "match list (multiple clauses, matching)"
   (match-list-multiple [0 1 2 3 4 5 6 7 8 9 9 9])
   8)
-(benchmark "match list (multiple clauses, not matching)"
+(add-benchmark pattern-matching
+  "match list (multiple clauses, not matching)"
   (match-list-multiple other)
   8)
 
-(benchmark "match tuple (single clause, matching)"
+(add-benchmark pattern-matching
+  "match tuple (single clause, matching)"
   (match-tuple-single (@p 0 1 2 3 4 5 6 7 8 9 9 9))
   7)
-(benchmark "match tuple (single clause, not matching)"
+(add-benchmark pattern-matching
+  "match tuple (single clause, not matching)"
   (match-tuple-single other)
   8)
 
-(benchmark "match tuple (multiple clauses, matching)"
+(add-benchmark pattern-matching
+  "match tuple (multiple clauses, matching)"
   (match-tuple-multiple (@p 0 1 2 3 4 5 6 7 8 9 9 9))
   7)
-(benchmark "match tuple (multiple clauses, not matching)"
+(add-benchmark pattern-matching
+  "match tuple (multiple clauses, not matching)"
   (match-tuple-multiple other)
   8)
 
-(benchmark "match vector (single clause, matching)"
+(add-benchmark pattern-matching
+  "match vector (single clause, matching)"
   (match-vector-single (@v 0 1 2 3 4 5 6 7 8 9 9 9 <>))
   4)
-(benchmark "match vector (single clause, not matching)"
+(add-benchmark pattern-matching
+  "match vector (single clause, not matching)"
   (match-vector-single other)
   8)
 
-(benchmark "match vector (multiple clauses, matching)"
+(add-benchmark pattern-matching
+  "match vector (multiple clauses, matching)"
   (match-vector-multiple (@v 0 1 2 3 4 5 6 7 8 9 9 9 <>))
   4)
-(benchmark "match vector (multiple clauses, not matching)"
+(add-benchmark pattern-matching
+  "match vector (multiple clauses, not matching)"
   (match-vector-multiple other)
   8)
 
-(benchmark "match string (single clause, matching)"
+(add-benchmark pattern-matching
+  "match string (single clause, matching)"
   (match-string-single "ABCDEFGHIJKLX")
   6)
-(benchmark "match string (single clause, not matching)"
+(add-benchmark pattern-matching
+  "match string (single clause, not matching)"
   (match-string-single other)
   8)
 
-(benchmark "match string (multiple clauses, matching)"
+(add-benchmark pattern-matching
+  "match string (multiple clauses, matching)"
   (match-string-multiple "ABCDEFGHIJKLX")
   6)
-(benchmark "match string (multiple clauses, not matching)"
+(add-benchmark pattern-matching
+  "match string (multiple clauses, not matching)"
   (match-string-multiple other)
   8)
