@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Benchmarks.
+
 ## [22.2] - 2019-10-11
 
 ### Fixed
