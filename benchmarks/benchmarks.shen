@@ -13,17 +13,17 @@
 
 (define run-benchmark
   Report [Tag Description F RunsPower]
-  -> (let _ (Report start [Tag Description RunsPower])
+  -> (let _ (Report begin [Tag Description RunsPower])
           Runs (power 10 RunsPower)
           Start (get-time run)
           Result (F Runs)
           End (get-time run)
-          _ (Report end [Tag Description RunsPower Start End])
+          _ (Report finish [Tag Description RunsPower Start End])
        done))
 
 (define stoutput-report
-  start [Tag Description RunsPower] -> (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
-  end [Tag Description RunsPower Start End] -> (output "run time: ~S secs~%" (- End Start)))
+  begin [Tag Description RunsPower] -> (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
+  finish [Tag Description RunsPower Start End] -> (output "run time: ~S secs~%" (- End Start)))
 
 (define run-all-benchmarks
   Report -> (let Benchmarks (reverse (value *benchmarks*))
