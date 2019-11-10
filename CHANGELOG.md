@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Added
 - Benchmarks.
 
+### Fixed
+- Fixed bug in typechecking function that made user-defined typechecking rules for lambdas to never run.
+
 ## [22.2] - 2019-10-11
 
 ### Fixed
