@@ -89,8 +89,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   (mode [@v X Y] -) [vector A] Hyp <-- (th* X A Hyp) (th* Y [vector A] Hyp);
   (mode [@s X Y] -) string Hyp <-- (th* X string Hyp) (th* Y string Hyp);
   (mode [lambda X Y] -) [A --> B] Hyp <-- (bind X&& (placeholder))
-                                            (bind Z (ebr X&& X Y))
-                                            (th* Z B [[X&& : A] | Hyp]);
+                                          (bind Z (ebr X&& X Y))
+                                          (th* Z B [[X&& : A] | Hyp]);
   (mode [let X Y Z] -) A Hyp <-- (th* Y B Hyp)
                                  (bind X&& (placeholder))
                                  (bind W (ebr X&& X Z))
@@ -265,12 +265,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (defprolog t*-patterns
   (mode [] -) _ _ <--;
-  (mode [Pattern | Patterns] -) (mode [A --> B] -) Hyp <-- (t* [Pattern : A] Hyp)
-  (t*-patterns Patterns B Hyp);)
+  (mode [Pattern | Patterns] -) (mode [A --> B] -) Hyp
+    <-- (t* [Pattern : A] Hyp)
+        (t*-patterns Patterns B Hyp);)
 
 (defprolog t*-action
   (mode [where P Action] -) A Hyp
-    <-- ! (t* [P : boolean] Hyp) ! (t*-action Action A [[P : verified] | Hyp]);
+    <-- ! (t* [P : boolean] Hyp)
+        ! (t*-action Action A [[P : verified] | Hyp]);
   (mode [choicepoint! [[fail-if F] Action]] -) A Hyp
     <-- ! (t*-action [where [not [F Action]] Action] A Hyp);
   (mode [choicepoint! Action] -) A Hyp
