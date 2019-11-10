@@ -88,7 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   (mode [@p X Y] -) [A * B] Hyp <-- (th* X A Hyp) (th* Y B Hyp);
   (mode [@v X Y] -) [vector A] Hyp <-- (th* X A Hyp) (th* Y [vector A] Hyp);
   (mode [@s X Y] -) string Hyp <-- (th* X string Hyp) (th* Y string Hyp);
-  (mode [lambda X Y] -) [A --> B] Hyp <-- ! (bind X&& (placeholder))
+  (mode [lambda X Y] -) [A --> B] Hyp <-- (bind X&& (placeholder))
                                             (bind Z (ebr X&& X Y))
                                             (th* Z B [[X&& : A] | Hyp]);
   (mode [let X Y Z] -) A Hyp <-- (th* Y B Hyp)
