@@ -88,6 +88,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> false  where (= X (fail))
   _ -> true)
 
+(define custom-pattern-handler
+  Msg Arg -> (let F (value *custom-patterns-handler*)
+               (if (= F false)
+                   false
+                   (F Msg Arg))))
+
 (defcc <patterns>
   <pattern> <patterns> := [<pattern> | <patterns>];
   <e> := [];)
@@ -98,6 +104,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [@v <pattern1> <pattern2>] := [@v <pattern1> <pattern2>];
   [@s <pattern1> <pattern2>] := [@s <pattern1> <pattern2>];
   [vector 0] := [vector 0];
+  Constructor := (custom-pattern-handler "compile" Constructor)
+      where (custom-pattern-handler "valid?" Constructor)
   X := (constructor-error X) 	where (cons? X);
   <simple_pattern> := <simple_pattern>;)
 
@@ -333,6 +341,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          (let Abstraction [/. X [/. Y (ebr A [@s X Y] Z)]]
               Application [[Abstraction [pos A 0]] [tlstr A]]
            (reduce_help Application)))
+  [[/. [Constructor | Args] Body] A]
+  -> (custom-pattern-handler "reduce"
+       [[/. [Constructor | Args] Body] A])
+      where (custom-pattern-handler "valid?" [Constructor | Args])
   [[/. X Z] A]
   -> (do (add_test [= X A])
          (reduce_help Z))  where (not (variable? X))
