@@ -105,7 +105,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [@s <pattern1> <pattern2>] := [@s <pattern1> <pattern2>];
   [vector 0] := [vector 0];
   Constructor := (custom-pattern-handler "compile" Constructor)
-      where (custom-pattern-handler "valid?" Constructor)
+      where (custom-pattern-handler "valid?" Constructor);
   X := (constructor-error X) 	where (cons? X);
   <simple_pattern> := <simple_pattern>;)
 
