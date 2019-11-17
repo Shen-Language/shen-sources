@@ -3,7 +3,49 @@
 
 \\ Documentation: docs/extensions/extend-pattern-matching.md
 
-(package shen.x.extend-pattern-matching []
+(package shen.x.extend-pattern-matching [defpatterns =>]
+
+(define defpatterns-macro
+  [defpatterns Name | Rest] -> (construct-register-patterns Name Rest)
+  X -> X)
+
+(define construct-register-patterns
+  Name [] -> Name
+  Name [Var => Body where Test | Rest]
+  -> (let Constructor (pattern-constructor Body)
+          Head (head Constructor)
+          Args (tail Constructor)
+          Selectors (shen.cons_form (pattern-selectors Var Args Body))
+          TestLambda (if (= true Test) true [lambda Var (shen.rcons_form Test)])
+       [do [register-constructor Head TestLambda Selectors]
+           (construct-register-patterns Name Rest)])
+  Name [Var => Body | Rest] -> (construct-register-patterns
+                                 Name [Var => Body where true | Rest])
+  Name X -> (error "invalid clause syntax in defpatterns '~A'" Name))
+
+(define pattern-constructor
+  [let _ _ Body] -> (pattern-constructor Body)
+  [Head | Args] -> [Head | Args] where (and (symbol? Head)
+                                            (variables? Args))
+  Exp -> (error "Invalid constructor pattern in defpatterns: ~A" Exp))
+
+(define variables?
+  [] -> true
+  [X | Rest] -> (and (variable? X) (variables? Rest)))
+
+\\ FIXME: match selector order to args order
+(define pattern-selectors
+  _ [] _ -> []
+  Var Args [let Arg Selector Body] -> [[lambda Var (shen.rcons_form Selector)]
+                                       | (pattern-selectors Var (remove Arg Args) Body)]
+      where (and (element? Arg Args)
+                 (valid-selector? Var Selector))
+  _ _ Body -> (error "defpatterns: Invalid selector pattern ~A." Body))
+
+(define valid-selector?
+  Var [_ | Rest] -> (element? Var Rest)
+  Var Var -> true
+  _ _ -> false)
 
 (define valid-constructor?
   [X | Args] -> (= (trap-error (get X constructor-length) (/. _ -1))
@@ -11,9 +53,9 @@
   _ -> false)
 
 (define register-constructor
-  Head Predicate Accessors -> (do (put Head pattern-test Predicate)
-                                  (put Head accessors Accessors)
-                                  (put Head constructor-length (length Accessors))
+  Head Predicate Selectors -> (do (put Head pattern-test Predicate)
+                                  (put Head selectors Selectors)
+                                  (put Head constructor-length (length Selectors))
                                 done))
 
 (define compile-pattern
@@ -25,10 +67,10 @@
   [[/. [Constructor | Args] Body] A]
   -> (let MkTest (app-form-lambda (get Constructor pattern-test))
           Test (MkTest A)
-          AccessorBuilders (map (/. S (app-form-lambda S)) (get Constructor accessors))
+          SelectorBuilders (map (/. S (app-form-lambda S)) (get Constructor selectors))
           AddTest (shen.add_test Test)
           Abstraction (build-abstraction Args (shen.ebr A [Constructor | Args] Body))
-          Application (build-application Abstraction (reverse AccessorBuilders) A)
+          Application (build-application Abstraction (reverse SelectorBuilders) A)
        (shen.reduce_help Application)))
 
 (define app-form-lambda
@@ -51,6 +93,7 @@
   "reduce" Arg -> (reduce Arg))
 
 (define initialise
-  -> (set shen.*custom-patterns-handler* (/. Msg Arg (driver Msg Arg))))
+  -> (do (set shen.*custom-patterns-handler* (/. Msg Arg (driver Msg Arg)))
+         (shen.add-macro defpatterns-macro)))
 
 )
