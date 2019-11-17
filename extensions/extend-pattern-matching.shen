@@ -17,7 +17,7 @@
                                 done))
 
 (define compile-pattern
-  [Constructor | Args] -> (let Compile (/. X (<patterns> X))
+  [Constructor | Args] -> (let Compile (/. X (shen.<patterns> X))
                                Handler (/. E (error "failed to compile ~A" E))
                             [Constructor | (compile Compile Args Handler)]))
 
