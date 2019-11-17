@@ -28,7 +28,7 @@
           AccessorBuilders (map (/. S (app-form-lambda S)) (get Constructor accessors))
           AddTest (shen.add_test Test)
           Abstraction (build-abstraction Args (shen.ebr A [Constructor | Args] Body))
-          Application (build-application Abstraction AccessorBuilders A)
+          Application (build-application Abstraction (reverse AccessorBuilders) A)
        (shen.reduce_help Application)))
 
 (define app-form-lambda
