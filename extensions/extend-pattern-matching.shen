@@ -32,6 +32,8 @@
        (shen.reduce_help Application)))
 
 (define app-form-lambda
+  true -> (/. _ true)
+  let -> (/. A A)
   Sym -> (/. A [Sym A]) where (symbol? Sym)
   F -> F)
 
