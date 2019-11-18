@@ -5,6 +5,8 @@
 
 (package shen.x.extend-pattern-matching [defpatterns =>]
 
+\\ Macro
+
 (define defpatterns-macro
   [defpatterns Name | Rest] -> (construct-register-patterns Name Rest)
   X -> X)
@@ -15,7 +17,7 @@
   -> (let Constructor (pattern-constructor Body)
           Head (head Constructor)
           Args (tail Constructor)
-          Selectors (shen.cons_form (pattern-selectors Var Args Body))
+          Selectors (shen.cons_form (pattern-selectors Var Args Body Args))
           TestLambda (if (= true Test) true [lambda Var (shen.rcons_form Test)])
        [do [register-constructor Head TestLambda Selectors]
            (construct-register-patterns Name Rest)])
@@ -33,14 +35,15 @@
   [] -> true
   [X | Rest] -> (and (variable? X) (variables? Rest)))
 
-\\ FIXME: match selector order to args order
 (define pattern-selectors
-  _ [] _ -> []
-  Var Args [let Arg Selector Body] -> [[lambda Var (shen.rcons_form Selector)]
-                                       | (pattern-selectors Var (remove Arg Args) Body)]
+  _ [] _ Result -> Result
+  Var Args [let Arg Selector Body] Result
+  -> (let SelectorLambda [lambda Var (shen.rcons_form Selector)]
+       (pattern-selectors
+         Var (remove Arg Args) Body (subst SelectorLambda Arg Result)))
       where (and (element? Arg Args)
                  (valid-selector? Var Selector))
-  _ _ Body -> (error "defpatterns: Invalid selector pattern ~A." Body))
+  _ _ Body _ -> (error "defpatterns: Invalid selector pattern ~A." Body))
 
 (define valid-selector?
   Var [_ | Rest] -> (element? Var Rest)
@@ -51,6 +54,8 @@
   [X | Args] -> (= (trap-error (get X constructor-length) (/. _ -1))
                    (length Args))
   _ -> false)
+
+\\ Patterns compilation
 
 (define register-constructor
   Head Predicate Selectors -> (do (put Head pattern-test Predicate)
