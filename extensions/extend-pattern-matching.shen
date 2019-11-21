@@ -53,9 +53,11 @@
           Is? (/. Expr (shen.add_test Expr))
           Assign (/. Var Expr (push SelectorStack (@p Var Expr)))
           Result (apply-pattern-handlers Handlers Ref Is? Assign [Constructor | Args])
-          Abstraction (shen.abstraction_build Args (shen.ebr Ref [Constructor | Args] Body))
-          SelectorBuilders (map (function snd) (reverse (pop-all SelectorStack)))
-          Application (shen.application_build SelectorBuilders Abstraction)
+          Vars+Sels (reverse (pop-all SelectorStack))
+          Vars (map (function fst) Vars+Sels)
+          Selectors (map (function snd) Vars+Sels)
+          Abstraction (shen.abstraction_build Vars (shen.ebr Ref [Constructor | Args] Body))
+          Application (shen.application_build Selectors Abstraction)
        (shen.reduce_help Application)))
 
 (define initialise
