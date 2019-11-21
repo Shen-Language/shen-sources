@@ -37,7 +37,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (set *varcounter* (vector 10000))
 (set *prologvectors* (vector 10000))
 (set *demodulation-function* (/. X X))
-(set *custom-patterns-handler* false)
+(set *custom-pattern-compiler* (/. Arg OnFail (thaw OnFail)))
+(set *custom-pattern-reducer* (/. Arg Arg))
 (set *macroreg* [timer-macro cases-macro abs-macro put/get-macro
                  compile-macro datatype-macro let-macro assoc-macro
                  make-string-macro output-macro input-macro error-macro

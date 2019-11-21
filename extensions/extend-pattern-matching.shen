@@ -3,102 +3,66 @@
 
 \\ Documentation: docs/extensions/extend-pattern-matching.md
 
-(package shen.x.extend-pattern-matching [defpatterns =>]
+(package shen.x.extend-pattern-matching []
 
-\\ Macro
+(define register-pattern-handler
+  F -> skip where (element? F (value *pattern-handlers-reg*))
+  F -> (do (set *pattern-handlers-reg* [F | (value *pattern-handlers-reg*)])
+           (set *pattern-handlers* [(function F) | (value *pattern-handlers*)])))
 
-(define defpatterns-macro
-  [defpatterns Name | Rest] -> (construct-register-patterns Name Rest)
-  X -> X)
+(define apply-pattern-handlers
+  [] _ _ _ _ -> (fail)
+  [Handler | _] Ref Is? Assign Expr <- (Handler Ref Is? Assign Expr)
+  [_ | Handlers] Ref Is? Assign Expr -> (apply-pattern-handlers Handlers Ref Is? Assign Expr))
 
-(define construct-register-patterns
-  Name [] -> Name
-  Name [Var => Body where Test | Rest]
-  -> (let Constructor (pattern-constructor Body)
-          Head (head Constructor)
-          Args (tail Constructor)
-          Selectors (shen.cons_form (pattern-selectors Var Args Body Args))
-          TestLambda (if (= true Test) true [lambda Var (shen.rcons_form Test)])
-       [do [register-constructor Head TestLambda Selectors]
-           (construct-register-patterns Name Rest)])
-  Name [Var => Body | Rest] -> (construct-register-patterns
-                                 Name [Var => Body where true | Rest])
-  Name X -> (error "invalid clause syntax in defpatterns '~A'" Name))
+(define make-stack
+  -> (address-> (absvector 1) 0 []))
 
-(define pattern-constructor
-  [let _ _ Body] -> (pattern-constructor Body)
-  [Head | Args] -> [Head | Args] where (and (symbol? Head)
-                                            (variables? Args))
-  Exp -> (error "Invalid constructor pattern in defpatterns: ~A" Exp))
+(define push
+  S V -> (address-> S 0 [V | (<-address S 0)]))
 
-(define variables?
-  [] -> true
-  [X | Rest] -> (and (variable? X) (variables? Rest)))
-
-(define pattern-selectors
-  _ [] _ Result -> Result
-  Var Args [let Arg Selector Body] Result
-  -> (let SelectorLambda [lambda Var (shen.rcons_form Selector)]
-       (pattern-selectors
-         Var (remove Arg Args) Body (subst SelectorLambda Arg Result)))
-      where (and (element? Arg Args)
-                 (valid-selector? Var Selector))
-  _ _ Body _ -> (error "defpatterns: Invalid selector pattern ~A." Body))
-
-(define valid-selector?
-  Var [_ | Rest] -> (element? Var Rest)
-  Var Var -> true
-  _ _ -> false)
-
-(define valid-constructor?
-  [X | Args] -> (= (trap-error (get X constructor-length) (/. _ -1))
-                   (length Args))
-  _ -> false)
-
-\\ Patterns compilation
-
-(define register-constructor
-  Head Predicate Selectors -> (do (put Head pattern-test Predicate)
-                                  (put Head selectors Selectors)
-                                  (put Head constructor-length (length Selectors))
-                                done))
+(define pop-all
+  S -> (let Res (<-address S 0)
+            _ (address-> S 0 [])
+         Res))
 
 (define compile-pattern
-  [Constructor | Args] -> (let Compile (/. X (shen.<patterns> X))
-                               Handler (/. E (error "failed to compile ~A" E))
-                            [Constructor | (compile Compile Args Handler)]))
+  Patt Handlers OnFail
+  -> (let VarsStack (make-stack)
+          Ref (protect Self$$7907$$)
+          Is? (/. _ ignored)
+          Assign (/. Var _ (push VarsStack Var))
+          Result (apply-pattern-handlers Handlers Ref Is? Assign Patt)
+       (if (= Result (fail))
+           (thaw OnFail)
+           (compile-pattern-h Patt (reverse (pop-all VarsStack))))))
+
+(define compile-pattern-h
+  [Constructor | Args] Vars
+  -> (let Compile (/. X (shen.<pattern> X))
+          Handler (/. E (error "failed to compile ~A" E))
+          NewArgs (map (/. Arg (if (element? Arg Vars)
+                                   (compile Compile [Arg] Handler)
+                                   Arg))
+                       Args)
+       [Constructor | NewArgs]))
 
 (define reduce
-  [[/. [Constructor | Args] Body] A]
-  -> (let MkTest (app-form-lambda (get Constructor pattern-test))
-          Test (MkTest A)
-          SelectorBuilders (map (/. S (app-form-lambda S)) (get Constructor selectors))
-          AddTest (shen.add_test Test)
-          Abstraction (build-abstraction Args (shen.ebr A [Constructor | Args] Body))
-          Application (build-application Abstraction (reverse SelectorBuilders) A)
+  [[/. [Constructor | Args] Body] Ref] Handlers
+  -> (let SelectorStack (make-stack)
+          Is? (/. Expr (shen.add_test Expr))
+          Assign (/. Var Expr (push SelectorStack (@p Var Expr)))
+          Result (apply-pattern-handlers Handlers Ref Is? Assign [Constructor | Args])
+          Abstraction (shen.abstraction_build Args (shen.ebr Ref [Constructor | Args] Body))
+          SelectorBuilders (map (function snd) (reverse (pop-all SelectorStack)))
+          Application (shen.application_build SelectorBuilders Abstraction)
        (shen.reduce_help Application)))
 
-(define app-form-lambda
-  true -> (/. _ true)
-  let -> (/. A A)
-  Sym -> (/. A [Sym A]) where (symbol? Sym)
-  F -> F)
-
-(define build-abstraction
-  [] Body -> Body
-  [Arg | Args] Body -> [/. Arg (build-abstraction Args Body)])
-
-(define build-application
-  Abstraction [] _ -> Abstraction
-  Abstraction [AB | ABs] A -> [(build-application Abstraction ABs A) (AB A)])
-
-(define driver
-  "valid?" Arg -> (valid-constructor? Arg)
-  "compile" Arg -> (compile-pattern Arg)
-  "reduce" Arg -> (reduce Arg))
-
 (define initialise
-  -> (do (set shen.*custom-patterns-handler* (/. Msg Arg (driver Msg Arg)))
-         (shen.add-macro defpatterns-macro)))
+  -> (do (set shen.*custom-pattern-compiler* (/. Arg OnFail (compile-pattern Arg (value *pattern-handlers*) OnFail)))
+         (set shen.*custom-pattern-reducer* (/. Arg (reduce Arg (value *pattern-handlers*))))
+         (set *pattern-handlers* [])
+         (set *pattern-handlers-reg* [])
+         done))
 
 )
