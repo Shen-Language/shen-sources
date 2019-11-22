@@ -6,6 +6,15 @@ over in addition to what is supported natively.
 
 ## How to use
 
+Before using this extension, it has to be initialised (only once) by calling the 0-place `shen.x.programmable-pattern-matching.initialise` function:
+
+```shen
+\\ Ideally the port already comes with this extension loaded
+\\ and initialised, but if it is being use as a library,
+\\ then this step is required
+(shen.x.programmable-pattern-matching.initialise)
+```
+
 Supporting new patterns is done by the definition and registration of
 "pattern handler" functions.
 
