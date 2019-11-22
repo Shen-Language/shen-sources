@@ -42,6 +42,20 @@ be implemented if the compiler didn't support it already:
   _ _ _ _ -> (fail))
 ```
 
+Once a pattern handler function has been defined, it can be registered and enabled by passing its name to the `shen.x.programmable-pattern-matching.register-handler` function:
+
+```shen
+(shen.x.programmable-pattern-matching.register-handler cons-pattern-handler)
+(shen.x.programmable-pattern-matching.register-handler tuple-pattern-handler)
+```
+
+A handler can be disabled by passing its name to the `shen.x.programmable-pattern-matching.unregister-handler` function:
+
+```shen
+(shen.x.programmable-pattern-matching.unregister-handler cons-pattern-handler)
+(shen.x.programmable-pattern-matching.unregister-handler tuple-pattern-handler)
+```
+
 ### Notes:
 
 - It is not mandatory to bind all the variables in the pattern, some of the inputs may be used by the pattern handler to decide how such pattern should be compiled.
