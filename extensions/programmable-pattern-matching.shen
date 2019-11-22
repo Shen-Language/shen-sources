@@ -1,14 +1,9 @@
 \\ Copyright (c) 2019 Bruno Deferrari.  All rights reserved.
 \\ BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause
 
-\\ Documentation: docs/extensions/extend-pattern-matching.md
+\\ Documentation: docs/extensions/programmable-pattern-matching.md
 
-(package shen.x.extend-pattern-matching []
-
-(define register-pattern-handler
-  F -> skip where (element? F (value *pattern-handlers-reg*))
-  F -> (do (set *pattern-handlers-reg* [F | (value *pattern-handlers-reg*)])
-           (set *pattern-handlers* [(function F) | (value *pattern-handlers*)])))
+(package shen.x.programmable-pattern-matching []
 
 (define apply-pattern-handlers
   [] _ _ _ _ -> (fail)
@@ -66,5 +61,21 @@
          (set *pattern-handlers* [])
          (set *pattern-handlers-reg* [])
          done))
+
+(define register-handler
+  F -> skip where (element? F (value *pattern-handlers-reg*))
+  F -> (do (set *pattern-handlers-reg* [F | (value *pattern-handlers-reg*)])
+           (set *pattern-handlers* [(function F) | (value *pattern-handlers*)])))
+
+(define findpos
+  Sym L -> (trap-error (shen.findpos Sym L)
+                       (/. _ (error "~A is not a pattern handler~%" F))))
+
+(define unregister-handler
+  F -> (let Reg (value *pattern-handlers-reg*)
+            Pos (findpos F Reg))
+            RemoveReg (set *pattern-handlers-reg* (remove F Reg))
+            RemoveFun (set *pattern-handlers* (shen.remove-nth Pos (value *pattern-handlers*)))
+         F)
 
 )
