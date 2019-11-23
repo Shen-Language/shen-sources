@@ -7,8 +7,8 @@
 
 (define apply-pattern-handlers
   [] _ _ _ _ -> (fail)
-  [Handler | _] Ref Is? Assign Expr <- (Handler Ref Is? Assign Expr)
-  [_ | Handlers] Ref Is? Assign Expr -> (apply-pattern-handlers Handlers Ref Is? Assign Expr))
+  [Handler | _] Self AddTest Bind Patt <- (Handler Self AddTest Bind Patt)
+  [_ | Handlers] Self AddTest Bind Patt -> (apply-pattern-handlers Handlers Self AddTest Bind Patt))
 
 (define make-stack
   -> (address-> (absvector 1) 0 []))
@@ -24,10 +24,10 @@
 (define compile-pattern
   Patt Handlers OnFail
   -> (let VarsStack (make-stack)
-          Ref (protect Self$$7907$$)
-          Is? (/. _ ignored)
-          Assign (/. Var _ (push VarsStack Var))
-          Result (apply-pattern-handlers Handlers Ref Is? Assign Patt)
+          Self (protect Self$$7907$$)
+          AddTest (/. _ ignored)
+          Bind (/. Var _ (push VarsStack Var))
+          Result (apply-pattern-handlers Handlers Self AddTest Bind Patt)
        (if (= Result (fail))
            (thaw OnFail)
            (compile-pattern-h Patt (reverse (pop-all VarsStack))))))
@@ -43,15 +43,15 @@
        [Constructor | NewArgs]))
 
 (define reduce
-  [[/. [Constructor | Args] Body] Ref] Handlers
+  [[/. [Constructor | Args] Body] Self] Handlers
   -> (let SelectorStack (make-stack)
-          Is? (/. Expr (shen.add_test Expr))
-          Assign (/. Var Expr (push SelectorStack (@p Var Expr)))
-          Result (apply-pattern-handlers Handlers Ref Is? Assign [Constructor | Args])
+          AddTest (/. Expr (shen.add_test Expr))
+          Bind (/. Var Expr (push SelectorStack (@p Var Expr)))
+          Result (apply-pattern-handlers Handlers Self AddTest Bind [Constructor | Args])
           Vars+Sels (reverse (pop-all SelectorStack))
           Vars (map (function fst) Vars+Sels)
           Selectors (map (function snd) Vars+Sels)
-          Abstraction (shen.abstraction_build Vars (shen.ebr Ref [Constructor | Args] Body))
+          Abstraction (shen.abstraction_build Vars (shen.ebr Self [Constructor | Args] Body))
           Application (shen.application_build Selectors Abstraction)
        (shen.reduce_help Application)))
 
