@@ -63,9 +63,10 @@
          done))
 
 (define register-handler
-  F -> skip where (element? F (value *pattern-handlers-reg*))
+  F -> F where (element? F (value *pattern-handlers-reg*))
   F -> (do (set *pattern-handlers-reg* [F | (value *pattern-handlers-reg*)])
-           (set *pattern-handlers* [(function F) | (value *pattern-handlers*)])))
+           (set *pattern-handlers* [(function F) | (value *pattern-handlers*)])
+           F))
 
 (define findpos
   Sym L -> (trap-error (shen.findpos Sym L)
