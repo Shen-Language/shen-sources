@@ -136,8 +136,7 @@
 
 (define exp-var
   [SelF Exp] -> (concat/ (exp-var Exp) SelF)
-      where (element? SelF [hd tl hdv tlv fst snd tlstr])
-  [hdstr Exp] -> (concat/ (exp-var Exp) hdstr)
+      where (element? SelF [hd tl hdv tlv fst snd hdstr tlstr])
   Var -> Var)
 
 (define optimize-selectors
