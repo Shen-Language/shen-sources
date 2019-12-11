@@ -256,7 +256,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define patthyps
   [] _ Hyp -> Hyp
-  [Pattern | Patterns] [A --> B] Hyp -> (adjoin [Pattern : A] (patthyps Patterns B Hyp)))
+  [Pattern | Patterns] [A --> B] Hyp -> (adjoin [(curry Pattern) : A] (patthyps Patterns B Hyp)))
 
 (define result-type
   [] [--> A] -> A
@@ -266,7 +266,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (defprolog t*-patterns
   (mode [] -) _ _ <--;
   (mode [Pattern | Patterns] -) (mode [A --> B] -) Hyp
-    <-- (t* [Pattern : A] Hyp)
+    <-- (t* [(curry Pattern) : A] Hyp)
         (t*-patterns Patterns B Hyp);)
 
 (defprolog t*-action
