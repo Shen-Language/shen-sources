@@ -145,8 +145,8 @@
 (define test->selectors
   [cons? X] -> [[hd X] [tl X]]
   [tuple? X] -> [[fst X] [snd X]]
-  [string? X] -> [[hdstr X] [tlstr X]]
-  [vector? X] -> [[hdv X] [tlv X]]
+  [+string? X] -> [[hdstr X] [tlstr X]]
+  [+vector? X] -> [[hdv X] [tlv X]]
   _ -> [])
 
 (define bind-repeating-selectors
