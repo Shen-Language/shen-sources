@@ -150,8 +150,8 @@
   _ -> [])
 
 (define bind-repeating-selectors
-  [SelA SelB] Body -> (bind-selector SelA (bind-selector SelB Body))
-   _ Body -> Body)
+  [Sel | Rest] Body -> (bind-selector Sel (bind-repeating-selectors Rest Body))
+  [] Body -> Body)
 
 (define bind-selector
   Sel Body -> (let Var (exp-var Sel)
