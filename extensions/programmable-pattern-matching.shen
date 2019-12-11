@@ -70,13 +70,13 @@
 
 (define findpos
   Sym L -> (trap-error (shen.findpos Sym L)
-                       (/. _ (error "~A is not a pattern handler~%" F))))
+                       (/. _ (error "~A is not a pattern handler~%" Sym))))
 
 (define unregister-handler
   F -> (let Reg (value *pattern-handlers-reg*)
-            Pos (findpos F Reg))
+            Pos (findpos F Reg)
             RemoveReg (set *pattern-handlers-reg* (remove F Reg))
             RemoveFun (set *pattern-handlers* (shen.remove-nth Pos (value *pattern-handlers*)))
-         F)
+         F))
 
 )
