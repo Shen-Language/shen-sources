@@ -212,7 +212,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             [cutpoint (protect Throwcontrol) Code]])
 
 (define catchpoint
-  -> (set *catch* (+ 1 (value *catch*))))
+  -> [catchpoint! | (set *catch* (+ 1 (value *catch*)))])
 
 (define cutpoint
   Catch Catch -> false
