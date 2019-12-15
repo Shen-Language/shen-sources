@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Fixed
 - Fixed bug in typechecking function that made user-defined typechecking rules for lambdas to never run.
 - Fixed handling of prolog cuts in some corner cases.
+- The t* algorithm now respects user-defined rules for lambdas.
 
 ## [22.2] - 2019-10-11
 
