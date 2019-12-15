@@ -66,6 +66,26 @@ and
 
 The port has to convert these constructs to something suitable for the underlying platform.
 
+### Optimization of custom selectors
+
+If the `programmable-pattern-matching` extension is used to add new patterns that generate selectors different from the ones used by core datatypes, it is possible to extend the factoriser to make it handle those new selectors by registering a selector handling function by passing its name to the `shen.x.factorise-defun.register-selector-handler` function.
+
+A selector handling function needs to match an expression that recognizes the value on which the selectors work, and return a list containing expressions for all the relevant selectors.
+
+```shen
+(define mycons-selector-handler
+  [mycons? X] -> [[myhd X] [mytl X]]
+  _ -> (fail))
+
+(shen.x.factorise-defun.register-selector-handler mycons-selector-handler)
+```
+
+Handlers can be removed with the `shen.x.factorise-defun.deregister-selector-handler` function:
+
+```shen
+(shen.x.factorise-defun.deregister-selector-handler mycons-selector-handler)
+```
+
 ## Example
 
 The following function:

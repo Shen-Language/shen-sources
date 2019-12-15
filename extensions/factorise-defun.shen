@@ -135,9 +135,8 @@
   A B -> (concat A (concat / B)))
 
 (define exp-var
-  [SelF Exp] -> (concat/ (exp-var Exp) SelF)
-      where (element? SelF [hd tl hdv tlv fst snd tlstr])
-  [hdstr Exp] -> (concat/ (exp-var Exp) hdstr)
+  [Sel Exp] -> (concat/ (exp-var Exp) Sel) where (symbol? Sel)
+  [Sel | _] -> (gensym Sel)
   Var -> Var)
 
 (define optimize-selectors
@@ -146,18 +145,46 @@
 (define test->selectors
   [cons? X] -> [[hd X] [tl X]]
   [tuple? X] -> [[fst X] [snd X]]
-  [string? X] -> [[hdstr X] [tlstr X]]
-  [vector? X] -> [[hdv X] [tlv X]]
+  [shen.+string? X] -> [[hdstr X] [tlstr X]]
+  [shen.+vector? X] -> [[hdv X] [tlv X]]
+  Other <- (apply-selector-handlers (value *selector-handlers*) Other)
   _ -> [])
 
 (define bind-repeating-selectors
-  [SelA SelB] Body -> (bind-selector SelA (bind-selector SelB Body))
-   _ Body -> Body)
+  [Sel | Rest] Body -> (bind-selector Sel (bind-repeating-selectors Rest Body))
+  [] Body -> Body)
 
 (define bind-selector
   Sel Body -> (let Var (exp-var Sel)
                 [let Var Sel (subst Var Sel Body)])
       where (> (occurrences Sel Body) 1)
   _ Body -> Body)
+
+(define apply-selector-handlers
+  [] _ -> (fail)
+  [Handler | _] Exp <- (Handler Exp)
+  [_ | Handlers] Exp -> (apply-selector-handlers Handlers Exp))
+
+(define initialise
+  -> (do (set *selector-handlers* [])
+         (set *selector-handlers-reg* [])
+         done))
+
+(define register-selector-handler
+  F -> F where (element? F (value *selector-handlers*))
+  F -> (do (set *selector-handlers-reg* [F | (value *selector-handlers*)])
+           (set *selector-handlers* [(function F) | (value *selector-handlers*)])
+           F))
+
+(define findpos
+  Sym L -> (trap-error (shen.findpos Sym L)
+                       (/. _ (error "~A is not a selector handler~%" Sym))))
+
+(define unregister-selector-handler
+  F -> (let Reg (value *selector-handlers-reg*)
+            Pos (findpos F Reg)
+            RemoveReg (set *selector-handlers-reg* (remove F Reg))
+            RemoveFun (set *selector-handlers* (shen.remove-nth Pos (value *selector-handlers*)))
+         F))
 
 )
