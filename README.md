@@ -1,4 +1,4 @@
-[![Current Release](https://img.shields.io/badge/release-22.2-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
+[![Current Release](https://img.shields.io/badge/release-22.3-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 # Official Shen Sources
 
@@ -32,7 +32,7 @@ Packages can be created for any version, but when uploading to the releases page
 
 ```
 make pure
-git checkout shen-22.2
+git checkout shen-22.3
 make fetch
 make klambda
 make release
