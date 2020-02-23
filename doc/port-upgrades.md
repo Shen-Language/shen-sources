@@ -6,6 +6,22 @@ This document runs parallel to changes mentioned in the [changelog](../CHANGELOG
 
 ## Unreleased
 
+## 22.3
+
+### Extensions
+
+**New extensions in this release**:
+
+  - **programmable-pattern-matching**: experimental extension that adds hook to extend how the Shen compiler handles pattern matching clauses.
+
+### Benchmark suite
+
+A basic benchmark suite for primitive operations has been added. Porters may use this to find operations that are inefficient in their port.
+
+## 22.2
+
+Bugfix release.
+
 ## 22.1
 
 ### Extensions
