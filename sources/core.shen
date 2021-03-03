@@ -340,6 +340,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          (let Abstraction [/. X [/. Y (ebr A [@s X Y] Z)]]
               Application [[Abstraction [pos A 0]] [tlstr A]]
            (reduce_help Application)))
+  [[/. [vector 0] Body] A]
+  -> (do (add_test [vector? A])
+         (add_test [= 0 [limit A]])
+         (reduce_help (ebr A [vector 0] Body)))
   [[/. [Constructor | Args] Body] A]
   -> (custom-pattern-reducer [[/. [Constructor | Args] Body] A])
   [[/. X Z] A]
