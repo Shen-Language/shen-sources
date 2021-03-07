@@ -25,7 +25,7 @@
   setup _ -> skip
   cleanup _ -> skip
   begin [_ Description RunsPower] -> (output "Measuring 10^~S runs of: ~A~%" RunsPower Description)
-  finish [_ _ _ Start End] -> (output "run time: ~S secs~%" (- End Start)))
+  finish [_ _ _ Start End] -> (output "    run time: ~S secs~%" (- End Start)))
 
 (define save-report
   setup _ -> (set *benchmark-results* [])
@@ -39,13 +39,14 @@
                  Results (map (run-benchmark Report) Benchmarks)
                  Cleanup (Report cleanup Benchmarks)
               done))
-
+\\(set _scm.*factorize-patterns* false)
 (set *hush* true)
-(load "benchmarks/data.shen")
-(load "benchmarks/control-flow.shen")
-(load "benchmarks/shen-compilation.shen")
+\\(set shen-cl.*factorise-patterns* false)
+\\(load "benchmarks/data.shen")
+\\(load "benchmarks/control-flow.shen")
+\\(load "benchmarks/shen-compilation.shen")
 (load "benchmarks/pattern-matching.shen")
-(load "benchmarks/equality-check.shen")
+\\(load "benchmarks/equality-check.shen")
 (set *hush* false)
 
 (if (bound? *argv*)
