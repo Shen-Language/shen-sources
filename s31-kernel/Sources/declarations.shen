@@ -29,7 +29,6 @@
 (set *gensym* 0)
 (set *tracking* [])
 (set *profiled* [])
-(set *home-directory* "")
 (set *special* [@p @s @v cons lambda let where set open input+ type])
 (set *extraspecial* [])
 (set *spy* false)
@@ -52,6 +51,10 @@
 (set *step* false)
 (set *it* "")
 (set *residue* [])
+
+(if (not (bound? *home-directory*))
+    (set *home-directory* "")
+    skip)
 
 (define prolog-memory
    N -> (let Bindings (absvector N)
