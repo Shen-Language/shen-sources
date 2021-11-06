@@ -3,6 +3,9 @@
 
 (package shen []
 
+(define native-hash
+  S Limit -> (mod (hashkey S) Limit))
+
 (define dict
   Size -> (error "invalid initial dict size: ~S" Size) where (< Size 1)
   Size -> (let D (absvector (+ 3 Size))
@@ -39,7 +42,7 @@
                                  Dict (+ Diff (dict-count Dict)))))
 
 (define dict->
-  Dict Key Value -> (let N (hash Key (dict-capacity Dict))
+  Dict Key Value -> (let N (native-hash Key (dict-capacity Dict))
                          Bucket (<-dict-bucket Dict N)
                          NewBucket (assoc-set Key Value Bucket)
                          Change (dict-bucket-> Dict N NewBucket)
