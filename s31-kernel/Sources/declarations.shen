@@ -6,7 +6,7 @@
 
 (set *history* [])
 (set *tc* false)
-(set *property-vector* (vector 20000))
+(set *property-vector* (dict 20000))
 (set *macros* [ [defmacro-macro | (/. X (defmacro-macro X))]
                 [timer-macro | (/. X (timer-macro X))]
                 [cases-macro | (/. X (cases-macro X))]

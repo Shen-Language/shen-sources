@@ -162,6 +162,16 @@
   X [_ | Y] -> (assoc X Y)
   _ _ -> (error "attempt to search a non-list with assoc~%"))
 
+(define assoc-set
+  Key Value [] -> [[Key | Value]]
+  Key Value [[Key | _] | Rest] -> [[Key | Value] | Rest]
+  Key Value [Z | Rest] -> [Z | (assoc-set Key Value Rest)])
+
+(define assoc-rm
+  Key [] -> []
+  Key [[Key | _] | Rest] -> Rest
+  Key [Z | Rest] -> [Z | (assoc-rm Key Rest)])
+
 (define boolean?
   true -> true
   false -> true
@@ -197,37 +207,25 @@
   F _ X -> (fix-help F X (F X)))
 
 (define put
-  X Pointer Y Vector -> (let N (hash X (limit Vector))
-                             Entry (trap-error (<-vector Vector N) (/. E []))
-                             Change (vector-> Vector N (change-pointer-value X Pointer Y Entry))
-                             Y))
+  X Pointer Y Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
+                           Added (assoc-set Pointer Y Curr)
+                           Update (dict-> Dict X Added)
+                        Y))
 
 (define unput
-  X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error (<-vector Vector N) (/. E []))
-                           Change (vector-> Vector N (remove-pointer X Pointer Entry))
-                           X))
-
-(define remove-pointer
-  X Pointer [] -> []
-  X Pointer [[[X Pointer] | _] | Entry] -> Entry
-  X Pointer [Z | Entry] -> [Z | (remove-pointer X Pointer Entry)]
-  _ _ _ -> (simple-error "implementation error in shen.remove-pointer"))
-
-(define change-pointer-value
-  X Pointer Y [] -> [[[X Pointer] | Y]]
-  X Pointer Y [[[X Pointer] | _] | Entry] -> [[[X Pointer] | Y] | Entry]
-  X Pointer Y [Z | Entry] -> [Z | (change-pointer-value X Pointer Y Entry)]
-  _ _ _ _ -> (simple-error "implementation error in shen.change-pointer-value"))
+  X Pointer Dict -> (let Curr (trap-error (<-dict Dict X) (/. E []))
+                         Removed (assoc-rm Pointer Curr)
+                         Update (dict-> Dict X Removed)
+                      X))
 
 (define get
-  X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error (<-vector Vector N)
-                                      (/. E (error "~A has no attributes: ~S~%" X Pointer)))
-                           Result (assoc [X Pointer] Entry)
-                           (if (empty? Result)
-                               (error "attribute ~S not found for ~S~%" Pointer X)
-                               (tl Result))))
+  X Pointer Dict -> (let Entry (trap-error
+                                (<-dict Dict X)
+                                (/. E (error "~A has no attributes: ~S~%" X Pointer)))
+                         Result (assoc Pointer Entry)
+                      (if (empty? Result)
+                          (error "attribute ~S not found for ~S~%" Pointer X)
+                          (tl Result))))
 
 (define hash
   S Limit -> (let Hash (mod (hashkey S) Limit)
