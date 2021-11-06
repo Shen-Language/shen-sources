@@ -137,6 +137,7 @@
   Fs -> (let LambdaEntries (map (/. X (lambda-entry X)) Fs)
              (set *lambdatable* [[tuple | (/. X (tuple X))]
                                  [pvar | (/. X (pvar X))]
+                                 [dictionary | (/. X (dictionary X))]
                                  [print-prolog-vector | (/. X (print-prolog-vector X))]
                                  [print-freshterm | (/. X (print-freshterm X))]
                                  [printF | (/. X (printF X))]
