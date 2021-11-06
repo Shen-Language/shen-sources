@@ -123,7 +123,7 @@
   Name FreeV -> (if (empty? FreeV)
                     skip
                     (do (output "free variables in ~A:" Name)
-                        (map (/. X (output " ~A" X)) FreeV)
+                        (for-each (/. X (output " ~A" X)) FreeV)
                         (nl)
                         (abort))))
 

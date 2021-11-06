@@ -15,7 +15,7 @@
   _ Code     -> (check-eval-and-print Code))
 
 (define eval-and-print
-  X -> (map (/. Y (output "~S~%" (eval-kl (shen->kl Y)))) X))
+  X -> (for-each (/. Y (output "~S~%" (eval-kl (shen->kl Y)))) X))
 
 (define check-eval-and-print
   X -> (let Table (mapcan (/. Y (typetable Y)) X)

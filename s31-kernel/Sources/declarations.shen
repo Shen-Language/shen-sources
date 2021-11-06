@@ -145,7 +145,7 @@
 
 (define build-lambda-table
   Fs -> (let LambdaEntries (map (/. X (lambda-entry X)) Fs)
-             (map (/. X (set-lambda-form-entry X))
+             (for-each (/. X (set-lambda-form-entry X))
                   [[tuple | (/. X (tuple X))]
                    [pvar | (/. X (pvar X))]
                    [dictionary | (/. X (dictionary X))]
