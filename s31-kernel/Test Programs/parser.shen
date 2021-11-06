@@ -31,7 +31,7 @@
   [["that" | Input] Output] -> [Input [[det --> "that"] | Output]]
   [["this" | Input] Output] -> [Input [[det --> "this"] | Output]]
   _ -> (fail))
- 
+
 (define n
   [["boy" | Input] Output] -> [Input [[n --> "boy"] | Output]]
   [["girl" | Input] Output] -> [Input [[n --> "girl"] | Output]]

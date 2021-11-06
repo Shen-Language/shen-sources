@@ -1,4 +1,4 @@
-(define backchain  
+(define backchain
    Conc Assumptions -> (backchain* Conc Assumptions Assumptions))
 
 (define backchain*
@@ -23,5 +23,5 @@
 
 
 
- 
+
 

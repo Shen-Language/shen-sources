@@ -4,7 +4,7 @@
 
 (package shen []
 
-(define f-error 
+(define f-error
   F -> (do (output "partial function ~A;~%" F)
            (if (and (not (tracked? F))
                     (y-or-n? (make-string "track ~A? " F)))
@@ -36,34 +36,34 @@
                                  [do [set *call* [- [value *call*] 1]]
                                      [do [terpri-or-read-char]
                                          (protect Result)]]]]]]])
-                                         
+
 (define prolog-track
-  Body Params -> Params   where (= (occurrences incinfs Body) 0) 
+  Body Params -> Params   where (= (occurrences incinfs Body) 0)
   Body Params -> (vector-dereference Params (vector-parameter Params)))
-  
+
 (define vector-parameter
   [] -> []
   [Vector Lock Key Continuation] -> Vector
   [_ | Parameters] -> (vector-parameter Parameters))
-  
+
 (define vector-dereference
   Parameters [] ->  Parameters
   [Vector Lock Key Continuation] _ -> [Vector Lock Key Continuation]
-  [Parameter | Parameters] Vector -> [[deref Parameter Vector] | (vector-dereference Parameters Vector)])                                            
+  [Parameter | Parameters] Vector -> [[deref Parameter Vector] | (vector-dereference Parameters Vector)])
 
-(define step 
+(define step
   + -> (set *step* true)
   - -> (set *step* false)
   _ -> (error "step expects a + or a -.~%"))
 
-(define spy 
+(define spy
   + -> (set *spy* true)
   - -> (set *spy* false)
   _ -> (error "spy expects a + or a -.~%"))
 
 (define terpri-or-read-char
-  -> (if (value *step*) 
-         (check-byte (read-byte (value *stinput*))) 
+  -> (if (value *step*)
+         (check-byte (read-byte (value *stinput*)))
          (nl)))
 
 (define check-byte
@@ -88,9 +88,9 @@
   N F Result -> (output "~%~A<~A> Output from ~A ~%~A==> ~S" (spaces N) N F (spaces N) Result))
 
 (define untrack
-  F -> (do (set *tracking* (remove F (value *tracking*))) 
+  F -> (do (set *tracking* (remove F (value *tracking*)))
            (trap-error (eval (ps F)) (/. E F))))
-           
+
 (define remove
   X Y -> (remove-h X Y []))
 
@@ -115,27 +115,27 @@
   _ -> (error "Cannot profile.~%"))
 
 (define unprofile
-  F -> (do (set *profiled* (remove F (value *profiled*))) 
+  F -> (do (set *profiled* (remove F (value *profiled*)))
            (trap-error (eval (ps F)) (/. E F))))
 
 (define profiled?
   F -> (element? F (value *profiled*)))
 
-(define profile-func 
+(define profile-func
   F Params Code -> [let (protect Start) [get-time run]
                      [let (protect Result) Code
                        [let (protect Finish) [- [get-time run] (protect Start)]
-                         [let (protect Record) 
+                         [let (protect Record)
                               [put-profile F [+ [get-profile F] (protect Finish)]]
                               (protect Result)]]]])
 
-(define profile-results 
-   F -> (let Results (get-profile F) 
+(define profile-results
+   F -> (let Results (get-profile F)
              Initialise (put-profile F 0)
              (@p F Results)))
-             
+
 (define get-profile
   F -> (trap-error (get F profile) (/. E 0)))
-  
+
 (define put-profile
   F Time -> (put F profile Time)))

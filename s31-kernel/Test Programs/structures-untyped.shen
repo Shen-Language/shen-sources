@@ -8,22 +8,22 @@
     Name Attributes -> (map (/. A (selector Name A)) Attributes))
 
 (define selector
-    Name Attribute 
+    Name Attribute
     -> (let SelectorName (concat Name (concat - Attribute))
            (eval [define SelectorName
                    (protect Structure) -> [let (protect LookUp) [assoc Attribute (protect Structure)]
                                      [if [empty? (protect LookUp)]
-                                         [error "~A is not an attribute of ~A.~%" 
+                                         [error "~A is not an attribute of ~A.~%"
                                                     Attribute Name]
                                          [tail (protect LookUp)]]]])))
 
 (define constructor
-   Name Attributes 
+   Name Attributes
    -> (let ConstructorName (concat make- Name)
            Parameters (params Attributes)
            (eval [define ConstructorName |
-                    (append Parameters 
-                            [-> [cons [cons structure Name] 
+                    (append Parameters
+                            [-> [cons [cons structure Name]
                                       (make-association-list Attributes
                                                              Parameters)]])])))
 

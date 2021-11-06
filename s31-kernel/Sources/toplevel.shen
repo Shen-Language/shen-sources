@@ -4,52 +4,52 @@
 
 (package shen []
 
-(define shen.shen 
+(define shen.shen
  -> (do (credits)
-         (loop)))            
+         (loop)))
 
 (define loop
    -> (do (initialise_environment)
-          (prompt) 
-          (trap-error (read-evaluate-print) 
-                      (/. E (do (pr (error-to-string E) (stoutput)) (nl 0))))  
+          (prompt)
+          (trap-error (read-evaluate-print)
+                      (/. E (do (pr (error-to-string E) (stoutput)) (nl 0))))
           (loop)))
 
 (define credits
  -> (do (output "~%Shen, www.shenlanguage.org, copyright (C) 2010-2021, Mark Tarver~%")
-        (output "version: S~A, language: ~A, platform: ~A ~A~%" 
+        (output "version: S~A, language: ~A, platform: ~A ~A~%"
            (value *version*) (value *language*) (value *implementation*) (value *release*))
-        (output "port ~A, ported by ~A~%~%" (value *port*) (value *porters*))))        
+        (output "port ~A, ported by ~A~%~%" (value *port*) (value *porters*))))
 
-(define initialise_environment 
+(define initialise_environment
   -> (do (set *call* 0) (set *infs* 0)))
-  
+
 (define prompt
   -> (if (value *tc*)
          (output  "~%(~A+) " (length (value *history*)))
          (output  "~%(~A-) " (length (value *history*)))))
 
-(define read-evaluate-print 
+(define read-evaluate-print
   -> (let Package (value *package*)
-          Lineread (package-user-input Package (lineread))                         
+          Lineread (package-user-input Package (lineread))
           History (update-history)
           (evaluate-lineread Lineread History (value *tc*))))
-          
+
 (define package-user-input
   null Lineread -> Lineread
   Package Lineread -> (let Str (str Package)
                            External (external Package)
                            (map (/. X (pui-h Str External X)) Lineread)))
-  
+
 (define pui-h
   Package External [fn F] -> (if (internal? F Package External)
                                  [fn (intern-in-package Package F)]
                                  [fn F])
   Package External [F | X] -> (cases (internal? F Package External)  [(intern-in-package Package F) | (map (/. Y (pui-h Package External Y)) X)]
                                      (cons? F) (map (/. Y (pui-h Package External Y)) [F | X])
-                                     true [F | (map (/. Y (pui-h Package External Y)) X)]) 
+                                     true [F | (map (/. Y (pui-h Package External Y)) X)])
   _ _ X -> X)
-                                   
+
 (define update-history
   -> (set *history* [(it) | (value *history*)]))
 
@@ -74,32 +74,32 @@
                                         (abort))
   X _ true -> (check-eval-and-print X)
   X _ false -> (eval-and-print X)
-  _ _ _ -> (simple-error "implementation error in shen.evaluate-lineread"))             
-                                   
+  _ _ _ -> (simple-error "implementation error in shen.evaluate-lineread"))
+
 (define use-history
   Read S History -> (cases (integer? Read) (nth (+ 1 Read) (reverse History))
                            (symbol? Read)  (string-match S History)
                            true (error "! expects a number or a symbol~%")))
-                         
+
 (define peek-history
   Read S History -> (cases (integer? Read) (output "~%~A" (nth (+ 1 Read) (reverse History)))
                            (or (= S "") (symbol? Read))  (recursive-string-match 0 S (reverse History))
                            true (error "% expects a number or a symbol~%")))
-                           
+
 (define string-match
   _ [] -> (error "~%input not found")
   S [S* | _] -> S*  where (string-prefix? S S*)
   S [_ | History] -> (string-match S History)
   _ _ -> (simple-error "implementation error in shen.string-match"))
-  
+
 (define string-prefix?
   "" _ -> true
   (@s W Ss) S* -> (string-prefix? Ss S*)     where (whitespace? (string->n W))
-  Ss (@s W S*) -> (string-prefix? Ss S*)     where (whitespace? (string->n W))                           
+  Ss (@s W S*) -> (string-prefix? Ss S*)     where (whitespace? (string->n W))
   S (@s "(" S*) -> (string-prefix? S S*)
   (@s S Ss) (@s S Ss*) -> (string-prefix? Ss Ss*)
-  _ _ -> false)  
- 
+  _ _ -> false)
+
 (define recursive-string-match
   _ _ [] -> skip
   N S [S* | History] -> (do (if (string-prefix? S S*) (output "~A. ~A~%" N S*) skip)

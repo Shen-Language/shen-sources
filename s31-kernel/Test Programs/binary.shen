@@ -18,7 +18,7 @@ ________________________________________
 
 (define complement
    {binary --> binary}
-   [0] -> [1] 
-   [1] -> [0]      
-   [1 N | X] -> [0 | (complement [N | X])] 
-   [0 N | X] -> [1 | (complement [N | X])]) 
+   [0] -> [1]
+   [1] -> [0]
+   [1 N | X] -> [0 | (complement [N | X])]
+   [0 N | X] -> [1 | (complement [N | X])])

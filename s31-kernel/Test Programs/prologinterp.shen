@@ -13,7 +13,7 @@
   P : number;
   ___________
   P : term;
-    
+
   P : string;
   ___________
   P : term;
@@ -37,23 +37,23 @@
    P P -> []
    [F | X] [F | Y] -> (unify-terms X Y [ ])
    _ _ -> (error "unification failure!"))
- 
-(define unify-terms 
-  {(list term) --> (list term) --> (list (term * term)) --> (list (term * term))} 
+
+(define unify-terms
+  {(list term) --> (list term) --> (list (term * term)) --> (list (term * term))}
    X X Mgu -> Mgu
-   [X | Y] [W | Z] Mgu 
-   -> (unify-terms Y Z (unify-term (dereference X Mgu) 
-                                   (dereference W Mgu) 
+   [X | Y] [W | Z] Mgu
+   -> (unify-terms Y Z (unify-term (dereference X Mgu)
+                                   (dereference W Mgu)
                                    Mgu))
    _ _ _ -> (error "unification failure!"))
 
 (define unify-term
-  {term --> term --> (list (term * term)) --> (list (term * term))}     
+  {term --> term --> (list (term * term)) --> (list (term * term))}
    X X Mgu -> Mgu
    X Y Mgu -> [(@p X Y) | Mgu]   where (occurs-check? X Y)
    X Y Mgu -> [(@p Y X) | Mgu]   where (occurs-check? Y X)
    [F | Y] [F | Z] Mgu -> (unify-terms Y Z Mgu)
-   _ _ _ -> (error "unification failure!")) 
+   _ _ _ -> (error "unification failure!"))
 
 (define occurs-check?
    {term --> term --> boolean}
@@ -61,36 +61,36 @@
 
 (define dereference
   {term --> (list (term * term)) --> term}
-   [X | Y] Mgu -> [X | (map (/. Z (dereference Z Mgu)) Y)] 
-   X Mgu -> (let Val (lookup X Mgu) 
+   [X | Y] Mgu -> [X | (map (/. Z (dereference Z Mgu)) Y)]
+   X Mgu -> (let Val (lookup X Mgu)
                         (if (= Val X) X (dereference Val Mgu))))
-		                 
+
 (define lookup
   {term --> (list (term * term)) --> term}
    X [] -> X
    X [(@p X Y) | _] -> Y
-   X [_ | Y] -> (lookup X Y))	
-	                  
+   X [_ | Y] -> (lookup X Y))
+
 (define occurs?
   {term --> term --> boolean}
    X X -> true
    X [Y | Z] -> (or (== X Y) (some (/. W (occurs? X W)) Z))
    _ _ -> false)
- 
+
 (define some
   {(A --> boolean) --> (list A) --> boolean}
     _ [] -> false
-    F [X | Y] -> (or (F X) (some F Y))) 
- 
+    F [X | Y] -> (or (F X) (some F Y)))
+
 (define prolog
    {(list atom) --> (list horn-clause)  -->  boolean}
-     Goals Program -> (prolog-help (insert-answer-literal Goals) 
-                                                    Program 
+     Goals Program -> (prolog-help (insert-answer-literal Goals)
+                                                    Program
                                                     Program))
 
 (define insert-answer-literal
    {(list atom) --> (list atom)}
-    Goals -> (append Goals 
+    Goals -> (append Goals
                      (answer-literal (mapcan (fn variables-in-atom) Goals))))
 
 (define answer-literal
@@ -110,20 +110,20 @@
       -> (let StClause (standardise-apart Clause)
                 H (hdcl StClause)
                 B (body StClause)
-                (or (trap-error 
+                (or (trap-error
                        (let MGU (unify-atoms P H)
-                             Goals (map (/. X (dereference-atom X MGU)) 
+                             Goals (map (/. X (dereference-atom X MGU))
                                                 (append B Ps))
                              (prolog-help Goals Program Program)) (/. E false))
-                       (prolog-help [P | Ps] Clauses Program)))  
+                       (prolog-help [P | Ps] Clauses Program)))
     _ _ _ -> false)
- 
+
 (define hdcl
   {horn-clause --> atom}
   [H <= | _] -> H)
 
 (define body
-  {horn-clause --> (list atom)}   
+  {horn-clause --> (list atom)}
    [_ <= | Body] -> Body)
 
 (define dereference-atom
@@ -140,7 +140,7 @@
   Clause -> (st-all (variables-in-clause Clause) Clause))
 
 (define variables-in-clause
-   {horn-clause --> (list term)} 
+   {horn-clause --> (list term)}
    [H <= | B] -> (append (variables-in-atom H) (mapcan (fn variables-in-atom) B)))
 
 (define variables-in-atom
@@ -161,7 +161,7 @@
 
 (define replace-term-in-clause
    {term --> term --> horn-clause --> horn-clause}
-    V NewV [H <= | B] -> [(replace-term-in-atom V NewV H) <= 
+    V NewV [H <= | B] -> [(replace-term-in-atom V NewV H) <=
                                           | (map (/. A (replace-term-in-atom V NewV A)) B)])
 
 (define replace-term-in-atom

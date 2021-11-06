@@ -4,38 +4,38 @@
 
 (package shen [update-lambda-table]
 
-(define thaw 
+(define thaw
   F -> (F))
-  
+
 \\(define eval
- \\ X -> (eval-kl (shen->kl (macroexpand X))))  
+ \\ X -> (eval-kl (shen->kl (macroexpand X))))
 
 (define eval
   X -> (eval-kl (shen->kl (process-applications (macroexpand X) (find-types X)))))
-           
+
 (define external
   null -> []
-  Package -> (trap-error (get Package external-symbols) 
+  Package -> (trap-error (get Package external-symbols)
                          (/. E (error "package ~A does not exist.~%;" Package))))
 
 (define internal
   null -> []
-  Package -> (trap-error (get Package internal-symbols) 
+  Package -> (trap-error (get Package internal-symbols)
                          (/. E (error "package ~A does not exist.~%;" Package))))
-                     
+
 (define fail-if
-  F X -> (if (F X) (fail) X))  
+  F X -> (if (F X) (fail) X))
 
 (define @s
   X Y -> (cn X Y))
 
 (define tc?
   -> (value *tc*))
- 
+
 (define ps
   Name -> (trap-error (get Name source) (/. E (error "~A not found.~%" Name))))
-  
-(define stinput 
+
+(define stinput
   -> (value *stinput*))
 
 (define vector
@@ -43,31 +43,31 @@
              ZeroStamp (address-> Vector 0 N)
              Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
              Standard))
-                            
-(define fillvector 
+
+(define fillvector
   Vector N N X -> (address-> Vector N X)
   Vector Counter N X -> (fillvector (address-> Vector Counter X) (+ 1 Counter) N X))
 
-(define vector? 
+(define vector?
   X -> (and (absvector? X) (trap-error (>= (<-address X 0) 0) (/. E false))))
 
-(define vector-> 
-  Vector N X -> (if (= N 0) 
+(define vector->
+  Vector N X -> (if (= N 0)
                     (error "cannot access 0th element of a vector~%")
                     (address-> Vector N X)))
 
-(define <-vector 
-  Vector N -> (if (= N 0) 
+(define <-vector
+  Vector N -> (if (= N 0)
                   (error "cannot access 0th element of a vector~%")
                   (let VectorElement (<-address Vector N)
                       (if (= VectorElement (fail))
                           (error "vector element not found~%")
                           VectorElement))))
 
-(define posint? 
+(define posint?
   X -> (and (integer? X) (>= X 0)))
 
-(define limit 
+(define limit
   Vector -> (<-address Vector 0))
 
 (define symbol?
@@ -80,13 +80,13 @@
   (@s S Ss) -> (and (alpha? (string->n S))
                     (alphanums? Ss))
   _ -> (simple-error "implementation error in shen.analyse-symbol?"))
-                     
+
 (define alphanums?
   "" -> true
   (@s S Ss) -> (let N (string->n S)
                     (and (or (alpha? N) (digit? N)) (alphanums? Ss)))
   _ -> (simple-error "implementation error in shen.alphanums?"))
-                              
+
 (define variable?
   X -> false where (or (boolean? X) (number? X) (string? X))
   X -> (trap-error (let String (str X)
@@ -96,27 +96,27 @@
   (@s S Ss) -> (and (uppercase? (string->n S))
                     (alphanums? Ss))
   _ -> (simple-error "implementation error in shen.analyse-variable?"))
-                      
+
 (define gensym
   Sym -> (concat Sym (set *gensym* (+ 1 (value *gensym*)))))
-  
-(define concat
-  S1 S2 -> (intern (cn (str S1) (str S2))))  
 
-(define @p 
+(define concat
+  S1 S2 -> (intern (cn (str S1) (str S2))))
+
+(define @p
   X Y -> (let Vector (absvector 3)
               Tag (address-> Vector 0 tuple)
               Fst (address-> Vector 1 X)
               Snd (address-> Vector 2 Y)
               Vector))
-              
-(define fst 
+
+(define fst
   X -> (<-address X 1))
-           
-(define snd 
+
+(define snd
   X -> (<-address X 2))
 
-(define tuple? 
+(define tuple?
   X -> (trap-error (and (absvector? X) (= tuple (<-address X 0))) (/. E false)))
 
 (define append
@@ -128,20 +128,20 @@
   X Vector -> (let Limit (limit Vector)
                    NewVector (vector (+ Limit 1))
                    X+NewVector (vector-> NewVector 1 X)
-                   (if (= Limit 0) 
+                   (if (= Limit 0)
                        X+NewVector
                        (@v-help Vector 1 Limit X+NewVector))))
 
 (define @v-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (+ N 1))
-  OldVector N Limit NewVector -> (@v-help OldVector (+ N 1) Limit 
+  OldVector N Limit NewVector -> (@v-help OldVector (+ N 1) Limit
                                      (copyfromvector OldVector NewVector N (+ N 1))))
 
 (define copyfromvector
-  OldVector NewVector From To -> (trap-error (vector-> NewVector To (<-vector OldVector From)) (/. E NewVector))) 
+  OldVector NewVector From To -> (trap-error (vector-> NewVector To (<-vector OldVector From)) (/. E NewVector)))
 
 (define hdv
-  Vector -> (trap-error (<-vector Vector 1) 
+  Vector -> (trap-error (<-vector Vector 1)
                         (/. E (error "hdv needs a non-empty vector as an argument~%"))))
 
 (define tlv
@@ -153,7 +153,7 @@
 
 (define tlv-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (- N 1))
-  OldVector N Limit NewVector -> (tlv-help OldVector (+ N 1) Limit 
+  OldVector N Limit NewVector -> (tlv-help OldVector (+ N 1) Limit
                                      (copyfromvector OldVector NewVector N (- N 1))))
 
 (define assoc
@@ -188,7 +188,7 @@
 (define empty?
   [] -> true
   _ -> false)
-  
+
 (define fix
   F X -> (fix-help F X (F X)))
 
@@ -212,9 +212,9 @@
   X Pointer [] -> []
   X Pointer [[[X Pointer] | _] | Entry] -> Entry
   X Pointer [Z | Entry] -> [Z | (remove-pointer X Pointer Entry)]
-  _ _ _ -> (simple-error "implementation error in shen.remove-pointer")) 
+  _ _ _ -> (simple-error "implementation error in shen.remove-pointer"))
 
-(define change-pointer-value 
+(define change-pointer-value
   X Pointer Y [] -> [[[X Pointer] | Y]]
   X Pointer Y [[[X Pointer] | _] | Entry] -> [[[X Pointer] | Y] | Entry]
   X Pointer Y [Z | Entry] -> [Z | (change-pointer-value X Pointer Y Entry)]
@@ -222,38 +222,38 @@
 
 (define get
   X Pointer Vector -> (let N (hash X (limit Vector))
-                           Entry (trap-error (<-vector Vector N) 
+                           Entry (trap-error (<-vector Vector N)
                                       (/. E (error "~A has no attributes: ~S~%" X Pointer)))
                            Result (assoc [X Pointer] Entry)
-                           (if (empty? Result) 
-                               (error "attribute ~S not found for ~S~%" Pointer X) 
-                               (tl Result)))) 
+                           (if (empty? Result)
+                               (error "attribute ~S not found for ~S~%" Pointer X)
+                               (tl Result))))
 
 (define hash
   S Limit -> (let Hash (mod (hashkey S) Limit)
                   (if (= Hash 0)
                       1
-                      Hash)))                                     
-                      
+                      Hash)))
+
 (define hashkey
   S -> (let Ns (map (/. X (string->n X)) (explode S))
-               (prodbutzero Ns 1)))                  
-                  
+               (prodbutzero Ns 1)))
+
 (define prodbutzero
   [] N -> N
   [0 | Ns] N -> (prodbutzero Ns N)
   [N1 | Ns] N -> (if (> N 1e10)
                      (prodbutzero Ns (+ N N1))
-                     (prodbutzero Ns (* N N1))))  
-                    
+                     (prodbutzero Ns (* N N1))))
+
 (define mod
   N Div -> (modh N (multiples N [Div])))
-  
+
 (define multiples
   N [M | Ms] ->  Ms   where (> M N)
   N [M | Ms] -> (multiples N [(* 2 M) M | Ms])
   _ _ -> (simple-error "implementation error in shen.multiples"))
-  
+
 (define modh
   0 _ -> 0
   N [] -> N
@@ -291,7 +291,7 @@
   [] R -> R
   [X | Y] R -> (reverse-help Y [X | R])
   _ _ -> (error "attempt to reverse a non-list~%"))
-  
+
 (define union
   [] X -> X
   [X | Y] Z -> (if (element? X Z) (union Y Z) [X | (union Y Z)])
@@ -301,17 +301,17 @@
   String -> (let Message (output String)
                  Y-or-N (output " (y/n) ")
                  Input (make-string "~S" (read (stinput)))
-                 (cases (= "y" Input) true 
-                        (= "n" Input) false 
+                 (cases (= "y" Input) true
+                        (= "n" Input) false
                         true (do (output "please answer y or n~%")
                                  (y-or-n? String)))))
 
 (define not
   X -> (if X false true))
 
-(define abort 
+(define abort
   -> (simple-error ""))
-  
+
 (define subst
   X Y Y -> X
   X Y [W | Z] -> [(subst X Y W) | (subst X Y Z)]
@@ -325,16 +325,16 @@
   (@s S Ss) -> [S | (explode-h Ss)]
   _ -> (simple-error "implementation error in explode-h"))
 
-(define cd 
+(define cd
   Path -> (set *home-directory* (if (= Path "") "" (make-string "~A/" Path))))
 
 (define map
   F X -> (map-h F X []))
-  
+
 (define map-h
   F [] Acc -> (reverse Acc)
-  F [X | Y] Acc -> (map-h F Y [(F X) | Acc]))  
- 
+  F [X | Y] Acc -> (map-h F Y [(F X) | Acc]))
+
 (define length
   X -> (length-h X 0))
 
@@ -348,12 +348,12 @@
   X [Y | Z] -> (+ (occurrences X Y) (occurrences X Z))
   _ _ -> 0)
 
-(define nth 
+(define nth
   1 [X | _] -> X
   N [_ | Y] -> (nth (- N 1) Y)
   N X -> (error "nth applied to ~A, ~A~%" N X))
-  
-(define integer? 
+
+(define integer?
   N -> (and (number? N) (let Abs (abs N) (integer-test? Abs (magless Abs 1)))))
 
 (define abs
@@ -367,11 +367,11 @@
 
 (define integer-test?
   0 _ -> true
-  Abs _ -> false    where (> 1 Abs)  
+  Abs _ -> false    where (> 1 Abs)
   Abs N -> (let Abs-N (- Abs N)
                 (if (> 0 Abs-N)
                     (integer? Abs)
-                    (integer-test? Abs-N N))))  
+                    (integer-test? Abs-N N))))
 
 (define mapcan
   _ [] -> []
@@ -381,14 +381,14 @@
 (define ==
   X X -> true
   _ _ -> false)
-    
-(define bound? 
-  Sym -> (and (symbol? Sym) 
+
+(define bound?
+  Sym -> (and (symbol? Sym)
               (let Val (trap-error (value Sym) (/. E this-symbol-is-unbound))
                           (if (= Val this-symbol-is-unbound)
                               false
                               true))))
-                              
+
 (define string->bytes
   "" -> []
   S -> [(string->n (pos S 0)) | (string->bytes (tlstr S))])
@@ -396,7 +396,7 @@
 (define maxinferences
   N -> (set *maxinferences* N))
 
-(define inferences 
+(define inferences
   -> (value *infs*))
 
 (define protect
@@ -446,54 +446,53 @@
             (if (empty? Assoc)
                 (error "~A has no lambda expansion~%" F)
                 (tl Assoc))))
-  
+
 (define fail
-  -> fail!) 
-            
+  -> fail!)
+
 (define enable-type-theory
   + -> (set *shen-type-theory-enabled?* true)
-  - -> (set *shen-type-theory-enabled?* false) 
-  _ -> (error "enable-type-theory expects a + or a -~%"))   
-  
+  - -> (set *shen-type-theory-enabled?* false)
+  _ -> (error "enable-type-theory expects a + or a -~%"))
+
 (define tc
   + -> (set *tc* true)
   - -> (set *tc* false)
   _ -> (error "tc expects a + or -"))
-                   
+
 (define destroy
   F -> (do (unassoc F (value *sigf*)) F))
-  
+
 (define unassoc
   F SigF -> (let Assoc (assoc F SigF)
                  Remove (remove Assoc SigF)
-                 (set *sigf* Remove))) 
-                 
+                 (set *sigf* Remove)))
+
 (define in-package
   Package -> (if (package? Package)
                  (set *package* Package)
-                 (error "package ~A does not exist~%" Package)))                  
+                 (error "package ~A does not exist~%" Package)))
 
 (define write-to-file
    File Text -> (let Stream (open File out)
-                     String (if (string? Text) 
-                                (make-string "~A~%~%" Text) 
+                     String (if (string? Text)
+                                (make-string "~A~%~%" Text)
                                 (make-string "~S~%~%" Text))
-                     Write (pr String Stream) 
+                     Write (pr String Stream)
                      Close (close Stream)
                      Text))
-                     
+
 (define fresh
-  -> (freshterm (gensym t)))     
+  -> (freshterm (gensym t)))
 
 (define update-lambda-table
     F Arity -> (let AssertArity (put F arity Arity)
                     LambdaEntry (shen.lambda-entry F)
                     Update (set shen.*lambdatable* [LambdaEntry | (value shen.*lambdatable*)])
-                    F))                  
-                     
+                    F))
+
 (define specialise
   F 0 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 1 -> (do (set *special* (adjoin F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 2 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (adjoin F (value *extraspecial*))) F)
   F _ -> (error "specialise requires values of 0, 1 or 2~%")) )
-  

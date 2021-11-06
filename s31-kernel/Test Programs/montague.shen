@@ -42,19 +42,19 @@
   [a! X P] : f;)
 
 (defcc <sent>
-  {(list t) ==> f} 
+  {(list t) ==> f}
   <np> <vp> := (<np> <vp>);)
-  
+
 (defcc <np>
   {(list t) ==> ((t --> f) --> f)}
   Name := (/. P (P Name))   where (name? Name);
-  <det> <rcn> := (<det> <rcn>); 
+  <det> <rcn> := (<det> <rcn>);
   <det> <cn> := (<det> <cn>);)
-  
+
 (define name?
   {t --> boolean}
-   Name -> (variable? Name)) 
-  
+   Name -> (variable? Name))
+
 (defcc <cn>
    {(list t) ==> (t --> f)}
    CN := (/. X [CN X])     where (common-noun? CN);)
@@ -88,9 +88,9 @@
 (define trans?
    {t --> boolean}
    Trans -> (element? Trans [likes greets admires]))
-   
+
 (defcc <det>
   {(list t) ==> ((t --> f) --> ((t --> f) --> f))}
    some := (let V (type (gensym v) t) (/. P Q [e! V [(P V) & (Q V)]]));
    every := (let V (type (gensym v) t) (/. P Q [a! V [(P V) => (Q V)]]));
-   no      := (let V (type (gensym v) t) (/. P Q [a! V [(P V) => [~ (Q V)]]]));)   
+   no      := (let V (type (gensym v) t) (/. P Q [a! V [(P V) => [~ (Q V)]]]));)

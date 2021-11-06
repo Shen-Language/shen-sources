@@ -2,7 +2,7 @@
 
     X : number;
     ====================
-    [num X] : arith-expr; 
+    [num X] : arith-expr;
 
     if (element? Op [+ - * /])
     X : arith-expr; Y : arith-expr;

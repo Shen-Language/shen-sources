@@ -19,20 +19,20 @@
 
 (defprolog member
    X (- [X | _]) <--;
-   X (- [_ | Z]) <-- (member X Z);) 
+   X (- [_ | Z]) <-- (member X Z);)
 
 (defprolog house
    [Nationality Pet Cigarette Drink Colour] <--;)
-  
+
 (defprolog next
   X Y List <-- (left X Y List);
   X Y List <-- (left Y X List);)
 
- 
+
 (defprolog left
   L R (- [L R | _]) <--;
-  L R (- [_ | Houses]) <-- (left L R Houses);)        
-      
+  L R (- [_ | Houses]) <-- (left L R Houses);)
+
 (defprolog who-owns-the-fish?
   Nationality Houses <-- (member [Nationality fish _ _ _] Houses)
                          (return Nationality);)

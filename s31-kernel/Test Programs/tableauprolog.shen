@@ -14,19 +14,19 @@
   (- [[~ [P => Q]] | A])  <-- ! (proph (append A [P [~ Q]]));
   (- [[~ [P <=> Q]] | A]) <-- ! (proph [[~ [[P => Q] & [Q => P]]] | A]);
   (- [P | Ps])            <-- ! (proph (append Ps [P]));)
- 
+
 (defprolog inconsistent
    [P | Ps] <-- (complement P NotP) (member NotP Ps) !;
    [_ | Ps] <-- (inconsistent Ps);)
-   
+
 (defprolog consistent
   [] <--;
   [P | Ps]     <-- (when (symbol? P)) ! (consistent Ps);
-  [[~ P] | Ps] <-- (when (symbol? P)) (consistent Ps);)   
-   
+  [[~ P] | Ps] <-- (when (symbol? P)) (consistent Ps);)
+
 (defprolog complement
   [~ P] P <-- !;
-  P [~ P] <--;)   
+  P [~ P] <--;)
 
 (defprolog member
   X (- [X | _]) <--;
