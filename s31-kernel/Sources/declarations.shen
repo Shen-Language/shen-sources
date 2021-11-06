@@ -56,6 +56,10 @@
     (set *home-directory* "")
     skip)
 
+(if (not (bound? *sterror*))
+    (set *sterror* (value *stoutput*))
+    skip)
+
 (define prolog-memory
    N -> (let Bindings (absvector N)
              PrintNamed (address-> Bindings 0 print-prolog-vector)
@@ -96,7 +100,7 @@
    prolog-memory 1 profile-results 1 pr 2 ps 1 preclude 1 preclude-all-but 1 protect 1
    put 4 read-file-as-string 1 read-file-as-bytelist 1 read-file 1 read 1 read-byte 1
    read-from-string 1 read-from-string-unprocessed 1 read-unit-string 1 receive 1 release 0 remove 2 reverse 1 set 2 simple-error 1 snd 1
-   specialise 2 spy 1 step 1 stinput 0 stoutput 0 str 1 string->n 1 string->symbol 1 string? 1 subst 3
+   specialise 2 spy 1 step 1 stinput 0 sterror 0 stoutput 0 str 1 string->n 1 string->symbol 1 string? 1 subst 3
    sum 1 symbol? 1 systemf 1 tail 1 tl 1 tc 1 tc? 0 thaw 1 tlstr 1 track 1 trap-error 2
    tuple? 1 type 2 return 5 undefmacro 1 unput 3 unprofile 1 union 2 untrack 1 undefmacro 1
    update-lambda-table 2 vector 1 vector? 1 vector-> 3 value 1 variable? 1 var? 5 version 0 when 5 write-byte 2
@@ -112,12 +116,12 @@
 
 (put shen external-symbols
      [! } { --> <-- && (intern ":") (intern ";") (intern ":=") (intern ",") _ *language* *implementation*
-     *stinput* *stoutput* *home-directory* *version* *maximum-print-sequence-size* *macros* *os* *release*
+     *stinput* *sterror* *stoutput* *home-directory* *version* *maximum-print-sequence-size* *macros* *os* *release*
      *property-vector* @v @p @s *port* *porters* *hush* <- -> <e> == = >= > ==> /. <!> <end> $ - / * + <=
      < >> <> y-or-n? write-to-file write-byte where when warn version verified variable? var?
      value vector-> <-vector vector vector? u! update-lambda-table unspecialise untrack unit unix union unput unprofile undefmacro
      return type tuple? true trap-error track time thaw tc? tc tl tlstr tlv tail systemf synonyms symbol symbol?
-     string->symbol sum subst string? string->n stream string stinput stoutput step spy specialise snd simple-error
+     string->symbol sum subst string? string->n stream string stinput sterror stoutput step spy specialise snd simple-error
      set save str run reverse remove release read receive read-file read-file-as-bytelist read-file-as-string
      read-byte read-from-string read-from-string-unprocessed package? put preclude preclude-all-but ps prolog?
      protect profile-results profile prolog-memory print pprint pr pos porters port package output out os or

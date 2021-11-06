@@ -400,6 +400,9 @@
 (define protect
   X -> X)
 
+(define sterror
+  -> (value *sterror*))
+
 (define stoutput
   -> (value *stoutput*))
 
