@@ -148,13 +148,6 @@
   F N -> (do (put F arity N)
              (update-lambdatable F N)))
 
-(define update-lambdatable
-  F N -> (let LambdaTable (value *lambdatable*)
-              Lambda (eval-kl (lambda-function [F] N))
-              Insert (assoc-> F Lambda LambdaTable)
-              Reset (set *lambdatable* Insert)
-              Reset))
-
 (define lambda-function
   _ 0 -> skip
   FX 1 -> (let X (protect (gensym Y)) [lambda X (append FX [X])])
@@ -555,12 +548,6 @@
 
 (define function
   F -> (fn F))
-
-(define fn
-   F -> (let LookUp (assoc F (value *lambdatable*))
-             (if (empty? LookUp)
-                 (error  "fn: ~A is undefined~%" F)
-                 (tl LookUp))))
 
 (define fn-call?
    [fn F] -> true

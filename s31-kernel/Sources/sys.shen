@@ -440,10 +440,9 @@
   Package -> (trap-error (do (external Package) true) (/. E false)))
 
 (define fn
-  F -> (let Assoc (assoc F (value *lambdatable*))
-            (if (empty? Assoc)
-                (error "~A has no lambda expansion~%" F)
-                (tl Assoc))))
+  F -> (trap-error
+        (get F lambda-form)
+        (/. E (error "~A has no lambda expansion~%" F))))
 
 (define fail
   -> fail!)
@@ -485,8 +484,8 @@
 
 (define update-lambda-table
     F Arity -> (let AssertArity (put F arity Arity)
-                    LambdaEntry (shen.lambda-entry F)
-                    Update (set shen.*lambdatable* [LambdaEntry | (value shen.*lambdatable*)])
+                    LambdaEntry (lambda-entry F)
+                    Update (set-lambda-form-entry [F | LambdaEntry])
                     F))
 
 (define specialise
