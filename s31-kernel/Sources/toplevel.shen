@@ -4,7 +4,7 @@
 
 (package shen []
 
-(define shen.shen
+(define shen.repl
  -> (do (credits)
          (loop)))
 
