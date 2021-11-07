@@ -51,6 +51,7 @@
 (set *step* false)
 (set *it* "")
 (set *residue* [])
+(set *demodulation-function* (/. X X))
 
 (if (not (bound? *home-directory*))
     (set *home-directory* "")

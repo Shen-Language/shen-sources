@@ -136,9 +136,14 @@
   [synonyms | X] -> (synonyms-h (append X (value *synonyms*)))
   X -> X)
 
+(define lambda-of-defun
+  [defun _ [Var] Body] -> (eval [/. Var Body]))
+
 (define synonyms-h
   Synonyms -> (let CurryTypes (map (/. X (curry-type X)) Synonyms)
-                   Eval (eval [define demod | (compile-synonyms CurryTypes)])
+                   DemodLambda (lambda-of-defun
+                                 (elim-def [define demod | (compile-synonyms CurryTypes)]]))
+                   Demod (set *demodulation-function* DemodLambda)
                    synonyms))
 
 (define compile-synonyms

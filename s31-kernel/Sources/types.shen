@@ -31,7 +31,8 @@
               (stpart Vs [is! V (rcons_form A) Bindings Lock Key Continuation] Bindings)]]]]]))
 
 (define demod
-  X -> X)
+  X -> (let F (value *demodulation-function*)
+         (F X)))
 
 (declare abort [--> A])
 (declare absvector? [A --> boolean])
