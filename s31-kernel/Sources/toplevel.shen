@@ -12,8 +12,11 @@
    -> (do (initialise_environment)
           (prompt)
           (trap-error (read-evaluate-print)
-                      (/. E (do (pr (error-to-string E) (stoutput)) (nl 0))))
+                      (/. E (toplevel-display-exception E)))
           (loop)))
+
+(define toplevel-display-exception
+  E -> (do (pr (error-to-string E) (stoutput)) (nl 0)))
 
 (define credits
  -> (do (output "~%Shen, www.shenlanguage.org, copyright (C) 2010-2021, Mark Tarver~%")
