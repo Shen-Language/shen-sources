@@ -16,7 +16,7 @@
 (define external
   null -> []
   Package -> (trap-error (get Package external-symbols)
-                         (/. E (error "package ~A does not exist.~%;" Package))))
+               (/. E (error "package ~A does not exist.~%;" Package))))
 
 (define internal
   null -> []
@@ -39,10 +39,10 @@
   -> (value *stinput*))
 
 (define vector
-   N -> (let Vector (absvector (+ N 1))
-             ZeroStamp (address-> Vector 0 N)
-             Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
-             Standard))
+  N -> (let Vector (absvector (+ N 1))
+            ZeroStamp (address-> Vector 0 N)
+            Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
+         Standard))
 
 (define fillvector
   Vector N N X -> (address-> Vector N X)
@@ -60,9 +60,9 @@
   Vector N -> (if (= N 0)
                   (error "cannot access 0th element of a vector~%")
                   (let VectorElement (<-address Vector N)
-                      (if (= VectorElement (fail))
-                          (error "vector element not found~%")
-                          VectorElement))))
+                    (if (= VectorElement (fail))
+                        (error "vector element not found~%")
+                        VectorElement))))
 
 (define posint?
   X -> (and (integer? X) (>= X 0)))
@@ -74,7 +74,7 @@
   X -> false where (or (boolean? X) (number? X) (string? X) (cons? X) (empty? X) (vector? X))
   X -> true  where (element? X [{ } (intern ":") (intern ";") (intern ",")])
   X -> (trap-error (let String (str X)
-                        (analyse-symbol? String)) (/. E false)))
+                     (analyse-symbol? String)) (/. E false)))
 
 (define analyse-symbol?
   (@s S Ss) -> (and (alpha? (string->n S))
@@ -90,7 +90,7 @@
 (define variable?
   X -> false where (or (boolean? X) (number? X) (string? X))
   X -> (trap-error (let String (str X)
-                        (analyse-variable? String)) (/. E false)))
+                     (analyse-variable? String)) (/. E false)))
 
 (define analyse-variable?
   (@s S Ss) -> (and (uppercase? (string->n S))
@@ -108,7 +108,7 @@
               Tag (address-> Vector 0 tuple)
               Fst (address-> Vector 1 X)
               Snd (address-> Vector 2 Y)
-              Vector))
+            Vector))
 
 (define fst
   X -> (<-address X 1))
@@ -128,9 +128,9 @@
   X Vector -> (let Limit (limit Vector)
                    NewVector (vector (+ Limit 1))
                    X+NewVector (vector-> NewVector 1 X)
-                   (if (= Limit 0)
-                       X+NewVector
-                       (@v-help Vector 1 Limit X+NewVector))))
+                (if (= Limit 0)
+                    X+NewVector
+                    (@v-help Vector 1 Limit X+NewVector))))
 
 (define @v-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (+ N 1))
@@ -146,15 +146,16 @@
 
 (define tlv
   Vector -> (let Limit (limit Vector)
-                 (cases (= Limit 0) (error "cannot take the tail of the empty vector~%")
-                        (= Limit 1) (vector 0)
-                        true (let NewVector (vector (- Limit 1))
-                                  (tlv-help Vector 2 Limit (vector (- Limit 1)))))))
+              (cases (= Limit 0) (error "cannot take the tail of the empty vector~%")
+                     (= Limit 1) (vector 0)
+                     true (let NewVector (vector (- Limit 1))
+                            (tlv-help Vector 2 Limit (vector (- Limit 1)))))))
 
 (define tlv-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (- N 1))
   OldVector N Limit NewVector -> (tlv-help OldVector (+ N 1) Limit
-                                     (copyfromvector OldVector NewVector N (- N 1))))
+                                           (copyfromvector
+                                            OldVector NewVector N (- N 1))))
 
 (define assoc
   _ [] -> []
@@ -257,7 +258,8 @@
   N [] -> N
   N [M | Ms] -> (if (empty? Ms)
                     N
-                    (modh N Ms))   where (> M N)
+                    (modh N Ms))
+      where (> M N)
   N [M | Ms] -> (modh (- N M) [M | Ms])
   _ _ -> (simple-error "implementation error in shen.modh"))
 
@@ -299,10 +301,10 @@
   String -> (let Message (output String)
                  Y-or-N (output " (y/n) ")
                  Input (make-string "~S" (read (stinput)))
-                 (cases (= "y" Input) true
-                        (= "n" Input) false
-                        true (do (output "please answer y or n~%")
-                                 (y-or-n? String)))))
+              (cases (= "y" Input) true
+                     (= "n" Input) false
+                     true (do (output "please answer y or n~%")
+                              (y-or-n? String)))))
 
 (define not
   X -> (if X false true))
@@ -364,17 +366,17 @@
 
 (define magless
   Abs N -> (let Nx2 (* N 2)
-                (if (> Nx2 Abs)
-                    N
-                    (magless Abs Nx2))))
+             (if (> Nx2 Abs)
+                 N
+                 (magless Abs Nx2))))
 
 (define integer-test?
   0 _ -> true
   Abs _ -> false    where (> 1 Abs)
   Abs N -> (let Abs-N (- Abs N)
-                (if (> 0 Abs-N)
-                    (integer? Abs)
-                    (integer-test? Abs-N N))))
+             (if (> 0 Abs-N)
+                 (integer? Abs)
+                 (integer-test? Abs-N N))))
 
 (define mapcan
   _ [] -> []
@@ -388,9 +390,9 @@
 (define bound?
   Sym -> (and (symbol? Sym)
               (let Val (trap-error (value Sym) (/. E this-symbol-is-unbound))
-                          (if (= Val this-symbol-is-unbound)
-                              false
-                              true))))
+                (if (= Val this-symbol-is-unbound)
+                    false
+                    true))))
 
 (define string->bytes
   "" -> []
@@ -491,13 +493,15 @@
   -> (freshterm (gensym t)))
 
 (define update-lambda-table
-    F Arity -> (let AssertArity (put F arity Arity)
-                    LambdaEntry (lambda-entry F)
-                    Update (set-lambda-form-entry [F | LambdaEntry])
-                    F))
+  F Arity -> (let AssertArity (put F arity Arity)
+                  LambdaEntry (lambda-entry F)
+                  Update (set-lambda-form-entry [F | LambdaEntry])
+               F))
 
 (define specialise
   F 0 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 1 -> (do (set *special* (adjoin F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 2 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (adjoin F (value *extraspecial*))) F)
-  F _ -> (error "specialise requires values of 0, 1 or 2~%")) )
+  F _ -> (error "specialise requires values of 0, 1 or 2~%"))
+
+)

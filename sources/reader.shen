@@ -9,7 +9,7 @@
                S-exprs (trap-error (compile (/. X (<s-exprs> X)) Bytelist)
                                    (/. E (print-residue (value *residue*))))
                Process (process-sexprs S-exprs)
-               Process))
+            Process))
 
 (define print-residue
   Residue -> (let Err (output "syntax error here:~%")
@@ -28,7 +28,7 @@
                Byte   (read-byte Stream)
                Bytes  (read-file-as-bytelist-help Stream Byte [])
                Close  (close Stream)
-               (reverse Bytes)))
+           (reverse Bytes)))
 
 (define read-file-as-bytelist-help
   Stream -1 Bytes -> Bytes
@@ -36,7 +36,7 @@
 
 (define read-file-as-string
    File -> (let Stream (open File in)
-               (rfas-h Stream (read-byte Stream) "")))
+             (rfas-h Stream (read-byte Stream) "")))
 
 (define rfas-h
   Stream -1 String -> (do (close Stream) String)
@@ -48,9 +48,9 @@
 (define input+
   Type Stream -> (let Mono? (monotype Type)
                       Input (read Stream)
-                      (if (= false (typecheck Input (rectify-type Type)))
-                          (error "type error: ~R is not of type ~R~%" Input Type)
-                          (eval-kl Input))))
+                   (if (= false (typecheck Input (rectify-type Type)))
+                       (error "type error: ~R is not of type ~R~%" Input Type)
+                       (eval-kl Input))))
 
 (define monotype
   [X | Y] -> (map (/. Z (monotype Z)) [X | Y])
@@ -319,7 +319,7 @@
   <dbq> <strcontents> <dbq> := <strcontents>;)
 
 (defcc <dbq>
-   34 := skip;)
+  34 := skip;)
 
 (defcc <strcontents>
   <strc> <strcontents> := (cn <strc> <strcontents>);
@@ -336,7 +336,7 @@
    Byte := (n->string Byte)	 where (not (= Byte 34));)
 
 (defcc <lowC>
-   99 := skip;)
+  99 := skip;)
 
 (defcc <hash>
   35 := skip;)
@@ -358,8 +358,8 @@
   <digits> := (compute-integer <digits>);)
 
 (defcc <digits>
-   <digit> <digits> := [<digit> | <digits>];
-   <digit> := [<digit>];)
+  <digit> <digits> := [<digit> | <digits>];
+  <digit> := [<digit>];)
 
 (defcc <digit>
   Byte := (byte->digit Byte)  where (digit? Byte);)
@@ -371,17 +371,17 @@
   Digits -> (compute-integer-h (reverse Digits) 0))
 
 (define compute-integer-h
-   [] _ -> 0
-   [Digit | Digits] Expt -> (+ (* (expt 10 Expt) Digit) (compute-integer-h Digits (+ Expt 1))))
+  [] _ -> 0
+  [Digit | Digits] Expt -> (+ (* (expt 10 Expt) Digit) (compute-integer-h Digits (+ Expt 1))))
 
 (define expt
-    _ 0       -> 1
-    Base Expt -> (* Base (expt Base (- Expt 1)))  where (> Expt 0)
-    Base Expt -> (/ (expt Base (+ Expt 1)) Base))
+  _ 0       -> 1
+  Base Expt -> (* Base (expt Base (- Expt 1)))  where (> Expt 0)
+  Base Expt -> (/ (expt Base (+ Expt 1)) Base))
 
 (defcc <float>
-   <integer> <stop> <fraction> := (+ <integer> <fraction>);
-   <stop> <fraction> := <fraction>;)
+  <integer> <stop> <fraction> := (+ <integer> <fraction>);
+  <stop> <fraction> := <fraction>;)
 
 (defcc <stop>
   46 := skip;)
@@ -393,13 +393,13 @@
   Digits -> (compute-fraction-h Digits -1))
 
 (define compute-fraction-h
-   [] _ -> 0
-   [Digit | Digits] Expt -> (+ (* (expt 10 Expt) Digit)
-                               (compute-fraction-h Digits (- Expt 1))))
+  [] _ -> 0
+  [Digit | Digits] Expt -> (+ (* (expt 10 Expt) Digit)
+                              (compute-fraction-h Digits (- Expt 1))))
 
 (defcc <e-number>
-   <float> <lowE> <log10> 	 := (compute-E <float> <log10>);
-   <integer> <lowE> <log10>  := (compute-E <integer> <log10>);)
+  <float> <lowE> <log10> 	 := (compute-E <float> <log10>);
+  <integer> <lowE> <log10>  := (compute-E <integer> <log10>);)
 
 (defcc <log10>
   <plus> <log10> := <log10>;
@@ -420,19 +420,19 @@
   Byte := skip     where  (whitespace? Byte);)
 
 (define whitespace?
-   32 -> true
-   13 -> true
-   10 -> true
-    9 -> true
-    _ -> false)
+  32 -> true
+  13 -> true
+  10 -> true
+  9  -> true
+  _  -> false)
 
 (define unpackage&macroexpand
   [] -> []
   [Package | S-exprs] -> (unpackage&macroexpand (append (unpackage Package) S-exprs))  where (packaged? Package)
   [S-expr | S-exprs]  -> (let M (macroexpand S-expr)
-                              (if (packaged? M)
-                                  (unpackage&macroexpand [M | S-exprs])
-                                  [M | (unpackage&macroexpand S-exprs)])))
+                           (if (packaged? M)
+                               (unpackage&macroexpand [M | S-exprs])
+                               [M | (unpackage&macroexpand S-exprs)])))
 
 (define packaged?
   [package P E | Code] -> true
@@ -443,11 +443,11 @@
   [package P External | S-exprs] -> (let External! (eval External)
                                          Package (package-symbols (str P) External! S-exprs)
                                          RecordExternal (record-external P External!)
-                                         Package))
+                                      Package))
 
 (define record-external
   P E* -> (let External (trap-error (get P external-symbols) (/. E []))
-               (put P external-symbols (union E* External))))
+            (put P external-symbols (union E* External))))
 
 (define package-symbols
   P External [S-expr | S-exprs] -> (map (/. X (package-symbols P External X))
@@ -476,9 +476,9 @@
   F -> (element? F (get shen external-symbols)))
 
 (define internal-to-P?
-   "" (@s "." _)        -> true
-   (@s S Ss) (@s S Ss*) -> (internal-to-P? Ss Ss*)
-  _ _                   -> false)
+  "" (@s "." _)        -> true
+  (@s S Ss) (@s S Ss*) -> (internal-to-P? Ss Ss*)
+  _ _                  -> false)
 
 (define process-applications
   X Types -> X  where (element? X Types)
@@ -559,9 +559,9 @@
   F -> (and (symbol? F) (not (variable? F))))
 
 (define simple-curry
-   [F X]       -> [F X]
-   [F X Y | Z] -> (simple-curry [[F X] Y | Z])
-   X -> X)
+  [F X]       -> [F X]
+  [F X Y | Z] -> (simple-curry [[F X] Y | Z])
+  X -> X)
 
 (define function
   F -> (fn F))
@@ -572,11 +572,11 @@
    _ -> false)
 
 (define fn-call
-   [function F] -> (fn-call [fn F])
-   [fn F] -> (let ArityF (arity F)
-                (cases (= ArityF -1) [fn F]
-                       (= ArityF 0) (error "fn cannot be applied to a zero place function~%")
-                       true (lambda-function [F] ArityF))))
+  [function F] -> (fn-call [fn F])
+  [fn F] -> (let ArityF (arity F)
+               (cases (= ArityF -1) [fn F]
+                      (= ArityF 0) (error "fn cannot be applied to a zero place function~%")
+                      true (lambda-function [F] ArityF))))
 
 (define partial-application*?
   F ArityF N -> (let Verdict (> ArityF N)
@@ -594,4 +594,6 @@
                                (output "~A might not like ~A argument~A~%"
                                         F N (if (= N 1) "" "s"))
                                skip)
-                     Verdict))                    )
+                  Verdict))
+
+)

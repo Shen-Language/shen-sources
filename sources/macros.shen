@@ -6,14 +6,14 @@
 
 (define macroexpand
   X -> (let Fs (map (/. X (tl X)) (value *macros*))
-           (macroexpand-h X Fs Fs)))
+         (macroexpand-h X Fs Fs)))
 
 (define macroexpand-h
   X [] _ -> X
   X [F | Fs] Macros -> (let Y (walk F X)
-                            (if (= X Y)
-                                (macroexpand-h X Fs Macros)
-                                (macroexpand-h Y Macros Macros)))
+                         (if (= X Y)
+                             (macroexpand-h X Fs Macros)
+                             (macroexpand-h Y Macros Macros)))
   _ _ _ -> (simple-error "implementation error in shen.macroexpand-h"))
 
 (define walk
@@ -24,7 +24,7 @@
   [defmacro F | Rest] -> (let Default [(protect X) -> (protect X)]
                               Def (eval [define F | (append Rest Default)])
                               Record (record-macro F (/. X ((fn F) X)))
-                              F)
+                           F)
    X -> X)
 
 (define u!-macro
@@ -39,7 +39,7 @@
   (@s S Ss) -> (let ASCII (string->n S)
                     ASCII-32 (- ASCII 32)
                     Upper (if (and (>= ASCII 97) (<= ASCII 122)) (n->string ASCII-32) S)
-                    (@s Upper (mu-h Ss))))
+                 (@s Upper (mu-h Ss))))
 
 (define record-macro
   F Lambda -> (set *macros* (update-assoc F Lambda (value *macros*))))
@@ -127,9 +127,9 @@
 (define @s-macro
   [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]
   [@s X Y] -> (let E (explode X)
-                   (if (> (length E) 1)
-                       (@s-macro [@s | (append E [Y])])
-                       [@s X Y]))   where (string? X)
+                (if (> (length E) 1)
+                    (@s-macro [@s | (append E [Y])])
+                    [@s X Y]))   where (string? X)
   X -> X)
 
 (define synonyms-macro
@@ -144,7 +144,7 @@
                    DemodLambda (lambda-of-defun
                                  (shendef->kldef demod (compile-synonyms CurryTypes)))
                    Demod (set *demodulation-function* DemodLambda)
-                   synonyms))
+                synonyms))
 
 (define compile-synonyms
   [] -> (let X (gensym (protect X)) [X -> X])
@@ -158,7 +158,7 @@
 
 (define assoc-macro
   [F W X Y | Z] -> [F W (assoc-macro [F X Y | Z])]
-                        where (element? F [@p @v append and or + * do])
+      where (element? F [@p @v append and or + * do])
   X -> X)
 
 (define let-macro
@@ -167,9 +167,9 @@
    X -> X)
 
 (define abs-macro
-   [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
-   [/. X Y] -> (if (variable? X) [lambda X Y] (error "~S is not a variable~%" X))
-   X -> X)
+  [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
+  [/. X Y] -> (if (variable? X) [lambda X Y] (error "~S is not a variable~%" X))
+  X -> X)
 
 (define cases-macro
   [cases true X | _] -> X
@@ -179,17 +179,17 @@
   X -> X)
 
 (define timer-macro
-   [time Process] -> (let-macro
-                        [let (protect Start) [get-time run]
-                             (protect Result) Process
-                             (protect Finish) [get-time run]
-                             (protect Time) [- (protect Finish) (protect Start)]
-                             (protect Message) [pr [cn "c#10;run time: "
-                                                       [cn [str (protect Time)]
-                                                           " secsc#10;"]]
-                                                   [stoutput]]
-                             (protect Result)])
-    X -> X)
+  [time Process] -> (let-macro
+                     [let (protect Start) [get-time run]
+                          (protect Result) Process
+                          (protect Finish) [get-time run]
+                          (protect Time) [- (protect Finish) (protect Start)]
+                          (protect Message) [pr [cn "c#10;run time: "
+                                                    [cn [str (protect Time)]
+                                                        " secsc#10;"]]
+                                                [stoutput]]
+                       (protect Result)])
+   X -> X)
 
 (define tuple-up
   [X | Y] -> [@p X (tuple-up Y)]

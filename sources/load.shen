@@ -8,7 +8,7 @@
    File     -> (let TC?   (value *tc*)
                     Load  (time (load-help TC? (read-file File)))
                     Infs  (if TC? (output "~%typechecked in ~A inferences~%" (inferences)) skip)
-                    loaded))
+                 loaded))
 
 (define load-help
   false Code -> (eval-and-print Code)
@@ -81,4 +81,6 @@
 (define klfile
   "" -> ".kl"
   ".shen" -> ".kl"
-  (@s S Ss) -> (@s S (klfile Ss)))        )
+  (@s S Ss) -> (@s S (klfile Ss)))
+
+)

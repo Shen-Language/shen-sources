@@ -185,4 +185,6 @@
 (declare / [number --> [number --> number]])
 (declare - [number --> [number --> number]])
 (declare * [number --> [number --> number]])
-(declare == [A --> [B --> boolean]]) )
+(declare == [A --> [B --> boolean]])
+
+)

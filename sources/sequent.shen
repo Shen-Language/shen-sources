@@ -282,4 +282,6 @@
   Types -> (let InternTypes  (map (/. X (intern-type X)) Types)
                 AllDatatypes (value *alldatatypes*)
                 Datatypes (set *datatypes* (remove-datatypes InternTypes AllDatatypes))
-                (show-datatypes Datatypes))) )
+                (show-datatypes Datatypes)))
+
+)

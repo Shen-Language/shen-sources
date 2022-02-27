@@ -106,12 +106,12 @@
 
 (define profile-help
   [defun F Params Code]
-   -> (let G (gensym f)
-           Profile [defun F Params (profile-func F Params [G | Params])]
-           Def [defun G Params (subst G F Code)]
-           CompileProfile (eval-kl Profile)
-           CompileG (eval-kl Def)
-           F)
+  -> (let G (gensym f)
+          Profile [defun F Params (profile-func F Params [G | Params])]
+          Def [defun G Params (subst G F Code)]
+          CompileProfile (eval-kl Profile)
+          CompileG (eval-kl Def)
+       F)
   _ -> (error "Cannot profile.~%"))
 
 (define unprofile
@@ -132,10 +132,12 @@
 (define profile-results
    F -> (let Results (get-profile F)
              Initialise (put-profile F 0)
-             (@p F Results)))
+          (@p F Results)))
 
 (define get-profile
   F -> (trap-error (get F profile) (/. E 0)))
 
 (define put-profile
-  F Time -> (put F profile Time)))
+  F Time -> (put F profile Time))
+
+)

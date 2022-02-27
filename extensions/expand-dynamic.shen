@@ -41,7 +41,6 @@
        RecordSig
        ))
 
-
 (define expand-lambda-entries
   [] -> []
   [F Arity | Rest] -> (append

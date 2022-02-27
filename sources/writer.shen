@@ -128,11 +128,11 @@
   _ _ _ 0 -> "... etc"
   V N Mode Max -> (let Item (trap-error (<-address V N) (/. E out-of-bounds))
                        Next (trap-error (<-address V (+ N 1)) (/. E out-of-bounds))
-                       (cases (= Item out-of-bounds) ""
-                              (= Next out-of-bounds) (arg->str Item Mode)
-                              true (@s (arg->str Item Mode)
-                                       " "
-                                       (iter-vector V (+ N 1) Mode (- Max 1))))))
+                    (cases (= Item out-of-bounds) ""
+                           (= Next out-of-bounds) (arg->str Item Mode)
+                           true (@s (arg->str Item Mode)
+                                    " "
+                                    (iter-vector V (+ N 1) Mode (- Max 1))))))
 
 (define atom->str
   At -> (trap-error (str At) (/. E (funexstring))))
@@ -141,4 +141,6 @@
   -> (@s "c#16;fune" (arg->str (gensym (intern "x")) a) "c#17;"))
 
 (define list?
-  X -> (or (empty? X) (cons? X)))		)
+  X -> (or (empty? X) (cons? X)))
+
+)

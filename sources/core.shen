@@ -150,7 +150,7 @@
   F Rules Arity -> (let Parameters (parameters Arity)
                         Body (scan-body F (kl-body Rules Parameters))
                         Defun [defun F Parameters (cond-form Body)]
-                        Defun))
+                     Defun))
 
 (define parameters
   0 -> []
@@ -342,4 +342,6 @@
   +string? -> @s
   +vector? -> @v
   tuple? -> @p
-  _ -> skip)  )
+  _ -> skip)
+
+)
