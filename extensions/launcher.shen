@@ -7,7 +7,7 @@
 
 (define quiet-load
   File -> (let Contents (read-file File)
-            (map (/. X (shen.eval-without-macros X)) Contents)))
+            (map (/. X (eval X)) Contents)))
 
 (define version-string
   -> (make-string "~A ~R~%"
