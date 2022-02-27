@@ -9,7 +9,20 @@
   [X Y | Z] -> [X | (bubble [Y | Z])])
 
 (define bubble-again-perhaps
-  \* no change as a result of bubbling - then the job is done *\
-  X X -> X
+   \* no change as a result of bubbling - then the job is done *\
+   X X -> X
   \* else bubble again *\
-  X _ -> (bubble-sort X))
+   X _ -> (bubble-sort X))
+
+
+
+
+
+
+
+
+
+
+
+
+

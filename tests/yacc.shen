@@ -1,27 +1,34 @@
 (defcc <sent>
-  <np> <vp>;)
+ {(list symbol) ==> (list symbol)}
+<np> <vp>;)
 
 (defcc <det>
-  the; a;)
+{(list symbol) ==> (list symbol)}
+the; a;)
 
 (defcc <np>
-  <det> <n>;
-  <name1>;)
+{(list symbol) ==> (list symbol)}
+<det> <n>;
+<name1>;)
 
 (defcc <n>
-  cat; dog;)
+ {(list symbol) ==> (list symbol)}
+cat; dog;)
 
 (defcc <name1>
-  X := X	where (element? X [(protect Bill) (protect Ben)]);)
+{(list symbol) ==> (list symbol)}
+ X := [X]	where (element? X [bill ben]);)
 
 (defcc <vp>
-  <vtrans> <np>;)
+{(list symbol) ==> (list symbol)}
+<vtrans> <np>;)
 
 (defcc <vtrans>
-  likes; chases;)
+{(list symbol) ==> (list symbol)}
+likes; chases;)
 
 (defcc <des>
-  [<ds>] [<es>] := (append <ds> <es>);)
+[<ds>] [<es>] := (append <ds> <es>);)
 
 (defcc <ds>
   d <ds>;
@@ -32,10 +39,10 @@
   e;)
 
 (defcc <sent'>
-  <np> <vp> := (question <np> <vp>);)
+<np> <vp> := (question <np> <vp>);)
 
 (define question
-  NP VP -> (append [is it true that your father] VP [?]))
+NP VP -> (append [is it true that your father] VP [?]))
 
 (defcc <as->bs>
   a <a->bs> := [b | <a->bs>];
@@ -51,7 +58,7 @@
   X;)
 
 (defcc <digit>
-  0; 1; 2; 3; 4; 5; 6; 7; 8; 9;)
+0; 1; 2; 3; 4; 5; 6; 7; 8; 9;)
 
 (defcc <find-digit'>
   <digit> <morestuff>;
@@ -66,21 +73,21 @@
   a;)
 
 (defcc <bs>
-  b <bs>;
-  b;
-  <e>;)
+b <bs>;
+b;
+<e>;)
 
 (defcc <cs>
-  c <cs>;
-  c;)
+c <cs>;
+c;)
 
 (defcc <asbs'cs>
   <as> <bs'> <cs>;)
 
 (defcc <bs'>
-  b <bs'>;
-  b;
-  <e>;)
+b <bs'>;
+b;
+<e>;)
 
 (defcc <find-digit''>
   <digit''> <morestuff> := <digit''>;
@@ -91,41 +98,42 @@
   X := X  where (element? X [0 1 2 3 4 5 6 7 8 9]);)
 
 (defcc <anbncn>
-  <as> <bs> <cs> := (appendall [<as> <bs> <cs>])
-  where (equal-length? [<as> <bs> <cs>]);)
+<as> <bs> <cs> := (appendall [<as> <bs> <cs>])
+                       where (equal-length? [<as> <bs> <cs>]);)
 
 (defcc <as>
-  a <as>;
-  a;)
+a <as>;
+a;)
 
 (defcc <bs>
-  b <bs>;
-  b;)
+b <bs>;
+b;)
 
 (defcc <cs>
-  c <cs>;
-  c;)
+c <cs>;
+c;)
 
 (define equal-length?
-  [] -> true
-  [L] -> true
-  [L1 L2 | Ls] -> (and (= (length L1) (length L2)) (equal-length? [L2 | Ls])))
+[] -> true
+[L] -> true
+[L1 L2 | Ls] -> (and (= (length L1) (length L2)) (equal-length? [L2 | Ls])))
 
 (define appendall
-  [] -> []
-  [L | Ls] -> (append L (appendall Ls)))
+[] -> []
+[L | Ls] -> (append L (appendall Ls)))
 
 (defcc <a*s>
-  [a] := a;)
+   [a] := a;)
 
-(defcc <b*>
+ (defcc <b*>
   [b] b;)
 
-(defcc <c*>
-  [<c*>] := [<c*>];
-  c;)
+ (defcc <c*>
+   [<c*>] := [<c*>];
+   c;)
 
-(defcc <d*>
-  [<d*>] <d*> := [[<d*>] | <d*>];
-  d <d*> := [d | <d*>];
-  d := [d];)
+ (defcc <d*>
+    [<d*>] <d*> := [[<d*>] | <d*>];
+    d <d*> := [d | <d*>];
+    d := [d];)
+

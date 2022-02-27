@@ -2,7 +2,7 @@
   [is Object Concept] -> (if (belongs? Object Concept) yes no))
 
 (define belongs?
-  Object Concept -> (element? Concept (fix (function spread-activation) [Object])))
+  Object Concept -> (element? Concept (fix (fn spread-activation) [Object])))
 
 (define spread-activation
   [] -> []
@@ -19,11 +19,26 @@
   Vertex -> (get-prop Vertex type_of []))
 
 (define assert
-  [Object is_a Type] -> (put Object is_a [Type | (is_links Object)])
-  [Type1 type_of Type2] -> (put Type1 type_of [Type2 | (type_links Type1)]))
+   [Object is_a Type] -> (put Object is_a [Type | (is_links Object)])
+   [Type1 type_of Type2] -> (put Type1 type_of [Type2 | (type_links Type1)]))
 
 (define get-prop
   Ob Pointer Default -> (trap-error (get Ob Pointer) (/. E Default)))
 
 (define clear
   Ob -> (put Ob is_a (put Ob type_of [])))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
