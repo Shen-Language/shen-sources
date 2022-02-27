@@ -1,221 +1,251 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
+  
+  (define compile
+    F L -> (let Compile (F [L no-action])
+                (if (parsed? Compile)
+                    (objectcode Compile)
+                    (error "parse failure~%"))))
+                                 
+  (define parsed?
+    X -> false       where (parse-failure? X)  
+    [[X | Y] | _] -> (do (set *residue* [X | Y])
+                         (error "syntax error here: ~R~% ..." [X | Y]))
+    _ -> true)
+    
+  (define parse-failure?
+    X -> (= X (fail)))  
+    
+  (define objectcode
+     [_ ObjectCode] -> ObjectCode
+     X -> (error "~S is not a YACC stream~%" X))   
+     
+  (define yacc->shen
+     YACC -> (compile (/. X (<yacc> X)) YACC))
+  
+  (defcc <yacc>
+     F <yaccsig> <c-rules> := (let Stream (gensym (protect S))
+                                   Def    (append [define F]
+                                                  <yaccsig>
+                                                  [Stream -> (c-rules->shen <yaccsig> Stream <c-rules>)])
+                                   Def);) 
+     
+   (defcc <yaccsig>
+     LC [list A] ==> B RC := (let C (protect (gensym C))
+                               [{ [str [list A] (protect C)] --> [str [list A] B] }])
+                               where (and (= { LC) (= } RC));
+     <e> := [];)    
+      
+  (defcc <c-rules>
+     <c-rule> <c-rules> := [<c-rule> | <c-rules>];
+     <!> := (if (empty? <!>) [] (error "YACC syntax error here:~% ~R~% ..." <!>));) 
+    
+   (defcc <c-rule>
+     <syntax> <semantics> <sc>  := [<syntax> <semantics>];
+     <syntax> <sc>              := [<syntax> (autocomplete <syntax>)];)
+    
+   (define autocomplete 
+     [SyntaxItem] -> SyntaxItem    where (non-terminal? SyntaxItem)                
+     [SyntaxItem | Syntax] -> [append SyntaxItem (autocomplete Syntax)]  where (non-terminal? SyntaxItem)
+     [SyntaxItem | Syntax] -> [cons (autocomplete SyntaxItem) (autocomplete Syntax)]
+     SyntaxItem -> SyntaxItem)
+    
+   (define non-terminal?
+     SyntaxItem -> (and (symbol? SyntaxItem) 
+                        (let Explode (explode SyntaxItem)
+                            (compile (/. X (<non-terminal?> X)) Explode))))
+   
+   (defcc <non-terminal?>
+     <packagenames> <non-terminal-name> := true;
+     <non-terminal-name> := true;
+     <!> := false;)
+       
+   (defcc <packagenames>
+     <packagename> "." <packagenames>  := skip;
+     <packagename> "." := skip;)
+     
+   (defcc <packagename>
+     <packagechar> <packagename> := skip;
+     <e> := skip;)
+     
+   (defcc <packagechar>
+      X := skip           where (not (= X "."));)  
+     
+   (defcc <non-terminal-name>
+     "<" <!> := skip  where (let Reverse (reverse <!>)
+                                 (and (cons? Reverse) (= (hd Reverse) ">")));)
+    
+   (define semicolon?
+     X -> (= X (intern ";")))    
 
-(define yacc
-  [defcc S | CC_Stuff] -> (yacc->shen S CC_Stuff))
+   (defcc <colon-equal>
+     X := skip  where (colon-equal? X);)   
+   
+   (define colon-equal?
+     X -> (= (intern ":=") X))   
 
-(define yacc->shen
-  S CC_Stuff -> (let CCRules (split_cc_rules true CC_Stuff [])
-                     CCBody (map (/. X (cc_body X)) CCRules)
-                     YaccCases (yacc_cases CCBody)
-                  [define S (protect Stream) -> (kill-code YaccCases)]))
+   (defcc <syntax>
+      <syntax-item> <syntax> := [<syntax-item> | <syntax>];
+      <syntax-item> := [<syntax-item>];)
 
-(define kill-code
-  YaccCases -> (protect [trap-error YaccCases [lambda E [analyse-kill E]]])
-      where (> (occurrences kill YaccCases) 0)
-  YaccCases -> YaccCases)
+   (defcc <syntax-item>
+      X := X    where (syntax-item? X);)
 
-(define kill
-  -> (simple-error "yacc kill"))
+   (define syntax-item?
+      X           -> false  where (colon-equal? X)
+      X           -> false  where (semicolon? X)
+      X           -> true	  where (atom? X)
+      [cons X Y]  -> (and (syntax-item? X) (syntax-item? Y))
+      _           -> false)
+     
+   (defcc <semantics>
+     <colon-equal> Semantics where Guard := [where Guard Semantics] where (not (semicolon? Semantics));
+     <colon-equal> Semantics             := Semantics               where (not (semicolon? Semantics));)
+    
+   (define c-rules->shen 
+     _ Stream [] -> [parse-failure]
+     Type Stream [CRule | CRules] 
+      -> (combine-c-code (c-rule->shen Type CRule Stream) 
+                         (c-rules->shen Type Stream CRules))
+     _ _ _ -> (error "implementation error in shen.c-rules->shen~%"))
+                         
+   (define parse-failure
+     -> (fail))                      
+                          
+   (define combine-c-code
+     CRuleShen CRulesShen -> [let (protect Result) CRuleShen
+                                  [if [parse-failure? (protect Result)]
+                                      CRulesShen
+                                      (protect Result)]])                                                         
+    
+   (define c-rule->shen
+     Type [Syntax Semantics] Stream -> (yacc-syntax Type Stream Syntax Semantics)
+      _ _ _ -> (error "implementation error in shen.c-rule->shen~%"))
+                                           
+   (define yacc-syntax 
+     Type Stream [] [where P Semantics] -> [if (process-yacc-semantics P) 
+                                               (yacc-syntax Type Stream [] Semantics) 
+                                               [parse-failure]]
+     Type Stream [] Semantics -> (yacc-semantics Type Stream Semantics)
+     Type Stream [SyntaxItem | Syntax] Semantics
+      -> (cases (non-terminal? SyntaxItem) (non-terminalcode Type Stream SyntaxItem Syntax Semantics)
+                (variable? SyntaxItem)     (variablecode Type Stream SyntaxItem Syntax Semantics)
+                (= _ SyntaxItem)           (wildcardcode Type Stream SyntaxItem Syntax Semantics)
+                (atom? SyntaxItem)         (terminalcode Type Stream SyntaxItem Syntax Semantics)
+                (cons? SyntaxItem)         (conscode Type Stream SyntaxItem Syntax Semantics)
+                true                       (error "implementation error in shen.yacc-syntax~%"))
+     _ _ _ _ -> (error "implementation error in shen.yacc-syntax~%"))
+                
+   (define non-terminalcode
+     Type Stream NonTerminal Syntax Semantics 
+       -> (let ApplyNonTerminal (concat (protect Parse) NonTerminal)
+           [let ApplyNonTerminal [NonTerminal Stream] 
+               [if [parse-failure? ApplyNonTerminal]
+                   [parse-failure]
+                   (yacc-syntax Type ApplyNonTerminal Syntax Semantics)]]))
+                           
+   (define variablecode
+     Type Stream Variable Syntax Semantics
+       -> (let NewStream (gensym (protect News))
+               [if [non-empty-stream? Stream]
+                   [let Variable [hds Stream]
+                        NewStream [tls Stream] 
+                        (yacc-syntax Type NewStream Syntax Semantics)]
+               [parse-failure]]))
+               
+   (define wildcardcode
+     Type Stream Variable Syntax Semantics
+       -> (let NewStream (gensym (protect News))
+              [if [non-empty-stream? Stream]
+                  [let NewStream [tls Stream] 
+                       (yacc-syntax Type NewStream Syntax Semantics)]
+                  [parse-failure]]))
+                
+   (define terminalcode
+     Type Stream Terminal Syntax Semantics 
+       -> (let NewStream (gensym (protect News))
+               [if [=hd? Stream Terminal]              
+                   [let NewStream [tls Stream] 
+                        (yacc-syntax Type NewStream Syntax Semantics)]
+                   [parse-failure]])) 
+    
+    (define conscode
+      Type Str Cons Syn Sem -> [if [ccons? Str]
+                                   [let (protect SynCons) [comb [hds Str] [<-out Str]]
+                                        (yacc-syntax Type 
+                                                (protect SynCons)
+                                                (append (decons Cons) [<end>])
+                                                [pushsemantics [tlstream Str] Syn Sem])]
+                                   [parse-failure]])  
 
-(define analyse-kill
-  Exception -> (let String (error-to-string Exception)
-                 (if (= String "yacc kill")
-                     (fail)
-                     Exception)))
-
-(define split_cc_rules
-  _ [] [] -> []
-  Flag [] RevRule -> [(split_cc_rule Flag (reverse RevRule) [])]
-  Flag [; | CC_Stuff] RevRule
-  -> [(split_cc_rule Flag (reverse RevRule) [])
-      | (split_cc_rules Flag CC_Stuff [])]
-  Flag [X | CC_Stuff] RevRule -> (split_cc_rules Flag CC_Stuff [X | RevRule]))
-
-(define split_cc_rule
-  _ [:= Semantics] RevSyntax -> [(reverse RevSyntax) Semantics]
-  _ [:= Semantics where Guard] RevSyntax
-  -> [(reverse RevSyntax) [where Guard Semantics]]
-  Flag [] RevSyntax
-  -> (do (semantic-completion-warning Flag RevSyntax)
-         (split_cc_rule Flag [:= (default_semantics (reverse RevSyntax))]
-                        RevSyntax))
-  Flag [Syntax | Rule] RevSyntax -> (split_cc_rule Flag Rule [Syntax | RevSyntax]))
-
-(define semantic-completion-warning
-  true RevSyntax -> (do (output "warning: ")
-                        (for-each (/. X (output "~A " X)) (reverse RevSyntax))
-                        (output "has no semantics.~%"))
-  _ _ -> skip)
-
-(define default_semantics
-  [] -> []
-  [S] -> S						  where (grammar_symbol? S)
-  [S | Syntax] -> [append S (default_semantics Syntax)]	  where (grammar_symbol? S)
-  [S | Syntax] -> [cons S (default_semantics Syntax)])
-
-(define grammar_symbol?
-  S -> (and (symbol? S)
-            (let Cs (strip-pathname (explode S))
-              (and (= (hd Cs) "<") (= (hd (reverse Cs)) ">")))))
-
-(define yacc_cases
-  [Case] -> Case
-  [Case | Cases] -> (let P (protect YaccParse)
-                      [let P Case
-                        [if [= P [fail]]
-                            (yacc_cases Cases)
-                            P]]))
-
-(define cc_body
-  [Syntax Semantics] -> (syntax Syntax (protect Stream) Semantics))
-
-(define syntax
-  [] Stream [where Guard Semantics] -> [if (semantics Guard)
-                                           [pair [hd Stream] (semantics Semantics)]
-                                           [fail]]
-  [] Stream Semantics -> [pair [hd Stream] (semantics Semantics)]
-  [S | Syntax] Stream Semantics
-  -> (cases (grammar_symbol? S) (recursive_descent [S | Syntax] Stream Semantics)
-            (variable? S) (variable-match [S | Syntax] Stream Semantics)
-            (jump_stream? S) (jump_stream [S | Syntax] Stream Semantics)
-            (terminal? S) (check_stream [S | Syntax] Stream Semantics)
-            (cons? S) (list-stream (decons S) Syntax Stream Semantics)
-            true (error "~A is not legal syntax~%" S)))
-
-(define list-stream
-  S Syntax Stream Semantics
-  -> (let Test [and [cons? [hd Stream]] [cons? [hdhd Stream]]]
-          Placeholder (gensym place)
-          RunOn (syntax Syntax [pair [tlhd Stream] [hdtl Stream]] Semantics)
-          Action (insert-runon RunOn Placeholder
-                               (syntax S
-                                       [pair [hdhd Stream] [hdtl Stream]]
-                                       Placeholder))
-       [if Test
-           Action
-           [fail]]))
-
-(define decons
-  [cons X []] -> [X]
-  [cons X Y] -> [X | (decons Y)]
-  X -> X)
-
-(define insert-runon
-  Runon Placeholder [pair _ Placeholder] -> Runon
-  Runon Placeholder [X | Y] -> (map (/. Z (insert-runon Runon Placeholder Z)) [X | Y])
-  _ _ X -> X)
-
-(define strip-pathname
-  Cs -> Cs 		where (not (element? "." Cs))
-  [_ | Cs] -> (strip-pathname Cs))
-
-(define recursive_descent
-  [S | Syntax] Stream Semantics
-  -> (let Test [S Stream]
-          Action (syntax Syntax
-                         (concat (protect Parse_) S) Semantics)
-          Else [fail]
-       [let (concat (protect Parse_) S) Test
-         [if [not [= [fail] (concat (protect Parse_) S)]]
-             Action
-             Else]]))
-
-(define variable-match
-  [S | Syntax] Stream Semantics
-  -> (let Test [cons? [hd Stream]]
-          Action [let (concat (protect Parse_) S) [hdhd Stream]
-                   (syntax Syntax [pair [tlhd Stream]
-                                        [hdtl Stream]] Semantics)]
-          Else [fail]
-       [if Test Action Else]))
-
-(define terminal?
-  [_ | _] -> false
-  X -> false  where (variable? X)
-  _ -> true)
-
-(define jump_stream?
-  X -> true  where (= X _)
-  _ -> false)
-
-(define check_stream
-  [S | Syntax] Stream Semantics
-  -> (let Test [and [cons? [hd Stream]] [= S [hdhd Stream]]]
-          NewStr (gensym (protect NewStream))
-          Action [let NewStr [pair [tlhd Stream]
-                                   [hdtl Stream]]
-                   (syntax Syntax NewStr Semantics)]
-          Else [fail]
-       [if Test Action Else]))
-
-(define jump_stream
-  [S | Syntax] Stream Semantics
-  -> (let Test [cons? [hd Stream]]
-          Action (syntax Syntax [pair [tlhd Stream]
-                                      [hdtl Stream]] Semantics)
-          Else [fail]
-       [if Test Action Else]))
-
-(define semantics
-  [] -> []
-  S -> [hdtl (concat (protect Parse_) S)] 	where (grammar_symbol? S)
-  S -> (concat (protect Parse_) S) 	where (variable? S)
-  [X | Y] -> (map (/. Z (semantics Z)) [X | Y])
-  X -> X)
-
-(define pair
-  X Y -> [X Y])
-
-(define hdtl
-  X -> (hd (tl X)))
-
-(define hdhd
-  X -> (hd (hd X)))
-
-(define tlhd
-  X -> (tl (hd X)))
-
-(define snd-or-fail
-  [_ Y] -> Y
-  _ -> (fail))
-
-(define fail
-  -> fail!)
-
-(define <!>
-  [X _] -> [[] X]
-  _ -> (fail))
-
-(define <e>
-  [X _] -> [X []])
-
-)
+    (define decons
+      [cons X Y] -> [X | (decons Y)]
+      X -> X)
+       
+    (define ccons?
+      [[X | _] _] -> (cons? X)
+      _ -> false)                  
+              
+    (define non-empty-stream?
+     [[_ | _] | _] -> true
+     _ -> false)
+     
+   (define hds
+     Stream -> (hd (hd Stream)))
+      
+    (define hdstream
+      [[X | _] Y] -> [X Y]
+      _ -> (error "implementation error in shen.hdstream~%"))  
+      
+    (define comb
+      X Y -> [X Y])  
+      
+    (define tlstream
+      [[_ | Y] Z] -> [Y Z]
+      _ -> (error "implementation error in shen.tlstream~%"))                     
+              
+    (define =hd?
+      [[X | _] | _] X -> true
+      _ _ -> false)
+      
+    (define tls
+      [[_ | Y] Z] -> [Y Z]
+      _ -> (error "implementation error in shen.tls~%"))      
+                            
+    (define yacc-semantics
+      Type _ [pushsemantics Stream Syntax Semantics] -> (yacc-syntax Type Stream Syntax Semantics)
+      Type Stream Semantics -> (let Process (process-yacc-semantics Semantics)
+                                    Annotate (use-type-info Type Process)
+                                    [comb [in-> Stream] Annotate]))
+    
+    (define use-type-info
+     [{ [str [list A] C] --> [str [list A] B] }] Semantics -> [type Semantics B]
+     _ Semantics -> Semantics)    
+       
+    (define process-yacc-semantics
+      [X | Y] -> (map (/. Z (process-yacc-semantics Z)) [X | Y])
+      NonTerminal -> [<-out (concat (protect Parse) NonTerminal)]  where (non-terminal? NonTerminal)
+      X -> X)
+      
+     (define <-out
+       [_ X] -> X
+       _ -> (error "implementation error in shen.<-out~%"))
+       
+     (define in->
+       [X _] -> X
+       _ -> (error "implementation error in shen.in->~%"))  
+       
+     (define <!>
+      [X _] -> [[] X]
+      _ -> (error "implementation error in <!>~%"))
+       
+     (define <e>
+       [X _] -> [X []]
+       _ -> (error "implementation error in <e>~%"))
+       
+     (define <end>
+       [[] X] -> [[] X]
+       _ -> (parse-failure)))

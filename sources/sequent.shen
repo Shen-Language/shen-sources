@@ -1,281 +1,285 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
 
-(define datatype-error
-  [D _] -> (error "datatype syntax error here:~%~% ~A~%" (next-50 50 D)))
+(defcc <datatype>
+  D <datatype-rules> := (let Prolog (rules->prolog D <datatype-rules>)
+                             (remember-datatype D (fn D)));)
 
 (defcc <datatype-rules>
-  <datatype-rule> <datatype-rules> := [<datatype-rule> | <datatype-rules>];
-  <e> := [];)
+  <datatype-rule> <datatype-rules> := (append <datatype-rule> <datatype-rules>);
+  <!> := (if (empty? <!>) [] (error "datatype syntax error here:~% ~R~% ..." <!>));)
 
 (defcc <datatype-rule>
-  <side-conditions> <premises> <singleunderline> <conclusion>
-      := (sequent single [<side-conditions> <premises> <conclusion>]);
-  <side-conditions> <premises> <doubleunderline> <conclusion>
-      := (sequent double [<side-conditions> <premises> <conclusion>]);)
+  <single>;
+  <double>;)
 
-(defcc <side-conditions>
-  <side-condition> <side-conditions> := [<side-condition> | <side-conditions>];
-  <e> := [];)
+(defcc <single>
+  <sides> <prems> <sng> <conc> <sc> := [[<sides> <prems> <conc>]];)
 
-(defcc <side-condition>
-  if <expr> := [if <expr>];
-  let <variable?> <expr> := [let <variable?> <expr>];)
-
-(defcc <variable?>
-  X := X	where (variable? X);)
-
-(defcc <expr>
-  X := (remove-bar X) where (not (or (element? X [>> ;])
-                                     (singleunderline? X)
-                                     (doubleunderline? X)));)
-
-(define remove-bar
-  [X B Y] -> [X | Y] where (= B bar!)
-  [X | Y] -> [(remove-bar X) | (remove-bar Y)]
-  X -> X)
-
-(defcc <premises>
-  <premise> <semicolon-symbol> <premises> := [<premise> | <premises>];
-  <e> := [];)
-
-(defcc <semicolon-symbol>
-  X := skip	where (= X ;);)
-
-(defcc <premise>
-  ! := !;
-  <formulae> >> <formula> := (sequent <formulae> <formula>);
-  <formula> := (sequent [] <formula>);)
-
-(defcc <conclusion>
-  <formulae> >> <formula> <semicolon-symbol> := (sequent <formulae> <formula>);
-  <formula> <semicolon-symbol> := (sequent [] <formula>);)
-
-(define sequent
-  Formulae Formula -> (@p Formulae Formula))
+(defcc <double>
+  <sides> <formulae> <dbl> <formula> <sc> := (lr-rule <sides> <formulae> [[] <formula>]);)
 
 (defcc <formulae>
-  <formula> <comma-symbol> <formulae> := [<formula> | <formulae>];
-  <formula> := [<formula>];
+  <formula> <sc> <formulae> := [[[] <formula>] | <formulae>];
+  <formula> <sc>            := [[[] <formula>]];)
+
+(defcc <conc>
+  <ass> >> <formula> := [<ass> <formula>];
+  <formula>          := [[] <formula>];)
+
+(defcc <prems>
+  <prem> <sc> <prems> := [<prem> | <prems>];
   <e> := [];)
 
-(defcc <comma-symbol>
-  X := skip 	where (= X (intern ","));)
+(defcc <prem>
+  !                   := !;
+  <ass> >> <formula>  := [<ass> <formula>];
+  <formula>           := [[] <formula>];)
+
+(defcc <ass>
+   <formula> <iscomma> <ass> := [<formula> | <ass>];
+   <formula>         := [<formula>];
+   <e> := [];)
+
+(defcc <iscomma>
+  X := skip  where (= X (intern ","));)
 
 (defcc <formula>
-  <expr> : <type> := [(curry <expr>) : (demodulate <type>)];
-  <expr> := <expr>;)
+   <expr> <iscolon> <type> := [(curry <expr>) (intern ":") (rectify-type <type>)];
+   <expr>          := <expr>;)
+
+(defcc <iscolon>
+  X := skip   where (= X (intern ":"));)
+
+(defcc <sides>
+  <side> <sides> := [<side> | <sides>];
+  <e> := [];)
+
+(defcc <side>
+  if P    := [if P];
+  let X Y := [let X Y];
+  let! X Y := [let! X Y];)
+
+(define lr-rule
+  Side Sequents [[] C] -> (let P (gensym (protect P))
+                               LConc [[C] P]
+                               LPrem [(coll-formulae Sequents) P]
+                               Left [Side [LPrem] LConc]
+                               Right [Side Sequents [[] C]]
+                               [Right Left])
+  _ _ _ -> (simple-error "implementation error in shen.lr-rule"))
+
+(define coll-formulae
+  [] -> []
+  [[[] Q] | Sequents] -> [Q | (coll-formulae Sequents)]
+  _ -> (simple-error "implementation error in shen.coll-formulae"))
+
+(defcc <expr>
+  X := (macroexpand X) where (not (key-in-sequent-calculus? X));)
+
+(define key-in-sequent-calculus?
+  X -> (or (element? X [>> (intern ";") (intern ",") (intern ":") <--]) (sng? X) (dbl? X)))
 
 (defcc <type>
-  <expr> := (curry-type <expr>);)
+   <expr> := <expr>;)
 
-(defcc <doubleunderline>
-  X := X	where (doubleunderline? X);)
+(defcc <dbl>
+  X := X	where (dbl? X);)
 
-(defcc <singleunderline>
-  X := X	where (singleunderline? X);)
+(defcc <sng>
+  X := X	where (sng? X);)
 
-(define singleunderline?
-  S -> (and (symbol? S) (sh? (str S))))
+(define sng?
+  S -> (and (symbol? S) (sng-h? (str S))))
 
-(define sh?
-  "_" -> true
-  S -> (and (= (pos S 0) "_") (sh? (tlstr S))))
+(define sng-h?
+  "___" -> true
+  (@s "_" S) -> (sng-h? S)
+  _ -> false)
 
-(define doubleunderline?
-  S -> (and (symbol? S) (dh? (str S))))
+(define dbl?
+  S -> (and (symbol? S) (dbl-h? (str S))))
 
-(define dh?
-  "=" -> true
-  S -> (and (= (pos S 0) "=") (dh? (tlstr S))))
-
-(define process-datatype
-  D Rules -> (remember-datatype (s-prolog (rules->horn-clauses D Rules))))
+(define dbl-h?
+  "===" -> true
+  (@s "=" S) -> (dbl-h? S)
+  _ -> false)
 
 (define remember-datatype
-  [D | _] -> (do (set *datatypes* (adjoin D (value *datatypes*)))
-                 (set *alldatatypes* (adjoin D (value *alldatatypes*)))
-                 D))
+  D Fn -> (do (set *datatypes* (assoc-> D Fn (value *datatypes*)))
+              (set *alldatatypes* (assoc-> D Fn (value *alldatatypes*)))
+              D))
 
-(define rules->horn-clauses
-  _ [] -> []
-  D [(@p single Rule) | Rules]
-  -> [(rule->horn-clause D Rule) | (rules->horn-clauses D Rules)]
-  D [(@p double Rule) | Rules]
-  -> (rules->horn-clauses D (append (double->singles Rule) Rules)))
+(define rules->prolog
+  D Rules -> (let Clauses (mapcan (/. Rule (rule->clause Rule)) Rules)
+                  (eval [defprolog D | Clauses])))
 
-(define double->singles
-  Rule -> [(right-rule Rule) (left-rule Rule)])
+(define rule->clause
+    [S P [As R]] -> (let Constraints (extract-vars [S P [As R]])
+                         HypVs (nvars (+ 1 (length As)))
+                         Active (extract-vars R)
+                         Head (compile-consequent R HypVs)
+                         Goals (goals Constraints As S P HypVs Active)
+                         (append Head [<--] Goals [(intern ";")]))
+    _            -> (simple-error "implementation error in shen.rule->clause"))
 
-(define right-rule
-  Rule -> (@p single Rule))
+(define compile-consequent
+  R [H | _] -> [(optimise-typing R) H]
+  _ _ -> (simple-error "implementation error in shen.compile-consequent"))
 
-(define left-rule
-  [S P (@p [] C)] -> (let Q (gensym (protect Qv))
-                          NewConclusion (@p [C] Q)
-                          NewPremises [(@p (map (/. X (right->left X)) P) Q)]
-                       (@p single [S NewPremises NewConclusion])))
+(define nvars
+   0 -> []
+   N -> [(gensym (protect V)) | (nvars (- N 1))])
 
-(define right->left
-  (@p [] C) -> C
-  _ -> (error "syntax error with ==========~%"))
+(define optimise-typing
+  [X C A] -> [- (cons-form-with-modes [X C [+ A]])]  where (= C (intern ":"))
+  X -> [+ (cons-form-with-modes X)])
 
-(define rule->horn-clause
-  D [S P (@p A C)] -> [(rule->horn-clause-head D C) :- (rule->horn-clause-body S P A)])
-
-(define rule->horn-clause-head
-  D C -> [D (mode-ify C) (protect Context_1957)])
-
-(define mode-ify
-  [X : A] -> [mode [X : [mode A +]] -]
+(define cons-form-with-modes
+  [- X] -> [- (cons-form-with-modes X)]
+  [+ X] -> [+ (cons-form-with-modes X)]
+  [mode X Mode] -> [Mode (cons-form-with-modes X)]
+  [bar! Y] -> Y
+  [X | Y] -> [cons (cons-form-with-modes X) (cons-form-with-modes Y)]
   X -> X)
 
-(define rule->horn-clause-body
-  S P A -> (let Variables (map (/. X (extract_vars X)) A)
-                Predicates (map (/. X (gensym cl)) A)
-                SearchLiterals (construct-search-literals
-                                Predicates Variables
-                                (protect Context_1957)
-                                (protect Context1_1957))
-                SearchClauses (construct-search-clauses Predicates A Variables)
-                SideLiterals (construct-side-literals S)
-                PremissLiterals (map (/. X (construct-premiss-literal
-                                            X (empty? A)))
-                                     P)
-             (append SearchLiterals SideLiterals PremissLiterals)))
+(define goals
+   Constraints As S P HypVs Active
+   -> (let GoalsAs (compile-assumptions As Constraints HypVs Active)
+           GoalsS (compile-side-conditions S)
+           GoalsP (compile-premises P HypVs)
+           (append GoalsAs GoalsS GoalsP)))
 
-(define construct-search-literals
-  [] [] _ _ -> []
-  Predicates Variables Context Context1
-  -> (csl-help Predicates Variables Context Context1))
+(define compile-assumptions
+  [] _ _ _ -> []
+  [A | As] Constraints [H1 H2 | HypVs] Active
+   -> (let NewActive (append (extract-vars A) Active)
+           [(compile-assumption A H1 H2 Constraints Active)
+            | (compile-assumptions As Constraints [H2 | HypVs] NewActive)])
+  _ _ _ _ ->  (simple-error "implementation error in shen.compile-assumptions"))
 
-(define csl-help
-  [] [] In _ -> [[bind (protect ContextOut_1957) In]]
-  [P | Ps] [V | Vs] In Out -> [[P In Out | V] |
-                               (csl-help Ps Vs Out (gensym (protect Context)))])
+(define compile-assumption
+  A H1 H2 Constraints Active
+  -> (let F (gensym search)
+          Compile (compile-search-procedure F A H1 H2 Constraints Active)
+          [F H1 [] H2 | Constraints]))
 
-(define construct-search-clauses
-  [] [] [] -> skip
-  [Pred | Preds] [A | As] [V | Vs] -> (do (construct-search-clause Pred A V)
-                                          (construct-search-clauses Preds As Vs)))
+(define compile-search-procedure
+    F A H1 H2 Constraints Active
+     -> (let Past (gensym (protect Previous))
+             Base (foundit! A H1 Past H2 Constraints Active)
+             Recursive (keep-looking F H1 Past H2 Constraints)
+             (eval [defprolog F | (append Base Recursive)])))
 
-(define construct-search-clause
-  Pred A V -> (s-prolog [(construct-base-search-clause Pred A V)
-                         (construct-recursive-search-clause Pred A V)]))
+(define foundit!
+    A H1 Past H2 Constraints Active
+    -> (let  Passive (passive A Active)
+             Table (tabulate-passive Passive)
+             Head  (head-foundit! A H1 Past H2 Constraints Table)
+             Body (body-foundit! H1 Past H2 Table)
+             (append Head [<--] Body [(intern ";")])))
 
-(define construct-base-search-clause
-  Pred A V -> [[Pred [(mode-ify A) | (protect In_1957)] (protect In_1957) | V]
-               :- []])
+(define keep-looking
+   F H1 Past H2 Constraints
+   ->  (let X (gensym (protect V))
+            Head   [[- [cons X H1]] Past H2 | Constraints]
+            Body   [[F H1 [cons X Past] H2 | Constraints]]
+            (append Head [<--] Body [(intern ";")])))
 
-(define construct-recursive-search-clause
-  Pred A V -> [[Pred [(protect Assumption_1957) | (protect Assumptions_1957)]
-                     [(protect Assumption_1957) | (protect Out_1957)] | V]
-               :- [[Pred (protect Assumptions_1957) (protect Out_1957) | V]]])
+(define passive
+   [X | Y] Active -> (union (passive X Active) (passive Y Active))
+   X Active -> [X]  where (passive? X Active)
+   _ _ -> [])
 
-(define construct-side-literals
-  [] -> []
-  [[if P] | Sides] -> [[when P] | (construct-side-literals Sides)]
-  [[let X Y] | Sides] -> [[is X Y] | (construct-side-literals Sides)]
-  [_ | Sides] -> (construct-side-literals Sides))
+(define passive?
+   X Active -> (and (not (element? X Active)) (variable? X)))
 
-(define construct-premiss-literal
-  (@p A C) Flag -> [t* (recursive_cons_form C) (construct-context Flag A)]
-  ! _ -> [cut (protect Throwcontrol)])
+(define tabulate-passive
+   Passive -> (map (/. X [X | (gensym (protect V))]) Passive))
 
-(define construct-context
-  true [] -> (protect Context_1957)
-  false [] -> (protect ContextOut_1957)
-  Flag [X | Y] -> [cons (recursive_cons_form X) (construct-context Flag Y)])
+(define head-foundit!
+    A H1 Past H2 Constraints Table
+  -> (let Optimise (optimise-passive Constraints Table)
+             [[- [cons (optimise-typing A) H1]] Past H2 | Optimise]))
 
-(define recursive_cons_form
-  [X | Y] -> [cons (recursive_cons_form X) (recursive_cons_form Y)]
+(define optimise-passive
+   Constraints Table -> (map (/. C (optimise-passive-h C Table)) Constraints))
+
+(define optimise-passive-h
+   C Table -> (let Entry (assoc C Table)
+                   (if (empty? Entry) C (tl Entry))))
+
+(define body-foundit!
+  H1 Past H2 [] -> [[bind H2 [append [1 Past] [1 H1]]]]
+  H1 Past H2 [[C | V] | Table] -> [[bind V C] | (body-foundit! H1 Past H2 Table)]
+  _ _ _ _ -> (simple-error "implementation error in shen.body-foundit!"))
+
+(define compile-side-conditions
+  S -> (map (/. X (compile-side-condition X)) S))
+
+(define compile-side-condition
+  [let X Y] -> [is X Y]
+  [let! X Y] -> [is! X Y]
+  [if P] -> [when P]
+  _ -> (simple-error "implementation error in shen.compile-side-condition"))
+
+(define compile-premises
+  P HypVs -> (let Hyp (hd (reverse HypVs))
+                  (map (/. X (compile-premise X Hyp)) P)))
+
+(define compile-premise
+  ! _ -> !
+  [As R] Hyp -> (compile-premise-h (reverse As) R Hyp)
+  _ _ -> (simple-error "implementation error in shen.premise"))
+
+(define compile-premise-h
+  [] R Hyp -> [system-S (cons-form-no-modes R) Hyp]
+  [A | As] R Hyp -> (compile-premise-h As R [cons (cons-form-no-modes A) Hyp])
+  _ _ _ -> (simple-error "implementation error in shen.compile-premise-h"))
+
+(define cons-form-no-modes
+  [bar! Y] -> Y
+  [X | Y]  -> [cons (cons-form-no-modes X) (cons-form-no-modes Y)]
   X -> X)
 
 (define preclude
-  Types -> (preclude-h (map (/. X (intern-type X)) Types)))
+   Types -> (let InternTypes (map (/. X (intern-type X)) Types)
+                 Datatypes   (value *datatypes*)
+                 Remove      (remove-datatypes InternTypes Datatypes)
+                 NewDatatypes (set *datatypes* Remove)
+                 (show-datatypes NewDatatypes)))
 
-(define preclude-h
-  Types -> (let FilterDatatypes (set *datatypes*
-                                     (difference (value *datatypes*) Types))
-             (value *datatypes*)))
+(define remove-datatypes
+  [] Datatypes       -> Datatypes
+  [D | Ds] Datatypes -> (remove-datatypes Ds (unassoc D Datatypes))
+  _ _ -> (simple-error "implementation error in shen.remove-datatypes"))
+
+(define unassoc
+  _ []            -> []
+  X [[X | _] | Y] -> Y
+  X [Y | Z]       -> [Y | (unassoc X Z)]
+  _ _             -> (simple-error "implementation error in shen.unassoc"))
+
+(define show-datatypes
+  Datatypes -> (map (/. X (hd X)) Datatypes))
 
 (define include
-  Types -> (include-h (map (/. X (intern-type X)) Types)))
-
-(define include-h
-  Types -> (let ValidTypes (intersection Types (value *alldatatypes*))
-                NewDatatypes (set *datatypes*
-                                  (union ValidTypes (value *datatypes*)))
-             (value *datatypes*)))
+  Types -> (let InternTypes (map (/. X (intern-type X)) Types)
+                Remember    (map (/. D (remember-datatype D (fn D))) InternTypes)
+                Datatypes   (value *datatypes*)
+                (show-datatypes Datatypes)))
 
 (define preclude-all-but
-  Types -> (preclude-h (difference (value *alldatatypes*)
-                                   (map (/. X (intern-type X)) Types))))
+  Types -> (let Initialise (set *datatypes* [])
+                InternTypes  (map (/. X (intern-type X)) Types)
+                NewDatatypes (map (/. D (remember-datatype D (fn D))) InternTypes)
+                (show-datatypes (value *datatypes*))))
 
 (define include-all-but
-  Types -> (include-h (difference (value *alldatatypes*)
-                                  (map (/. X (intern-type X)) Types))))
-
-(define synonyms-help
-  [] -> (update-demodulation-function
-         (value *tc*)
-         (mapcan (/. X (demod-rule X)) (value *synonyms*)))
-  [S1 S2 | S] -> (let Vs (difference (extract_vars S2) (extract_vars S1))
-                   (if (empty? Vs)
-                       (do (pushnew [S1 S2] *synonyms*)
-                           (synonyms-help S))
-                       (free_variable_warnings S2 Vs)))
-  _ -> (error "odd number of synonyms~%"))
-
-(define pushnew
-  X Global -> (if (element? X (value Global))
-                  (value Global)
-                  (set Global [X | (value Global)])))
-
-(define demod-rule
-  [S1 S2] -> [(rcons_form S1) -> (rcons_form S2)])
-
-(define lambda-of-defun
-  [defun _ [Var] Body] -> (eval [/. Var Body]))
-
-(define update-demodulation-function
-  TC? Rules -> (do (tc -)
-                   (set *demodulation-function*
-                         (lambda-of-defun
-                          (elim-def [define demod
-                                      | (append Rules (default-rule))])))
-                   (if TC? (tc +) skip)
-                   synonyms))
-
-(define default-rule
-  -> (protect [X -> X]))
-
-)
+  Types -> (let InternTypes  (map (/. X (intern-type X)) Types)
+                AllDatatypes (value *alldatatypes*)
+                Datatypes (set *datatypes* (remove-datatypes InternTypes AllDatatypes))
+                (show-datatypes Datatypes))) )

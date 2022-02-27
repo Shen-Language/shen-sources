@@ -1,221 +1,110 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
 
-(define repl
-  -> (do (credits) (loop)))
-
-(define loop
-  -> (do (initialise_environment)
-         (prompt)
-         (trap-error
-          (read-evaluate-print)
-          (/. E (toplevel-display-exception E)))
+(define shen.repl
+ -> (do (credits)
          (loop)))
 
+(define loop
+   -> (do (initialise_environment)
+          (prompt)
+          (trap-error (read-evaluate-print)
+                      (/. E (toplevel-display-exception E)))
+          (loop)))
+
 (define toplevel-display-exception
-  E -> (pr (error-to-string E) (stoutput)))
+  E -> (do (pr (error-to-string E) (stoutput)) (nl 0)))
 
 (define credits
-  -> (do (output "~%Shen, copyright (C) 2010-2015 Mark Tarver~%")
-         (output "www.shenlanguage.org, ~A~%" (value *version*))
-         (output "running under ~A, implementation: ~A"
-                 (value *language*) (value *implementation*))
-         (output "~%port ~A ported by ~A~%" (value *port*) (value *porters*))))
+ -> (do (output "~%Shen, www.shenlanguage.org, copyright (C) 2010-2021, Mark Tarver~%")
+        (output "version: S~A, language: ~A, platform: ~A ~A~%"
+           (value *version*) (value *language*) (value *implementation*) (value *release*))
+        (output "port ~A, ported by ~A~%~%" (value *port*) (value *porters*))))
 
 (define initialise_environment
-  -> (multiple-set [*call* 0 *infs* 0 *process-counter* 0 *catch* 0]))
-
-(define multiple-set
-  [] -> []
-  [S V | M] -> (do (set S V) (multiple-set M)))
-
-(define destroy
-  F -> (declare F symbol))
-
-(set *history* [])
-
-(define read-evaluate-print
-  -> (let Lineread (toplineread)
-          History (value *history*)
-          NewLineread (retrieve-from-history-if-needed Lineread History)
-          NewHistory (update_history NewLineread History)
-          Parsed (fst NewLineread)
-       (toplevel Parsed)))
-
-(define retrieve-from-history-if-needed
-  (@p Line [C | Cs]) H -> (retrieve-from-history-if-needed (@p Line Cs) H)
-      where (element? C [(space) (newline)])
-  (@p _ [C1 C2]) [H | _] -> (let PastPrint (prbytes (snd H))
-                               H)
-      where (and (= C1 (exclamation)) (= C2 (exclamation)))
-  (@p _ [C | Key]) H -> (let Key? (make-key Key H)
-                             Find (head (find-past-inputs Key? H))
-                             PastPrint (prbytes (snd Find))
-                           Find)
-      where (= C (exclamation))
-  (@p _ [C]) H -> (do (print-past-inputs (/. X true) (reverse H) 0)
-                      (abort))
-      where (= C (percent))
-  (@p _ [C | Key]) H -> (let Key? (make-key Key H)
-                             Pastprint (print-past-inputs Key? (reverse H) 0)
-                          (abort))
-      where (= C (percent))
-  Lineread _ -> Lineread)
-
-(define percent
-  -> 37)
-
-(define exclamation
-  ->  33)
-
-(define prbytes
-  Bytes -> (do (for-each (/. Byte (pr (n->string Byte) (stoutput))) Bytes)
-               (nl)))
-
-(define update_history
-  Lineread History -> (set *history* [Lineread  | History]))
-
-(define toplineread
-  -> (toplineread_loop (read-char-code (stinput)) []))
-
-(define toplineread_loop
-  Char _ -> (error "line read aborted")  where (= Char (hat))
-  Char Chars -> (let Line (compile (/. X (<st_input> X)) Chars (/. E nextline))
-                     It (record-it Chars)
-                  (if (or (= Line nextline) (empty? Line))
-                      (toplineread_loop (read-char-code (stinput))
-                                        (append Chars [Char]))
-                      (@p Line Chars)))
-      where (element? Char [(newline) (carriage-return)])
-  Char Chars -> (toplineread_loop (read-char-code (stinput))
-                                  (if (= Char -1)
-                                      Chars
-                                      (append Chars [Char]))))
-
-(define hat
-  -> 94)
-
-(define newline
-  -> 10)
-
-(define carriage-return
-  -> 13)
-
-(define tc
-  + -> (set *tc* true)
-  - -> (set *tc* false)
-  _ -> (error "tc expects a + or -"))
+  -> (do (set *call* 0) (set *infs* 0)))
 
 (define prompt
   -> (if (value *tc*)
-         (output  "~%~%(~A+) " (length (value *history*)))
-         (output  "~%~%(~A-) " (length (value *history*)))))
+         (output  "~%(~A+) " (length (value *history*)))
+         (output  "~%(~A-) " (length (value *history*)))))
 
-(define toplevel
-  Parsed -> (toplevel_evaluate Parsed (value *tc*)))
+(define read-evaluate-print
+  -> (let Package (value *package*)
+          Lineread (package-user-input Package (lineread))
+          History (update-history)
+          (evaluate-lineread Lineread History (value *tc*))))
 
-(define find-past-inputs
-  Key? H -> (let F (find Key? H)
-              (if (empty? F)
-                  (error "input not found~%")
-                  F)))
+(define package-user-input
+  null Lineread -> Lineread
+  Package Lineread -> (let Str (str Package)
+                           External (external Package)
+                           (map (/. X (pui-h Str External X)) Lineread)))
 
-(define make-key
-  Key H -> (let Atom (hd (compile (/. X (<st_input> X)) Key))
-             (if (integer? Atom)
-                 (/. X (= X (nth (+ Atom 1) (reverse H))))
-                 (/. X (prefix? Key (trim-gubbins (snd X)))))))
+(define pui-h
+  Package External [fn F] -> (if (internal? F Package External)
+                                 [fn (intern-in-package Package F)]
+                                 [fn F])
+  Package External [F | X] -> (cases (internal? F Package External)  [(intern-in-package Package F) | (map (/. Y (pui-h Package External Y)) X)]
+                                     (cons? F) (map (/. Y (pui-h Package External Y)) [F | X])
+                                     true [F | (map (/. Y (pui-h Package External Y)) X)])
+  _ _ X -> X)
 
-(define trim-gubbins
-  [C | X] -> (trim-gubbins X)  where (= C (space))
-  [C | X] -> (trim-gubbins X)  where (= C (newline))
-  [C | X] -> (trim-gubbins X)  where (= C (carriage-return))
-  [C | X] -> (trim-gubbins X)  where (= C (tab))
-  [C | X] -> (trim-gubbins X)  where (= C (left-round))
-  X -> X)
+(define update-history
+  -> (set *history* [(it) | (value *history*)]))
 
-(define space
-  -> 32)
+(define evaluate-lineread
+  [X] ["!!" S | History] TC -> (let Y (read-from-string S)
+                                    NewHistory (set *history* [S S | History])
+                                    Print (output "~A~%" S)
+                                    (evaluate-lineread Y NewHistory TC))
+  [X] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
+                                        Peek (peek-history Read S History)
+                                        NewHistory (set *history* History)
+                                        (abort))
+  [X] [(@s "!" S) | History] TC -> (let Read (hd (read-from-string S))
+                                        Match (use-history Read S History)
+                                        Print (output "~A~%" Match)
+                                        Y (read-from-string Match)
+                                        NewHistory (set *history* [Match | History])
+                                        (evaluate-lineread Y NewHistory TC))
+  [X] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
+                                        Peek (peek-history Read S History)
+                                        NewHistory (set *history* History)
+                                        (abort))
+  X _ true -> (check-eval-and-print X)
+  X _ false -> (eval-and-print X)
+  _ _ _ -> (simple-error "implementation error in shen.evaluate-lineread"))
 
-(define tab
-  -> 9)
+(define use-history
+  Read S History -> (cases (integer? Read) (nth (+ 1 Read) (reverse History))
+                           (symbol? Read)  (string-match S History)
+                           true (error "! expects a number or a symbol~%")))
 
-(define left-round
-  -> 40)
+(define peek-history
+  Read S History -> (cases (integer? Read) (output "~%~A" (nth (+ 1 Read) (reverse History)))
+                           (or (= S "") (symbol? Read))  (recursive-string-match 0 S (reverse History))
+                           true (error "% expects a number or a symbol~%")))
 
-(define find
-  _ [] -> []
-  F [X | Y] -> [X | (find F Y)]	where (F X)
-  F [_ | Y] -> (find F Y))
+(define string-match
+  _ [] -> (error "~%input not found")
+  S [S* | _] -> S*  where (string-prefix? S S*)
+  S [_ | History] -> (string-match S History)
+  _ _ -> (simple-error "implementation error in shen.string-match"))
 
-(define prefix?
-  [] _ -> true
-  [X | Y] [X | Z] -> (prefix? Y Z)
+(define string-prefix?
+  "" _ -> true
+  (@s W Ss) S* -> (string-prefix? Ss S*)     where (whitespace? (string->n W))
+  Ss (@s W S*) -> (string-prefix? Ss S*)     where (whitespace? (string->n W))
+  S (@s "(" S*) -> (string-prefix? S S*)
+  (@s S Ss) (@s S Ss*) -> (string-prefix? Ss Ss*)
   _ _ -> false)
 
-(define print-past-inputs
-  _ [] _ -> _
-  Key? [H | Hs] N -> (print-past-inputs Key? Hs (+ N 1)) 	where (not (Key? H))
-  Key? [(@p _ Cs) | Hs] N -> (do (output "~A. " N)
-                                 (prbytes Cs)
-                                 (print-past-inputs Key? Hs (+ N 1))))
-
-(define toplevel_evaluate
-  [X : A] true -> (typecheck-and-evaluate X A)
-  [X Y | Z] Boolean -> (do (toplevel_evaluate [X] Boolean)
-                           (nl)
-                           (toplevel_evaluate [Y | Z] Boolean))
-  [X] true -> (typecheck-and-evaluate X (gensym (protect A)))
-  [X] false -> (let Eval (eval-without-macros X)
-                 (print Eval)))
-
-(define typecheck-and-evaluate
-  X A -> (let Typecheck (typecheck X A)
-           (if (= Typecheck false)
-               (error "type error~%")
-               (let Eval (eval-without-macros X)
-                    Type (pretty-type Typecheck)
-                 (output "~S : ~R" Eval Type)))))
-
-(define pretty-type
-  Type -> (mult_subst (value *alphabet*) (extract-pvars Type) Type))
-
-(define extract-pvars
-  X -> [X]  where (pvar? X)
-  [X | Y] -> (union (extract-pvars X) (extract-pvars Y))
-  _ -> [])
-
-(define mult_subst
-  [] _ X -> X
-  _ [] X -> X
-  [X | Y] [W | Z] A -> (mult_subst Y Z (subst X W A)))
-
-)
+(define recursive-string-match
+  _ _ [] -> skip
+  N S [S* | History] -> (do (if (string-prefix? S S*) (output "~A. ~A~%" N S*) skip)
+                            (recursive-string-match (+ N 1) S History))
+  _ _ _ -> (simple-error "implementation error in shen.recursive-string-match"))   )

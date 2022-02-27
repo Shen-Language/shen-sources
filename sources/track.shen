@@ -1,35 +1,10 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
 
-(define f_error
+(define f-error
   F -> (do (output "partial function ~A;~%" F)
            (if (and (not (tracked? F))
                     (y-or-n? (make-string "track ~A? " F)))
@@ -42,26 +17,39 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define track
   F -> (let Source (ps F)
-         (track-function Source)))
+            (track-function Source)))
 
 (define track-function
   [defun F Params Body]
-  -> (let KL [defun F Params (insert-tracking-code F Params Body)]
-          Ob (eval-kl KL)
-          Tr (set *tracking* [Ob | (value *tracking*)])
-        Ob))
+   -> (let KL [defun F Params (insert-tracking-code F Params Body)]
+           Ob (eval-kl KL)
+           Tr (set *tracking* [Ob | (value *tracking*)])
+           Ob)
+   _ -> (simple-error "implementation error in shen.track-function")        )
 
 (define insert-tracking-code
   F Params Body -> [do [set *call* [+ [value *call*] 1]]
-                       [do [input-track [value *call*] F (cons_form Params)]
+                       [do [input-track [value *call*] F (cons-form (prolog-track Body Params))]
                            [do [terpri-or-read-char]
-                               [let (protect Result) Body
-                                 [do [output-track [value *call*] F (protect Result)]
-                                     [do [set *call* [- [value *call*] 1]]
-                                         [do [terpri-or-read-char]
-                                             (protect Result)]]]]]]])
+                        [let (protect Result) Body
+                             [do [output-track [value *call*] F (protect Result)]
+                                 [do [set *call* [- [value *call*] 1]]
+                                     [do [terpri-or-read-char]
+                                         (protect Result)]]]]]]])
 
-(set *step* false)
+(define prolog-track
+  Body Params -> Params   where (= (occurrences incinfs Body) 0)
+  Body Params -> (vector-dereference Params (vector-parameter Params)))
+
+(define vector-parameter
+  [] -> []
+  [Vector Lock Key Continuation] -> Vector
+  [_ | Parameters] -> (vector-parameter Parameters))
+
+(define vector-dereference
+  Parameters [] ->  Parameters
+  [Vector Lock Key Continuation] _ -> [Vector Lock Key Continuation]
+  [Parameter | Parameters] Vector -> [[deref Parameter Vector] | (vector-dereference Parameters Vector)])
 
 (define step
   + -> (set *step* true)
@@ -79,7 +67,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          (nl)))
 
 (define check-byte
-  C -> (error "aborted")   where (= C (hat))
+  94 -> (error "aborted")
   _ -> true)
 
 (define input-track
@@ -89,53 +77,65 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define recursively-print
   [] -> (output " ==>")
-  [X | Y] -> (do (print X) (do (output ", ") (recursively-print Y))))
+  [X | Y] -> (do (print X) (do (output ", ") (recursively-print Y)))
+  _ -> (simple-error "implementation error in shen.recursively-print"))
 
 (define spaces
-  0 -> ""
-  N -> (cn " " (spaces (- N 1))))
+ 0 -> ""
+ N -> (cn " " (spaces (- N 1))))
 
 (define output-track
-  N F Result -> (output "~%~A<~A> Output from ~A ~%~A==> ~S"
-                        (spaces N) N F (spaces N) Result))
+  N F Result -> (output "~%~A<~A> Output from ~A ~%~A==> ~S" (spaces N) N F (spaces N) Result))
 
 (define untrack
-  F -> (let Tracking (value *tracking*)
-            Tracking (set *tracking* (remove F Tracking))
-         (eval (ps F))))
+  F -> (do (set *tracking* (remove F (value *tracking*)))
+           (trap-error (eval (ps F)) (/. E F))))
+
+(define remove
+  X Y -> (remove-h X Y []))
+
+(define remove-h
+  _ [] X -> (reverse X)
+  X [X | Y] Z -> (remove-h X Y Z)
+  X [Y | Z] W -> (remove-h X Z [Y | W])
+  _ _ _ -> (simple-error "implementation error in shen.remove-h"))
 
 (define profile
-  Func -> (profile-help (ps Func)))
+  Func -> (do (set *profiled* [Func | (value *profiled*)])
+              (profile-help (ps Func))))
 
 (define profile-help
   [defun F Params Code]
-  -> (let G (gensym f)
-          Profile [defun F Params (profile-func F Params [G | Params])]
-          Def [defun G Params (subst G F Code)]
-          CompileProfile (eval-without-macros Profile)
-          CompileG (eval-without-macros Def)
-        F)
+   -> (let G (gensym f)
+           Profile [defun F Params (profile-func F Params [G | Params])]
+           Def [defun G Params (subst G F Code)]
+           CompileProfile (eval-kl Profile)
+           CompileG (eval-kl Def)
+           F)
   _ -> (error "Cannot profile.~%"))
 
 (define unprofile
-  Func -> (untrack Func))
+  F -> (do (set *profiled* (remove F (value *profiled*)))
+           (trap-error (eval (ps F)) (/. E F))))
+
+(define profiled?
+  F -> (element? F (value *profiled*)))
 
 (define profile-func
   F Params Code -> [let (protect Start) [get-time run]
                      [let (protect Result) Code
                        [let (protect Finish) [- [get-time run] (protect Start)]
-                         [let (protect Record) [put-profile F [+ [get-profile F] (protect Finish)]]
-                           (protect Result)]]]])
+                         [let (protect Record)
+                              [put-profile F [+ [get-profile F] (protect Finish)]]
+                              (protect Result)]]]])
 
 (define profile-results
-  F -> (let Results (get-profile F)
-            Initialise (put-profile F 0)
-         (@p F Results)))
+   F -> (let Results (get-profile F)
+             Initialise (put-profile F 0)
+             (@p F Results)))
 
 (define get-profile
   F -> (trap-error (get F profile) (/. E 0)))
 
 (define put-profile
-  F Time -> (put F profile Time))
-
-)
+  F Time -> (put F profile Time)))

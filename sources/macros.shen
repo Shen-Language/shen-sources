@@ -1,46 +1,61 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
 
 (define macroexpand
-  X -> (let Y (compose (value *macros*) X)
-         (if (= X Y)
-             X
-             (walk (/. Z (macroexpand Z)) Y))))
+  X -> (let Fs (map (/. X (tl X)) (value *macros*))
+           (macroexpand-h X Fs Fs)))
+
+(define macroexpand-h
+  X [] _ -> X
+  X [F | Fs] Macros -> (let Y (walk F X)
+                            (if (= X Y)
+                                (macroexpand-h X Fs Macros)
+                                (macroexpand-h Y Macros Macros)))
+  _ _ _ -> (simple-error "implementation error in shen.macroexpand-h"))
+
+(define walk
+  F [X | Y] -> (F (map (/. Z (walk F Z)) [X | Y]))
+  F X -> (F X))
+
+(define defmacro-macro
+  [defmacro F | Rest] -> (let Default [(protect X) -> (protect X)]
+                              Def (eval [define F | (append Rest Default)])
+                              Record (record-macro F (/. X ((fn F) X)))
+                              F)
+   X -> X)
+
+(define u!-macro
+  [u! S] -> [protect (make-uppercase S)]
+  X -> X)
+
+(define make-uppercase
+  S -> (intern (mu-h (str S))))
+
+(define mu-h
+  "" -> ""
+  (@s S Ss) -> (let ASCII (string->n S)
+                    ASCII-32 (- ASCII 32)
+                    Upper (if (and (>= ASCII 97) (<= ASCII 122)) (n->string ASCII-32) S)
+                    (@s Upper (mu-h Ss))))
+
+(define record-macro
+  F Lambda -> (set *macros* (update-assoc F Lambda (value *macros*))))
+
+(define update-assoc
+  F Lambda [] -> [[F | Lambda]]
+  F Lambda [[F | _] | Macros] -> [[F | Lambda] | Macros]
+  F Lambda [Macro | Macros] -> [Macro | (update-assoc F Lambda Macros)]
+  _ _ _ -> (simple-error "implementation error in shen.update-assoc"))
 
 (define error-macro
   [error String | Args] -> [simple-error (mkstr String Args)]
   X -> X)
 
 (define output-macro
-  [output String | Args] -> [prhush (mkstr String Args) [stoutput]]
+  [output String | Args] -> [pr (mkstr String Args) [stoutput]]
   [pr String] -> [pr String [stoutput]]
   X -> X)
 
@@ -53,64 +68,57 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [input] -> [input [stinput]]
   [read] -> [read [stinput]]
   [input+ Type] -> [input+ Type [stinput]]
-  [read-byte] -> [read-byte [stinput]]
+  [read-byte] -> (if (char-stinput? (stinput))
+                     [string->n [read-unit-string [stinput]]]
+                     [read-byte [stinput]])
   X -> X)
 
-(define compose
-  [] X -> X
-  [F | Fs] X -> (compose Fs (F X)))
-
-(define compile-macro
-  [compile F X] -> [compile F X [lambda (protect E)
-                                  [if [cons? (protect E)]
-                                      [error "parse error here: ~S~%" (protect E)]
-                                      [error "parse error~%"]]]]
+(define defcc-macro
+  [defcc | X] -> (yacc->shen X)
   X -> X)
 
 (define prolog-macro
-  [prolog? | Lits] -> [let (protect NPP) [start-new-prolog-process]
-                           (let Calls (bld-prolog-call (protect NPP) Lits)
-                                Vs (extract_vars Lits)
-                                External (externally-bound Lits)
-                                PrologVs (difference Vs External)
-                                (locally-bind-prolog-vs (protect NPP)
-                                                        PrologVs
-                                                        Calls))]
+  [prolog? | Literals] -> (call-prolog Literals)
   X -> X)
 
-(define externally-bound
-  [receive V] -> [V]
-  [X | Y] -> (union (externally-bound X) (externally-bound Y))
+(define call-prolog
+  Literals -> (let Bindings [reset-prolog-vector]
+                   Lock [@v true 0 [vector 0]]
+                   Key 0
+                   Continuation [freeze true]
+                   CLiterals (compile (/. X (<body> X)) Literals)
+                   Received (received Literals)
+                   B (gensym (protect V))
+                   L (gensym (protect L))
+                   K (gensym (protect K))
+                   C (gensym (protect C))
+                   Lambda [lambda B [lambda L [lambda K [lambda C (continue Received CLiterals B L K C)]]]]
+                   [Lambda Bindings Lock Key Continuation]))
+
+(define received
+  [receive X] -> [X]
+  [X | Y] -> (union (received X) (received Y))
   _ -> [])
 
-(define locally-bind-prolog-vs
-  _ [] Calls -> Calls
-  N [V | Vs] Calls -> [let V [newpv N] (locally-bind-prolog-vs N Vs Calls)]
-  _ _ _ -> (simple-error "implementation error inp locally-bind-prolog-vs"))
+(define reset-prolog-vector
+  -> (address-> (value *prolog-vector*) 1 2))
 
-(define bld-prolog-call
-  _ [] -> true
-  N [! | Lits] -> [cut false N [freeze (bld-prolog-call N Lits)]]
-  N [[when X] | Lits] -> [fwhen (insert-deref X N) N [freeze (bld-prolog-call N Lits)]]
-  N [[is X Y] | Lits] -> [bind X (insert-deref Y N) N [freeze (bld-prolog-call N Lits)]]
-  N [[receive X] | Lits] -> (bld-prolog-call N Lits)
-  N [[bind X Y] | Lits] -> [bind X (insert-lazyderef Y N) N [freeze (bld-prolog-call N Lits)]]
-  N [[fwhen X] | Lits] -> [fwhen (insert-lazyderef X N) N [freeze (bld-prolog-call N Lits)]]
-  N [Lit | Lits] -> (append Lit [N [freeze (bld-prolog-call N Lits)]])
-  _ _ -> (simple-error "implementation error in bld-prolog-call"))
+(define receive
+  X -> X)
 
 (define defprolog-macro
-  [defprolog F | X] -> (compile (/. Y (<defprolog> Y))
-                                [F | X]
-                                (/. Y (prolog-error F Y)))
+  [defprolog F | Clauses] -> (compile-prolog F Clauses)
   X -> X)
 
 (define datatype-macro
   [datatype F | Rules]
-  -> (protect [process-datatype (intern-type F)
-                                [compile [lambda X [<datatype-rules> X]]
-                                         (rcons_form Rules)
-                                         [function datatype-error]]])
+   -> (let D (intern-type F)
+           Compile (compile (/. X (<datatype> X)) [D | Rules])
+           D)
+  X -> X)
+
+(define rcons_form
+  [X | Y] -> [cons (rcons_form X) (rcons_form Y)]
   X -> X)
 
 (define intern-type
@@ -119,18 +127,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define @s-macro
   [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]
   [@s X Y] -> (let E (explode X)
-                (if (> (length E) 1)
-                    (@s-macro [@s | (append E [Y])])
-                    [@s X Y]))
-      where (string? X)
+                   (if (> (length E) 1)
+                       (@s-macro [@s | (append E [Y])])
+                       [@s X Y]))   where (string? X)
   X -> X)
 
 (define synonyms-macro
-  [synonyms | X] -> [synonyms-help (rcons_form (curry-synonyms X))]
+  [synonyms | X] -> (synonyms-h (append X (value *synonyms*)))
   X -> X)
 
-(define curry-synonyms
-  Synonyms -> (map (/. X (curry-type X)) Synonyms))
+(define lambda-of-defun
+  [defun _ [Var] Body] -> (eval [/. Var Body]))
+
+(define synonyms-h
+  Synonyms -> (let CurryTypes (map (/. X (curry-type X)) Synonyms)
+                   DemodLambda (lambda-of-defun
+                                 (shendef->kldef demod (compile-synonyms CurryTypes)))
+                   Demod (set *demodulation-function* DemodLambda)
+                   synonyms))
+
+(define compile-synonyms
+  [] -> (let X (gensym (protect X)) [X -> X])
+  [X SynX | Synonyms] -> [(rcons_form X) -> (rcons_form SynX)
+                          | (compile-synonyms Synonyms)]
+  _ -> (error "synonyms requires an even number of arguments~%"))
 
 (define nl-macro
   [nl] -> [nl 1]
@@ -138,17 +158,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define assoc-macro
   [F W X Y | Z] -> [F W (assoc-macro [F X Y | Z])]
-      where (element? F [@p @v append and or + * do])
+                        where (element? F [@p @v append and or + * do])
   X -> X)
 
 (define let-macro
-  [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
-  X -> X)
+   [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
+   [let X Y Z] -> (if (variable? X) [let X Y Z] (error "~S is not a variable~%" X))
+   X -> X)
 
 (define abs-macro
-  [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
-  [/. X Y] -> [lambda X Y]
-  X -> X)
+   [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
+   [/. X Y] -> (if (variable? X) [lambda X Y] (error "~S is not a variable~%" X))
+   X -> X)
 
 (define cases-macro
   [cases true X | _] -> X
@@ -158,17 +179,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> X)
 
 (define timer-macro
-  [time Process] -> (let-macro
-                     [let (protect Start) [get-time run]
-                          (protect Result) Process
-                          (protect Finish) [get-time run]
-                          (protect Time) [- (protect Finish) (protect Start)]
-                          (protect Message) [prhush [cn "c#10;run time: "
-                                                        [cn [str (protect Time)]
-                                                            " secsc#10;"]]
-                                                    [stoutput]]
-                       (protect Result)])
-  X -> X)
+   [time Process] -> (let-macro
+                        [let (protect Start) [get-time run]
+                             (protect Result) Process
+                             (protect Finish) [get-time run]
+                             (protect Time) [- (protect Finish) (protect Start)]
+                             (protect Message) [pr [cn "c#10;run time: "
+                                                       [cn [str (protect Time)]
+                                                           " secsc#10;"]]
+                                                   [stoutput]]
+                             (protect Result)])
+    X -> X)
 
 (define tuple-up
   [X | Y] -> [@p X (tuple-up Y)]
@@ -180,34 +201,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
   X -> X)
 
-(define function-macro
-  [function F] -> (function-abstraction F (arity F))
-  X -> X)
-
-(define function-abstraction
-  F 0 -> (error "~A has no lambda form~%" F)
-  F -1 -> [function F]
-  F N -> (function-abstraction-help F N []))
-
-(define function-abstraction-help
-  F 0 Vars -> [F | Vars]
-  F N Vars -> (let X (gensym (protect V))
-                [/. X (function-abstraction-help F (- N 1) (append Vars [X]))]))
-
 (define undefmacro
-  F -> (let MacroReg (value *macroreg*)
-            Pos (findpos F MacroReg)
-            Remove1 (set *macroreg* (remove F MacroReg))
-            Remove2 (set *macros* (remove-nth Pos (value *macros*)))
-          F))
-
-(define findpos
-  F [] -> (error "~A is not a macro~%" F)
-  F [F | _] -> 1
-  F [_ | Y] -> (+ 1 (findpos F Y)))
-
-(define remove-nth
-  1 [_ | Y] -> Y
-  N [X | Y] -> [X | (remove-nth (- N 1) Y)])
+  F -> (do (set *macros* (remove (assoc F (value *macros*)) (value *macros*)))
+           F))
 
 )
