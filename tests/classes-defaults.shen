@@ -19,7 +19,7 @@
                          NewClassDef [[class | Class] | Assoc]
                          Store (put-prop Class classdef NewClassDef)
                          RecordClass (axiom Class Class [class Class])
-                       Class))
+                      Class))
 
 (define assign-values
   (@p Attribute _ Value) -> [Attribute | Value]

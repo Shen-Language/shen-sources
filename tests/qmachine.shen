@@ -34,29 +34,29 @@
 
 (define forall
   {(progression A) --> (A --> boolean) --> boolean}
-  Progression P -> (super Progression P (function and) true))
+  Progression P -> (super Progression P (fn and) true))
 
 (define exists
   {(progression A) --> (A --> boolean) --> boolean}
-  Progression P -> (super Progression P (function or) false))
+  Progression P -> (super Progression P (fn or) false))
 
-(define for
+(define for*
   {(progression A) --> (A --> B) --> number}
-  Progression P -> (super Progression P (function progn) 0))
+  Progression P -> (super Progression P (fn progn) 0))
 
 (define progn
   {A --> B --> B}
   X Y -> Y)
 
-(define pfilter
+(define filter*
   {(progression A) --> (A --> boolean) --> (list A)}
-  Progression P -> (super Progression (/. X (if (P X) [X] [])) append []))
+  Progression P -> (super Progression (/. X (if (P X) [X] [])) (fn append) []))
 
 (define next-prime
   {number --> number}
-  N -> (if (prime? (+ N 1)) (+ N 1) (next-prime (+ N 1))))
+  N -> (if (prime*? (+ N 1)) (+ N 1) (next-prime (+ N 1))))
 
-(define prime?
+(define prime*?
   {number --> boolean}
   X -> (prime-help X (/ X 2) 2))
 

@@ -51,7 +51,7 @@
 
 (define generate_code_for_nonlex
   Rules -> (eval (append [define (get_characteristic_non_terminal Rules)
-                                   | (mapapp (function gcfn_help) Rules)]
+                                   | (mapapp (fn gcfn_help) Rules)]
                          [(protect X) -> [fail]])))
 
 (define mapapp
@@ -62,12 +62,11 @@
   [[CNT | _] | _] -> CNT)
 
 (define gcfn_help
-   Rule -> [(protect Parameter)
-            <-
-            (apply_expansion Rule
-                             [listit [head (protect Parameter)]
-                                     [cons [listit | Rule]
-                                           [head [tail (protect Parameter)]]]])])
+  Rules -> (eval (append
+                  [define (get_characteristic_non_terminal Rules)
+                    (protect X) -> [fail]  where [= (protect X) [fail]]
+                    | (mapapp (function gcfl_help) Rules)]
+                  [(protect X) -> [fail]])))
 
 (define apply_expansion
    [CNT --> | Expansion] Parameter -> (ae_help Expansion Parameter))

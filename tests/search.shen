@@ -42,15 +42,15 @@
 
 (define order_states
   {(state --> number) --> (list state) --> (list state)}
-  E States -> (sort (/. S1 (/. S2 (> (E S1) (E S2)))) States))
+  E States -> (bsort (/. S1 (/. S2 (> (E S1) (E S2)))) States))
 
-(define sort
+(define bsort
   {(A --> (A --> boolean)) --> (list A) --> (list A)}
-  R X -> (fix (/. Y (sort* R Y)) X))
+  R X -> (fix (/. Y (bsort* R Y)) X))
 
-(define sort*
+(define bsort*
   {(A --> A --> boolean) --> (list A) --> (list A)}
   _ [] -> []
   _ [X] -> [X]
-  R [X Y | Z] -> [Y | (sort* R [X | Z])]	where (R Y X)
-  R [X Y | Z] -> [X | (sort* R [Y | Z])])
+  R [X Y | Z] -> [Y | (bsort* R [X | Z])]	where (R Y X)
+  R [X Y | Z] -> [X | (bsort* R [Y | Z])])

@@ -3,7 +3,7 @@
   -> (let Assoc (map (/. Attribute [Attribute | fail]) Attributes)
           ClassDef [[class | Class] | Assoc]
           Store (put Class classdef ClassDef)
-        Class))
+       Class))
 
 (define make-instance
   Class -> (let ClassDef (trap-error (get Class classdef) (/. E []))

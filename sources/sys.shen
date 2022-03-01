@@ -1,97 +1,27 @@
-\*
-Copyright (c) 2010-2015, Mark Tarver
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-All rights reserved.
+\\                  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
-
-(package shen []
+(package shen [update-lambda-table]
 
 (define thaw
   F -> (F))
 
+\\(define eval
+ \\ X -> (eval-kl (shen->kl (macroexpand X))))
+
 (define eval
-  X -> (let Macroexpand (walk (/. Y (macroexpand Y)) X)
-         (if (packaged? Macroexpand)
-             (map (/. Z (eval-without-macros Z)) (package-contents Macroexpand))
-             (eval-without-macros Macroexpand))))
-
-(define eval-without-macros
-  X -> (eval-kl (elim-def (proc-input+ X))))
-
-(define proc-input+
-  [input+ Type Stream] -> [input+ (rcons_form Type) Stream]
-  [read+ Type Stream] -> [read+ (rcons_form Type) Stream]
-  [X | Y] -> (map (/. Z (proc-input+ Z)) [X | Y])
-  X -> X)
-
-(define elim-def
-  [define F | Rest] -> (shen->kl F Rest)
-  [defmacro F | Rest] -> (let Default [(protect X) -> (protect X)]
-                              Def (elim-def [define F | (append Rest Default)])
-                              MacroAdd (add-macro F)
-                            Def)
-  [defcc F | X] -> (elim-def (yacc [defcc F | X]))
-  [X | Y] -> (map (/. Z (elim-def Z)) [X | Y])
-  X -> X)
-
-(define add-macro
-  F -> (let MacroReg (value *macroreg*)
-            NewMacroReg (set *macroreg* (adjoin F (value *macroreg*)))
-         (if (= MacroReg NewMacroReg)
-             skip
-             (set *macros* [(function F) | (value *macros*)]))))
-
-(define packaged?
-  [package P E | _] -> true
-  _ -> false)
+  X -> (eval-kl (shen->kl (process-applications (macroexpand X) (find-types X)))))
 
 (define external
-  Package -> (trap-error
-              (get Package external-symbols)
-              (/. E (error "package ~A has not been used.~%" Package))))
+  null -> []
+  Package -> (trap-error (get Package external-symbols)
+               (/. E (error "package ~A does not exist.~%;" Package))))
 
 (define internal
-  Package -> (trap-error
-              (get Package internal-symbols)
-              (/. E (error "package ~A has not been used.~%" Package))))
-
-(define package-contents
-  [package null _ | Contents] -> Contents
-  [package P E | Contents] -> (let PackageNameDot (intern (cn (str P) "."))
-                                   ExpPackageNameDot (explode PackageNameDot)
-                                (packageh P E Contents ExpPackageNameDot)))
-
-(define walk
-  F [X | Y] -> (F (map (/. Z (walk F Z)) [X | Y]))
-  F X -> (F X))
-
-(define compile
-  F X Err -> (let O (F [X []])
-               (if (or (= (fail) O) (not (empty? (hd O))))
-                   (Err O)
-                   (hdtl O))))
+  null -> []
+  Package -> (trap-error (get Package internal-symbols)
+                         (/. E (error "package ~A does not exist.~%;" Package))))
 
 (define fail-if
   F X -> (if (F X) (fail) X))
@@ -103,9 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (value *tc*))
 
 (define ps
-  Name -> (trap-error
-           (get Name source)
-           (/. E (error "~A not found.~%" Name))))
+  Name -> (trap-error (get Name source) (/. E (error "~A not found.~%" Name))))
 
 (define stinput
   -> (value *stinput*))
@@ -114,17 +42,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   N -> (let Vector (absvector (+ N 1))
             ZeroStamp (address-> Vector 0 N)
             Standard (if (= N 0) ZeroStamp (fillvector ZeroStamp 1 N (fail)))
-          Standard))
+         Standard))
 
 (define fillvector
   Vector N N X -> (address-> Vector N X)
-  Vector Counter N X -> (fillvector (address-> Vector Counter X)
-                                    (+ 1 Counter) N X))
+  Vector Counter N X -> (fillvector (address-> Vector Counter X) (+ 1 Counter) N X))
 
 (define vector?
-  X -> (and (absvector? X)
-            (let X (trap-error (<-address X 0) (/. E -1))
-              (and (number? X) (>= X 0)))))
+  X -> (and (absvector? X) (trap-error (>= (<-address X 0) 0) (/. E false))))
 
 (define vector->
   Vector N X -> (if (= N 0)
@@ -146,32 +71,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   Vector -> (<-address Vector 0))
 
 (define symbol?
-  X -> false where (or (boolean? X) (number? X) (string? X))
+  X -> false where (or (boolean? X) (number? X) (string? X) (cons? X) (empty? X) (vector? X))
+  X -> true  where (element? X [{ } (intern ":") (intern ";") (intern ",")])
   X -> (trap-error (let String (str X)
                      (analyse-symbol? String)) (/. E false)))
 
 (define analyse-symbol?
-  "" -> false
-  (@s S Ss) -> (and (alpha? S)
-                    (alphanums? Ss)))
-
-(define alpha?
-  S ->  (element? S ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
-                     "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"
-                     "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
-                     "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"
-                     "=" "*" "/" "+" "-" "_" "?" "$" "!" "@" "~" ">" "<"
-                     "&" "%" "{" "}" ":" ";" "`" "#" "'" "."]))
+  (@s S Ss) -> (and (alpha? (string->n S))
+                    (alphanums? Ss))
+  _ -> (simple-error "implementation error in shen.analyse-symbol?"))
 
 (define alphanums?
   "" -> true
-  (@s S Ss) -> (and (alphanum? S) (alphanums? Ss)))
-
-(define alphanum?
-  S -> (or (alpha? S) (digit? S)))
-
-(define digit?
-  S -> (element? S ["1" "2" "3" "4" "5" "6" "7" "8" "9" "0"]))
+  (@s S Ss) -> (let N (string->n S)
+                    (and (or (alpha? N) (digit? N)) (alphanums? Ss)))
+  _ -> (simple-error "implementation error in shen.alphanums?"))
 
 (define variable?
   X -> false where (or (boolean? X) (number? X) (string? X))
@@ -179,12 +93,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                      (analyse-variable? String)) (/. E false)))
 
 (define analyse-variable?
-  (@s S Ss) -> (and (uppercase? S)
-                    (alphanums? Ss)))
-
-(define uppercase?
-  S ->  (element? S ["A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M"
-                     "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"]))
+  (@s S Ss) -> (and (uppercase? (string->n S))
+                    (alphanums? Ss))
+  _ -> (simple-error "implementation error in shen.analyse-variable?"))
 
 (define gensym
   Sym -> (concat Sym (set *gensym* (+ 1 (value *gensym*)))))
@@ -206,12 +117,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   X -> (<-address X 2))
 
 (define tuple?
-  X -> (and (absvector? X)
-            (= tuple (trap-error (<-address X 0) (/. E not-tuple)))))
+  X -> (trap-error (and (absvector? X) (= tuple (<-address X 0))) (/. E false)))
 
 (define append
   [] X -> X
-  [X | Y] Z -> [X | (append Y Z)])
+  [X | Y] Z -> [X | (append Y Z)]
+  _ _ -> (simple-error "attempt to append a non-list"))
 
 (define @v
   X Vector -> (let Limit (limit Vector)
@@ -224,19 +135,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define @v-help
   OldVector N N NewVector -> (copyfromvector OldVector NewVector N (+ N 1))
   OldVector N Limit NewVector -> (@v-help OldVector (+ N 1) Limit
-                                          (copyfromvector
-                                           OldVector NewVector N (+ N 1))))
+                                     (copyfromvector OldVector NewVector N (+ N 1))))
 
 (define copyfromvector
-  OldVector NewVector From To -> (trap-error
-                                  (vector-> NewVector To
-                                            (<-vector OldVector From))
-                                  (/. E NewVector)))
+  OldVector NewVector From To -> (trap-error (vector-> NewVector To (<-vector OldVector From)) (/. E NewVector)))
 
 (define hdv
-  Vector -> (trap-error
-             (<-vector Vector 1)
-             (/. E (error "hdv needs a non-empty vector as an argument; not ~S~%" Vector))))
+  Vector -> (trap-error (<-vector Vector 1)
+                        (/. E (error "hdv needs a non-empty vector as an argument~%"))))
 
 (define tlv
   Vector -> (let Limit (limit Vector)
@@ -254,7 +160,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define assoc
   _ [] -> []
   X [[X | Y] | _] -> [X | Y]
-  X [_ | Y] -> (assoc X Y))
+  X [_ | Y] -> (assoc X Y)
+  _ _ -> (error "attempt to search a non-list with assoc~%"))
 
 (define assoc-set
   Key Value [] -> [[Key | Value]]
@@ -277,7 +184,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define difference
   [] _ -> []
-  [X | Y] Z -> (if (element? X Z) (difference Y Z) [X | (difference Y Z)]))
+  [X | Y] Z -> (if (element? X Z) (difference Y Z) [X | (difference Y Z)])
+  _ _ -> (error "attempt to find the difference with a non-list~%"))
 
 (define do
   X Y -> Y)
@@ -285,7 +193,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define element?
   _ [] -> false
   X [X | _] -> true
-  X [_ | Z] -> (element? X Z))
+  X [_ | Z] -> (element? X Z)
+  _ _ -> (error "attempt to find an element in a non-list~%"))
 
 (define empty?
   [] -> true
@@ -311,21 +220,38 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                       X))
 
 (define get
-  X Pointer Dict -> (let Entry (trap-error (<-dict Dict X) (/. E []))
+  X Pointer Dict -> (let Entry (trap-error
+                                (<-dict Dict X)
+                                (/. E (error "~A has no attributes: ~S~%" X Pointer)))
                          Result (assoc Pointer Entry)
                       (if (empty? Result)
-                          (error "value not found~%")
+                          (error "attribute ~S not found for ~S~%" Pointer X)
                           (tl Result))))
 
 (define hash
-  S Limit -> (mod (sum (map (/. X (string->n X)) (explode S))) Limit))
+  S Limit -> (let Hash (mod (hashkey S) Limit)
+                  (if (= Hash 0)
+                      1
+                      Hash)))
+
+(define hashkey
+  S -> (let Ns (map (/. X (string->n X)) (explode S))
+               (prodbutzero Ns 1)))
+
+(define prodbutzero
+  [] N -> N
+  [0 | Ns] N -> (prodbutzero Ns N)
+  [N1 | Ns] N -> (if (> N 1e10)
+                     (prodbutzero Ns (+ N N1))
+                     (prodbutzero Ns (* N N1))))
 
 (define mod
   N Div -> (modh N (multiples N [Div])))
 
 (define multiples
   N [M | Ms] ->  Ms   where (> M N)
-  N [M | Ms] -> (multiples N [(* 2 M) M | Ms]))
+  N [M | Ms] -> (multiples N [(* 2 M) M | Ms])
+  _ _ -> (simple-error "implementation error in shen.multiples"))
 
 (define modh
   0 _ -> 0
@@ -334,41 +260,42 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     N
                     (modh N Ms))
       where (> M N)
-  N [M | Ms] -> (modh (- N M) [M | Ms]))
+  N [M | Ms] -> (modh (- N M) [M | Ms])
+  _ _ -> (simple-error "implementation error in shen.modh"))
 
 (define sum
   [] -> 0
-  [N | Ns] -> (+ N (sum Ns)))
+  [N | Ns] -> (+ N (sum Ns))
+  _ -> (error "attempt to sum a non-list~%"))
 
 (define head
   [X | _] -> X
-  _ -> (error "head expects a non-empty list"))
+  _ -> (error "head expects a non-empty list~%"))
 
 (define tail
   [_ | Y] -> Y
-  _ -> (error "tail expects a non-empty list"))
+  _ -> (error "tail expects a non-empty list~%"))
 
 (define hdstr
   S -> (pos S 0))
 
 (define intersection
   [] _ -> []
-  [X | Y] Z -> (if (element? X Z)
-                   [X | (intersection Y Z)]
-                   (intersection Y Z)))
+  [X | Y] Z -> (if (element? X Z) [X | (intersection Y Z)] (intersection Y Z))
+  _ _ -> (error "attempt to find the intersection with a non-list~%"))
 
 (define reverse
-  X -> (reverse_help X []))
+  X -> (reverse-help X []))
 
-(define reverse_help
+(define reverse-help
   [] R -> R
-  [X | Y] R -> (reverse_help Y [X | R]))
+  [X | Y] R -> (reverse-help Y [X | R])
+  _ _ -> (error "attempt to reverse a non-list~%"))
 
 (define union
   [] X -> X
-  [X | Y] Z -> (if (element? X Z)
-                   (union Y Z)
-                   [X | (union Y Z)]))
+  [X | Y] Z -> (if (element? X Z) (union Y Z) [X | (union Y Z)])
+  _ _ -> (error "attempt to find the union with a non-list~%"))
 
 (define y-or-n?
   String -> (let Message (output String)
@@ -382,9 +309,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define not
   X -> (if X false true))
 
+(define abort
+  -> (simple-error ""))
+
 (define subst
   X Y Y -> X
-  X Y Z -> (map (/. W (subst X Y W)) Z)  where (cons? Z)
+  X Y [W | Z] -> [(subst X Y W) | (subst X Y Z)]
   _ _ Z -> Z)
 
 (define explode
@@ -392,27 +322,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define explode-h
   "" -> []
-  (@s S Ss) -> [S | (explode-h Ss)])
+  (@s S Ss) -> [S | (explode-h Ss)]
+  _ -> (simple-error "implementation error in explode-h"))
 
 (define cd
   Path -> (set *home-directory* (if (= Path "") "" (make-string "~A/" Path))))
 
 (define for-each
   F [] -> true
-  F [X | Xs] -> (let _ (F X)
+  F [X | Xs] -> (let Ignored (F X)
                   (for-each F Xs)))
 
 (define map
-   _ [] -> []
-   F [X | Y] -> [(F X) | (map F Y)]
-   F X -> (F X))
+  F X -> (map-h F X []))
+
+(define map-h
+  F [] Acc -> (reverse Acc)
+  F [X | Y] Acc -> (map-h F Y [(F X) | Acc]))
 
 (define length
   X -> (length-h X 0))
 
 (define length-h
   [] N -> N
-  X N -> (length-h (tl X) (+ N 1)))
+  X N -> (length-h (tl X) (+ N 1))
+  _ _ -> (error "attempt to find the length of a non-list~%"))
 
 (define occurrences
   X X -> 1
@@ -446,14 +380,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (define mapcan
   _ [] -> []
-  F [X | Y] -> (append (F X) (mapcan F Y)))
+  F [X | Y] -> (append (F X) (mapcan F Y))
+  _ _ -> (error "attempt to mapcan over a non-list~%"))
 
 (define ==
   X X -> true
   _ _ -> false)
-
-(define abort
-  -> (simple-error ""))
 
 (define bound?
   Sym -> (and (symbol? Sym)
@@ -475,17 +407,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (define protect
   X -> X)
 
-(define stoutput
-  -> (value *stoutput*))
-
 (define sterror
   -> (value *sterror*))
 
+(define stoutput
+  -> (value *stoutput*))
+
 (define string->symbol
   S -> (let Symbol (intern S)
-         (if (symbol? Symbol)
-             Symbol
-             (error "cannot intern ~S to a symbol" S))))
+          (if (symbol? Symbol)
+              Symbol
+              (error "cannot intern ~S to a symbol" S))))
 
 (define optimise
   + -> (set *optimise* true)
@@ -514,14 +446,62 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -> (value *release*))
 
 (define package?
+  null -> true
   Package -> (trap-error (do (external Package) true) (/. E false)))
 
-(define function
-  F -> (lookup-func F))
-
-(define lookup-func
+(define fn
   F -> (trap-error
         (get F lambda-form)
         (/. E (error "~A has no lambda expansion~%" F))))
+
+(define fail
+  -> fail!)
+
+(define enable-type-theory
+  + -> (set *shen-type-theory-enabled?* true)
+  - -> (set *shen-type-theory-enabled?* false)
+  _ -> (error "enable-type-theory expects a + or a -~%"))
+
+(define tc
+  + -> (set *tc* true)
+  - -> (set *tc* false)
+  _ -> (error "tc expects a + or -"))
+
+(define destroy
+  F -> (do (unassoc F (value *sigf*)) F))
+
+(define unassoc
+  F SigF -> (let Assoc (assoc F SigF)
+                 Remove (remove Assoc SigF)
+                 (set *sigf* Remove)))
+
+(define in-package
+  Package -> (if (package? Package)
+                 (set *package* Package)
+                 (error "package ~A does not exist~%" Package)))
+
+(define write-to-file
+   File Text -> (let Stream (open File out)
+                     String (if (string? Text)
+                                (make-string "~A~%~%" Text)
+                                (make-string "~S~%~%" Text))
+                     Write (pr String Stream)
+                     Close (close Stream)
+                     Text))
+
+(define fresh
+  -> (freshterm (gensym t)))
+
+(define update-lambda-table
+  F Arity -> (let AssertArity (put F arity Arity)
+                  LambdaEntry (lambda-entry F)
+                  Update (set-lambda-form-entry [F | LambdaEntry])
+               F))
+
+(define specialise
+  F 0 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
+  F 1 -> (do (set *special* (adjoin F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
+  F 2 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (adjoin F (value *extraspecial*))) F)
+  F _ -> (error "specialise requires values of 0, 1 or 2~%"))
 
 )

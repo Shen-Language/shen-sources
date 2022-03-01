@@ -1,117 +1,98 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
+\\                  All rights reserved.
 
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
-
-(package shen []
+(package shen [shen]
 
 (define shen->kl
-  F Def -> (compile (/. X (<define> X)) [F | Def] (/. X (shen-syntax-error F X))))
+  Shen -> (let KL (shen->kl-h Shen)
+               (record-and-evaluate KL)))
 
-(define shen-syntax-error
-  F [X | Y] -> (error "syntax error in ~A here:~%~% ~A~%" F (next-50 50 X))
-  F _ -> (error "syntax error in ~A~%" F))
+(define record-and-evaluate
+  [defun F Params Def] -> (let SysfuncChk (if (sysfunc? F)
+                                              (error "~A is not a legitimate function name~%" F)
+                                              skip)
+                               Arity   (store-arity F (length Params))
+                               Record  (record-kl F [defun F Params Def])
+                               Eval    (eval-kl [defun F Params Def])
+                               (fn-print F))
+  KL -> KL)
+
+(define shen->kl-h
+  [define F | Def] -> (shendef->kldef F Def)
+  [defun F Params Def] -> [defun F Params Def]
+  [type X A] -> [type X (rcons_form A)]
+  [input+ A S] -> [input+ (rcons_form A) S]
+  [X | Y] -> (map (/. Z (shen->kl-h Z)) [X | Y])
+  X -> X)
+
+(define shendef->kldef
+  F Def -> (compile (/. X (<define> X)) [F | Def]))
 
 (defcc <define>
-  <name> <signature> <rules> := (compile_to_machine_code <name> <rules>);
-  <name> <rules> := (compile_to_machine_code <name> <rules>);)
+ <name> { <signature> } <rules> := (shendef->kldef-h <name> <rules>);
+ <name> <rules> := (shendef->kldef-h <name> <rules>);)
+
+(define shendef->kldef-h
+  F Rules -> (let Ps (map (/. X (fst X)) Rules)
+                  Arity (arity-chk F Ps)
+                  FreeVarChk (map (/. R (free-var-chk F R)) Rules)
+                  KL (factorise-code (compile-to-kl F Rules Arity))
+                  KL))
 
 (defcc <name>
-  X := (if (and (symbol? X) (not (sysfunc? X)))
+  X := (if (and (symbol? X) (not (variable? X)))
            X
-           (error "~A is not a legitimate function name.~%" X)))
-
-(define sysfunc?
-  F -> (element? F (get (intern "shen") external-symbols)))
+           (error "~A is not a legitimate function name.~%" X));)
 
 (defcc <signature>
-  { <signature-help> } := (demodulate (curry-type <signature-help>));)
-
-(define curry-type
-  A -> (active-cons (curry-type-h A)))
-
-(define active-cons
-  [X Bar Y] -> [(active-cons X) | (active-cons Y)]
-      where (= Bar bar!)
-  [X | Y] -> [(active-cons X) | (active-cons Y)]
-  X -> X)
-
-(define curry-type-h
-  [A --> B --> | C] -> (curry-type-h [A --> [B --> | C]])
-  [A * B * | C] -> (curry-type-h [A * [B * | C]])
-  [X | Y] -> (map (/. Z (curry-type-h Z)) [X | Y])
-  X -> X)
-
-(defcc <signature-help>
-  X <signature-help> := [X | <signature-help>]  where (not (element? X [{ }]));
-  <e> := [];)
+  X <signature> := [X | <signature>]  where (not (element? X [{ }]));
+ <e> := [];)
 
 (defcc <rules>
   <rule> <rules> := [(linearise <rule>) | <rules>];
-  <rule> := [(linearise <rule>)];)
+  <!> := (if (empty? <!>) [] (error "Shen syntax error here:~% ~R~% ..." <!>));)
+
+(define linearise
+  (@p Ps A) -> (linearise-h Ps Ps [] A)
+   _ -> (simple-error "implementation error in shen.linearise"))
+
+(define linearise-h
+  [] Ps _ A -> (@p Ps A)
+  [[X | Y] | Z] Ps Vs A -> (linearise-h (append [X | Y] Z) Ps Vs A)
+  [X | Y] Ps Vs A -> (if (element? X Vs)
+                         (let Z (gensym (protect V))
+                                (linearise-h Y (rep-X X Z Ps) Vs [where [= Z X] A]))
+                         (linearise-h Y Ps [X | Vs] A))   where (variable? X)
+  [_ | Y] Ps Vs A -> (linearise-h Y Ps Vs A)
+  _ _ _ _ -> (simple-error "implementation error in shen.linearise-h"))
 
 (defcc <rule>
-  <patterns> -> <action> where <guard> := [<patterns> [where <guard> <action>]];
-  <patterns> -> <action> := [<patterns> <action>];
-  <patterns> <- <action> where <guard>
-      := [<patterns> [where <guard> [choicepoint! <action>]]];
-  <patterns> <- <action> := [<patterns> [choicepoint! <action>]];)
-
-(define fail_if
-  F X -> (if (F X) (fail) X))
-
-(define succeeds?
-  X -> false  where (= X (fail))
-  _ -> true)
-
-(define custom-pattern-compiler
-  Arg OnFail -> ((value *custom-pattern-compiler*) Arg OnFail))
-
-(define custom-pattern-reducer
-  Arg -> ((value *custom-pattern-reducer*) Arg))
+  <patterns> -> Action where Guard := (@p <patterns> [where Guard Action]);
+  <patterns> -> Action             := (@p <patterns> Action);
+  <patterns> <- Action where Guard := (@p <patterns> [where Guard [choicepoint! Action]]);
+  <patterns> <- Action             := (@p <patterns> [choicepoint! Action]);)
 
 (defcc <patterns>
   <pattern> <patterns> := [<pattern> | <patterns>];
   <e> := [];)
 
 (defcc <pattern>
-  [@p <pattern1> <pattern2>] := [@p <pattern1> <pattern2>];
-  [cons <pattern1> <pattern2>] := [cons <pattern1> <pattern2>];
-  [@v <pattern1> <pattern2>] := [@v <pattern1> <pattern2>];
-  [@s <pattern1> <pattern2>] := [@s <pattern1> <pattern2>];
+  [<constructor> <pattern1> <pattern2>] := [<constructor> <pattern1> <pattern2>];
   [vector 0] := [vector 0];
-  X := (custom-pattern-compiler X (freeze (constructor-error X)))
-      where (cons? X);
-  <simple_pattern> := <simple_pattern>;)
+  X := (constructor-error X) 	where (cons? X);
+  <simple-pattern> := <simple-pattern>;)
+
+(defcc <constructor>
+  C := C where (constructor? C);)
+
+(define constructor?
+  C -> (element? C [cons @p @s @v]))
 
 (define constructor-error
-  X -> (error "~A is not a legitimate constructor~%" X))
+  X -> (error "~R is not a legitimate constructor~%" X))
 
-(defcc <simple_pattern>
+(defcc <simple-pattern>
   X := (gensym (protect Y)) 	where (= X _);
   X := X 		        where (not (element? X [-> <-]));)
 
@@ -121,309 +102,246 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (defcc <pattern2>
   <pattern> := <pattern>;)
 
-(defcc <action>
-  X := X;)
+(define fn-print
+  F -> (let V (absvector 2)
+            Print (address-> V 0 printF)
+            Named (address-> Print 1 (@s "(fn " (str F) ")"))
+            Named))
 
-(defcc <guard>
-  X := X;)
+(define printF
+  V -> (<-address V 1))
 
-(define compile_to_machine_code
-  Name Rules -> (let Lambda+ (compile_to_lambda+ Name Rules)
-                     KL (compile_to_kl Name Lambda+)
-                     Record (record-source Name KL)
-                   KL))
+(define arity-chk
+  _ [P] -> (length P)
+  F [P1 P2 | Ps] -> (arity-chk F [P2 | Ps])  where (= (length P1) (length P2))
+  F _ -> (error "arity error in ~A~%" F))
 
-(define record-source
-  _ _ -> skip    where (value *installing-kl*)
-  Name ObjectCode -> (put Name source ObjectCode))
+(define free-var-chk
+  Name (@p P A) -> (free-variable-error-message Name (find-free-vars (extract-vars P) A)))
 
-(define compile_to_lambda+
-  Name Rules -> (let Arity (aritycheck Name Rules)
-                     UpDateSymbolTable (update-symbol-table Name Arity)
-                     Free (for-each (/. Rule (free_variable_check Name Rule))
-                                    Rules)
-                     Variables (parameters Arity)
-                     Strip (map (/. X (strip-protect X)) Rules)
-                     Abstractions (map (/. X (abstract_rule X)) Strip)
-                     Applications
-                       (map (/. X (application_build Variables X))
-                            Abstractions)
-                  [Variables Applications]))
+(define free-variable-error-message
+  Name FreeV -> (if (empty? FreeV)
+                    skip
+                    (do (output "free variables in ~A:" Name)
+                        (for-each (/. X (output " ~A" X)) FreeV)
+                        (nl)
+                        (abort))))
 
-(define update-symbol-table
-  Name 0 -> skip
-  Name Arity -> (put Name lambda-form (eval-kl (lambda-form Name Arity))))
+(define extract-vars
+  X -> [X]   where (variable? X)
+  [X | Y] -> (union (extract-vars X) (extract-vars Y))
+  _ -> [])
 
-(define free_variable_check
-  Name [Patts Action] -> (let Bound (extract_vars Patts)
-                              Free (extract_free_vars Bound Action)
-                           (free_variable_warnings Name Free)))
-
-(define extract_vars
-  X -> [X]	where (variable? X)
-  [X | Y] -> (union (extract_vars X) (extract_vars Y))
-  X -> [])
-
-(define extract_free_vars
-  Bound [P _] -> []  where (= P protect)
-  Bound X -> [X]	where (and (variable? X) (not (element? X Bound)))
-  Bound [lambda X Y] -> (extract_free_vars [X | Bound] Y)
-  Bound [let X Y Z] -> (union (extract_free_vars Bound Y)
-                              (extract_free_vars [X | Bound] Z))
-  Bound [X | Y] -> (union (extract_free_vars Bound X)
-                          (extract_free_vars Bound Y))
+(define find-free-vars
+  Bound [protect V] -> []
+  Bound [let X Y Z] -> (union (find-free-vars Bound Y) (find-free-vars [X | Bound] Z))
+  Bound [lambda X Y] -> (find-free-vars [X | Bound] Y)
+  Bound [X | Y] -> (union (find-free-vars Bound X) (find-free-vars Bound Y))
+  Bound V -> [V]    where (free-variable? V Bound)
   _ _ -> [])
 
-(define free_variable_warnings
-  _ [] -> _
-  Name Vs -> (error "error: the following variables are free in ~A: ~A"
-                    Name (list_variables Vs)))
+(define free-variable?
+  V Bound -> (and (variable? V) (not (element? V Bound))))
 
-(define list_variables
-  [V] -> (cn (str V) ".")
-  [V | Vs] -> (cn (str V) (cn ", " (list_variables Vs))))
+(define record-kl
+  F KL -> (put F source KL))
 
-(define strip-protect
-  [P X] -> (strip-protect X)   where (= P protect)
-  [X | Y] -> (map (/. Z (strip-protect Z)) [X | Y])
-  X -> X)
-
-(define linearise
-  [Patts Action] -> (linearise_help (flatten Patts) Patts Action))
-
-(define flatten
-  [] -> []
-  [X | Y] -> (append (flatten X) (flatten Y))
-  X -> [X])
-
-(define linearise_help
-  [] Patts Action -> [Patts Action]
-  [X | Y] Patts Action -> (if (and (variable? X) (element? X Y))
-                              (let Var (gensym X)
-                                   NewAction [where [= X Var] Action]
-                                   NewPatts (linearise_X X Var Patts)
-                                (linearise_help Y NewPatts NewAction))
-                              (linearise_help Y Patts Action)))
-
-(define linearise_X
-  X Var X -> Var
-  X Var [Y | Z] -> (let L (linearise_X X Var Y)
-                     (if (= L Y)
-                         [Y | (linearise_X X Var Z)]
-                         [L | Z]))
-  _ _ Y -> Y)
-
-(define aritycheck
-  Name [[Patts Action]]
-  -> (do (aritycheck-action Action)
-         (aritycheck-name Name (arity Name) (length Patts)))
-  Name [[Patts1 Action1] [Patts2 Action2] | Rules]
-  -> (if (= (length Patts1) (length Patts2))
-         (do (aritycheck-action Action1)
-             (aritycheck Name [[Patts2 Action2] | Rules]))
-         (error "arity error in ~A~%" Name)))
-
-(define aritycheck-name
-  _ -1 Arity -> Arity
-  _ Arity Arity -> Arity
-  Name _ Arity
-  -> (do (output "~%warning: changing the arity of ~A can cause errors.~%" Name)
-         Arity))
-
-(define aritycheck-action
-  [F | X] -> (do (aah F X)
-                 (for-each (/. Y (aritycheck-action Y)) [F | X]))
-  _ -> skip)
-
-(define aah
-  F X -> (let Arity (arity F)
-              Len (length X)
-           (if (and (> Arity -1) (> Len Arity))
-               (output "warning: ~A might not like ~A argument~A.~%"
-                       F Len (if (> Len 1) "s" ""))
-               skip)))
-
-(define abstract_rule
-  [Patterns Action] -> (abstraction_build Patterns Action))
-
-(define abstraction_build
-  [] Action -> Action
-  [Patt | Patts] Action -> [/. Patt (abstraction_build Patts Action)])
+(define compile-to-kl
+  F Rules Arity -> (let Parameters (parameters Arity)
+                        Body (scan-body F (kl-body Rules Parameters))
+                        Defun [defun F Parameters (cond-form Body)]
+                     Defun))
 
 (define parameters
   0 -> []
   N -> [(gensym (protect V)) | (parameters (- N 1))])
 
-(define application_build
-  [] Application -> Application
-  [V | Vs] Abstraction -> (application_build Vs [Abstraction V]))
+(define cond-form
+  [[true X] | _] -> X
+  Body -> [cond | Body])
 
-(define compile_to_kl
-  Name [Variables Applications]
-  -> (let Arity (store-arity Name (length Variables))
-          Reduce (map (/. X (reduce X)) Applications)
-          CondExpression (cond-expression Name Variables Reduce)
-          TypeTable (if (value *optimise*)
-                        (typextable (get-type Name) Variables)
-                        skip)
-          TypedCondExpression (if (value *optimise*)
-                                  (assign-types Variables TypeTable CondExpression)
-                                  CondExpression)
-       [defun Name Variables TypedCondExpression]))
+(define scan-body
+  F [] -> [[true [f-error F]]]
+  F [Case | Cases] -> (choicepoint F
+                                  (gensym (protect Freeze))
+                                  (gensym (protect Result))
+                                  Case Cases)  where (choicepoint? Case)
+  _ [[true X] | _] -> [[true X]]
+  F [Case | Cases] -> [Case | (scan-body F Cases)]
+  _ _ -> (simple-error "implementation error in shen.scan-body"))
 
-(define get-type
-  [_ | _] -> skip
-  F -> (let FType (assoc F (value *signedfuncs*))
-         (if (empty? FType)
-             skip
-             (tl FType))))
+(define choicepoint?
+  [_ [choicepoint! _]] -> true
+  _ -> false)
 
-(define typextable
-  [A --> B] [V | Vs] -> (if (variable? A)
-                            (typextable B Vs)
-                            [[V | A] | (typextable B Vs)])
-  _ _ -> [])
+(define choicepoint
+  F Freeze Result [Test [_ [fail-if F Action]]] Cases
+  -> [[true [let Freeze [freeze [cond | (scan-body F Cases)]]
+                 [if Test
+                     [let Result Action
+                              [if [F Result]
+                                  [thaw Freeze]
+                                  Result]]
+                     [thaw Freeze]]]]]
+  F Freeze Result [Test [_ Action]] Cases
+  -> [[true [let Freeze [freeze [cond | (scan-body F Cases)]]
+                 [if Test
+                     [let Result Action
+                        [if [= Result [fail]]
+                            [thaw Freeze]
+                            Result]]
+                     [thaw Freeze]]]]]
+  _ _ _ _ _ -> (simple-error "implementation error in shen.choicepoint"))
 
-(define assign-types
-  Bound Table [let X Y Z]
-  -> [let X (assign-types Bound Table Y)
-       (assign-types [X | Bound] Table Z)]
-  Bound Table [lambda X Y]
-  -> [lambda X (assign-types [X | Bound] Table Y)]
-  Bound Table [cond | X]
-  -> [cond | (map (/. Y [(assign-types Bound Table (hd Y))
-                         (assign-types Bound Table (hd (tl Y)))])
-                  X)]
-  Bound Table [F | X]
-  -> (let NewTable (typextable (get-type F) X)
-       [F | (map (/. Y (assign-types Bound (append Table NewTable) Y)) X)])
-  Bound Table Atom
-  -> (let AtomType (assoc Atom Table)
-       (cases (cons? AtomType) [type Atom (tl AtomType)]
-              (element? Atom Bound) Atom
-              true (atom-type Atom))))
+(define rep-X
+  X V X -> V
+  X V [Y | Z]-> (let Rep (rep-X X V Y)
+                     (if (= Rep Y)
+                         [Y | (rep-X X V Z)]
+                         [Rep | Z]))
+  X V Y -> Y)
 
-(define atom-type
-  Atom -> (cases (string? Atom) [type Atom string]
-                 (number? Atom) [type Atom number]
-                 (boolean? Atom) [type Atom boolean]
-                 (symbol? Atom) [type Atom symbol]
-                 true Atom))
+(define kl-body
+   Rules Parameters -> (map (/. R (triple-stack [] (fst R) Parameters (snd R))) Rules))
 
-(define store-arity
-  _ _ -> skip    where (value *installing-kl*)
-  F Arity -> (put F arity Arity))
+(define triple-stack
+  Test [] [] [where P Continue] -> (triple-stack [P | Test] [] [] Continue)
+  Test [] [] Continue -> [(rectify-test (reverse Test)) Continue]
+  Test [Si | S] [Ti | T] Continue -> (triple-stack Test S T (beta Si Ti Continue))
+                                                          where (variable? Si)
+  Test [[C Sa Sb] | S] [Ti | T] Continue -> (triple-stack [[(op-test C) Ti] | Test]
+                                                          [Sa Sb | S]
+                                                          [[(op1 C) Ti] [(op2 C) Ti] | T]
+                                                          (beta [C Sa Sb] Ti Continue))
+  Test [Si | S] [Ti | T] Continue -> (triple-stack [[= Si Ti] | Test] S T Continue)
+  _ _ _ _ -> (simple-error "implementation error in shen.triple-stack"))
 
-(define reduce
-  Application -> (do (set *teststack* [])
-                     (let Result (reduce_help Application)
-                       [[:tests | (reverse (value *teststack*))] Result])))
+(define rectify-test
+  [] -> true
+  [P] -> P
+  [P Q | R] -> [and P (rectify-test [Q | R])]
+  _ -> (simple-error "implementation error in shen.rectify-test"))
 
-(define reduce_help
-  [[/. [cons X Y] Z] A]
-  -> (do (add_test [cons? A])
-         (let Abstraction [/. X [/. Y (ebr A [cons X Y] Z)]]
-              Application [[Abstraction [hd A]] [tl A]]
-           (reduce_help Application)))
-  [[/. [@p X Y] Z] A]
-  -> (do (add_test [tuple? A])
-         (let Abstraction [/. X [/. Y (ebr A [@p X Y] Z)]]
-              Application [[Abstraction [fst A]] [snd A]]
-           (reduce_help Application)))
-  [[/. [@v X Y] Z] A]
-  -> (do (add_test [+vector? A])
-         (let Abstraction [/. X [/. Y (ebr A [@v X Y] Z)]]
-              Application [[Abstraction [hdv A]] [tlv A]]
-           (reduce_help Application)))
-  [[/. [@s X Y] Z] A]
-  -> (do (add_test [+string? A])
-         (let Abstraction [/. X [/. Y (ebr A [@s X Y] Z)]]
-              Application [[Abstraction [pos A 0]] [tlstr A]]
-           (reduce_help Application)))
-  [[/. [vector 0] Body] A]
-  -> (do (add_test [vector? A])
-         (add_test [= 0 [limit A]])
-         (reduce_help (ebr A [vector 0] Body)))
-  [[/. [Constructor | Args] Body] A]
-  -> (custom-pattern-reducer [[/. [Constructor | Args] Body] A])
-  [[/. X Z] A]
-  -> (do (add_test [= X A])
-         (reduce_help Z))  where (not (variable? X))
-  [[/. X Z] A] -> (reduce_help (ebr A X Z))
-  [where P Q] -> (do (add_test P) (reduce_help Q))
-  [X Y] -> (let Z (reduce_help X)
-             (if (= X Z) [X Y] (reduce_help [Z Y])))
-  X -> X)
+(define beta
+  X Y X -> Y
+  X _ [lambda X Y] -> [lambda X Y]
+  X W [let X Y Z] -> [let X (beta X W Y) Z]
+  X W [Y | Z] -> (map (/. V (beta X W V)) [Y | Z])
+  _ _ X -> X)
+
+(define op1
+  cons -> hd
+  @s -> hdstr
+  @p -> fst
+  @v -> hdv
+  _ -> (simple-error "implementation error in shen.op1"))
+
+(define op2
+  cons -> tl
+  @s -> tlstr
+  @p -> snd
+  @v -> tlv
+  _ -> (simple-error "implementation error in shen.op2"))
+
+(define op-test
+  cons -> cons?
+  @s -> +string?
+  @p -> tuple?
+  @v -> +vector?
+  _ -> (simple-error "implementation error in shen.op-test"))
 
 (define +string?
   "" -> false
   X -> (string? X))
 
 (define +vector?
-  X -> (and (absvector? X) (> (<-address X 0) 0)))
+  X -> false        where (= X (vector 0))
+  X -> (vector? X))
 
-(define ebr
-  A B B -> A
-  A B [lambda C D] -> [lambda C D] where (clash? C B)
-  A B [let V C D] -> [let V (ebr A B C) D]	where (clash? V B)
-  A B [C | D] -> [(ebr A B C) | (ebr A B D)]
-  _ _ C -> C)
+(define factorise
+  + -> (set *factorise?* true)
+  - -> (set *factorise?* false)
+  _ -> (error "factorise expects a + or a -~%"))
 
-(define clash?
-  V V -> true
-  V [X | Y] -> (or (clash? V X) (clash? V Y))
-  _ _ -> false)
+(define factorise-code
+  [defun F Params [cond | Cases]]
+   -> [defun F Params (vertical Params Cases [f-error F])]  where (value *factorise?*)
+  Code -> Code)
 
-(define add_test
-  Test -> (set *teststack* [Test | (value *teststack*)]))
+(define vertical
+  _ [[true Result] | _] _ -> Result
+  Free [] Exit -> Exit
+  Free [[[and P Q] Result] | Cases] Exit
+  -> (let Before+After (split-cases P [[[and P Q] Result] | Cases] [])
+          (branch P Free Before+After Exit))
+   Free [[Test Result] | Cases] Exit -> [if Test Result (vertical Free Cases Exit)]
+   _ _ _ -> (simple-error "implementation error in shen.vertical"))
 
-(define cond-expression
-  Name Variables Code -> (let Err (err-condition Name)
-                              Cases (case-form Code Err)
-                              EncodeChoices (encode-choices Cases Name)
-                           (cond-form EncodeChoices)))
+(define split-cases
+  P [[[and P Ps] Result] | Cases] Before -> (split-cases P Cases [[Ps Result] | Before])
+  P [[P Result] | Cases] Before -> (split-cases P Cases [[true Result] | Before])
+  _ After Before -> [(reverse Before) After])
 
-(define cond-form
-  [[true Result] | _] -> Result
-  Cases -> [cond | Cases])
+(define branch
+  P Free [Before After] Exit
+  -> (let Else (else Free After Exit)
+          Then (then P Free Before Else)
+          [if P Then Else]))
 
-(define encode-choices
+(define else
+  Free After Exit -> (let Else (vertical Free After Exit)
+                          (if (inline? Else)
+                              Else
+                              (procedure-call Free Else))))
+
+(define procedure-call
+  Free Code -> (let F (gensym else)
+                    Used (remove-if-unused Free Code)
+                    KL [defun F Used Code]
+                    EvalKL (eval-kl KL)
+                    Record (record-kl F KL)
+                    [F | Used]))
+
+(define remove-if-unused
   [] _ -> []
-  [[true [choicepoint! Action]]] Name
-  -> [[true [let (protect Result) Action
-              [if [= (protect Result) [fail]]
-                  (if (value *installing-kl*) [sys-error Name] [f_error Name])
-                  (protect Result)]]]]
-  [[true [choicepoint! Action]] | Code] Name
-  -> [[true [let (protect Result) Action
-              [if [= (protect Result) [fail]]
-                  (cond-form (encode-choices Code Name))
-                  (protect Result)]]]]
-  [[Test [choicepoint! Action]] | Code] Name
-  -> [[true [let (protect Freeze) [freeze (cond-form (encode-choices Code Name))]
-              [if Test
-                  [let (protect Result) Action
-                    [if [= (protect Result) [fail]]
-                        [thaw (protect Freeze)]
-                        (protect Result)]]
-                  [thaw (protect Freeze)]]]]]
-  [[Test Result] | Code] Name -> [[Test Result] | (encode-choices Code Name)])
+  [V | Vs] Code -> (if (occurs? V Code)
+                       [V | (remove-if-unused Vs Code)]
+                       (remove-if-unused Vs Code))
+  _ _ -> (simple-error "implementation error in shen.remove-if-unused"))
 
-(define case-form
-  [] Err -> [Err]
-  [[[:tests] [choicepoint! Result]] | Code] Err -> [[true [choicepoint! Result]] | (case-form Code Err)]
-  [[[:tests] Result] | _] _ -> [[true Result]]
-  [[[:tests | Tests] Result] | Code] Err
-  -> [[(embed-and Tests) Result] | (case-form Code Err)])
+(define then
+  P Free Before Else -> (horizontal (selectors P Before) Free Before Else))
 
-(define embed-and
-  [Test] -> Test
-  [Test | Tests] -> [and Test (embed-and Tests)])
+(define horizontal
+  [] Free Before Else -> (vertical Free Before Else)
+  [S | Ss] Free Before Else -> (let V (gensym (protect V))
+                                  [let V S (horizontal Ss [V | Free] (subst V S Before) Else)])
+  _ _ _ _ -> (simple-error "implementation error in shen.horizontal"))
 
-(define err-condition
-  Name -> [true [f_error Name]])
+(define selectors
+  [C X] Before -> (let Op (op C)
+                       Hd [(op1 Op) X]
+                       Tl [(op2 Op) X]
+                       RptedHd? (rpted? Hd Before)
+                       RptedTl? (rpted? Tl Before)
+                       (cases (and RptedHd? RptedTl?) [Hd Tl]
+                              RptedHd? [Hd]
+                              RptedTl? [Tl]
+                              true []))  where (constructor? (op C))
+  _ _ -> [])
 
-(define sys-error
-  Name -> (error "system function ~A: unexpected argument~%" Name))
+(define rpted?
+  X Y -> (> (occurrences X Y) 1))
+
+(define inline?
+  [X | Y] -> (and (atom? X) (inline? Y))
+  X -> (atom? X))
+
+(define op
+  cons? -> cons
+  +string? -> @s
+  +vector? -> @v
+  tuple? -> @p
+  _ -> skip)
 
 )

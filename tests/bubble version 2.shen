@@ -1,5 +1,5 @@
 (define bubble-sort
-  X -> (fix (function bubble) X))
+  X -> (fix (fn bubble) X))
 
 (define bubble
   [] -> []

@@ -1,12 +1,12 @@
-\* <program> := <statement> <program> | <statement>;
-<statement> := <assignment> | <conditional> | <goto> | <tag>;
-<assignment> := (<var> := <val>) | (++ <var>); (-- <var>);
-<var> := any symbol;
-<val> := any number
-<conditional> := (if <test> <statement> <statement>);
-<test> := (<var> <comp> <var); (<test> and <test>);
+\* <program> @= <statement> <program> | <statement>;
+<statement> @= <assignment> | <conditional> | <goto> | <tag>;
+<assignment> @= (<var> @= <val>) | (++ <var>); (-- <var>);
+<var> @= any symbol;
+<val> @= any number
+<conditional> @= (if <test> <statement> <statement>);
+<test> @= (<var> <comp> <var); (<test> and <test>);
           (<test> or <test>) | (not <test>);
-<comp> := > | < | =; *\
+<comp> @= > | < | =; *\
 
 (synonyms program (list statement)
           env     (list (symbol * number)))
@@ -15,7 +15,7 @@
 
   Var : symbol; Val : val;
   =========================
-  [Var := Val] : statement;
+  [Var @= Val] : statement;
 
   if (element? Op [++ --])
   Var : symbol;
@@ -85,19 +85,21 @@
   _____________
   Val : val;)
 
-\* The program that runs Minim programs is 56 lines of Qi and is given here. *\
 
-(define run
+\\ The program that runs Minim programs is 56 lines and is given here.
+
+
+(define run-it
   {program --> env}
   Program -> (run-loop Program Program []))
 
 (define run-loop
   {program --> program --> env --> env}
   [] _ Env -> Env
-  [nl | Ss] Program Env -> (do (output "~%") (run-loop Ss Program Env))
+  \\ [nl | Ss] Program Env -> (do (output "~%") (run-loop Ss Program Env))
   [Tag | Ss] Program Env -> (run-loop Ss Program Env)      where (symbol? Tag)
   [[goto Tag] | _] Program Env -> (run-loop (go Tag Program) Program Env)
-  [[Var := Val] | Ss] Program Env
+  [[Var @= Val] | Ss] Program Env
   -> (run-loop Ss Program (change-env Var (compute-val Val Env) Env))
   [[++ Var] | Ss] Program Env
   -> (run-loop Ss Program (change-env Var (+ 1 (look-up Var Env)) Env))
@@ -109,11 +111,11 @@
          (run-loop [DoThat | Ss] Program Env))
   [[print M] | Ss] Program Env -> (do (output "~A" (look-up M Env))
                                       (run-loop Ss Program Env))
-  where (symbol? M)
+      where (symbol? M)
   [[print M] | Ss] Program Env -> (do (output "~A" M)
                                       (run-loop Ss Program Env))
   [[input Var] | Ss] Program Env
-  -> (run-loop Ss Program (change-env Var (input+ : number) Env)) )
+  -> (run-loop Ss Program (change-env Var (input+ number) Env)) )
 
 (define compute-val
   {val --> env --> number}
@@ -149,7 +151,7 @@
   Var [(@p Var Val) | _] -> Val
   Var [_ | Env] -> (look-up Var Env))
 
-\* (run [      [print "Add x and y"]
+\* (run-it [      [print "Add x and y"]
                nl
                [print "Input x: "]
                [input x]

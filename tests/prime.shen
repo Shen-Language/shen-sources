@@ -1,4 +1,4 @@
-(define prime?
+(define prime*?
   X -> (prime* X (/ X 2) 2))
 
 (define prime*

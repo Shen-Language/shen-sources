@@ -15,8 +15,8 @@
   (do
     (output "~%")
     (output "compiling *.shen to *.kl:~%")
-    (map (function systemf) [internal receive <!> sterror *sterror* ,])
-    (map (function make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
+    (map (fn systemf) [internal receive <!> sterror *sterror* ,])
+    (map (fn make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (shen.x.expand-dynamic.initialise)
     (let License (read-file-as-string "LICENSE.txt")
       (map
@@ -43,8 +43,8 @@
                    (make.make-extension-file File)))
       ["features"
        "launcher"
-       "factorise-defun"
-       "programmable-pattern-matching"
+       \\"factorise-defun"
+       \\"programmable-pattern-matching"
        "expand-dynamic"])
     (output "compilation complete.~%")
     done))
@@ -57,7 +57,7 @@
 (defcc shen.<name>
   X := (if (symbol? X)
            X
-           (error "~A is not a legitimate function name.~%" X)))
+           (error "~A is not a legitimate function name.~%" X));)
 
 
 (define make.make-extension-file
@@ -66,21 +66,15 @@
           KlFile (make-string "klambda/extension-~A.kl" File)
           License (make.file-license ShenFile)
           ShenCode (read-file ShenFile)
-          KlCode (map (function make.make-kl-code) ShenCode)
+          KlCode (map (fn make.make-kl-code) ShenCode)
           KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string KlCode))
           Write (write-to-file KlFile KlString)
        KlFile))
 
-(define make.type-signature-name?
-  (@s "shen.type-signature-of-" _) -> true
-  _ -> false)
-
 (define make.initialiser-kind
-  [set shen.*signedfuncs* | _] -> set-signedfuncs
-  [shen.set-lambda-form-entry [cons Name | _]] -> set-signedfunc-lambda-form-entry
-      where (make.type-signature-name? (str Name))
+  [set shen.*sigf* | _] -> set-signedfuncs
   [shen.set-lambda-form-entry | _] -> set-lambda-form-entry
-  _ -> environment)
+  Other -> environment)
 
 (define make.filter
   P [] -> []
@@ -93,7 +87,6 @@
           InitCode (value *init-code*)
           EnvInit (make.filter (/. X (= environment (make.initialiser-kind X))) InitCode)
           SignedFuncsInit (make.filter (/. X (= set-signedfuncs (make.initialiser-kind X))) InitCode)
-          SignedFuncsLambdaFormsInit (make.filter (/. X (= set-signedfunc-lambda-form-entry (make.initialiser-kind X))) InitCode)
           LambdaFormsInit (make.filter (/. X (= set-lambda-form-entry (make.initialiser-kind X))) InitCode)
           KlString (make-string "c#34;~Ac#34;~%~%~A" License
                      (make.list->string [
@@ -104,16 +97,12 @@
                         shen.initialise-signedfuncs [] SignedFuncsInit)
 
                        (shen.x.expand-dynamic.wrap-in-defun
-                        shen.initialise-signedfunc-lambda-forms [] SignedFuncsLambdaFormsInit)
-
-                       (shen.x.expand-dynamic.wrap-in-defun
                         shen.initialise-lambda-forms [] LambdaFormsInit)
 
                        (shen.x.expand-dynamic.wrap-in-defun
                         shen.initialise [] [
                           [shen.initialise-environment]
                           [shen.initialise-lambda-forms]
-                          [shen.initialise-signedfunc-lambda-forms]
                           [shen.initialise-signedfuncs]
                         ])
                       ]))
@@ -124,7 +113,7 @@
   -> (let ShenFile (make-string "sources/~A.shen" File)
           KlFile (make-string "klambda/~A.kl" File)
           ShenCode (read-file ShenFile)
-          KlCode* (map (function make.make-kl-code) ShenCode)
+          KlCode* (map (fn make.make-kl-code) ShenCode)
           KlCode (shen.x.expand-dynamic.expand-dynamic KlCode*)
           Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
           Defuns (fst Defuns+Init)
@@ -134,8 +123,7 @@
        KlFile))
 
 (define make.make-kl-code
-  [define F | Rules] -> (shen.elim-def [define F | Rules])
-  [defcc F | Rules] -> (shen.elim-def [defcc F | Rules])
+  [define F | Rules] -> (shen.shendef->kldef F Rules)
   Code -> Code)
 
 (define make.list->string

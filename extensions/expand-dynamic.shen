@@ -3,69 +3,58 @@
 
 \\ Documentation: docs/extensions/expand-dynamic.md
 
-(package shen.x.expand-dynamic []
+(package shen.x.expand-dynamic [shen]
 
 (define initialise
-  -> (do (set *external-symbols* [])
-         (set *arities* [])))
+  -> (set *arities* []))
 
 (define expand-dynamic
   [] -> []
-  [[declare Name Sig] | Exps] -> (append (expand-declare [declare Name Sig])
-                                         (expand-dynamic Exps))
-
-  \\ Store the external symbols for use in the expansion of lambda forms
-  [[put [intern "shen"] shen.external-symbols Symbols PVec] | Exps]
-  -> (do (set *external-symbols* (eval-kl Symbols))
-         [[put [intern "shen"] shen.external-symbols Symbols PVec]
-          | (expand-dynamic Exps)])
+  [[declare Name Sig] | Exps] -> [(expand-declare [declare Name Sig])
+                                  | (expand-dynamic Exps)]
 
   \\ Store arities for use in the expansion of lambda forms
-  [[shen.initialise_arity_table Arities] | Exps]
+  [[shen.initialise-arity-table Arities] | Exps]
   -> (do (set *arities* (eval-kl Arities))
-         [[shen.initialise_arity_table Arities] | (expand-dynamic Exps)])
+         [[shen.initialise-arity-table Arities] | (expand-dynamic Exps)])
 
-  [[shen.for-each
-     [lambda Entry [shen.set-lambda-form-entry Entry]]
-     Entries]
-   | Exps]
-  -> (append (expand-lambda-entries Entries)
-             (expand-dynamic Exps))
+  [[shen.build-lambda-table [external shen]] | Exps]
+  -> (let X (protect X)
+        (append (expand-lambda-entries
+                    \\ TODO: would be good to obtain these from the definition itself
+                    [shen.tuple 1 shen.pvar 1 shen.dictionary 1 shen.print-prolog-vector 1
+                     shen.print-freshterm 1 shen.printF 1
+                     | (value *arities*)])
+                (expand-dynamic Exps)))
+
   [Exp | Exps] -> [Exp | (expand-dynamic Exps)])
+
+(define functions-with-lambdas
+  [] -> []
+  [F N | Rest] -> [F | (functions-with-lambdas Rest)])
 
 (define expand-declare
   [declare Name Sig]
-  -> (let Eval (eval-kl [declare Name Sig])
-          F* (concat shen.type-signature-of- Name)
-          KlDef (ps F*)
-          RecordSig [set shen.*signedfuncs*
-                         [cons [cons Name Sig]
-                               [value shen.*signedfuncs*]]]
-          RecordLambda [shen.set-lambda-form-entry
-                        [cons F* (shen.lambda-form F* 3)]]
-       [KlDef RecordSig RecordLambda]))
+  -> (let Sig (eval-kl Sig)
+          Abstraction (shen.prolog-abstraction Sig)
+          RecordSig [set shen.*sigf* [shen.assoc-> Name Abstraction [value shen.*sigf*]]]
+       RecordSig
+       ))
 
 (define expand-lambda-entries
   [] -> []
-  [mapcan [lambda X [shen.lambda-form-entry X]] [external [intern "shen"]]]
-  -> (mapcan (/. F (expand-lambda-form-entry F))
-             (value *external-symbols*))
-  [cons [cons X Lambda] Y] -> [[shen.set-lambda-form-entry [cons X Lambda]]
-                               | (expand-lambda-entries Y)])
-
-(define get-arity
-  Name [] -> -1
-  Name [Name Arity | Rest] -> Arity
-  Name [_ _ | Rest] -> (get-arity Name Rest))
+  [F Arity | Rest] -> (append
+                        (expand-lambda-form-entry F Arity)
+                        (expand-lambda-entries Rest))
+  Other -> (error "expand-lambda-entries: got unexpected ~A" Other))
 
 (define expand-lambda-form-entry
-  package -> []
-  receive -> []
-  F -> (let ArityF (get-arity F (value *arities*))
-         (cases (= ArityF -1) []
-                (= ArityF 0) []
-                true [[shen.set-lambda-form-entry
-                        [cons F (shen.lambda-form F ArityF)]]])))
+  package _ -> []
+  receive _ -> []
+  F Arity -> (cases (= Arity -1) []
+                    (= Arity 0) []
+                    true [[shen.set-lambda-form-entry
+                            [cons F (shen.lambda-function [F] Arity)]]]))
 
 (define split-defuns-h
   [[defun | Defun] | Exps] (@p Defuns Other)
@@ -78,10 +67,11 @@
   Exps -> (split-defuns-h Exps (@p [] [])))
 
 (define wrap-in-defun
-  Name Args Exprs -> [defun Name Args (to-single-expression Exprs)])
+  Name Args Exprs -> [defun Name Args (to-single-expression Name Exprs)])
 
 (define to-single-expression
-  [Exp] -> Exp
-  [Exp | Exps] -> [do Exp (to-single-expression Exps)])
+  _ [Exp] -> Exp
+  Name [Exp | Exps] -> [do Exp (to-single-expression Name Exps)]
+  Name _ -> (error "to-single-expression: got empty list of expressions: ~A" Name))
 
 )

@@ -1,93 +1,86 @@
-\*
+\\           Copyright (c) 2010-2019, Mark Tarver
 
-Copyright (c) 2010-2015, Mark Tarver
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-1. Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in the
-   documentation and/or other materials provided with the distribution.
-3. The name of Mark Tarver may not be used to endorse or promote products
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY Mark Tarver ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL Mark Tarver BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*\
+\\                  All rights reserved.
 
 (package shen []
 
 (define load
-  FileName -> (let Load (time (load-help (value *tc*) (read-file FileName)))
-                   Infs (if (value *tc*)
-                            (output "~%typechecked in ~A inferences~%"
-                                    (inferences))
-                            skip)
+   File     -> (let TC?   (value *tc*)
+                    Load  (time (load-help TC? (read-file File)))
+                    Infs  (if TC? (output "~%typechecked in ~A inferences~%" (inferences)) skip)
                  loaded))
 
 (define load-help
-  false File -> (for-each (/. X (output "~S~%" (eval-without-macros X))) File)
-  _ File -> (let RemoveSynonyms (mapcan (/. X (remove-synonyms X)) File)
-                 Table (mapcan (/. X (typetable X)) RemoveSynonyms)
-                 Assume (for-each (/. X (assumetype X)) Table)
-              (trap-error
-               (for-each (/. X (typecheck-and-load X)) RemoveSynonyms)
-               (/. E (unwind-types E Table)))))
+  false Code -> (eval-and-print Code)
+  _ Code     -> (check-eval-and-print Code))
 
+(define eval-and-print
+  X -> (for-each (/. Y (output "~S~%" (eval-kl (shen->kl Y)))) X))
 
-(define remove-synonyms
-  [synonyms-help | S] -> (do (eval [synonyms-help | S]) [])
-  Code -> [Code])
-
-(define typecheck-and-load
-  X -> (do (nl) (typecheck-and-evaluate X (gensym (protect A)))))
+(define check-eval-and-print
+  X -> (let Table (mapcan (/. Y (typetable Y)) X)
+            Assume (assumetypes Table)
+            (trap-error (work-through X)
+                        (/. E (unwind-types E Table)))))
 
 (define typetable
-  [define F | X]
-  -> (let Sig (compile (/. Y (<sig+rest> Y))
-                       X
-                       (/. E (error "~A lacks a proper signature.~%" F)))
-       [[F | Sig]])
+  [define F { | X] -> [F (rectify-type (type-F F X))]
+  [define F | _]   -> (error "missing { in ~A~%" F)
   _ -> [])
 
-(define assumetype
-  [F | Type] -> (declare F Type))
+(define type-F
+  _ [} | _] -> []
+  F [X | Y] -> [X | (type-F F Y)]
+  F _ -> (error "missing } in ~A~%" F))
+
+(define assumetypes
+  [] -> []
+  [F Type | Table] -> (do (declare F Type) (assumetypes Table))
+  _ -> (simple-error "implementation error in shen.assumetype"))
 
 (define unwind-types
-  E [] -> (simple-error (error-to-string E))
-  E [[F | _] | Table] -> (do (remtype F) (unwind-types E Table)))
+  E [[F | _] | Table] -> (do (destroy F) (unwind-types E Table))
+  E _ -> (simple-error (error-to-string E)))
 
-(define remtype
-  F -> (set *signedfuncs* (removetype F (value *signedfuncs*))))
+(define work-through
+  [] -> []
+  [X Colon A | Y] -> (let Check (typecheck X A)
+                     (if (= Check false)
+                         (type-error)
+                         (let Eval (eval-kl (shen->kl X))
+                              Message (output "~S : ~R~%" Eval (pretty-type Check))
+                              (work-through Y))))   where (= Colon (intern ":"))
+  [X | Y] -> (work-through [X (intern ":") (protect A) | Y])
+  _ -> (simple-error "implementation error in shen.work-through"))
 
-(define removetype
-  _ [] -> []
-  F [[F | _] | Table] -> (removetype F Table)
-  F [Entry | Table] -> [Entry | (removetype F Table)])
+(define pretty-type
+  [[str [list A] B] --> [str [list A] C]] -> [[list A] ==> C]
+  Type -> Type)
 
-(defcc <sig+rest>
-  <signature> <!> := <signature>;)
+(define type-error
+  -> (error "type error~%"))
 
-(define write-to-file
-  File Text -> (let Stream (open File out)
-                    String (if (string? Text)
-                               (make-string "~A~%~%" Text)
-                               (make-string "~S~%~%" Text))
-                    Write (pr String Stream)
-                    Close (close Stream)
-                  Text))
+(define bootstrap
+  File -> (let KLFile (klfile File)
+               Code (read-file File)
+               Open (open KLFile out)
+               KL (map (/. X (shen->kl-h X)) Code)
+               Write (write-kl KL Open)
+               KLFile))
+
+(define write-kl
+  [] Open -> (close Open)
+  [KL | KLs] Open -> (write-kl KLs (do (write-kl-h KL Open)
+                                       Open)) where (cons? KL)
+  [_ | KLs] Open -> (write-kl KLs Open))
+
+(define write-kl-h
+ [defun fail [] _] Open -> (pr "(defun fail () shen.fail!)" Open)
+ KL Open -> (pr (make-string "~R~%~%" KL) Open))
+
+(define klfile
+  "" -> ".kl"
+  ".shen" -> ".kl"
+  (@s S Ss) -> (@s S (klfile Ss)))
 
 )
-

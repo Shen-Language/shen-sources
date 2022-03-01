@@ -25,7 +25,7 @@
   [["Bill" | Input] Output] -> [Input [[name --> "Bill"] | Output]]
   _ -> (fail))
 
-(define det
+ (define det
   [["the" | Input] Output] -> [Input [[det --> "the"] | Output]]
   [["a" | Input] Output] -> [Input [[det --> "a"] | Output]]
   [["that" | Input] Output] -> [Input [[det --> "that"] | Output]]

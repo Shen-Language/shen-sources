@@ -17,7 +17,7 @@
           Store (put-prop Class classdef ClassDef)
           RecordClass (axiom Class Class [class Class])
           SubTypes (record-subtypes Class SuperClasses)
-        Class))
+      Class))
 
 (define record-subtypes
   _ [] -> _

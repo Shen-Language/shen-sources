@@ -1,0 +1,4 @@
+This directory contains test programs for testing the Shen kernel.
+To run it; cd to this directory within Shen and enter 
+
+(load "runme.shen")

@@ -1,13 +1,13 @@
 (declare defclass [symbol --> [list [symbol * symbol]] --> symbol])
 
 (define defclass
-  Class ClassDef -> (let Attributes (map (function fst) ClassDef)
+  Class ClassDef -> (let Attributes (map (fn fst) ClassDef)
                          Types (record-attribute-types Class ClassDef)
                          Assoc (map (/. Attribute [Attribute | fail]) Attributes)
                          ClassDef [[class | Class] | Assoc]
                          Store (put Class classdef ClassDef)
                          RecordClass (axiom Class Class [class Class])
-                       Class))
+                      Class))
 
 (define axiom
   DataType X A -> (eval [datatype DataType

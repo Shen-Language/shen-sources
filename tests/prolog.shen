@@ -1,32 +1,5 @@
-(defprolog f
-  a <--;)
-
-(defprolog g
-  a <-- ! (f b);
-  X <-- (f a);)
-
-(defprolog mem
-  X [X | _] <--;
-  X [Y | Z] <-- (mem X Z);)
-
-(defprolog app
-  [] X X <--;
-  [X | Y] W [X | Z] <-- (app Y W Z);)
-
-(defprolog rev
-  [] [] <--;
-  [X | Y] Z <-- (rev Y W) (app W [X] Z);)
-
-(defprolog enjoys
-  willi X <-- (enjoys mark X);
-  mark chocolate <--;
-  mark tea <--;) enjoys
-
-(defprolog fads
-  X <-- (findall Y [enjoys X Y] Friends) (return Friends);) fads
-
 (defprolog prop
-  A C <-- (proph [[~  C] | A]);) prop
+  A C <-- (proph [[~  C] | A]);)
 
 (defprolog proph
   A <-- (mem [~ P] A) (mem P A) !;
@@ -56,16 +29,16 @@
   X (mode [_ | Y] -) <-- (mem X Y);)
 
 (defprolog mapit
-  _  []  [] <--;
-  Pred [X | Y] [W | Z] <-- (call [Pred X W])  (mapit Pred Y Z);)
+  _  [] [] <--;
+  Pred [X | Y] [W | Z] <-- (call (Pred X W)) (mapit Pred Y Z);)
 
 (defprolog consit
   X [1 X] <--;)
 
 (defprolog different
-  X Y <--  (~ [identical X Y]);)
+  X Y <--  (not! (is X Y));)
 
-(defprolog ~
+(defprolog not!
   P <-- (call P) ! (when false);
   _ <--;)
 

@@ -1,7 +1,7 @@
-(define even?
+(define even*?
   1 -> false
-  X -> (odd? (- X 1)))
+  X -> (odd*? (- X 1)))
 
-(define odd?
+(define odd*?
   1 -> true
-  X -> (even? (- X 1)))
+  X -> (even*? (- X 1)))

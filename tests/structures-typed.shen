@@ -1,14 +1,14 @@
 (define defstruct
   Name Slots
-  -> (let Attributes (map (function fst) Slots)
-          Types (map (function snd) Slots)
+  -> (let Attributes (map (fn fst) Slots)
+          Types (map (fn snd) Slots)
           Selectors (selectors Name Attributes)
           Constructor (constructor Name Attributes)
           Recognisor (recognisor Name)
           ConstructorType (constructor-type Name Types)
           SelectorTypes (selector-types Name Attributes Types)
           RecognisorType (recognisor-type Name)
-          Name))
+       Name))
 
 (define selector-types
   _ [] [] -> (gensym (protect X))
@@ -43,7 +43,7 @@
                (protect Structure) -> [let (protect LookUp) [assoc Attribute (protect Structure)]
                                         [if [empty? (protect LookUp)]
                                             [error "~A is not an attribute of ~A.~%"
-                                                   Attribute Name]
+                                                       Attribute Name]
                                             [tail (protect LookUp)]]]])))
 
 (define constructor
@@ -68,4 +68,4 @@
   Name -> (let RecognisorName (concat Name ?)
             (eval [define RecognisorName
                     [cons [cons structure Name] _] -> true
-                    _ -> false])))
+                     _ -> false])))

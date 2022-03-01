@@ -36,7 +36,7 @@
   S Proof -> (let Show (show-sequent S (+ 1 (length Proof)))
                   D (user-directive _)
                   Step (@p S D)
-               (if (= D back)
+               (if (= D (fn back))
                    (proof-loop (go-back Proof) (tail Proof))
                    (proof-loop (D S) [Step | Proof]))))
 
