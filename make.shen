@@ -138,6 +138,7 @@
 
 (define make.extract-license
   [10 10 | Rest] Acc -> (make.bytes->string (reverse Acc) "")
+  [13 10 13 10 | Rest] Acc -> (make.bytes->string (reverse Acc) "")
   [Byte | Rest] Acc -> (make.extract-license Rest [Byte | Acc]))
 
 (define make.bytes->string
