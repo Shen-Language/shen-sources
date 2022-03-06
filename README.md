@@ -32,7 +32,7 @@ Packages can be created for any version, but when uploading to the releases page
 
 ```
 make pure
-git checkout shen-22.4
+git checkout shen-32
 make fetch
 make klambda
 make release
