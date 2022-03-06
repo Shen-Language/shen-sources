@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [32.0] - 2022-03-06
 
+### Changed
+
 - Integrated changes from the new S-kernel series.
 
 ## [22.4] - 2020-03-07
