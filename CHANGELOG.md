@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [32.0] - 2022-03-06
+
+- Integrated changes from the new S-kernel series.
+
 ## [22.4] - 2020-03-07
 
 ### Fixed
@@ -398,7 +402,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-22.4...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-32...HEAD
+[32.0]: https://github.com/Shen-Language/shen-sources/compare/shen-22.4...shen-32
 [22.4]: https://github.com/Shen-Language/shen-sources/compare/shen-22.3...shen-22.4
 [22.3]: https://github.com/Shen-Language/shen-sources/compare/shen-22.2...shen-22.3
 [22.2]: https://github.com/Shen-Language/shen-sources/compare/shen-22.1...shen-22.2
