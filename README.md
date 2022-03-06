@@ -1,4 +1,4 @@
-[![Current Release](https://img.shields.io/badge/release-22.4-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
+[![Current Release](https://img.shields.io/badge/release-32-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 # Official Shen Sources
 
