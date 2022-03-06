@@ -133,7 +133,7 @@
   X -> X)
 
 (define synonyms-macro
-  [synonyms | X] -> (synonyms-h (append X (value *synonyms*)))
+  [synonyms | X] -> (synonyms-h (set *synonyms* (append X (value *synonyms*))))
   X -> X)
 
 (define lambda-of-defun

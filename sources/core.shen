@@ -37,8 +37,15 @@
   F Rules -> (let Ps (map (/. X (fst X)) Rules)
                   Arity (arity-chk F Ps)
                   FreeVarChk (map (/. R (free-var-chk F R)) Rules)
-                  KL (factorise-code (compile-to-kl F Rules Arity))
+                  Unprotect (unprotect Rules)
+                  KL (factorise-code (compile-to-kl F Unprotect Arity))
                   KL))
+
+(define unprotect
+  (@p X Y) -> (@p (unprotect X) (unprotect Y))
+  [protect X] -> (unprotect X)
+  [X | Y] -> (map (/. Z (unprotect Z)) [X | Y])
+  X -> X)
 
 (defcc <name>
   X := (if (and (symbol? X) (not (variable? X)))

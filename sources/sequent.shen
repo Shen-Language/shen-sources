@@ -119,7 +119,7 @@
 
 (define rule->clause
     [S P [As R]] -> (let Constraints (extract-vars [S P [As R]])
-                         HypVs (nvars (+ 1 (length As)))
+                         HypVs (append (nvars (length As)) [(protect Delta)])
                          Active (extract-vars R)
                          Head (compile-consequent R HypVs)
                          Goals (goals Constraints As S P HypVs Active)

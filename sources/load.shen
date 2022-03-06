@@ -19,7 +19,7 @@
 
 (define check-eval-and-print
   X -> (let Table (mapcan (/. Y (typetable Y)) X)
-            Assume (assumetypes Table)
+            Assume (trap-error (assumetypes Table) (/. E (unwind-types E Table)))
             (trap-error (work-through X)
                         (/. E (unwind-types E Table)))))
 

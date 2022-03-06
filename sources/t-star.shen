@@ -17,7 +17,7 @@
   (- [V | Vs]) A* Out <-- (insert-prolog-variables Vs (subst X (0 V) (0 A*)) Out);)
 
 (defprolog toplevel-forms
-  (- [define F | X]) A  <-- !  (signal-def (value *spy*) F) (t* [define F | X] A);
+  (- [define F | X]) A  <-- (when (type-theory-enabled?)) ! (signal-def (value *spy*) F) (t* [define F | X] A);
   X A                   <-- (system-S [X (intern ":") A] []);)
 
 (defprolog signal-def
@@ -210,8 +210,8 @@
   [[V | Fresh] | Assoc] X -> (freshen-type Assoc (subst Fresh V X)))
 
 (defcc <rules*>
-  <rule*> <rules*> := [(linearise <rule*>) | <rules*>];
-  <rule*> := [(linearise <rule*>)];)
+  <rule*> <rules*> := [<rule*> | <rules*>];
+  <rule*> := [<rule*>];)
 
 (defcc <rule*>
   <patterns> -> Action where Guard := (@p <patterns> [where Guard Action]);
@@ -247,7 +247,22 @@
 
 (defprolog t*-rule-h
   (- []) R (- [--> A]) <-- ! (t*-correct R A []);
-  Ps R A 	             <-- (t*-integrity Ps A Hyps B) ! (t*-correct R B Hyps);)
+  Ps R A 	             <-- (p-hyps (freshterms (0 Ps)) Hyps)
+                           (t*-integrity Ps A Hyps B)
+                           !
+                           (t*-correct R B Hyps);)
+
+(define freshterms
+  [] -> []
+  [[X | Y] | Z] -> (freshterms (append [X | Y] Z))
+  [X | Y] -> (adjoin X (freshterms Y))  where (freshterm? X)
+  [_ | Y] -> (freshterms Y))
+
+(defprolog p-hyps
+  (- []) [] <--;
+  (- [P | Ps]) [[Q Colon A] | Hyps] <-- (bind Q P)
+                                        (bind Colon (intern ":"))
+                                        (p-hyps Ps Hyps);)
 
 (defprolog t*-correct
   (- [where G R]) A Hyps <-- !
@@ -258,24 +273,11 @@
   R A Hyps               <-- (system-S-h (curry (0 R)) A Hyps);)
 
 (defprolog t*-integrity
-  (- []) B [] B                             <--;
-  (- [P | Ps]) (- [A --> B]) [Hyp | Hyps] C <--  (bind Hyp [P (intern ":") A])
-                                                 (p-hyps P PHyps)
-                                                 !
-                                                 (system-S-h P A PHyps)
-                                                 !
-                                                 (t*-integrity Ps B Hyps C);)
-
-(defprolog p-hyps
-  P PHyps  <-- (when (freshterm? P)) ! (bind PHyps [[P (intern ":") A]]);
-  (- [X | Y]) PHyps  <-- ! (p-hyps X XHyps)
-                           (p-hyps Y YHyps)
-                           (join XHyps YHyps PHyps);
-   _ PHyps <-- (bind PHyps []);)
+  (- []) B _ B                      <--;
+  (- [P | Ps]) (- [A --> B]) Hyps C <--  (system-S-h P A Hyps)
+                                         (t*-integrity Ps B Hyps C);)
 
 (define freshterm?
   X -> (and (absvector? X) (not (string? X)) (= (<-address X 0) print-freshterm)))
 
-(defprolog join
-  (- []) X X* <-- (bind X* X);
-  (- [X | Y]) W [X* | Z] <-- (bind X* X) (join Y W Z);))
+)

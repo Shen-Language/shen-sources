@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [u! consp t car cdr t consp stringp numberp null equal eq quote funcall eql]
+(package cl [u! member consp t car cdr t consp stringp numberp null equal eq quote funcall eql]
 
 (define kl-to-lisp
   KL -> (kl-to-lisp-h [] KL))
@@ -35,6 +35,7 @@
   X -> X)
 
 (define optimise-application
+   [protect X]        -> (optimise-application X)
    [hd X]             -> [(u! car) (optimise-application X)]
    [tl X]             -> [(u! cdr) (optimise-application X)]
    [cons X Y]         -> [(u! cons) (optimise-application X) (optimise-application Y)]
