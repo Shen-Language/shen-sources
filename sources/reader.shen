@@ -530,7 +530,7 @@
                                (variable? F)                      (simple-curry [F | X])
                                (application? F)                   (simple-curry [F | X])
                                (partial-application*? F ArityF N) (lambda-function [F | X] (- ArityF N))
-                               (overapplication? F ArityF N)      (simple-curry [F | X])
+                               (overapplication? F ArityF N)      (simple-curry [[fn F] | X])
                                true                               [F | X])))
 
 (define zero-place?
