@@ -19,7 +19,7 @@
   E -> (do (pr (error-to-string E) (stoutput)) (nl 0)))
 
 (define credits
- -> (do (output "~%Shen, www.shenlanguage.org, copyright (C) 2010-2021, Mark Tarver~%")
+ -> (do (output "~%Shen, www.shenlanguage.org, copyright (C) 2010-2022, Mark Tarver~%")
         (output "version: S~A, language: ~A, platform: ~A ~A~%"
            (value *version*) (value *language*) (value *implementation*) (value *release*))
         (output "port ~A, ported by ~A~%~%" (value *port*) (value *porters*))))
