@@ -159,10 +159,16 @@
 (define continue
   H B Bindings Lock Key Continuation
   -> (let HVs (extract-vars H)
-          BVs (extract-vars B)
+          BVs (extract-free-vars B)
           Free (difference BVs HVs)
           ContinuationCode [do [incinfs] (compile-body B Bindings Lock Key Continuation)]
           (stpart Free ContinuationCode Bindings)))
+
+(define extract-free-vars
+  [lambda X Y] -> (remove X (extract-free-vars Y))
+  [X | Y] -> (union (extract-free-vars X) (extract-free-vars Y))
+  X -> [X]   where (variable? X)
+  _ -> [])
 
 (define compile-body
   [] _ _ _ Continuation -> [thaw Continuation]
@@ -202,15 +208,16 @@
 
 (define function-calls
   [cons X Y] Bindings -> [cons (function-calls X Bindings) (function-calls Y Bindings)]
-  [F | X] Bindings -> (deref-terms [F | X] Bindings)
+  [F | X] Bindings -> (deref-terms [F | X] Bindings [])
   X _ -> X)
 
 (define deref-terms
-  [0 X] _ ->  (if (variable? X) X (error "attempt to optimise a non-variable ~S~%" X))
-  [1 X] Bindings -> (if (variable? X) [lazyderef X Bindings] (error "attempt to optimise a non-variable ~S~%" X))
-  X Bindings -> [deref X Bindings]           where (variable? X)
-  [X | Y] Bindings -> (map (/. Z (deref-terms Z Bindings)) [X | Y])
-  X _ -> X)
+  [0 X] _ _ ->  (if (variable? X) X (error "attempt to optimise a non-variable ~S~%" X))
+  [1 X] Bindings LBound -> (if (variable? X) [lazyderef X Bindings] (error "attempt to optimise a non-variable ~S~%" X))
+  X Bindings LBound -> [deref X Bindings]           where (and (not (element? X LBound)) (variable? X))
+  [lambda X Y] Bindings LBound -> [lambda X (deref-terms Y Bindings [X | LBound])]
+  [X | Y] Bindings LBound -> (map (/. Z (deref-terms Z Bindings LBound)) [X | Y])
+  X _ _ -> X)
 
 (define compile-head
    _ [] [] Bindings Continuation                 -> Continuation
