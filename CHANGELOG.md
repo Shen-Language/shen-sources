@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [32.3] - 2022-07-31
+
 ### Fixed
 
 - Fixed bug in the compilation of mode forms in sequent calculus.
@@ -415,7 +417,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...HEAD
+[32.3]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-32.3
 [32.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32...shen-32.1
 [32.0]: https://github.com/Shen-Language/shen-sources/compare/shen-22.4...shen-32
 [22.4]: https://github.com/Shen-Language/shen-sources/compare/shen-22.3...shen-22.4
