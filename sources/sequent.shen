@@ -135,12 +135,19 @@
    N -> [(gensym (protect V)) | (nvars (- N 1))])
 
 (define optimise-typing
-  [X C A] -> [- (cons-form-with-modes [X C [+ A]])]  where (= C (intern ":"))
-  X -> [+ (cons-form-with-modes X)])
+  [X C A] -> (let Expand (expand-mode-forms [- [X C [+ A]]])
+                  (cons-form-with-modes Expand))
+                          where (= C (intern ":"))
+  X -> (let Expand (expand-mode-forms [+ X])
+            (cons-form-with-modes Expand)))
+
+(define expand-mode-forms
+  [+ X] -> [mode (expand-mode-forms X) +]
+  [- X] -> [mode (expand-mode-forms X) -]
+  [X | Y] -> (map (/. Z (expand-mode-forms Z)) [X | Y])
+  X -> X)
 
 (define cons-form-with-modes
-  [- X] -> [- (cons-form-with-modes X)]
-  [+ X] -> [+ (cons-form-with-modes X)]
   [mode X Mode] -> [Mode (cons-form-with-modes X)]
   [bar! Y] -> Y
   [X | Y] -> [cons (cons-form-with-modes X) (cons-form-with-modes Y)]
