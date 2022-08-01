@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed bug in the compilation of mode forms in sequent calculus.
+- Fixed compilation of lambda forms in Shen prolog code.
+
 ## [32.1] - 2022-05-21
 
 ### Fixed
