@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [33.1] - 2022-09-10
+
+## Added
+
+- `foreign` form for marking native platform functions.
+
+## Fixed
+
+- Support for % and ! in the REPL in platforms that don't normalize line-endings.
+
 ## [32.3] - 2022-07-31
 
 ### Fixed
@@ -417,7 +427,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1...HEAD
+[33.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...shen-33.1
 [32.3]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-32.3
 [32.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32...shen-32.1
 [32.0]: https://github.com/Shen-Language/shen-sources/compare/shen-22.4...shen-32
