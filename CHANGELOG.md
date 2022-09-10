@@ -8,11 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [33.1] - 2022-09-10
 
-## Added
+### Added
 
 - `foreign` form for marking native platform functions.
 
-## Fixed
+### Fixed
 
 - Support for % and ! in the REPL in platforms that don't normalize line-endings.
 
