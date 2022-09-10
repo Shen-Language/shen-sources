@@ -449,11 +449,6 @@
   null -> true
   Package -> (trap-error (do (external Package) true) (/. E false)))
 
-(define fn
-  F -> (trap-error
-        (get F lambda-form)
-        (/. E (error "~A has no lambda expansion~%" F))))
-
 (define fail
   -> fail!)
 

@@ -568,6 +568,11 @@
 (define function
   F -> (fn F))
 
+(define fn
+  F -> (trap-error
+        (get F lambda-form)
+        (/. E (error  "fn: ~A is undefined~%" F))))
+
 (define fn-call?
    [fn F] -> true
    [function F] -> true
