@@ -54,24 +54,28 @@
   _ _ X -> X)
 
 (define update-history
-  -> (set *history* [(it) | (value *history*)]))
+  -> (set *history* [(trim-it (it)) | (value *history*)]))
+
+(define trim-it
+  (@s S Ss) -> (trim-it Ss)   where (whitespace? (string->n S))
+  Ss -> Ss)
 
 (define evaluate-lineread
-  [X] ["!!" S | History] TC -> (let Y (read-from-string S)
+  [_] ["!!" S | History] TC -> (let Y (read-from-string S)
                                     NewHistory (set *history* [S S | History])
                                     Print (output "~A~%" S)
                                     (evaluate-lineread Y NewHistory TC))
-  [X] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
+  [_] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Peek (peek-history Read S History)
                                         NewHistory (set *history* History)
                                         (abort))
-  [X] [(@s "!" S) | History] TC -> (let Read (hd (read-from-string S))
+  [_] [(@s "!" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Match (use-history Read S History)
                                         Print (output "~A~%" Match)
                                         Y (read-from-string Match)
                                         NewHistory (set *history* [Match | History])
                                         (evaluate-lineread Y NewHistory TC))
-  [X] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
+  [_] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Peek (peek-history Read S History)
                                         NewHistory (set *history* History)
                                         (abort))
