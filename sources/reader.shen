@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [shen]
+(package shen [shen foreign]
 
 (define read-file
   File -> (let Bytelist (read-file-as-bytelist File)
@@ -523,7 +523,8 @@
                         N (length X)
                         (cases (element? [F | X] Types)           [F | X]
                                (shen-call? F)                     [F | X]
-                               (platform-native-call? F)          [F | X]
+                               (foreign? [F | X])                 (unpack-foreign [F | X])
+                               (platform-native-call? F)          [F | X] \\ TODO: remove in next release, with `foreign` this is not required anymore
                                (fn-call? [F | X])                 (fn-call [F | X])
                                (zero-place? [F | X])              [F | X]
                                (undefined-f? F ArityF)            (simple-curry [[fn F] | X])
@@ -533,6 +534,13 @@
                                (overapplication? F ArityF N)      (simple-curry [[fn F] | X])
                                true                               [F | X])))
 
+(define unpack-foreign
+  [[foreign F] | X] -> [F | X])
+
+(define foreign?
+  [[foreign F] | X] -> true
+  _ -> false)
+
 (define zero-place?
   [F] -> true
   _ -> false)
@@ -540,6 +548,7 @@
 (define shen-call?
    F -> (and (symbol? F) (internal-to-shen? (str F))))
 
+\\ TODO: remove in next release, not needed anymore with `foreign`
 \\ Override in platform
 (define platform-native-call?
   F -> (let Check (value *platform-native-call-check*)
@@ -551,6 +560,7 @@
 
 (define application?
   [protect _] -> false
+  [foreign _] -> false
   F -> (cons? F))
 
 (define undefined-f?

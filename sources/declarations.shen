@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [shen update-lambda-table inline]
+(package shen [shen update-lambda-table inline foreign]
 
 (set *history* [])
 (set *tc* false)
@@ -88,7 +88,7 @@
   [abort 0 absvector? 1 absvector 1 address-> 3 adjoin 2 and 2 append 2 arity 1
   assoc 2 atom? 1 boolean? 1 bootstrap 1 bound? 1 bind 6 call 5 cd 1 compile 2 concat 2 cons 2 cons? 1 cn 2 close 1 declare 2 destroy 1 difference 2
   do 2 element? 2 empty? 1 enable-type-theory 1 external 1 error-to-string 1 interror 2 eval 1
-  eval-kl 1 explode 1 external 1 factorise 1 fail-if 2 fail 0 fix 2 findall 7 fork 5 freeze 1 fresh 0
+  eval-kl 1 explode 1 external 1 factorise 1 fail-if 2 fail 0 fix 2 findall 7 foreign 1 fork 5 freeze 1 fresh 0
   fst 1 fn 1 function 1 gensym 1 get 3 get-time 1 address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2 hash 2 hd 1
   hdv 1 hdstr 1 head 1 if 3 include 1 in-package 1 integer? 1 internal 1 intern 1 inferences 0
   input 1 input+ 2 implementation 0 include-all-but 1 intersection 2 internal 1 it 0 is 6 is! 6
@@ -127,7 +127,7 @@
      optimise open occurrences occurs-check n->string number? number null nth not nl mode macroexpand maxinferences
      mapcan map make-string load loaded list lineread limit length let lazy lambda language is intersection inferences
      intern integer? input input+ inline include include-all-but it is is! in in-package internal implementation if
-      head hd hdv hdstr hash get get-time gensym fn function fst freeze fresh fork fix file fail fail-if factorise
+      head hd hdv hdstr hash get get-time gensym fn function fst freeze fresh fork foreign fix file fail fail-if factorise
       findall false enable-type-theory explode external exception eval-kl eval error-to-string error empty? element?
       do difference destroy defun define defmacro defcc defprolog declare datatype cn cons? cons cond concat
       compile cd cases call close bind bound? boolean? boolean bootstrap (intern "bar!")
