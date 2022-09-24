@@ -524,7 +524,6 @@
                         (cases (element? [F | X] Types)           [F | X]
                                (shen-call? F)                     [F | X]
                                (foreign? [F | X])                 (unpack-foreign [F | X])
-                               (platform-native-call? F)          [F | X] \\ TODO: remove in next release, with `foreign` this is not required anymore
                                (fn-call? [F | X])                 (fn-call [F | X])
                                (zero-place? [F | X])              [F | X]
                                (undefined-f? F ArityF)            (simple-curry [[fn F] | X])
@@ -547,12 +546,6 @@
 
 (define shen-call?
    F -> (and (symbol? F) (internal-to-shen? (str F))))
-
-\\ TODO: remove in next release, not needed anymore with `foreign`
-\\ Override in platform
-(define platform-native-call?
-  F -> (let Check (value *platform-native-call-check*)
-         (Check F)))
 
 (define internal-to-shen?
   (@s "shen." _) -> true

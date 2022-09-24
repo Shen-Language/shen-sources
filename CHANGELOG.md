@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Removed
+
+- `shen.*platform-native-call-check*` variable for customizing the check for native calls got removed (not needed anymore with the addition of `foreign`).
+
 ## [33.1] - 2022-09-10
 
 ### Added

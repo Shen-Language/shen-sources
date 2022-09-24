@@ -53,10 +53,6 @@
 (set *residue* [])
 (set *demodulation-function* (/. X X))
 
-(if (not (bound? *platform-native-call-check*))
-    (set *platform-native-call-check* (/. X false))
-    skip)
-
 (if (not (bound? *home-directory*))
     (set *home-directory* "")
     skip)
