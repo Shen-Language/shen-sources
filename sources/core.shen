@@ -305,9 +305,12 @@
   Free Code -> (let F (gensym else)
                     Used (remove-if-unused Free Code)
                     KL [defun F Used Code]
-                    EvalKL (eval-kl KL)
+                    EvalKL (eval-factorised-branch KL)
                     Record (record-kl F KL)
                     [F | Used]))
+
+(define eval-factorised-branch
+  KL -> (eval-kl KL))
 
 (define remove-if-unused
   [] _ -> []

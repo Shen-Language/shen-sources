@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- When factorising `defun` definitions, abstract evaluation of branch functions in a `shen.eval-factorised-branch` function that ports can override to customize behavior.
+
 ### Removed
 
 - `shen.*platform-native-call-check*` variable for customizing the check for native calls got removed (not needed anymore with the addition of `foreign`).
