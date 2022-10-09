@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [33.1.1] - 2022-10-09
+
 ### Changed
 
 - When factorising `defun` definitions, abstract evaluation of branch functions in a `shen.eval-factorised-branch` function that ports can override to customize behavior.
@@ -435,7 +437,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.1...HEAD
+[33.1.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-33.1.1
 [33.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...shen-33.1
 [32.3]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-32.3
 [32.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32...shen-32.1
