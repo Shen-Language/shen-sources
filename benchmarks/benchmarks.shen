@@ -13,12 +13,12 @@
 
 (define run-benchmark
   Report [Tag Description F RunsPower]
-  -> (let _ (Report begin [Tag Description RunsPower])
+  -> (let X (Report begin [Tag Description RunsPower])
           Runs (power 10 RunsPower)
           Start (get-time run)
           Result (F Runs)
           End (get-time run)
-          _ (Report finish [Tag Description RunsPower Start End])
+          X (Report finish [Tag Description RunsPower Start End])
        done))
 
 (define stoutput-report
@@ -39,8 +39,10 @@
                  Results (map (run-benchmark Report) Benchmarks)
                  Cleanup (Report cleanup Benchmarks)
               done))
+
 \\(set _scm.*factorize-patterns* false)
 (set *hush* true)
+(trap-error (factorise +) (/. E cannot-factorise))
 \\(set shen-cl.*factorise-patterns* false)
 \\(load "benchmarks/data.shen")
 \\(load "benchmarks/control-flow.shen")
