@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [33.1.2] - 2022-10-09
+
+### Changed
+
+- Made `pvar?`, `tuple?` and `vector?` more optimizable by backends (like in the pre-S-kernel versions).
+
 ## [33.1.1] - 2022-10-09
 
 ### Changed
@@ -437,7 +443,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.2...HEAD
+[33.1.2]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.1...shen-33.1.2
 [33.1.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-33.1.1
 [33.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...shen-33.1
 [32.3]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-32.3
