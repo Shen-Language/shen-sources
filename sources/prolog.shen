@@ -316,7 +316,8 @@
   X -> (= X _))
 
 (define pvar?
-  X -> (trap-error (and (absvector? X) (= (<-address X 0) pvar)) (/. E false)))
+  X -> (and (absvector? X)
+            (= (trap-error (<-address X 0) (/. E not-pvar)) pvar)))
 
 (define lazyderef
   X Bindings -> (if (pvar? X)

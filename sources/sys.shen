@@ -49,7 +49,9 @@
   Vector Counter N X -> (fillvector (address-> Vector Counter X) (+ 1 Counter) N X))
 
 (define vector?
-  X -> (and (absvector? X) (trap-error (>= (<-address X 0) 0) (/. E false))))
+  X -> (and (absvector? X)
+            (let X (trap-error (<-address X 0) (/. E -1))
+              (and (number? X) (>= X 0)))))
 
 (define vector->
   Vector N X -> (if (= N 0)
@@ -117,7 +119,8 @@
   X -> (<-address X 2))
 
 (define tuple?
-  X -> (trap-error (and (absvector? X) (= tuple (<-address X 0))) (/. E false)))
+  X -> (and (absvector? X)
+            (= tuple (trap-error (<-address X 0) (/. E not-tuple)))))
 
 (define append
   [] X -> X
