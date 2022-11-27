@@ -444,7 +444,16 @@
   [package P External | S-exprs] -> (let External! (eval External)
                                          Package (package-symbols (str P) External! S-exprs)
                                          RecordExternal (record-external P External!)
+                                         RecordInternal (record-internal P External! S-exprs)
                                       Package))
+
+(define record-internal
+  P External! S-exprs -> (put P internal-symbols (internal-symbols (str P) External! S-exprs)))
+
+(define internal-symbols
+  P External [X | Y] -> (union (internal-symbols P External X) (internal-symbols P External Y))
+  P External X       -> [(intern-in-package P X)]  where (internal? X P External)
+  _ _ _ -> [])
 
 (define record-external
   P E* -> (let External (trap-error (get P external-symbols) (/. E []))

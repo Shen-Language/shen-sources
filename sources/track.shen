@@ -89,7 +89,8 @@
 
 (define untrack
   F -> (do (set *tracking* (remove F (value *tracking*)))
-           (trap-error (eval (ps F)) (/. E F))))
+           (trap-error (eval (ps F)) (/. E F))
+           F))
 
 (define remove
   X Y -> (remove-h X Y []))
