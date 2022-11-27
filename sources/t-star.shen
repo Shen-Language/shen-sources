@@ -250,7 +250,13 @@
   Ps R A 	             <-- (p-hyps (freshterms (0 Ps)) Hyps)
                            (t*-integrity Ps A Hyps B)
                            !
-                           (t*-correct R B Hyps);)
+                           (myassume Ps A Assumptions)
+                           (t*-correct R B Assumptions);)
+
+(defprolog myassume
+  (- []) _ [] <--;
+  (- [P | Ps]) (- [A --> B]) [[P Colon A] | Assumptions] <-- (bind Colon (intern ":"))
+                                                             (myassume Ps B Assumptions);)
 
 (define freshterms
   [] -> []
