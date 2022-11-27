@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [34.0] - 2022-11-27
+
+## Added
+
+- `assert` and `retract`: https://shenlanguage.org/TBoS/assert&retract.html
+
+## Fixed
+
+- Bug in compilation of shadowed pattern match variables.
+
 ## [33.1.2] - 2022-10-09
 
 ### Changed
@@ -443,7 +453,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.0...HEAD
+[34.0]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.2...shen-34.0
 [33.1.2]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.1...shen-33.1.2
 [33.1.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.1...shen-33.1.1
 [33.1]: https://github.com/Shen-Language/shen-sources/compare/shen-32.3...shen-33.1

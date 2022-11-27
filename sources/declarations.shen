@@ -48,7 +48,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "33.1.2")
+(set *version* "34.0")
 (set *step* false)
 (set *it* "")
 (set *residue* [])
