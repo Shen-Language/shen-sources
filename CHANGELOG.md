@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [34.2] - 2022-12-10
+
+### Added
+
+- Support for polymorphic types in YACC functions.
+
 ## [34.1] - 2022-11-27
 
 ### Fixed
@@ -459,7 +465,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.2...HEAD
+[34.2]: https://github.com/Shen-Language/shen-sources/compare/shen-34.1...shen-34.2
 [34.1]: https://github.com/Shen-Language/shen-sources/compare/shen-34.0...shen-34.1
 [34.0]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.2...shen-34.0
 [33.1.2]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.1...shen-33.1.2
