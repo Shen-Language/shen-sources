@@ -222,8 +222,14 @@
                                 [comb [in-> Stream] Annotate]))
 
 (define use-type-info
- [{ [str [list A] C] --> [str [list A] B] }] Semantics -> [type Semantics B]
- _ Semantics -> Semantics)
+  [{ [str [list A] C] --> [str [list A] B] }] Semantics -> [type Semantics B]
+      where (monomorphic? B)
+  _ Semantics -> Semantics)
+
+(define monomorphic?
+  X -> false  where (variable? X)
+  [X | Y] -> (and (monomorphic? X) (monomorphic? Y))
+  _ -> true)
 
 (define process-yacc-semantics
   [X | Y] -> (map (/. Z (process-yacc-semantics Z)) [X | Y])
