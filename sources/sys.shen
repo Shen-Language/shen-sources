@@ -466,12 +466,14 @@
   _ -> (error "tc expects a + or -"))
 
 (define destroy
-  F -> (do (unassoc F (value *sigf*)) F))
+  F -> (do (set *sigf* (unassoc F (value *sigf*)))
+           F))
 
 (define unassoc
-  F SigF -> (let Assoc (assoc F SigF)
-                 Remove (remove Assoc SigF)
-                 (set *sigf* Remove)))
+  _ []            -> []
+  X [[X | _] | Y] -> Y
+  X [Y | Z]       -> [Y | (unassoc X Z)]
+  _ _             -> (simple-error "implementation error in shen.unassoc"))
 
 (define in-package
   Package -> (if (package? Package)

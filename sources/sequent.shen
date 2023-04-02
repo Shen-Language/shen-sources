@@ -264,12 +264,6 @@
   [D | Ds] Datatypes -> (remove-datatypes Ds (unassoc D Datatypes))
   _ _ -> (simple-error "implementation error in shen.remove-datatypes"))
 
-(define unassoc
-  _ []            -> []
-  X [[X | _] | Y] -> Y
-  X [Y | Z]       -> [Y | (unassoc X Z)]
-  _ _             -> (simple-error "implementation error in shen.unassoc"))
-
 (define show-datatypes
   Datatypes -> (map (/. X (hd X)) Datatypes))
 
