@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [34.3] - 2023-04-02
+
+### Fixed
+
+- Bug in `destroy` function caused by duplicate `unassoc` definition.
+
 ## [34.2] - 2022-12-10
 
 ### Added
@@ -465,7 +471,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.3...HEAD
+[34.3]: https://github.com/Shen-Language/shen-sources/compare/shen-34.2...shen-34.3
 [34.2]: https://github.com/Shen-Language/shen-sources/compare/shen-34.1...shen-34.2
 [34.1]: https://github.com/Shen-Language/shen-sources/compare/shen-34.0...shen-34.1
 [34.0]: https://github.com/Shen-Language/shen-sources/compare/shen-33.1.2...shen-34.0
