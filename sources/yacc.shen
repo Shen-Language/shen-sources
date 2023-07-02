@@ -35,7 +35,7 @@
 
 (defcc <yaccsig>
   LC [list A] ==> B RC := (let C (protect (gensym C))
-                            [{ [str [list A] (protect C)] --> [str [list A] B] }])
+                            [{ [str [list A] C] --> [str [list A] B] }])
                             where (and (= { LC) (= } RC));
   <e> := [];)
 
@@ -232,6 +232,7 @@
   _ -> true)
 
 (define process-yacc-semantics
+  [protect NonTerminal] -> NonTerminal    where (non-terminal? NonTerminal)
   [X | Y] -> (map (/. Z (process-yacc-semantics Z)) [X | Y])
   NonTerminal -> [<-out (concat (protect Parse) NonTerminal)]  where (non-terminal? NonTerminal)
   X -> X)

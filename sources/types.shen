@@ -51,7 +51,7 @@
 (declare cn [string --> [string --> string]])
 (declare compile [[[str [list A] B] --> [str [list A] C]] --> [[list A] --> C]])
 (declare cons? [A --> boolean])
-(declare destroy [[A --> B] --> symbol])
+(declare destroy [symbol --> symbol])
 (declare difference [[list A] --> [[list A] --> [list A]]])
 (declare do [A --> [B --> B]])
 (declare dynamic [symbol --> [list symbol]])

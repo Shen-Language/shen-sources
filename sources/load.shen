@@ -39,7 +39,7 @@
   _ -> (simple-error "implementation error in shen.assumetype"))
 
 (define unwind-types
-  E [[F | _] | Table] -> (do (destroy F) (unwind-types E Table))
+  E [F _ | Table] -> (do (destroy F) (unwind-types E Table))
   E _ -> (simple-error (error-to-string E)))
 
 (define work-through
@@ -55,7 +55,9 @@
 
 (define pretty-type
   [[str [list A] B] --> [str [list A] C]] -> [[list A] ==> C]
-  Type -> Type)
+  [X | Y] -> (map (/. Z (pretty-type Z)) [X | Y])
+  A -> A)
+
 
 (define type-error
   -> (error "type error~%"))

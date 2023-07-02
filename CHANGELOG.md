@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [34.4] - 2023-07-02
+
+### Fixed
+
+- Type of `==>`.
+- Type of `destroy`.
+- `(protect X)` now works inside `defcc` forms.
+
+### Removed
+
+- Old unused prolog code.
+
 ## [34.3] - 2023-04-02
 
 ### Fixed
@@ -471,7 +483,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.4...HEAD
+[34.4]: https://github.com/Shen-Language/shen-sources/compare/shen-34.3...shen-34.4
 [34.3]: https://github.com/Shen-Language/shen-sources/compare/shen-34.2...shen-34.3
 [34.2]: https://github.com/Shen-Language/shen-sources/compare/shen-34.1...shen-34.2
 [34.1]: https://github.com/Shen-Language/shen-sources/compare/shen-34.0...shen-34.1

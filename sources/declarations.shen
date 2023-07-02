@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [shen update-lambda-table inline foreign asserta assertz dynamic retract]
+(package shen [shen update-lambda-table inline foreign]
 
 (set *history* [])
 (set *tc* false)
@@ -37,7 +37,6 @@
 (set *shen-type-theory-enabled?* true)
 (set *package* null)
 (set *synonyms* [])
-(set *dynamic* [])
 (set *system* [])
 (set *sigf* [])
 (set *occurs* true)
@@ -48,7 +47,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "34.3")
+(set *version* "34.4")
 (set *step* false)
 (set *it* "")
 (set *residue* [])
@@ -83,9 +82,9 @@
 
 (initialise-arity-table
   [abort 0 absvector? 1 absvector 1 address-> 3 adjoin 2 and 2 append 2 arity 1
-  asserta 5 assertz 5 assoc 2 atom? 1 boolean? 1 bootstrap 1 bound? 1 bind 6
+  assoc 2 atom? 1 boolean? 1 bootstrap 1 bound? 1 bind 6
   call 5 cd 1 compile 2 concat 2 cons 2 cons? 1 cn 2 close 1 declare 2 destroy 1
-  difference 2 do 2 dynamic 1 element? 2 empty? 1 enable-type-theory 1 external 1
+  difference 2 do 2 element? 2 empty? 1 enable-type-theory 1 external 1
   error-to-string 1 interror 2 eval 1 eval-kl 1 explode 1 external 1 factorise 1
   fail-if 2 fail 0 fix 2 findall 7 foreign 1 fork 5 freeze 1 fresh 0
   fst 1 fn 1 function 1 gensym 1 get 3 get-time 1 address-> 3 <-address 2 <-vector 2
@@ -99,7 +98,7 @@
    prolog-memory 1 profile-results 1 pr 2 ps 1 preclude 1 preclude-all-but 1 protect 1
    put 4 read-file-as-string 1 read-file-as-bytelist 1 read-file 1 read 1 read-byte 1
    read-from-string 1 read-from-string-unprocessed 1 read-unit-string 1 receive 1 release 0 remove 2
-   retract 5 reverse 1 set 2 simple-error 1 snd 1 specialise 2 spy 1 step 1 stinput 0 stoutput 0
+   reverse 1 set 2 simple-error 1 snd 1 specialise 2 spy 1 step 1 stinput 0 stoutput 0
    str 1 string->n 1 string->symbol 1 string? 1 subst 3
    sum 1 symbol? 1 systemf 1 tail 1 tl 1 tc 1 tc? 0 thaw 1 tlstr 1 track 1 trap-error 2
    tuple? 1 type 2 return 5 undefmacro 1 unput 3 unprofile 1 union 2 untrack 1 undefmacro 1

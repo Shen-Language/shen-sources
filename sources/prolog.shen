@@ -1,11 +1,8 @@
-\\           Copyright (c) 2010-2019, Mark Tarver
+\\           Copyright (c) 2010-2023, Mark Tarver
 \\                 All rights reserved.
 
 
-(package shen [asserta assertz retract dynamic]
-
-(define dynamic
-  Predicate -> (set *dynamic* [Predicate | (value *dynamic*)]))
+(package shen []
 
 (define compile-prolog
   F Clauses -> (compile (/. X (<defprolog> X)) [F | Clauses]))
@@ -13,81 +10,7 @@
 (defcc <defprolog>
   F <clauses> := (let Arity      (prolog-arity-check F <clauses>)
                       LeftLinear (map (/. X (linearise-clause X)) <clauses>)
-                      Parameters (parameters Arity)
-                      Insert     (if (dynamic? F)
-                                     (append (clauseA F Parameters) LeftLinear (clauseZ F Parameters))
-                                     LeftLinear)
-                      (horn-clause-procedure F Insert));)
-
-(define dynamic?
-  F -> (element? F (value *dynamic*)))
-
-(define clauseA
-  F Head -> (let FA (concat F (protect A))
-                 Body  [[when [defined? FA]] [FA | Head]]
-                 Clause [Head Body]
-                 [Clause]))
-
-(define clauseZ
-  F Head -> (let FZ (concat F (protect Z))
-                 Body  [[when [defined? FZ]] [FZ | Head]]
-                 Clause [Head Body]
-              [Clause]))
-
-(define defined?
-  F -> (not (= (arity F) -1)))
-
-(defprolog asserta
-  P <-- (execute (asserta-h P P));)
-
-(define asserta-h
-  [[F | X] <-- | Body] P -> (dynamically-assert [[F | X] <-- | Body] P)
-      where (not (defined? F))
-  P [[F | X] <-- | Body] -> (let FA (concat F (protect A))
-                              (if (defined? F)
-                                  (asserta-h P [[FA | X] <-- | Body])
-                                  (dynamically-assert P [[F | X] <-- | Body])))
-  P _ -> (error "~%non-clause ~R given to asserta~%" P))
-
-(define dynamically-assert
-  P [[F | X] <-- | Body] -> (let MakeFDynamic    (dynamic F)
-                                 UnretractedF    (flag-unretracted F)
-                                 AssociateClause (put P procedure-name F)
-                              (eval [defprolog F |
-                                     (append X [<--] [[when [unretracted? F]]] Body)])))
-
-(defprolog assertz
-  P <-- (execute (assertz-h P P));)
-
-(defprolog execute
-  _ <--;)
-
-(define assertz-h
-  [[F | X] <-- | Body] P -> (dynamically-assert [[F | X] <-- | Body] P)
-       where (not (defined? F))
-  P [[F | X] <-- | Body] -> (let FZ (concat F (protect Z))
-                              (if (defined? F)
-                                  (assertz-h P [[FZ | X] <-- | Body])
-                                  (dynamically-assert P [[F | X] <-- | Body])))
-  P _ -> (error "~%non-clause ~R given to assertz~%" P))
-
-(define flag-unretracted
-  F -> (put F retracted false))
-
-(define flag-retracted
-  F -> (put F retracted true))
-
-(define unretracted?
-  F -> (trap-error (not (get F retracted)) (/. E true)))
-
-(defprolog retract
-  P <-- (execute (retract-h P));)
-
-(define retract-h
-  Clause -> (let F (trap-error (get Clause procedure-name) (/. E skip))
-              (if (= F skip)
-                  skip
-                  (flag-retracted F))))
+                   (horn-clause-procedure F LeftLinear));)
 
 
 (define prolog-arity-check
