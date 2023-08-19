@@ -47,7 +47,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "34.4")
+(set *version* "34.5")
 (set *step* false)
 (set *it* "")
 (set *residue* [])
@@ -129,7 +129,7 @@
      intern integer? input input+ inline include include-all-but it is is! in in-package internal implementation if
       head hd hdv hdstr hash get get-time gensym fn function fst freeze fresh fork foreign fix file fail fail-if factorise
       findall false enable-type-theory explode external exception eval-kl eval error-to-string error empty? element?
-      dynamic do difference destroy defun define defmacro defcc defprolog declare datatype cn cons? cons cond concat
+      do difference destroy defun define defmacro defcc defprolog declare datatype cn cons? cons cond concat
       compile cd cases call close bind bound? boolean? boolean bootstrap (intern "bar!")
       atom? asserta assertz assoc arity append and adjoin <-address address-> absvector? absvector abort])
 

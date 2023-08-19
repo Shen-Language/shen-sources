@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [34.5] - 2023-08-19
+
+### Added
+
+- `assert` and `retract` functions restored.
+
 ## [34.4] - 2023-07-02
 
 ### Fixed
@@ -483,7 +489,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.4...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.5...HEAD
+[34.4]: https://github.com/Shen-Language/shen-sources/compare/shen-34.4...shen-34.5
 [34.4]: https://github.com/Shen-Language/shen-sources/compare/shen-34.3...shen-34.4
 [34.3]: https://github.com/Shen-Language/shen-sources/compare/shen-34.2...shen-34.3
 [34.2]: https://github.com/Shen-Language/shen-sources/compare/shen-34.1...shen-34.2

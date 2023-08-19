@@ -54,7 +54,6 @@
 (declare destroy [symbol --> symbol])
 (declare difference [[list A] --> [[list A] --> [list A]]])
 (declare do [A --> [B --> B]])
-(declare dynamic [symbol --> [list symbol]])
 (declare <e> [[str [list A] B] --> [str [list A] [list C]]])
 (declare <!> [[str [list A] B] --> [str [list A] [list A]]])
 (declare <end> [[str [list A] B] --> [str [list A] B]])

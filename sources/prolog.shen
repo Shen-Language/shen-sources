@@ -4,6 +4,66 @@
 
 (package shen []
 
+(define asserta
+  Clause -> (assert* Clause top))
+
+(define assertz
+  Clause -> (assert* Clause bottom))
+
+(define assert*
+  [H <-- | B] Where -> (let F      (predicate H)
+                            X      (terms H)
+                            N      (length X)
+                            Vars   (parameters N)
+                            Arity  (arity F)
+                            Create (if (= Arity -1)
+                                       (do (eval (create-skeleton F Vars)) (put F dynamic []))
+                                       skip)
+                            Insert (insert-info F X B [H <-- | B] Where)
+                            F))
+
+(define predicate
+  [F | _] -> F
+  F -> F)
+
+(define terms
+   [_ | Terms] -> Terms
+   _ -> [])
+
+(define create-skeleton
+  F Vars -> [defprolog F | (dynamic-default F Vars)])
+
+(define dynamic-default
+  F Vars -> (append Vars [<-- [call-dynamic (cons-form Vars) [get F dynamic]] (intern ";")]))
+
+(define insert-info
+  F X B Clause Where -> (let G (gensym g)
+                             Create (eval (append [defprolog G] X [<-- | B]))
+                             Entry [(fn G) | Clause]
+                             Dynamic (get F dynamic)
+                             New (if (= Where top)
+                                     [Entry | Dynamic]
+                                     (append Dynamic [Entry]))
+                          (put F dynamic New)))
+
+(defprolog call-dynamic
+  Vars (- [[G | _] | _])  <-- (callrec G Vars);
+  Vars (- [_ | Gs]) <-- (call-dynamic Vars Gs);)
+
+(define callrec
+  G [] Bindings Lock Key Continuation -> (G Bindings Lock Key Continuation)
+  G [X | Y] Bindings Lock Key Continuation -> (callrec (G X) Y Bindings Lock Key Continuation))
+
+(define retract
+  [H <-- | B] -> (let F (predicate H)
+                      Info (get F dynamic)
+                   (put F dynamic (retract-clause [H <-- | B] Info))))
+
+(define retract-clause
+   _ [] -> []
+   Clause [[_ | Clause] | Info] -> Info
+   Clause [Info | Infos] -> [Info | (retract-clause Clause Infos)])
+
 (define compile-prolog
   F Clauses -> (compile (/. X (<defprolog> X)) [F | Clauses]))
 
