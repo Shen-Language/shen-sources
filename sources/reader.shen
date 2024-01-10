@@ -85,8 +85,8 @@
 (define read-loop
    _ 94 Bytes Terminate?      -> (error "read aborted")
   _ -1 Bytes Terminate?       -> (if (empty? Bytes)
-                                      (simple-error "error: empty stream")
-                                      (compile (/. X (<s-exprs> X)) Bytes))
+                                     (simple-error "error: empty stream")
+                                     (compile (/. X (<s-exprs> X)) Bytes))
   Stream 0 Bytes Terminate?    -> (read-loop Stream (my-read-byte Stream) Bytes Terminate?)
   Stream Byte Bytes Terminate? -> (if (Terminate? Byte)
                                       (let Parse (try-parse Bytes)
