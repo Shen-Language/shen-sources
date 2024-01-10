@@ -47,10 +47,13 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "35.0")
+(set *version* "36.0")
+(set *names* [])
 (set *step* false)
 (set *it* "")
 (set *residue* [])
+(set *prolog-memory* 1e3)
+(set *loading?* false)
 (set *demodulation-function* (/. X X))
 
 (if (not (bound? *home-directory*))
@@ -62,11 +65,7 @@
     skip)
 
 (define prolog-memory
-   N -> (let Bindings (absvector N)
-             PrintNamed (address-> Bindings 0 print-prolog-vector)
-             Ticketed (address-> Bindings 1 2)
-             Assign (set *prolog-vector* Ticketed)
-             N))
+   N -> (set *prolog-memory* N))
 
 (prolog-memory 1e4)
 (set *loading?* false)

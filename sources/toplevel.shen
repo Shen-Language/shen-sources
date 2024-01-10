@@ -6,7 +6,7 @@
 
 (define shen.repl
  -> (do (credits)
-         (loop)))
+        (loop)))
 
 (define loop
    -> (do (initialise_environment)
@@ -64,22 +64,22 @@
   [_] ["!!" S | History] TC -> (let Y (read-from-string S)
                                     NewHistory (set *history* [S S | History])
                                     Print (output "~A~%" S)
-                                    (evaluate-lineread Y NewHistory TC))
+                                 (evaluate-lineread Y NewHistory TC))
   [_] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Peek (peek-history Read S History)
                                         NewHistory (set *history* History)
-                                        (abort))
+                                     (abort))
   [_] [(@s "!" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Match (use-history Read S History)
                                         Print (output "~A~%" Match)
                                         Y (read-from-string Match)
                                         NewHistory (set *history* [Match | History])
-                                        (evaluate-lineread Y NewHistory TC))
+                                     (evaluate-lineread Y NewHistory TC))
   [_] [(@s "%" S) | History] TC -> (let Read (hd (read-from-string S))
                                         Peek (peek-history Read S History)
                                         NewHistory (set *history* History)
-                                        (abort))
-  X _ true -> (check-eval-and-print X)
+                                     (abort))
+  X _ true  -> (check-eval-and-print X)
   X _ false -> (eval-and-print X)
   _ _ _ -> (simple-error "implementation error in shen.evaluate-lineread"))
 

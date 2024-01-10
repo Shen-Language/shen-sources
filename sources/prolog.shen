@@ -39,12 +39,19 @@
 (define insert-info
   F X B Clause Where -> (let G (gensym g)
                              Create (eval (append [defprolog G] X [<-- | B]))
-                             Entry [(fn G) | Clause]
+                             Entry [(fn G) G | Clause]
                              Dynamic (get F dynamic)
                              New (if (= Where top)
                                      [Entry | Dynamic]
                                      (append Dynamic [Entry]))
                           (put F dynamic New)))
+
+(define newname
+  -> (let Names (value *names*)
+          G     (if (empty? Names)
+                    (gensym g)
+                    (do (set *names* (tl Names)) (hd Names)))
+       G))
 
 (defprolog call-dynamic
   Vars (- [[G | _] | _])  <-- (callrec G Vars);
@@ -61,7 +68,7 @@
 
 (define retract-clause
    _ [] -> []
-   Clause [[_ | Clause] | Info] -> Info
+   Clause [[_ G | Clause] | Info] -> (do (set *names* [G | (value *names*)]) Info)
    Clause [Info | Infos] -> [Info | (retract-clause Clause Infos)])
 
 (define compile-prolog

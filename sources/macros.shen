@@ -82,7 +82,7 @@
   X -> X)
 
 (define call-prolog
-  Literals -> (let Bindings [reset-prolog-vector]
+  Literals -> (let Bindings [prolog-vector]
                    Lock [@v true 0 [vector 0]]
                    Key 0
                    Continuation [freeze true]
@@ -93,15 +93,18 @@
                    K (gensym (protect K))
                    C (gensym (protect C))
                    Lambda [lambda B [lambda L [lambda K [lambda C (continue Received CLiterals B L K C)]]]]
-                   [Lambda Bindings Lock Key Continuation]))
+                [Lambda Bindings Lock Key Continuation]))
 
 (define received
   [receive X] -> [X]
   [X | Y] -> (union (received X) (received Y))
   _ -> [])
 
-(define reset-prolog-vector
-  -> (address-> (value *prolog-vector*) 1 2))
+(define prolog-vector
+  -> (let Vector (absvector (value *prolog-memory*))
+          PrintNamed (address-> Vector 0 print-prolog-vector)
+          Ticketed (address-> Vector 1 2)
+       Ticketed))
 
 (define receive
   X -> X)
