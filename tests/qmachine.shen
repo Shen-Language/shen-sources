@@ -5,16 +5,16 @@
 	[X S E] : (progression A);)
 
 (define force
-  {(progression A) --> A}
+ {(progression A) --> A}
   [X S E] -> X)
 
 (define delay
   {(progression A) --> (progression A)}
-  [X S E] -> [(S X) S E])
+    [X S E] -> [(S X) S E])
 
 (define end?
   {(progression A) --> boolean}
-  [X S E] -> (E X))
+   [X S E] -> (E X))
 
 (define push
   {A --> (progression A) --> (progression A)}
@@ -22,7 +22,7 @@
 
 (define forall
   {(progression A) --> (A --> boolean) --> boolean}
-  [X S E] P -> (if (E X) true (and (P X) (forall [(S X) S E] P))))
+   [X S E] P -> (if (E X) true (and (P X) (forall [(S X) S E] P))))
 
 (define exists
   {(progression A) --> (A --> boolean) --> boolean}
@@ -30,23 +30,23 @@
 
 (define super
   {(progression A) --> (A --> B) --> (B --> C --> C) --> C --> C}
-  [X S E] P F Y -> (if (E X) Y (F (P X) (super [(S X) S E] P F Y))))
+   [X S E] P F Y -> (if (E X) Y (F (P X) (super [(S X) S E] P F Y))))
 
 (define forall
   {(progression A) --> (A --> boolean) --> boolean}
-  Progression P -> (super Progression P (fn and) true))
+   Progression P -> (super Progression P (fn and) true))
 
 (define exists
   {(progression A) --> (A --> boolean) --> boolean}
-  Progression P -> (super Progression P (fn or) false))
+   Progression P -> (super Progression P (fn or) false))
 
 (define for*
   {(progression A) --> (A --> B) --> number}
-  Progression P -> (super Progression P (fn progn) 0))
+   Progression P -> (super Progression P (fn progn) 0))
 
 (define progn
   {A --> B --> B}
-  X Y -> Y)
+   X Y -> Y)
 
 (define filter*
   {(progression A) --> (A --> boolean) --> (list A)}
@@ -62,6 +62,6 @@
 
 (define prime-help
   {number --> number --> number --> boolean}
-  X Max Div -> false 		where (integer? (/ X Div))
-  X Max Div -> true 		where (> Div Max)
-  X Max Div -> (prime-help X Max (+ 1 Div)))
+   X Max Div -> false 		where (integer? (/ X Div))
+   X Max Div -> true 		where (> Div Max)
+   X Max Div -> (prime-help X Max (+ 1 Div)))

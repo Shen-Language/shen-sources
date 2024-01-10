@@ -44,4 +44,6 @@
   _ _ [] -> true
   Up Down [Up | _] -> false
   Up Down [Down | _] -> false
-  Up Down [_ | Ns] -> (ok_diag_N? (+ 1 Up) (- Down 1) Ns)))
+  Up Down [_ | Ns] -> (ok_diag_N? (+ 1 Up) (- Down 1) Ns))
+
+  )

@@ -1,0 +1,620 @@
+(all x
+ (
+  (x : number) =>
+  (
+   (n-queens x) :
+   (list
+    (list number)))))
+
+(all x
+ (
+  (x : number) =>
+  (
+   (n-queens x) =
+   (n-queens.n-queens-loop x
+    (n-queens.initialise x)))))
+
+(all x
+ (
+  (x : number) =>
+  (
+   (n-queens.initialise x) :
+   (list number))))
+
+(all x
+ (
+  (
+   (x : number) &
+   (0 = x)) =>
+  (
+   (n-queens.initialise x) =
+   ())))
+
+(all x
+ (
+  (
+   (x : number) &
+   (~
+    (0 = x))) =>
+  (
+   (n-queens.initialise x) =
+   (cons 1
+    (n-queens.initialise
+     (- x 1))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y :
+     (list number)) =>
+    (
+     (n-queens.n-queens-loop x y) :
+     (list
+      (list number)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (n-queens.all_Ns? x y)) =>
+    (
+     (n-queens.n-queens-loop x y) =
+     ())))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (~
+       (n-queens.all_Ns? x y)) &
+      (
+       (n-queens.ok_row? y) &
+       (n-queens.ok_diag? y)))) =>
+    (
+     (n-queens.n-queens-loop x y) =
+     (cons y
+      (n-queens.n-queens-loop x
+       (n-queens.next_n x y))))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (~
+       (n-queens.all_Ns? x y)) &
+      (
+       (~
+        (n-queens.ok_row? y)) v
+       (~
+        (n-queens.ok_diag? y))))) =>
+    (
+     (n-queens.n-queens-loop x y) =
+     (n-queens.n-queens-loop x
+      (n-queens.next_n x y)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y :
+     (list number)) =>
+    (
+     (n-queens.all_Ns? x y) : boolean)))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      () = y)) =>
+    (
+     (n-queens.all_Ns? x y) = true)))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (~
+       (
+        () = y)) &
+      (
+       (exists z
+        (exists x1
+         (
+          (cons z x1) = y))) &
+       (x =
+        (hd y))))) =>
+    (
+     (n-queens.all_Ns? x y) =
+     (n-queens.all_Ns?
+      (hd y)
+      (tl y)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (~
+       (
+        () = y)) &
+      (
+       (all z
+        (all x1
+         (~
+          (
+           (cons z x1) = y)))) v
+       (~
+        (x =
+         (hd y)))))) =>
+    (
+     (n-queens.all_Ns? x y) = false)))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y :
+     (list number)) =>
+    (
+     (n-queens.next_n x y) :
+     (list number))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (exists z
+       (exists x1
+        (
+         (cons z x1) = y))) &
+      (x =
+       (hd y)))) =>
+    (
+     (n-queens.next_n x y) =
+     (cons 1
+      (n-queens.next_n
+       (hd y)
+       (tl y))))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (
+       (all z
+        (all x1
+         (~
+          (
+           (cons z x1) = y)))) v
+       (~
+        (x =
+         (hd y)))) &
+      (exists z
+       (exists x1
+        (
+         (cons z x1) = y))))) =>
+    (
+     (n-queens.next_n x y) =
+     (cons
+      (+ 1
+       (hd y))
+      (tl y)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (
+     (y :
+      (list number)) &
+     (
+      (
+       (all z
+        (all x1
+         (~
+          (
+           (cons z x1) = y)))) v
+       (~
+        (x =
+         (hd y)))) &
+      (all z
+       (all x1
+        (~
+         (
+          (cons z x1) = y)))))) =>
+    (
+     (n-queens.next_n x y) =
+     (shen.f-error n-queens.next_n))))))
+
+(all x
+ (
+  (x :
+   (list number)) =>
+  (
+   (n-queens.ok_row? x) : boolean)))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    () = x)) =>
+  (
+   (n-queens.ok_row? x) = true)))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (
+     (exists y
+      (exists z
+       (
+        (cons y z) = x))) &
+     (element?
+      (hd x)
+      (tl x))))) =>
+  (
+   (n-queens.ok_row? x) = false)))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (
+     (
+      (all y
+       (all z
+        (~
+         (
+          (cons y z) = x)))) v
+      (~
+       (element?
+        (hd x)
+        (tl x)))) &
+     (exists y
+      (exists z
+       (
+        (cons y z) = x)))))) =>
+  (
+   (n-queens.ok_row? x) =
+   (n-queens.ok_row?
+    (tl x)))))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (
+     (
+      (all y
+       (all z
+        (~
+         (
+          (cons y z) = x)))) v
+      (~
+       (element?
+        (hd x)
+        (tl x)))) &
+     (all y
+      (all z
+       (~
+        (
+         (cons y z) = x))))))) =>
+  (
+   (n-queens.ok_row? x) =
+   (shen.f-error n-queens.ok_row?))))
+
+(all x
+ (
+  (x :
+   (list number)) =>
+  (
+   (n-queens.ok_diag? x) : boolean)))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    () = x)) =>
+  (
+   (n-queens.ok_diag? x) = true)))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (exists y
+     (exists z
+      (
+       (cons y z) = x))))) =>
+  (
+   (n-queens.ok_diag? x) =
+   (n-queens.ok_diag_N?
+    (+
+     (hd x) 1)
+    (-
+     (hd x) 1)
+    (tl x)))))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (exists y
+     (exists z
+      (
+       (cons y z) = x))))) =>
+  (
+   (n-queens.ok_diag? x) =
+   (n-queens.ok_diag?
+    (tl x)))))
+
+(all x
+ (
+  (
+   (x :
+    (list number)) &
+   (
+    (~
+     (
+      () = x)) &
+    (all y
+     (all z
+      (~
+       (
+        (cons y z) = x)))))) =>
+  (
+   (n-queens.ok_diag? x) =
+   (shen.f-error n-queens.ok_diag?))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (z :
+       (list number)) =>
+      (
+       (n-queens.ok_diag_N? x y z) : boolean)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (
+       (z :
+        (list number)) &
+       (
+        () = z)) =>
+      (
+       (n-queens.ok_diag_N? x y z) = true)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (
+       (z :
+        (list number)) &
+       (
+        (~
+         (
+          () = z)) &
+        (
+         (exists x1
+          (exists y1
+           (
+            (cons x1 y1) = z))) &
+         (x =
+          (hd z))))) =>
+      (
+       (n-queens.ok_diag_N? x y z) = false)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (
+       (z :
+        (list number)) &
+       (
+        (~
+         (
+          () = z)) &
+        (
+         (
+          (all x1
+           (all y1
+            (~
+             (
+              (cons x1 y1) = z)))) v
+          (~
+           (x =
+            (hd z)))) &
+         (
+          (exists x1
+           (exists y1
+            (
+             (cons x1 y1) = z))) &
+          (y =
+           (hd z)))))) =>
+      (
+       (n-queens.ok_diag_N? x y z) = false)))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (
+       (z :
+        (list number)) &
+       (
+        (~
+         (
+          () = z)) &
+        (
+         (
+          (all x1
+           (all y1
+            (~
+             (
+              (cons x1 y1) = z)))) v
+          (~
+           (x =
+            (hd z)))) &
+         (
+          (
+           (all x1
+            (all y1
+             (~
+              (
+               (cons x1 y1) = z)))) v
+           (~
+            (y =
+             (hd z)))) &
+          (exists x1
+           (exists y1
+            (
+             (cons x1 y1) = z))))))) =>
+      (
+       (n-queens.ok_diag_N? x y z) =
+       (n-queens.ok_diag_N?
+        (+ 1 x)
+        (- y 1)
+        (tl z)))))))))
+
+(all x
+ (
+  (x : number) =>
+  (all y
+   (
+    (y : number) =>
+    (all z
+     (
+      (
+       (z :
+        (list number)) &
+       (
+        (~
+         (
+          () = z)) &
+        (
+         (
+          (all x1
+           (all y1
+            (~
+             (
+              (cons x1 y1) = z)))) v
+          (~
+           (x =
+            (hd z)))) &
+         (
+          (
+           (all x1
+            (all y1
+             (~
+              (
+               (cons x1 y1) = z)))) v
+           (~
+            (y =
+             (hd z)))) &
+          (all x1
+           (all y1
+            (~
+             (
+              (cons x1 y1) = z)))))))) =>
+      (
+       (n-queens.ok_diag_N? x y z) =
+       (shen.f-error n-queens.ok_diag_N?))))))))
+

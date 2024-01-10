@@ -1,5 +1,5 @@
 
-(defprolog g
+(defprolog g1
   a <--;)
 
 (defprolog h
@@ -13,4 +13,4 @@
    b <--;)
 
 (defprolog f
-   X <-- (g X) (fork [(h X) (i X) (j X)]);)
+   X <-- (g1 X) (fork [(h X) (i X) (j X)]);)

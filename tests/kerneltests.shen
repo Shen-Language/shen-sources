@@ -244,7 +244,7 @@
 (report "Prolog fork"
 
    (load "fork.shen") loaded
-   (prolog? (g a))    true)
+   (prolog? (g1 a))    true)
 
 (report "Prolog interpreter"
 

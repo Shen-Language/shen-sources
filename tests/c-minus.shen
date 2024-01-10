@@ -190,9 +190,11 @@
   ========================================================
   [Type Variable | Parameters] : parameters;)
 
-(define c-minus
-  {string --> program}
-   File -> (compile (fn <program>) (read-file-as-unit-strings File)))
+\\(spy +)
+
+\\(define c-minus
+ \\{string --> program}
+  \\File -> (compile (fn <program>) (read-file-as-unit-strings File)))
 
 (define read-file-as-unit-strings
   {string --> (list string)}
@@ -368,7 +370,7 @@
 
 (defcc <numeric>
   {(list string) ==> string}
-  X := X        where (element? X ["0" "1" "2""3""4""5" "6" "7" "8" "9"]);)
+  X := X        where (element? X ["0" "1" "2" "3" "4" "5" "6" "7" "8" "9"]);)
 
 (define digit
   {string --> integer}
