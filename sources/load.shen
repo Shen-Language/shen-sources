@@ -54,7 +54,7 @@
   _ -> (simple-error "implementation error in shen.work-through"))
 
 (define pretty-type
-  [[str [list A] B] --> [str [list A] C]] -> [[list A] ==> C]
+  [[list A] --> [str [list A] B]] -> [[list A] ==> B]
   [X | Y] -> (map (/. Z (pretty-type Z)) [X | Y])
   A -> A)
 

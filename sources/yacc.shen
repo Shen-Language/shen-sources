@@ -5,16 +5,10 @@
 (package shen []
 
 (define compile
-  F L -> (let Compile (F [L no-action])
-           (if (parsed? Compile)
-               (objectcode Compile)
-               (error "parse failure~%"))))
-
-(define parsed?
-  X -> false       where (parse-failure? X)
-  [[X | Y] | _] -> (do (set *residue* [X | Y])
-                       (error "syntax error here: ~R~% ..." [X | Y]))
-  _ -> true)
+  F L -> (let Compile (F L)
+           (cases (parse-failure? Compile) (error "parse failure~%")
+                  (cons? (in-> Compile))   (error "syntax error here: ~S ..." (hd (in-> Compile)))
+                  true                     (<-out Compile))))
 
 (define parse-failure?
   X -> (= X (fail)))
@@ -34,8 +28,7 @@
                                  Def);)
 
 (defcc <yaccsig>
-  LC [list A] ==> B RC := (let C (protect (gensym C))
-                            [{ [str [list A] C] --> [str [list A] B] }])
+  LC [list A] ==> B RC := [{ [list A] --> [str [list A] B] }]
                             where (and (= { LC) (= } RC));
   <e> := [];)
 
@@ -141,88 +134,81 @@
 
 (define non-terminalcode
   Type Stream NonTerminal Syntax Semantics
-    -> (let ApplyNonTerminal (concat (protect Parse) NonTerminal)
-        [let ApplyNonTerminal [NonTerminal Stream]
-            [if [parse-failure? ApplyNonTerminal]
-                [parse-failure]
-                (yacc-syntax Type ApplyNonTerminal Syntax Semantics)]]))
+    -> (let TryParse         (concat (protect Parse) NonTerminal)
+            Act              (concat (protect Action) NonTerminal)
+            Remainder        (concat (protect Remainder) NonTerminal)
+        [let TryParse [NonTerminal Stream]
+          [if [parse-failure? TryParse]
+              [parse-failure]
+              (let Continue [let Remainder [in-> TryParse]
+                                 (yacc-syntax Type Remainder Syntax Semantics)]
+                   (if (or (occurs? NonTerminal Semantics) (occurs? Act Semantics))
+                       [let Act [<-out TryParse] Continue]
+                       Continue))]]))
+
 
 (define variablecode
   Type Stream Variable Syntax Semantics
-    -> (let NewStream (gensym (protect News))
-            [if [non-empty-stream? Stream]
-                [let Variable [hds Stream]
-                     NewStream [tls Stream]
-                     (yacc-syntax Type NewStream Syntax Semantics)]
-            [parse-failure]]))
+    -> (let Remainder (gensym (protect Remainder))
+         [if [cons? Stream]
+             (let Continue [let Remainder [tail Stream]
+                             (yacc-syntax Type Remainder Syntax Semantics)]
+                  (if (occurs? Variable Semantics)
+                      [let Variable [head Stream] Continue]
+                      Continue))
+             [parse-failure]]))
 
 (define wildcardcode
   Type Stream Variable Syntax Semantics
-    -> (let NewStream (gensym (protect News))
-           [if [non-empty-stream? Stream]
-               [let NewStream [tls Stream]
-                    (yacc-syntax Type NewStream Syntax Semantics)]
-               [parse-failure]]))
+    -> (let Remainder (gensym (protect Remainder))
+         [if [cons? Stream]
+             [let Remainder [tail Stream]
+               (yacc-syntax Type Remainder Syntax Semantics)]
+             [parse-failure]]))
 
 (define terminalcode
   Type Stream Terminal Syntax Semantics
-    -> (let NewStream (gensym (protect News))
-            [if [=hd? Stream Terminal]
-                [let NewStream [tls Stream]
-                     (yacc-syntax Type NewStream Syntax Semantics)]
-                [parse-failure]]))
+    -> (let Remainder (gensym (protect Remainder))
+         [if [hds=? Stream Terminal]
+             [let Remainder [tail Stream]
+               (yacc-syntax Type Remainder Syntax Semantics)]
+             [parse-failure]]))
+
+(define hds=?
+  [X | _] X -> true
+  _ _ -> false)
 
 (define conscode
-  Type Str Cons Syn Sem -> [if [ccons? Str]
-                               [let (protect SynCons) [comb [hds Str] [<-out Str]]
-                                    (yacc-syntax Type
-                                            (protect SynCons)
-                                            (append (decons Cons) [<end>])
-                                            [pushsemantics [tlstream Str] Syn Sem])]
-                               [parse-failure]])
+  Type Stream Cons Syntax Semantics
+    -> (let Remainder (gensym (protect Remainder))
+            Head      (gensym (protect Hd))
+            Tail      (gensym (protect Tl))
+        [if [ccons? Stream]
+            [let Head [head Stream]
+                 Tail [tail Stream]
+              (yacc-syntax Type Head (append (decons Cons) [<end>])
+                  [processed (yacc-syntax Type Tail Syntax Semantics)])]
+            [parse-failure]]))
 
- (define decons
-   [cons X Y] -> [X | (decons Y)]
-   X -> X)
-
- (define ccons?
-   [[X | _] _] -> (cons? X)
-   _ -> false)
-
- (define non-empty-stream?
+(define ccons?
   [[_ | _] | _] -> true
   _ -> false)
 
-(define hds
-  Stream -> (hd (hd Stream)))
+(define decons
+  [cons X Y] -> [X | (decons Y)]
+  X -> X)
 
-(define hdstream
-  [[X | _] Y] -> [X Y]
-  _ -> (error "implementation error in shen.hdstream~%"))
-
- (define comb
+(define comb
   X Y -> [X Y])
 
-(define tlstream
-  [[_ | Y] Z] -> [Y Z]
-  _ -> (error "implementation error in shen.tlstream~%"))
-
-(define =hd?
-  [[X | _] | _] X -> true
-  _ _ -> false)
-
-(define tls
-  [[_ | Y] Z] -> [Y Z]
-  _ -> (error "implementation error in shen.tls~%"))
-
 (define yacc-semantics
-  Type _ [pushsemantics Stream Syntax Semantics] -> (yacc-syntax Type Stream Syntax Semantics)
+  _ _ [processed Semantics] -> Semantics
   Type Stream Semantics -> (let Process (process-yacc-semantics Semantics)
                                 Annotate (use-type-info Type Process)
-                                [comb [in-> Stream] Annotate]))
+                             [comb Stream Annotate]))
 
 (define use-type-info
-  [{ [str [list A] C] --> [str [list A] B] }] Semantics -> [type Semantics B]
+  [{ [list A] --> [str [list A] B] }] Semantics -> [type Semantics B]
       where (monomorphic? B)
   _ Semantics -> Semantics)
 
@@ -234,27 +220,24 @@
 (define process-yacc-semantics
   [protect NonTerminal] -> NonTerminal    where (non-terminal? NonTerminal)
   [X | Y] -> (map (/. Z (process-yacc-semantics Z)) [X | Y])
-  NonTerminal -> [<-out (concat (protect Parse) NonTerminal)]  where (non-terminal? NonTerminal)
+  NonTerminal -> (concat (protect Action) NonTerminal)  where (non-terminal? NonTerminal)
   X -> X)
 
 (define <-out
   [_ X] -> X
-  _ -> (error "implementation error in shen.<-out~%"))
+  X -> (hd (tl X)))
 
 (define in->
-  [X _] -> X
-  _ -> (error "implementation error in shen.in->~%"))
+  X -> (hd X))
 
 (define <!>
-  [X _] -> [[] X]
-  _ -> (error "implementation error in <!>~%"))
+  X -> [[] X])
 
 (define <e>
-  [X _] -> [X []]
-  _ -> (error "implementation error in <e>~%"))
+  X -> [X []])
 
 (define <end>
-  [[] X] -> [[] X]
+  [] -> [[] []]
   _ -> (parse-failure))
 
 )

@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [dynamic]
+(package shen []
 
 (define declare
   F A -> (let Rectify (rectify-type A)
@@ -46,28 +46,23 @@
 (declare boolean? [A --> boolean])
 (declare bootstrap [string --> string])
 (declare bound? [symbol --> boolean])
+(declare ccons? [[list A] --> boolean])
 (declare cd [string --> string])
 (declare close [[stream A] --> [list B]])
 (declare cn [string --> [string --> string]])
-(declare compile [[[str [list A] B] --> [str [list A] C]] --> [[list A] --> C]])
+(declare compile [[[list A] --> [str [list A] B]] --> [[list A] --> B]])
 (declare cons? [A --> boolean])
 (declare destroy [symbol --> symbol])
 (declare difference [[list A] --> [[list A] --> [list A]]])
 (declare do [A --> [B --> B]])
-(declare <e> [[str [list A] B] --> [str [list A] [list C]]])
-(declare <!> [[str [list A] B] --> [str [list A] [list A]]])
-(declare <end> [[str [list A] B] --> [str [list A] B]])
-(declare =hd? [[str [list A] B] --> [A --> boolean]])
-(declare hds [[str [list A] B] --> A])
-(declare tls [[str [list A] B] --> [str [list A] B]])
+(declare <e> [[list A] --> [str [list A] [list B]]])
+(declare <!> [[list A] --> [str [list B] [list A]]])
+(declare <end> [[list A] --> [str [list A] [list B]]])
 (declare parse-failure? [[str [list A] B] --> boolean])
 (declare parse-failure [--> [str [list A] B]])
 (declare <-out [[str [list A] B] --> B])
 (declare in-> [[str [list A] B] --> [list A]])
-(declare non-empty-stream? [[str [list A] B] --> boolean])
 (declare comb [[list A] --> [B --> [str [list A] B]]])
-(declare headstream [[str A B] --> [[str C D] --> [str A [str C D]]]])
-(declare tlstream [[str [list A] B] --> [str [list A] B]])
 (declare element? [A --> [[list A] --> boolean]])
 (declare empty? [A --> boolean])
 (declare enable-type-theory [symbol --> boolean])
@@ -80,6 +75,7 @@
 (declare freeze [A --> [lazy A]])
 (declare fst [[A * B] --> A])
 (declare gensym [symbol --> symbol])
+(declare hds=? [[list A] --> [A --> boolean]])
 (declare <-vector [[vector A] --> [number --> A]])
 (declare vector-> [[vector A] --> [number --> [A --> [vector A]]]])
 (declare vector [number --> [vector A]])

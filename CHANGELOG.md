@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [35.0] - 2024-01-10
+
+### Changed
+
+- Type `==>` simplified for YACC.
+
 ## [34.6] - 2024-01-10
 
 ### Changed
@@ -495,7 +501,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-34.6...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-35.0...HEAD
+[35.0]: https://github.com/Shen-Language/shen-sources/compare/shen-34.6...shen-35.0
 [34.6]: https://github.com/Shen-Language/shen-sources/compare/shen-34.5...shen-34.6
 [34.5]: https://github.com/Shen-Language/shen-sources/compare/shen-34.4...shen-34.5
 [34.4]: https://github.com/Shen-Language/shen-sources/compare/shen-34.3...shen-34.4

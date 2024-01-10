@@ -35,7 +35,7 @@
 
 (define curry-type
   [A --> B --> | C] -> (curry-type [A --> [B --> | C]])
-  [[list A] ==> B] -> (curry-type [[str [list A] (protect (gensym C))] --> [str [list A] B]])
+  [[list A] ==> B] -> (curry-type [[list A] --> [str [list A] B]])
   [A * B * | C] -> (curry-type [A * [B * | C]])
   [X | Y] -> (map (/. Z (curry-type Z)) [X | Y])
   X -> X)
