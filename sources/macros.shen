@@ -166,7 +166,7 @@
 
 (define let-macro
    [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
-   [let X Y Z] -> (if (variable? X) [let X Y Z] (error "~S is not a variable~%" X))
+   [let X Y Z] -> (if (or (= _ X) (variable? X)) [let X Y Z] (error "~S is not a variable~%" X))
    X -> X)
 
 (define abs-macro
