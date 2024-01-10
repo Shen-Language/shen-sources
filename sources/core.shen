@@ -283,81 +283,43 @@
   _ -> (error "factorise expects a + or a -~%"))
 
 (define factorise-code
-  [defun F Params [cond | Cases]]
-   -> [defun F Params (vertical Params Cases [f-error F])]  where (value *factorise?*)
+  Code -> (factor Code)  where (value *factorise?*)
   Code -> Code)
 
-(define vertical
-  _ [[true Result] | _] _ -> Result
-  Free [] Exit -> Exit
-  Free [[[and P Q] Result] | Cases] Exit
-  -> (let Before+After (split-cases P [[[and P Q] Result] | Cases] [])
-          (branch P Free Before+After Exit))
-   Free [[Test Result] | Cases] Exit -> [if Test Result (vertical Free Cases Exit)]
-   _ _ _ -> (simple-error "implementation error in shen.vertical"))
+(define factor
+  [defun F Params [cond | Body]] -> [defun F Params (factor-recognisors Body)]
+  Code -> Code)
 
-(define split-cases
-  P [[[and P Ps] Result] | Cases] Before -> (split-cases P Cases [[Ps Result] | Before])
-  P [[P Result] | Cases] Before -> (split-cases P Cases [[true Result] | Before])
-  _ After Before -> [(reverse Before) After])
+(define factor-recognisors
+  [[true R] | _]         -> R
+  [[[and P Q] R] | Body] -> (let Pivot         (pivot-on P [[[and P Q] R] | Body] [])
+                                 Before        (fst Pivot)
+                                 After         (snd Pivot)
+                                 Else          (factor-recognisors After)
+                                 Go            (gensym (protect GoTo))
+                                 Then          (reverse [[true [thaw Go]] | Before])
+                                 Code          [let Go [freeze Else]
+                                                 [if P
+                                                     (factor-selectors P (factor-recognisors Then))
+                                                     [thaw Go]]]
+                              (remove-indirection Code))
+  [[P R] | Body]         -> [if P R (factor-recognisors Body)])
 
-(define branch
-  P Free [Before After] Exit
-  -> (let Else (else Free After Exit)
-          Then (then P Free Before Else)
-          [if P Then Else]))
+(define remove-indirection
+  [let Go [freeze [thaw Procedure]] Body] -> (subst Procedure Go Body)  where (symbol? Procedure)
+  X -> X)
 
-(define else
-  Free After Exit -> (let Else (vertical Free After Exit)
-                          (if (inline? Else)
-                              Else
-                              (procedure-call Free Else))))
+(define pivot-on
+  P [[[and P Q] R] | Body] Before -> (pivot-on P Body [[Q R] | Before])
+  P [[P R] | Body] Before -> (pivot-on P Body [[true R] | Before])
+  P After Before -> (@p Before After))
 
-(define procedure-call
-  Free Code -> (let F (gensym else)
-                    Used (remove-if-unused Free Code)
-                    KL [defun F Used Code]
-                    EvalKL (eval-factorised-branch KL)
-                    Record (record-kl F KL)
-                    [F | Used]))
-
-(define eval-factorised-branch
-  KL -> (eval-kl KL))
-
-(define remove-if-unused
-  [] _ -> []
-  [V | Vs] Code -> (if (occurs? V Code)
-                       [V | (remove-if-unused Vs Code)]
-                       (remove-if-unused Vs Code))
-  _ _ -> (simple-error "implementation error in shen.remove-if-unused"))
-
-(define then
-  P Free Before Else -> (horizontal (selectors P Before) Free Before Else))
-
-(define horizontal
-  [] Free Before Else -> (vertical Free Before Else)
-  [S | Ss] Free Before Else -> (let V (gensym (protect V))
-                                  [let V S (horizontal Ss [V | Free] (subst V S Before) Else)])
-  _ _ _ _ -> (simple-error "implementation error in shen.horizontal"))
-
-(define selectors
-  [C X] Before -> (let Op (op C)
-                       Hd [(op1 Op) X]
-                       Tl [(op2 Op) X]
-                       RptedHd? (rpted? Hd Before)
-                       RptedTl? (rpted? Tl Before)
-                       (cases (and RptedHd? RptedTl?) [Hd Tl]
-                              RptedHd? [Hd]
-                              RptedTl? [Tl]
-                              true []))  where (constructor? (op C))
-  _ _ -> [])
-
-(define rpted?
-  X Y -> (> (occurrences X Y) 1))
-
-(define inline?
-  [X | Y] -> (and (atom? X) (inline? Y))
-  X -> (atom? X))
+(define factor-selectors
+  [F X] Code -> (let C (op F)
+                  (if (= skip C)
+                      Code
+                      (factor-selectors-h [[(op1 C) X] [(op2 C) X]] Code)))
+  _ Code -> Code)
 
 (define op
   cons? -> cons
@@ -365,5 +327,13 @@
   +vector? -> @v
   tuple? -> @p
   _ -> skip)
+
+(define factor-selectors-h
+  [] Code -> Code
+  [S | Ss] Code -> (if (> (occurrences S Code) 1)
+                       (let A (gensym (protect Select))
+                         [let A S
+                           (factor-selectors-h Ss (subst A S Code))])
+                       (factor-selectors-h Ss Code)))
 
 )
