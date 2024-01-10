@@ -21,10 +21,10 @@
    YACC -> (compile (/. X (<yacc> X)) YACC))
 
 (defcc <yacc>
-   F <yaccsig> <c-rules> := (let Stream (gensym (protect S))
+   F <yaccsig> <c-rules> := (let Input (gensym (protect S))
                                  Def    (append [define F]
                                                 <yaccsig>
-                                                [Stream -> (c-rules->shen <yaccsig> Stream <c-rules>)])
+                                                [Input -> (c-rules->shen <yaccsig> Input <c-rules>)])
                                  Def);)
 
 (defcc <yaccsig>
@@ -99,10 +99,10 @@
   <colon-equal> Semantics             := Semantics               where (not (semicolon? Semantics));)
 
 (define c-rules->shen
-  _ Stream [] -> [parse-failure]
-  Type Stream [CRule | CRules]
-   -> (combine-c-code (c-rule->shen Type CRule Stream)
-                      (c-rules->shen Type Stream CRules))
+  _ Input [] -> [parse-failure]
+  Type Input [CRule | CRules]
+   -> (combine-c-code (c-rule->shen Type CRule Input)
+                      (c-rules->shen Type Input CRules))
   _ _ _ -> (error "implementation error in shen.c-rules->shen~%"))
 
 (define parse-failure
@@ -115,29 +115,29 @@
                                    (protect Result)]])
 
 (define c-rule->shen
-  Type [Syntax Semantics] Stream -> (yacc-syntax Type Stream Syntax Semantics)
+  Type [Syntax Semantics] Input -> (yacc-syntax Type Input Syntax Semantics)
    _ _ _ -> (error "implementation error in shen.c-rule->shen~%"))
 
 (define yacc-syntax
-  Type Stream [] [where P Semantics] -> [if (process-yacc-semantics P)
-                                            (yacc-syntax Type Stream [] Semantics)
-                                            [parse-failure]]
-  Type Stream [] Semantics -> (yacc-semantics Type Stream Semantics)
-  Type Stream [SyntaxItem | Syntax] Semantics
-   -> (cases (non-terminal? SyntaxItem) (non-terminalcode Type Stream SyntaxItem Syntax Semantics)
-             (variable? SyntaxItem)     (variablecode Type Stream SyntaxItem Syntax Semantics)
-             (= _ SyntaxItem)           (wildcardcode Type Stream SyntaxItem Syntax Semantics)
-             (atom? SyntaxItem)         (terminalcode Type Stream SyntaxItem Syntax Semantics)
-             (cons? SyntaxItem)         (conscode Type Stream SyntaxItem Syntax Semantics)
+  Type Input [] [where P Semantics] -> [if (process-yacc-semantics P)
+                                           (yacc-syntax Type Input [] Semantics)
+                                           [parse-failure]]
+  Type Input [] Semantics -> (yacc-semantics Type Input Semantics)
+  Type Input [SyntaxItem | Syntax] Semantics
+   -> (cases (non-terminal? SyntaxItem) (non-terminalcode Type Input SyntaxItem Syntax Semantics)
+             (variable? SyntaxItem)     (variablecode Type Input SyntaxItem Syntax Semantics)
+             (= _ SyntaxItem)           (wildcardcode Type Input SyntaxItem Syntax Semantics)
+             (atom? SyntaxItem)         (terminalcode Type Input SyntaxItem Syntax Semantics)
+             (cons? SyntaxItem)         (conscode Type Input SyntaxItem Syntax Semantics)
              true                       (error "implementation error in shen.yacc-syntax~%"))
   _ _ _ _ -> (error "implementation error in shen.yacc-syntax~%"))
 
 (define non-terminalcode
-  Type Stream NonTerminal Syntax Semantics
+  Type Input NonTerminal Syntax Semantics
     -> (let TryParse         (concat (protect Parse) NonTerminal)
             Act              (concat (protect Action) NonTerminal)
             Remainder        (concat (protect Remainder) NonTerminal)
-        [let TryParse [NonTerminal Stream]
+        [let TryParse [NonTerminal Input]
           [if [parse-failure? TryParse]
               [parse-failure]
               (let Continue [let Remainder [in-> TryParse]
@@ -148,29 +148,29 @@
 
 
 (define variablecode
-  Type Stream Variable Syntax Semantics
+  Type Input Variable Syntax Semantics
     -> (let Remainder (gensym (protect Remainder))
-         [if [cons? Stream]
-             (let Continue [let Remainder [tail Stream]
+         [if [cons? Input]
+             (let Continue [let Remainder [tail Input]
                              (yacc-syntax Type Remainder Syntax Semantics)]
                   (if (occurs? Variable Semantics)
-                      [let Variable [head Stream] Continue]
+                      [let Variable [head Input] Continue]
                       Continue))
              [parse-failure]]))
 
 (define wildcardcode
-  Type Stream Variable Syntax Semantics
+  Type Input Variable Syntax Semantics
     -> (let Remainder (gensym (protect Remainder))
-         [if [cons? Stream]
-             [let Remainder [tail Stream]
+         [if [cons? Input]
+             [let Remainder [tail Input]
                (yacc-syntax Type Remainder Syntax Semantics)]
              [parse-failure]]))
 
 (define terminalcode
-  Type Stream Terminal Syntax Semantics
+  Type Input Terminal Syntax Semantics
     -> (let Remainder (gensym (protect Remainder))
-         [if [hds=? Stream Terminal]
-             [let Remainder [tail Stream]
+         [if [hds=? Input Terminal]
+             [let Remainder [tail Input]
                (yacc-syntax Type Remainder Syntax Semantics)]
              [parse-failure]]))
 
@@ -179,13 +179,13 @@
   _ _ -> false)
 
 (define conscode
-  Type Stream Cons Syntax Semantics
+  Type Input Cons Syntax Semantics
     -> (let Remainder (gensym (protect Remainder))
             Head      (gensym (protect Hd))
             Tail      (gensym (protect Tl))
-        [if [ccons? Stream]
-            [let Head [head Stream]
-                 Tail [tail Stream]
+        [if [ccons? Input]
+            [let Head [head Input]
+                 Tail [tail Input]
               (yacc-syntax Type Head (append (decons Cons) [<end>])
                   [processed (yacc-syntax Type Tail Syntax Semantics)])]
             [parse-failure]]))
@@ -203,9 +203,9 @@
 
 (define yacc-semantics
   _ _ [processed Semantics] -> Semantics
-  Type Stream Semantics -> (let Process (process-yacc-semantics Semantics)
-                                Annotate (use-type-info Type Process)
-                             [comb Stream Annotate]))
+  Type Input Semantics -> (let Process (process-yacc-semantics Semantics)
+                               Annotate (use-type-info Type Process)
+                            [comb Input Annotate]))
 
 (define use-type-info
   [{ [list A] --> [str [list A] B] }] Semantics -> [type Semantics B]
