@@ -66,9 +66,14 @@
   File -> (let KLFile (klfile File)
                Code (read-file File)
                Open (open KLFile out)
-               KL (map (/. X (shen->kl-h X)) Code)
+               KL (map (/. X (partial (shen->kl-h X))) Code)
                Write (write-kl KL Open)
                KLFile))
+
+(define partial
+   [f-error F] -> [simple-error (cn "partial function " (str F))]
+   [X | Y] -> (map (/. Z (partial Z)) [X | Y])
+   X -> X)
 
 (define write-kl
   [] Open -> (close Open)
