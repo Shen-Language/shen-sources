@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [37.0] - 2024-01-12
+
+### Changed
+
+- Replaced factorisation algorithm with a simplified, improved version.
+
 ## [36.0] - 2024-01-10
 
 ### Changed
@@ -508,7 +514,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-36.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-37.0...HEAD
+[37.0]: https://github.com/Shen-Language/shen-sources/compare/shen-36.0...shen-37.0
 [36.0]: https://github.com/Shen-Language/shen-sources/compare/shen-35.0...shen-36.0
 [35.0]: https://github.com/Shen-Language/shen-sources/compare/shen-34.6...shen-35.0
 [34.6]: https://github.com/Shen-Language/shen-sources/compare/shen-34.5...shen-34.6
