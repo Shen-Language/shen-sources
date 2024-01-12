@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [37.1] - 2024-01-12
+
+### Fixed
+
+- Redundant factorisation eliminated.
+
 ## [37.0] - 2024-01-12
 
 ### Changed
