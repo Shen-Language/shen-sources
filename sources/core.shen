@@ -292,18 +292,24 @@
 
 (define factor-recognisors
   [[true R] | _]         -> R
-  [[[and P Q] R] | Body] -> (let Pivot         (pivot-on P [[[and P Q] R] | Body] [])
-                                 Before        (fst Pivot)
-                                 After         (snd Pivot)
-                                 Else          (factor-recognisors After)
-                                 Go            (gensym (protect GoTo))
-                                 Then          (reverse [[true [thaw Go]] | Before])
-                                 Code          [let Go [freeze Else]
-                                                 [if P
-                                                     (factor-selectors P (factor-recognisors Then))
-                                                     [thaw Go]]]
-                              (remove-indirection Code))
+  [[[and P Q] R] | Body] -> (let Pivot        (pivot-on P [[[and P Q] R] | Body] [])
+                                 Before       (fst Pivot)
+                              (if (bad-pivot? Before)
+                                  [if [and P Q] R (factor-recognisors Body)]
+                                  (let After  (snd Pivot)
+                                       Else   (factor-recognisors After)
+                                       Go     (gensym (protect GoTo))
+                                       Then   (reverse [[true [thaw Go]] | Before])
+                                       Code   [let Go [freeze Else]
+                                                [if P
+                                                   (factor-selectors P (factor-recognisors Then))
+                                                   [thaw Go]]]
+                                    (remove-indirection Code))))
   [[P R] | Body]         -> [if P R (factor-recognisors Body)])
+
+(define bad-pivot?
+  [_] -> true
+  _   -> false)
 
 (define remove-indirection
   [let Go [freeze [thaw Procedure]] Body] -> (subst Procedure Go Body)  where (symbol? Procedure)
