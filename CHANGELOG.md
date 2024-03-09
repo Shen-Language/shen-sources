@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Changed
 
 - Shen macros factorised resulting in a 2X faster reader.
+- Use Shen/Scheme as the default implementation for building klambda.
 
 ## [37.1] - 2024-01-12
 
