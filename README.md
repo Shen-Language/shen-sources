@@ -34,7 +34,7 @@ Shen is a self-hosted language, so its kernel implementation is written in Shen.
 
 ### Using Pre-Built Shen/Scheme (Recommended)
 
-A prebuilt copy of the reference implementation can be pulled down by running `make fetch`. The executable `shen-scheme` will be dropped under the `shen-scheme/bin` folder. Render the Kλ by running `make klambda` or just `make`.
+A prebuilt copy of a reference implementation can be pulled down by running `make fetch`. The executable `shen-scheme` will be dropped under the `shen-scheme/bin` folder. Render the Kλ by running `make klambda` or just `make`.
 
 ### Using Another Executable
 
