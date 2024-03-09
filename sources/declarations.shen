@@ -7,25 +7,7 @@
 (set *history* [])
 (set *tc* false)
 (set *property-vector* (dict 20000))
-(set *macros* [ [defmacro-macro | (/. X (defmacro-macro X))]
-                [timer-macro | (/. X (timer-macro X))]
-                [cases-macro | (/. X (cases-macro X))]
-                [abs-macro | (/. X (abs-macro X))]
-                [put/get-macro | (/. X (put/get-macro X))]
-                [datatype-macro | (/. X (datatype-macro X))]
-                [let-macro | (/. X (let-macro X))]
-                [assoc-macro | (/. X (assoc-macro X))]
-                [make-string | (/. X (make-string-macro X))]
-                [output-macro | (/. X (output-macro X))]
-                [input-macro | (/. X (input-macro X))]
-                [error-macro | (/. X (error-macro X))]
-                [prolog-macro | (/. X (prolog-macro X))]
-                [synonyms-macro | (/. X (synonyms-macro X))]
-                [nl-macro | (/. X (nl-macro X))]
-                [@s-macro | (/. X (@s-macro X))]
-                [defprolog | (/. X (defprolog-macro X))]
-                [defcc-macro | (/. X (defcc-macro X))]
-                [u!-macro | (/. X (u!-macro X))]])
+(set *macros* [ [macros | (/. X (macros X))] ])
 (set *gensym* 0)
 (set *tracking* [])
 (set *profiled* [])
@@ -47,7 +29,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "37.1")
+(set *version* "38.0")
 (set *names* [])
 (set *step* false)
 (set *it* "")

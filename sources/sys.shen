@@ -483,8 +483,8 @@
 (define write-to-file
    File Text -> (let Stream (open File out)
                      String (if (string? Text)
-                                (make-string "~A~%~%" Text)
-                                (make-string "~S~%~%" Text))
+                                Text
+                                (make-string "~S" Text))
                      Write (pr String Stream)
                      Close (close Stream)
                      Text))

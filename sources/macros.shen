@@ -20,15 +20,107 @@
   F [X | Y] -> (F (map (/. Z (walk F Z)) [X | Y]))
   F X -> (F X))
 
-(define defmacro-macro
-  [defmacro F | Rest] -> (let Default [(protect X) -> (protect X)]
-                              Def (eval [define F | (append Rest Default)])
-                              Record (record-macro F (/. X ((fn F) X)))
-                           F)
-   X -> X)
+(define macros
+  [defmacro F | Rest]         -> (process-def F Rest)
+  [defcc | X]                 -> (yacc->shen X)
+  [u! S]                      -> [protect (make-uppercase S)]
+  [error String | Args]       -> [simple-error (mkstr String Args)]
+  [output String | Args]      -> [pr (mkstr String Args) [stoutput]]
+  [pr String]                 -> [pr String [stoutput]]
+  [make-string String | Args] -> (mkstr String Args)
+  [lineread]                  -> [lineread [stinput]]
+  [input]                     -> [input [stinput]]
+  [read]                      -> [read [stinput]]
+  [input+ Type]               -> [input+ Type [stinput]]
+  [read-byte]                 -> (process-read-byte)
+  [prolog? | Literals]        -> (call-prolog Literals)
+  [defprolog F | Clauses]     -> (compile-prolog F Clauses)
+  [datatype F | Rules]        -> (process-datatype F Rules)
+  [@s | X]                    -> (process-@s [@s | X])
+  [synonyms | X]              -> (process-synonyms X)
+  [nl]                        -> [nl 1]
+  [let | X]                   -> (process-let [let | X])
+  [/. | X]                    -> (process-lambda [/. | X])
+  [cases | X]                 -> (process-cases [cases | X])
+  [time Process]              -> (process-time Process)
+  [put X Pointer Y]           -> [put X Pointer Y [value *property-vector*]]
+  [get X Pointer]             -> [get X Pointer [value *property-vector*]]
+  [unput X Pointer]           -> [unput X Pointer [value *property-vector*]]
+  [F W X Y | Z]               -> [F W (process-assoc [F X Y | Z])]
+                                   where (element? F [@p @v append and or + * do])
+  X -> X)
 
-(define u!-macro
-  [u! S] -> [protect (make-uppercase S)]
+(define defcc-macro
+  [defcc | X] -> (yacc->shen X)
+  X -> X)
+
+(define process-def
+  F Rest -> (let Default [(protect X) -> (protect X)]
+                 Def (eval [define F | (append Rest Default)])
+                 Record (record-macro F (/. X (F X)))
+              F))
+
+(define process-let
+  [let W X Y Z | Rest] -> [let W X [let Y Z | Rest]]
+  X -> X)
+
+(define process-@s
+  [@s W X Y | Z] -> [@s W (process-@s [@s X Y | Z])]
+  [@s X Y] -> (let E (explode X)
+                (if (> (length E) 1)
+                    (process-@s [@s | (append E [Y])])
+                    [@s X Y]))   where (string? X)
+  X -> X)
+
+(define process-datatype
+  F Rules
+   -> (let D (intern-type F)
+           Compile (compile (/. X (<datatype> X)) [D | Rules])
+        D))
+
+(define intern-type
+  F -> (intern (cn (str F) "#type")))
+
+(define process-synonyms
+  X -> (synonyms-h (set *synonyms* (append X (value *synonyms*)))))
+
+(define synonyms-h
+  Synonyms -> (let CurryTypes (map (/. X (curry-type X)) Synonyms)
+                   Eval (eval [define demod | (compile-synonyms CurryTypes)])
+                synonyms))
+
+(define compile-synonyms
+  [] -> (let X (gensym (protect X)) [X -> X])
+  [X SynX | Synonyms] -> [(rcons_form X) -> (rcons_form SynX)
+                          | (compile-synonyms Synonyms)]
+  _ -> (error "synonyms requires an even number of arguments~%"))
+
+(define process-lambda
+  [/. V W X | Y] -> [lambda V (process-lambda [/. W X | Y])]
+  [/. X Y] -> (if (variable? X) [lambda X Y] (error "~S is not a variable~%" X))
+  X -> X)
+
+(define process-cases
+  [cases true X | _] -> X
+  [cases X Y] -> [if X Y [simple-error "error: cases exhausted"]]
+  [cases X Y | Z] -> [if X Y (process-cases [cases | Z])]
+  [cases X] -> (error "error: odd number of case elements~%")
+  X -> X)
+
+(define process-time
+   Process          -> [let (protect Start)    [get-time run]
+                            (protect Result)  Process
+                            (protect Finish)  [get-time run]
+                            (protect Time)    [- (protect Finish) (protect Start)]
+                            (protect Message) [pr [cn "c#10;run time: "
+                                                       [cn [str (protect Time)]
+                                                           " secsc#10;"]]
+                                                   [stoutput]]
+                         (protect Result)]
+    X -> X)
+
+(define process-assoc
+  [F W X Y | Z] -> [F W [F X Y | Z]]
   X -> X)
 
 (define make-uppercase
@@ -50,36 +142,10 @@
   F Lambda [Macro | Macros] -> [Macro | (update-assoc F Lambda Macros)]
   _ _ _ -> (simple-error "implementation error in shen.update-assoc"))
 
-(define error-macro
-  [error String | Args] -> [simple-error (mkstr String Args)]
-  X -> X)
-
-(define output-macro
-  [output String | Args] -> [pr (mkstr String Args) [stoutput]]
-  [pr String] -> [pr String [stoutput]]
-  X -> X)
-
-(define make-string-macro
-  [make-string String | Args] -> (mkstr String Args)
-  X -> X)
-
-(define input-macro
-  [lineread] -> [lineread [stinput]]
-  [input] -> [input [stinput]]
-  [read] -> [read [stinput]]
-  [input+ Type] -> [input+ Type [stinput]]
-  [read-byte] -> (if (char-stinput? (stinput))
-                     [string->n [read-unit-string [stinput]]]
-                     [read-byte [stinput]])
-  X -> X)
-
-(define defcc-macro
-  [defcc | X] -> (yacc->shen X)
-  X -> X)
-
-(define prolog-macro
-  [prolog? | Literals] -> (call-prolog Literals)
-  X -> X)
+(define process-read-byte
+  ->  (if (char-stinput? (stinput))
+          [string->n [read-unit-string [stinput]]]
+          [read-byte [stinput]]))
 
 (define call-prolog
   Literals -> (let Bindings [prolog-vector]
@@ -109,99 +175,12 @@
 (define receive
   X -> X)
 
-(define defprolog-macro
-  [defprolog F | Clauses] -> (compile-prolog F Clauses)
-  X -> X)
-
-(define datatype-macro
-  [datatype F | Rules]
-   -> (let D (intern-type F)
-           Compile (compile (/. X (<datatype> X)) [D | Rules])
-           D)
-  X -> X)
-
 (define rcons_form
   [X | Y] -> [cons (rcons_form X) (rcons_form Y)]
   X -> X)
 
-(define intern-type
-  F -> (intern (cn (str F) "#type")))
-
-(define @s-macro
-  [@s W X Y | Z] -> [@s W (@s-macro [@s X Y | Z])]
-  [@s X Y] -> (let E (explode X)
-                (if (> (length E) 1)
-                    (@s-macro [@s | (append E [Y])])
-                    [@s X Y]))   where (string? X)
-  X -> X)
-
-(define synonyms-macro
-  [synonyms | X] -> (synonyms-h (set *synonyms* (append X (value *synonyms*))))
-  X -> X)
-
-(define lambda-of-defun
-  [defun _ [Var] Body] -> (eval [/. Var Body]))
-
-(define synonyms-h
-  Synonyms -> (let CurryTypes (map (/. X (curry-type X)) Synonyms)
-                   DemodLambda (lambda-of-defun
-                                 (shendef->kldef demod (compile-synonyms CurryTypes)))
-                   Demod (set *demodulation-function* DemodLambda)
-                synonyms))
-
-(define compile-synonyms
-  [] -> (let X (gensym (protect X)) [X -> X])
-  [X SynX | Synonyms] -> [(rcons_form X) -> (rcons_form SynX)
-                          | (compile-synonyms Synonyms)]
-  _ -> (error "synonyms requires an even number of arguments~%"))
-
-(define nl-macro
-  [nl] -> [nl 1]
-  X -> X)
-
-(define assoc-macro
-  [F W X Y | Z] -> [F W (assoc-macro [F X Y | Z])]
-      where (element? F [@p @v append and or + * do])
-  X -> X)
-
-(define let-macro
-   [let V W X Y | Z] -> [let V W (let-macro [let X Y | Z])]
-   [let X Y Z] -> (if (or (= _ X) (variable? X)) [let X Y Z] (error "~S is not a variable~%" X))
-   X -> X)
-
-(define abs-macro
-  [/. V W X | Y] -> [lambda V (abs-macro [/. W X | Y])]
-  [/. X Y] -> (if (variable? X) [lambda X Y] (error "~S is not a variable~%" X))
-  X -> X)
-
-(define cases-macro
-  [cases true X | _] -> X
-  [cases X Y] -> [if X Y [simple-error "error: cases exhausted"]]
-  [cases X Y | Z] -> [if X Y (cases-macro [cases | Z])]
-  [cases X] -> (error "error: odd number of case elements~%")
-  X -> X)
-
-(define timer-macro
-  [time Process] -> (let-macro
-                     [let (protect Start) [get-time run]
-                          (protect Result) Process
-                          (protect Finish) [get-time run]
-                          (protect Time) [- (protect Finish) (protect Start)]
-                          (protect Message) [pr [cn "c#10;run time: "
-                                                    [cn [str (protect Time)]
-                                                        " secsc#10;"]]
-                                                [stoutput]]
-                       (protect Result)])
-   X -> X)
-
 (define tuple-up
   [X | Y] -> [@p X (tuple-up Y)]
-  X -> X)
-
-(define put/get-macro
-  [put X Pointer Y] -> [put X Pointer Y [value *property-vector*]]
-  [get X Pointer] -> [get X Pointer [value *property-vector*]]
-  [unput X Pointer] -> [unput X Pointer [value *property-vector*]]
   X -> X)
 
 (define undefmacro

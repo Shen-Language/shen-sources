@@ -13,6 +13,8 @@
 
 (define make ->
   (do
+    (set *maximum-print-sequence-size* 10000)
+    (set shen.*gensym* 0)
     (output "~%")
     (output "compiling *.shen to *.kl:~%")
     (map (fn systemf) [internal receive <!> sterror *sterror* ,])
@@ -22,10 +24,12 @@
       (map
         (/. File (do (output "  - ~A~%" File)
                      (make.make-file License File)))
-        ["core"
+        ["yacc"
+         "core"
          "declarations"
          "load"
-         "macros"
+         \\ macros is handled later with factorization enabled
+         \\ "macros"
          "prolog"
          "reader"
          "sequent"
@@ -36,8 +40,11 @@
          "track"
          "types"
          "writer"
-         "yacc"
          "init"]))
+    (let License   (read-file-as-string "LICENSE.txt")
+         Factor+   (factorise +)
+         MacroBoot (make.make-file License "macros")
+      (factorise -))
     (map
       (/. File (do (output "  - extension-~A~%" File)
                    (make.make-extension-file File)))
