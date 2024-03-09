@@ -24,15 +24,17 @@ This is the official repository for the open-source development of [Mark Tarver'
 
 Note that this repository does not contain a runnable implementation of Shen. Downloads for the [de-facto reference implementation](https://github.com/Shen-Language/shen-cl) are available on its [releases page](https://github.com/Shen-Language/shen-cl/releases). Other certified implementations are linked on [the Shen Open Source website](http://shen-language.github.io).
 
+> **NOTE** The version of Shen/CL linked above is currently unmaintained, consider the version from the [main website](https://shenlanguage.org/download.html) or [Shen/Scheme](https://github.com/tizoc/shen-scheme) instead.
+
 Documentation for the Shen Language is the [shendoc](http://shenlanguage.org/shendoc.htm) hosted on the [main website](http://www.shenlanguage.org).
 
 ## Generating Kλ
 
 Shen is a self-hosted language, so its kernel implementation is written in Shen. Building Kλ from the Shen sources requires an executable built from the previous release of Shen.
 
-### Using Pre-Built shen-cl (Recommended)
+### Using Pre-Built shen-scheme (Recommended)
 
-A prebuilt copy of the reference implementation can be pulled down by running `make fetch`. The executable `shen` will be dropped under the `shen-cl` folder. Render the Kλ by running `make klambda` or just `make`.
+A prebuilt copy of the reference implementation can be pulled down by running `make fetch`. The executable `shen` will be dropped under the `shen-scheme` folder. Render the Kλ by running `make klambda` or just `make`.
 
 ### Using Another Executable
 

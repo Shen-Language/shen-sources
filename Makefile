@@ -37,15 +37,15 @@ endif
 # Set shared variables
 #
 
-ShenClVersion=2.7.0
-UrlRoot=https://github.com/Shen-Language/shen-cl/releases/download
-ShenClTag=v$(ShenClVersion)
-ShenClFolderName=shen-cl-$(ShenClTag)-$(OSName)-prebuilt
-ShenClArchiveName=$(ShenClFolderName)$(ArchiveSuffix)
-ShenClArchiveUrl=$(UrlRoot)/$(ShenClTag)/$(ShenClArchiveName)
+ShenSchemeVersion=0.34
+UrlRoot=https://github.com/tizoc/shen-scheme/releases/download
+ShenSchemeTag=v$(ShenSchemeVersion)
+ShenSchemeFolderName=shen-scheme-$(ShenSchemeTag)-$(OSName)-bin
+ShenSchemeArchiveName=$(ShenSchemeFolderName)$(ArchiveSuffix)
+ShenSchemeArchiveUrl=$(UrlRoot)/$(ShenSchemeTag)/$(ShenSchemeArchiveName)
 
 ifndef Shen
-	Shen=.$(Slash)shen-cl$(Slash)shen$(BinarySuffix)
+	Shen=.$(Slash)shen-scheme$(Slash)bin$(Slash)shen-scheme$(BinarySuffix)
 endif
 
 ReleaseFolderName=ShenOSKernel-$(GitVersion)
@@ -76,18 +76,19 @@ endif
 .PHONY: fetch
 fetch:
 ifeq ($(OSName),windows)
-	$(PS) "Invoke-WebRequest -Uri $(ShenClArchiveUrl) -OutFile $(ShenClArchiveName)"
-	$(PS) "Expand-Archive $(ShenClArchiveName) -DestinationPath $(ShenClFolderName)"
-	$(PS) "if (Test-Path $(ShenClArchiveName)) { Remove-Item $(ShenClArchiveName) -Force -ErrorAction Ignore }"
-	$(PS) "if (Test-Path shen-cl) { Remove-Item shen-cl -Recurse -Force -ErrorAction Ignore }"
-	$(PS) "Rename-Item $(ShenClFolderName) shen-cl -ErrorAction Ignore"
+	$(PS) "Invoke-WebRequest -Uri $(ShenSchemeArchiveUrl) -OutFile $(ShenSchemeArchiveName)"
+	$(PS) "Expand-Archive $(ShenSchemeArchiveName) -DestinationPath $(ShenSchemeFolderName)"
+	$(PS) "if (Test-Path $(ShenSchemeArchiveName)) { Remove-Item $(ShenSchemeArchiveName) -Force -ErrorAction Ignore }"
+	$(PS) "if (Test-Path shen-scheme) { Remove-Item shen-scheme -Recurse -Force -ErrorAction Ignore }"
+	$(PS) "Rename-Item $(ShenSchemeFolderName)$(Slash)$(ShenSchemeFolderName) shen-scheme -ErrorAction Ignore"
+	$(PS) "Remove-Item $(ShenSchemeFolderName) -Recurse -Force -ErrorAction Ignore"
 else
-	wget $(ShenClArchiveUrl)
-	mkdir -p $(ShenClFolderName)
-	tar xf $(ShenClArchiveName) -C $(ShenClFolderName)
-	rm -f $(ShenClArchiveName)
-	rm -rf shen-cl
-	mv $(ShenClFolderName) shen-cl
+	wget $(ShenSchemeArchiveUrl)
+	mkdir -p $(ShenSchemeFolderName)
+	tar xf $(ShenSchemeArchiveName)
+	rm -f $(ShenSchemeArchiveName)
+	rm -rf shen-scheme
+	mv $(ShenSchemeFolderName) shen-scheme
 endif
 
 #
@@ -138,7 +139,7 @@ endif
 .PHONY: pure
 pure: clean
 ifeq ($(OSName),windows)
-	$(PS) "if (Test-Path shen-cl) { Remove-Item shen-cl -Recurse -Force -ErrorAction Ignore }"
+	$(PS) "if (Test-Path shen-scheme) { Remove-Item shen-scheme -Recurse -Force -ErrorAction Ignore }"
 else
-	rm -rf shen-cl
+	rm -rf shen-scheme
 endif
