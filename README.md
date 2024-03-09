@@ -32,7 +32,7 @@ Documentation for the Shen Language is the [shendoc](http://shenlanguage.org/she
 
 Shen is a self-hosted language, so its kernel implementation is written in Shen. Building Kλ from the Shen sources requires an executable built from the previous release of Shen.
 
-### Using Pre-Built shen-scheme (Recommended)
+### Using Pre-Built Shen/Scheme (Recommended)
 
 A prebuilt copy of the reference implementation can be pulled down by running `make fetch`. The executable `shen-scheme` will be dropped under the `shen-scheme/bin` folder. Render the Kλ by running `make klambda` or just `make`.
 
