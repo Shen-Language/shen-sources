@@ -1,3 +1,17 @@
+## Important User Notice
+
+This repository contains partial Shen language implementation details, aimed at developers working on Shen itself, **not** a full version ready for general programming use.
+
+To write and run Shen programs, please use one of these user-friendly options:
+
+- **Windows Users**: Download pre-compiled [SBCL port binaries](https://shenlanguage.org/download.html).
+- **Direct from Source**: Non-Windows users can obtain the [latest sources](https://shenlanguage.org/download.html) and run `(load "install.lsp")` in an SBCL REPL.
+- **Shen/Scheme**: Explore [Shen/Scheme](https://github.com/tizoc/shen-scheme), available as binaries or buildable from source.
+
+These resources provide complete Shen environments for programming. 
+
+---
+
 [![Current Release](https://img.shields.io/badge/release-37.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 # Official Shen Sources
