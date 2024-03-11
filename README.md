@@ -1,6 +1,8 @@
 ## Important User Notice
 
-This repository contains partial Shen language implementation details, aimed at developers working on Shen itself, **not** a full version ready for general programming use.
+This repository contains a partial Shen language implementation, aimed at developers working on Shen itself, **not** a full version ready for general programming use.
+
+> For beginners, it is **highly** recommended that they start first with the [main website](https://shenlanguage.org) and to join [the mailing list](https://groups.google.com/forum/#!forum/qilang).
 
 To write and run Shen programs, please use one of these user-friendly options:
 
@@ -14,17 +16,17 @@ These resources provide complete Shen environments for programming.
 
 [![Current Release](https://img.shields.io/badge/release-38.0-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
-# Official Shen Sources
+# Shen Sources
 
 <a href="http://www.shenlanguage.org">
   <img src="https://raw.githubusercontent.com/Shen-Language/shen-sources/master/assets/shen.png" align="right">
 </a>
 
-This is the official repository for the open-source development of [Mark Tarver's](http://www.marktarver.com/) Shen. Bug reports, suggested enhancements and pull requests are welcome here.
+This repository hosts a slightly modified version of the sources for the kernel of [Mark Tarver's](http://www.marktarver.com/) Shen programming language.
 
-Note that this repository does not contain a runnable implementation of Shen. Downloads for the [de-facto reference implementation](https://github.com/Shen-Language/shen-cl) are available on its [releases page](https://github.com/Shen-Language/shen-cl/releases). Other certified implementations are linked on [the Shen Open Source website](http://shen-language.github.io).
+Note that this repository does not contain a runnable implementation of Shen, just the language kernel code that can be used by porters to create a full implementation of the language.
 
-> **NOTE** The version of Shen/CL linked above is currently unmaintained, consider the version from the [main website](https://shenlanguage.org/download.html) or [Shen/Scheme](https://github.com/tizoc/shen-scheme) instead.
+> **NOTE** To obtain a runnable version, consider the reference implementation from the [main website](https://shenlanguage.org/download.html) or [Shen/Scheme](https://github.com/tizoc/shen-scheme).
 
 Documentation for the Shen Language is the [shendoc](http://shenlanguage.org/shendoc.htm) hosted on the [main website](http://www.shenlanguage.org).
 
