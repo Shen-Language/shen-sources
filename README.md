@@ -30,6 +30,8 @@ Documentation for the Shen Language is the [shendoc](http://shenlanguage.org/she
 
 ## Generating Kλ
 
+> **IMPORTANT** This is not required when downloading the [releases](https://github.com/Shen-Language/shen-cl/releases) (recommended).
+
 Shen is a self-hosted language, so its kernel implementation is written in Shen. Building Kλ from the Shen sources requires an executable built from the previous release of Shen.
 
 ### Using Pre-Built Shen/Scheme (Recommended)
