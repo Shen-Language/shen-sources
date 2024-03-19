@@ -20,31 +20,29 @@
     (map (fn systemf) [internal receive <!> sterror *sterror* ,])
     (map (fn make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (shen.x.expand-dynamic.initialise)
-    (let License (read-file-as-string "LICENSE.txt")
-      (map
-        (/. File (do (output "  - ~A~%" File)
-                     (make.make-file License File)))
-        ["yacc"
-         "core"
-         "declarations"
-         "load"
-         \\ macros is handled later with factorization enabled
-         \\ "macros"
-         "prolog"
-         "reader"
-         "sequent"
-         "sys"
-         "dict"
-         "t-star"
-         "toplevel"
-         "track"
-         "types"
-         "writer"
-         "init"]))
-    (let License   (read-file-as-string "LICENSE.txt")
-         Factor+   (factorise +)
-         MacroBoot (make.make-file License "macros")
-      (factorise -))
+    (map
+      (/. File (do (output "  - ~A~%" File)
+                   (make.make-file File)))
+      ["yacc"
+       "core"
+       "declarations"
+       "load"
+       \\ macros is handled later with factorization enabled
+       \\ "macros"
+       "prolog"
+       "reader"
+       "sequent"
+       "sys"
+       "dict"
+       "t-star"
+       "toplevel"
+       "track"
+       "types"
+       "writer"
+       "init"])
+    (factorise +)
+    (make.make-file "macros")
+    (factorise -)
     (map
       (/. File (do (output "  - extension-~A~%" File)
                    (make.make-extension-file File)))
@@ -89,13 +87,13 @@
   P [_ | Xs] -> (make.filter P Xs))
 
 (define make.make-file
-  License "init"
+  "init"
   -> (let KlFile "klambda/init.kl"
           InitCode (value *init-code*)
           EnvInit (make.filter (/. X (= environment (make.initialiser-kind X))) InitCode)
           SignedFuncsInit (make.filter (/. X (= set-signedfuncs (make.initialiser-kind X))) InitCode)
           LambdaFormsInit (make.filter (/. X (= set-lambda-form-entry (make.initialiser-kind X))) InitCode)
-          KlString (make-string "c#34;~Ac#34;~%~%~A" License
+          KlString (make-string "~A"
                      (make.list->string [
                        (shen.x.expand-dynamic.wrap-in-defun
                         shen.initialise-environment [] EnvInit)
@@ -116,7 +114,7 @@
           Write (write-to-file KlFile KlString)
        KlFile)
 
-  License File
+  File
   -> (let ShenFile (make-string "sources/~A.shen" File)
           KlFile (make-string "klambda/~A.kl" File)
           ShenCode (read-file ShenFile)
@@ -125,7 +123,7 @@
           Defuns+Init (shen.x.expand-dynamic.split-defuns KlCode)
           Defuns (fst Defuns+Init)
           Init (set *init-code* (append (value *init-code*) (snd Defuns+Init)))
-          KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Defuns))
+          KlString (make-string "~A" (make.list->string Defuns))
           Write (write-to-file KlFile KlString)
        KlFile))
 
