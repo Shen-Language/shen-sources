@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [38.1] - 2024-03-19
+
+### Fixed
+
+- More portable code for the application of user-defined macros
+
 ## [38.0] - 2024-03-09
 
 ### Changed
