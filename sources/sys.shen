@@ -7,9 +7,6 @@
 (define thaw
   F -> (F))
 
-\\(define eval
- \\ X -> (eval-kl (shen->kl (macroexpand X))))
-
 (define eval
   X -> (eval-kl (shen->kl (process-applications (macroexpand X) (find-types X)))))
 

@@ -50,14 +50,10 @@
                                    where (element? F [@p @v append and or + * do])
   X -> X)
 
-(define defcc-macro
-  [defcc | X] -> (yacc->shen X)
-  X -> X)
-
 (define process-def
   F Rest -> (let Default [(protect X) -> (protect X)]
                  Def (eval [define F | (append Rest Default)])
-                 Record (record-macro F (/. X (F X)))
+                 Record (record-macro F (fn F))
               F))
 
 (define process-let
