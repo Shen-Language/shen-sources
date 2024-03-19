@@ -527,7 +527,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...HEAD
+[38.1]: https://github.com/Shen-Language/shen-sources/compare/shen-38.0...shen-38.1
 [38.0]: https://github.com/Shen-Language/shen-sources/compare/shen-37.1...shen-38.0
 [37.1]: https://github.com/Shen-Language/shen-sources/compare/shen-37.0...shen-37.1
 [37.0]: https://github.com/Shen-Language/shen-sources/compare/shen-36.0...shen-37.0
