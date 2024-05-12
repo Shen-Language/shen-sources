@@ -80,9 +80,14 @@
 (define process-synonyms
   X -> (synonyms-h (set *synonyms* (append X (value *synonyms*)))))
 
+(define lambda-of-defun
+  [defun _ [Var] Body] -> (eval [/. Var Body]))
+
 (define synonyms-h
   Synonyms -> (let CurryTypes (map (/. X (curry-type X)) Synonyms)
-                   Eval (eval [define demod | (compile-synonyms CurryTypes)])
+                   DemodLambda (lambda-of-defun
+                                 (shendef->kldef demod (compile-synonyms CurryTypes)))
+                   Demod (set *demodulation-function* DemodLambda)
                 synonyms))
 
 (define compile-synonyms
