@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [38.2] - 2024-05-12
+
+### Fixed
+
+- Bug in the handling of % and ! in the REPL.
+
 ## [38.1] - 2024-03-19
 
 ### Fixed
@@ -533,7 +539,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...HEAD
+[38.2]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...shen-38.2
 [38.1]: https://github.com/Shen-Language/shen-sources/compare/shen-38.0...shen-38.1
 [38.0]: https://github.com/Shen-Language/shen-sources/compare/shen-37.1...shen-38.0
 [37.1]: https://github.com/Shen-Language/shen-sources/compare/shen-37.0...shen-37.1
