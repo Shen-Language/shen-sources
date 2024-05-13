@@ -37,7 +37,7 @@ endif
 # Set shared variables
 #
 
-ShenSchemeVersion=0.34
+ShenSchemeVersion=0.35
 UrlRoot=https://github.com/tizoc/shen-scheme/releases/download
 ShenSchemeTag=v$(ShenSchemeVersion)
 ShenSchemeFolderName=shen-scheme-$(ShenSchemeTag)-$(OSName)-bin
