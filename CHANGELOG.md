@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [38.3] - 2024-05-13
+
+### Fixed
+
+- Removed unnecesary external symbols, arities and duplicated definitions
+- Recover dynamic `demod` funcionality so that it is not updated through an `eval` that redefines it.
+
 ## [38.2] - 2024-05-12
 
 ### Fixed
@@ -539,7 +546,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...HEAD
+[38.3]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...shen-38.3
 [38.2]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...shen-38.2
 [38.1]: https://github.com/Shen-Language/shen-sources/compare/shen-38.0...shen-38.1
 [38.0]: https://github.com/Shen-Language/shen-sources/compare/shen-37.1...shen-38.0

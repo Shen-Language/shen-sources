@@ -155,9 +155,6 @@
 (defcc <sc>
   X := X  where (semicolon? X);)
 
-(define semicolon?
-  X -> (= X (intern ";")))
-
 (define horn-clause-procedure
    F Clauses -> (let Bindings (gensym (protect B))
                      Lock (gensym (protect L))

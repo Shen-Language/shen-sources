@@ -556,10 +556,6 @@
 (define shen-call?
    F -> (and (symbol? F) (internal-to-shen? (str F))))
 
-(define internal-to-shen?
-  (@s "shen." _) -> true
-  _ -> false)
-
 (define application?
   [protect _] -> false
   [foreign _] -> false
