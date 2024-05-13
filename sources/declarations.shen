@@ -106,7 +106,7 @@
      read-byte read-from-string read-from-string-unprocessed package? put preclude preclude-all-but ps prolog?
      protect profile-results profile prolog-memory print pr pos porters port package output out os or
      optimise open occurrences occurs-check n->string number? number null nth not nl mode macroexpand maxinferences
-     mapcan map make-string load loaded lineread limit length let lazy lambda language is intersection inferences
+     mapcan map make-string load loaded list lineread limit length let lazy lambda language is intersection inferences
      intern integer? input input+ inline include include-all-but it is is! in in-package internal implementation if
       head hd hdv hdstr hash get get-time gensym fn function fst freeze fresh fork foreign fix file fail fail-if factorise
       findall false enable-type-theory explode external exception eval-kl eval error-to-string error empty? element?
