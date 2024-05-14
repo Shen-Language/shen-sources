@@ -72,7 +72,7 @@
   > 2 >= 2 = 2 hash 2 hd 1 hdv 1 hdstr 1 head 1 if 3 include 1 in-package 1 integer? 1
   internal 1 intern 1 inferences 0 input 1 input+ 2 implementation 0 include-all-but 1
   intersection 2 internal 1 it 0 is 6 is! 6
-  language 0 length 1 limit 1 lineread 1 list 1 load 1 < 2 <= 2 vector 1 macroexpand 1 map 2 mapcan 2
+  language 0 length 1 limit 1 lineread 1 load 1 < 2 <= 2 vector 1 macroexpand 1 map 2 mapcan 2
   maxinferences 1 nl 1 not 1 nth 2 n->string 1 number? 1 occurs-check 1 occurrences 2 occurs-check 1
   open 2 optimise 1 or 2 os 0 package 3 package? 1 port 0 porters 0 pos 2 preclude-all-but 1
    print 1 profile 1 print-prolog-vector 1 print-freshterm 1 printF 1
