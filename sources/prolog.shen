@@ -459,9 +459,9 @@
 (define lzy=!
    X X _ Continuation -> (thaw Continuation)
    X Y Bindings Continuation -> (bind! X Y Bindings Continuation)
-                                 where (and (pvar? X) (not (occurs? X (deref Y Bindings))))
+                                 where (and (pvar? X) (not (prolog-occurs? X (deref Y Bindings))))
    X Y Bindings Continuation -> (bind! Y X Bindings Continuation)
-                                 where (and (pvar? Y) (not (occurs? Y (deref X Bindings))))
+                                 where (and (pvar? Y) (not (prolog-occurs? Y (deref X Bindings))))
    [X | Y] [W | Z] Bindings Continuation -> (lzy=! (lazyderef X Bindings)
                                                    (lazyderef W Bindings)
                                                    Bindings
@@ -484,9 +484,9 @@
                                                                 Continuation)))
    _ _ _ _ -> false)
 
-(define occurs?
+(define prolog-occurs?
   X X -> true
-  X [Y | Z] -> (or (occurs? X Y) (occurs? X Z))
+  X [Y | Z] -> (or (prolog-occurs? X Y) (prolog-occurs? X Z))
   _ _ -> false)
 
 (define call

@@ -25,6 +25,7 @@
                    (make.make-file File)))
       ["yacc"
        "core"
+       "declarations"
        "load"
        \\ macros is handled later with factorization enabled
        \\ "macros"
@@ -38,7 +39,6 @@
        "track"
        "types"
        "writer"
-       "declarations"
        "init"])
     (factorise +)
     (make.make-file "macros")
