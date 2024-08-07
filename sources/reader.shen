@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [shen foreign]
+(package shen [shen]
 
 (define read-file
   File -> (let Bytelist (read-file-as-bytelist File)
@@ -448,7 +448,9 @@
                                       Package))
 
 (define record-internal
-  P External! S-exprs -> (put P internal-symbols (internal-symbols (str P) External! S-exprs)))
+  P External! S-exprs -> (let Old (trap-error (get P internal-symbols) (/. E []))
+                              New (internal-symbols (str P) External! S-exprs)
+                           (put P internal-symbols (union New Old))))
 
 (define internal-symbols
   P External [X | Y] -> (union (internal-symbols P External X) (internal-symbols P External Y))
@@ -577,6 +579,7 @@
   F -> (fn F))
 
 (define fn
+  F -> (F) where (= (arity F) 0)
   F -> (trap-error
         (get F lambda-form)
         (/. E (error  "fn: ~A is undefined~%" F))))
@@ -590,7 +593,7 @@
   [function F] -> (fn-call [fn F])
   [fn F] -> (let ArityF (arity F)
                (cases (= ArityF -1) [fn F]
-                      (= ArityF 0) (error "fn cannot be applied to a zero place function~%")
+                      (= ArityF 0) [F]
                       true (lambda-function [F] ArityF))))
 
 (define partial-application*?

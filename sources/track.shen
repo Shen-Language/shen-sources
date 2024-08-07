@@ -23,8 +23,8 @@
   [defun F Params Body]
    -> (let KL [defun F Params (insert-tracking-code F Params Body)]
            Ob (eval-kl KL)
-           Tr (set *tracking* [Ob | (value *tracking*)])
-           Ob)
+           Tr (set *tracking* (adjoin F (value *tracking*)))
+        F)
    _ -> (simple-error "implementation error in shen.track-function")        )
 
 (define insert-tracking-code
@@ -56,10 +56,16 @@
   - -> (set *step* false)
   _ -> (error "step expects a + or a -.~%"))
 
+(define step?
+   -> (value *step*))
+
 (define spy
   + -> (set *spy* true)
   - -> (set *spy* false)
   _ -> (error "spy expects a + or a -.~%"))
+
+(define spy?
+   -> (value *spy*))
 
 (define terpri-or-read-char
   -> (if (value *step*)

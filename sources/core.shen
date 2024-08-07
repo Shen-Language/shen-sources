@@ -151,7 +151,8 @@
   V Bound -> (and (variable? V) (not (element? V Bound))))
 
 (define record-kl
-  F KL -> (put F source KL))
+  F KL -> (do (set *userdefs* (adjoin F (value *userdefs*)))
+              (put F source KL)))
 
 (define compile-to-kl
   F Rules Arity -> (let Parameters (parameters Arity)

@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [update-lambda-table]
+(package shen [update-lambda-table occurs? factorise? hush? optimise? system-S? userdefs tracked]
 
 (define thaw
   F -> (F))
@@ -28,6 +28,15 @@
 
 (define tc?
   -> (value *tc*))
+
+(define occurs?
+  -> (value *occurs*))
+
+(define factorise?
+  -> (value *factorise?*))
+
+(define tracked
+  -> (value *tracking*))
 
 (define ps
   Name -> (trap-error (get Name source) (/. E (error "~A not found.~%" Name))))
@@ -399,7 +408,9 @@
   S -> [(string->n (pos S 0)) | (string->bytes (tlstr S))])
 
 (define maxinferences
-  N -> (set *maxinferences* N))
+  N -> (cases (< N 0)      (value *maxinferences*)
+              (integer? N) (set *maxinferences* N)
+              true         (error "maxinferences expects an integer value~%")))
 
 (define inferences
   -> (value *infs*))
@@ -452,10 +463,27 @@
 (define fail
   -> fail!)
 
+(define userdefs
+  -> (value *userdefs*))
+
+(define optimise?
+  -> (value *optimise*))
+
+(define hush?
+  -> (value *hush*))
+
+(define system-S?
+  -> (value *shen-type-theory-enabled?*))
+
 (define enable-type-theory
   + -> (set *shen-type-theory-enabled?* true)
   - -> (set *shen-type-theory-enabled?* false)
   _ -> (error "enable-type-theory expects a + or a -~%"))
+
+(define hush
+  + -> (set *hush* true)
+  - -> (set *hush* false)
+  _ -> (error "hush expects a + or a -~%"))
 
 (define tc
   + -> (set *tc* true)
