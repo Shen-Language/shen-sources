@@ -83,11 +83,11 @@
   boolean? 1 bootstrap 1 bound? 1 bind 6 call 5 cd 1 compile 2 concat 2 cons 2 cons? 1 cn 2 close 1
   datatypes 0 declare 2 destroy 1 difference 2 do 2 element? 2 empty? 1 enable-type-theory 1 external 1
   error-to-string 1 eval 1 eval-kl 1 explode 1 external 1 factorise 1 factorise? 0 fail-if 2 fail 0
-  fix 2 findall 7 \* foreign 1 *\ fork 5 freeze 1 fresh 0 fst 1 fn 1 function 1 gensym 1 get 3 get-time 1
+  fix 2 findall 7 foreign 1 fork 5 freeze 1 fresh 0 fst 1 fn 1 function 1 gensym 1 get 3 get-time 1
   address-> 3 <-address 2 <-vector 2 > 2 >= 2 = 2 hash 2 hd 1 hdv 1 hdstr 1 head 1 hush? 0 hush 1 if 3
   include 1 included 0 in-package 1 integer? 1 internal 1 intern 1 inferences 0 input 1 input+ 2
   implementation 0 include-all-but 1 intersection 2 internal 1 it 0 is 6 is! 6 language 0 length 1
-  limit 1 lineread 1 \* list 1 *\ load 1 < 2 <= 2 vector 1 macroexpand 1 map 2 mapcan 2 maxinferences 1 nl 1
+  limit 1 lineread 1 list 1 load 1 < 2 <= 2 vector 1 macroexpand 1 map 2 mapcan 2 maxinferences 1 nl 1
   not 1 nth 2 n->string 1 number? 1 occurs-check 1 occurrences 2 occurs? 0 occurs-check 1 open 2 optimise 1
   optimise? 0 or 2 os 0 package 3 package? 1 port 0 porters 0 pos 2 preclude-all-but 1 print 1 profile 1
   print-prolog-vector 1 print-freshterm 1 printF 1 prolog-memory 1 profile-results 1 pr 2 ps 1 preclude 1
