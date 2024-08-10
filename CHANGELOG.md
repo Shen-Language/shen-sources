@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [39.0] - 2024-08-10
+
+- `fn` defined for 0 place functions.
+
 ## [38.3] - 2024-05-13
 
 ### Fixed
@@ -546,7 +550,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...HEAD
+[39.0]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...shen-39.0
 [38.3]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...shen-38.3
 [38.2]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...shen-38.2
 [38.1]: https://github.com/Shen-Language/shen-sources/compare/shen-38.0...shen-38.1
