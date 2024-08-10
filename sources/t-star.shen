@@ -114,6 +114,7 @@
   X A _                           <-- (when (not (cons? (1 X)))) (primitive X A);
   X A Hyp                         <-- (by-hypothesis X A Hyp);
   (- [F]) A Hyp                   <-- (lookupsig F [--> A]);
+  (- [fn F]) A Hyp                <-- (when (= (arity F) 0)) ! (system-S-h [F] A Hyp);
   (- [fn F]) A _                  <-- (lookupsig F A);
   (- [F X]) A Hyp                 <-- (when (not (cons? (1 F)))) (lookupsig F [B --> A]) (system-S-h X B Hyp);
   (- [F X]) A Hyp                 <-- (system-S-h F [B --> A] Hyp) (system-S-h X B Hyp);

@@ -57,7 +57,7 @@
 
 (define occurs-check?
    {term --> term --> boolean}
-   X Y -> (and (variable? X) (not (occurs? X Y))))
+   X Y -> (and (variable? X) (not (my-occurs? X Y))))
 
 (define dereference
   {term --> (list (term * term)) --> term}
@@ -71,10 +71,10 @@
    X [(@p X Y) | _] -> Y
    X [_ | Y] -> (lookup X Y))
 
-(define occurs?
+(define my-occurs?
   {term --> term --> boolean}
    X X -> true
-   X [Y | Z] -> (or (== X Y) (some (/. W (occurs? X W)) Z))
+   X [Y | Z] -> (or (== X Y) (some (/. W (my-occurs? X W)) Z))
    _ _ -> false)
 
 (define some

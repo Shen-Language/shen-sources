@@ -51,6 +51,8 @@
 (define expand-lambda-form-entry
   package _ -> []
   receive _ -> []
+  list _ -> []
+  foreign _ -> []
   F Arity -> (cases (= Arity -1) []
                     (= Arity 0) []
                     true [[shen.set-lambda-form-entry

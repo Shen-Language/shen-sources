@@ -142,7 +142,7 @@
               [parse-failure]
               (let Continue [let Remainder [in-> TryParse]
                                  (yacc-syntax Type Remainder Syntax Semantics)]
-                   (if (or (occurs? NonTerminal Semantics) (occurs? Act Semantics))
+                   (if (or (prolog-occurs? NonTerminal Semantics) (prolog-occurs? Act Semantics))
                        [let Act [<-out TryParse] Continue]
                        Continue))]]))
 
@@ -153,7 +153,7 @@
          [if [cons? Input]
              (let Continue [let Remainder [tail Input]
                              (yacc-syntax Type Remainder Syntax Semantics)]
-                  (if (occurs? Variable Semantics)
+                  (if (prolog-occurs? Variable Semantics)
                       [let Variable [head Input] Continue]
                       Continue))
              [parse-failure]]))
