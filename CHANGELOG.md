@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [39.0] - 2024-08-10
 
+### Changed
+
 - `fn` defined for 0 place functions.
 
 ## [38.3] - 2024-05-13
