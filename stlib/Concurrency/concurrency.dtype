@@ -1,0 +1,153 @@
+(package p [subset? p.apply p.and p.or p.let p.cases p.anycases thread terminate newv p.-> p.<- p.<-! sproc]
+
+(set *set-kl-extension* 2) 
+(set *prccount* 0)
+(set *cores* 8)
+
+(define cores
+  -> (value *cores*))
+  
+(define set-cores
+  N -> (set *cores* N)  where (and (integer? N) (> N 0))
+  N -> (error "~A must be a positive integer to 'cores'~%" N))  
+  
+(define kl-extension
+  -> (value *set-kl-extension*))  
+  
+(define processes
+  -> (value *prccount*))  
+  
+(define set-kl-extension
+  0 -> (set *set-kl-extension* 0)
+  1 -> (set *set-kl-extension* 1) 
+  2 -> (set *set-kl-extension* 2)
+  _ -> (error "set-kl-extension requires either 0, 1 or 2 as arguments~%"))  
+  
+(defmacro set-kl-extension-macro
+  [p.-> X] -> (let C (kl-extension)
+                     (if (= C 0)
+                         (error "cannot start a process if the computer is set to serial mode")
+                         [proc->-h [freeze X]])) 
+  [p.apply F | Args] -> (let C (kl-extension)
+                         (if (= C 0) 
+                             [F | Args]
+                             (let  Vars (map (/. X (newv)) Args)
+                                   Processes (map (/. X [p.-> X]) Args)
+                                   Local (local Vars Processes)
+                                   Result [F | (map (/. Y [p.<-! Y]) Vars)]
+                                   [let | (append Local [Result])])))
+  [p.and | Args] -> (let C (kl-extension)
+                         (cases (= C 0) [and | Args]
+                                (= C 1) [p-and-rotate (mk-proclist Args)]
+                                (= C 2) [p-and-rotate! (mk-proclist Args)]))
+  [p.or | Args] -> (let C (kl-extension)
+                         (cases (= C 0) [or | Args]
+                                (= C 1) [p-or-rotate (mk-proclist Args)]
+                                (= C 2) [p-or-rotate! (mk-proclist Args)]))
+  [p.anycases | Cases] -> (let C (kl-extension)
+                               (cases (= C 0) [cases | Cases]
+                                      (= C 1) [p-anycases-h (make-cases Cases)]
+                                      (= C 2) [p-anycases-h! (make-cases Cases)]))
+  [p.cases | Cases] -> (let C (kl-extension)
+                            (cases (= C 0) [cases | Cases]
+                                   (= C 1) [p-cases-h (make-cases Cases)]
+                                   (= C 2) [p-cases-h! (make-cases Cases)]))
+  [p.let | Body] -> (let C (kl-extension)
+                         (if (= C 0) 
+                             [let | Body]
+                             [let | (let-parallel-code Body [])])))
+                             
+(define mk-proclist
+   [] -> []
+   [Arg | Args] -> [cons [p.-> Arg] (mk-proclist Args)])                             
+  
+(define local
+  [] [] -> []
+  [V | Vs] [Arg | Args] -> [V Arg | (local Vs Args)])  
+  
+(define let-parallel-code
+  [[F | X]] Vs 
+  -> (if (directly-functional? F X Vs)
+         [[F | (map (/. Y [p.<-! Y]) X)]]
+         (error "'~R' is not directly functional~%" [F | X]))
+  [V E | Body] Vs 
+  -> (if (data-dependent? E Vs)
+         (error "'~R' is data dependent~%" E)
+         [V [p.-> E] 
+             | (let-parallel-code Body [V | Vs])])
+    _ _ -> (error "missing result in p-let~%"))
+  
+(define directly-functional?
+   F X Vs -> (and (symbol? F) (subset? X Vs)))
+   
+(define data-dependent? 
+    _ [] -> false
+    E [V | Vs] -> (or (> (occurrences V E) 0) 
+                      (data-dependent? E Vs)))
+                            
+(define make-cases
+  [] -> []
+  [Test Result | Cases] 
+    -> [cons [@p [p.-> Test] [freeze Result]]
+             (make-cases Cases)]
+  _ -> (error "odd number of cases~%"))
+
+(define proc->-h
+  Lazy -> (let V (absvector 4)
+               Pr (address-> V 0 print-simple-process)
+               Result (address-> V 1 "??")
+               Terminated? (address-> V 2 false)
+               Process (address-> V 3 
+                         (thread 
+                          	 (freeze 
+                               (do (prccount+)
+                                   (address-> V 1 (thaw Lazy))
+                                   (prccount-)
+                                   (address-> V 2 true)))))
+               V))
+               
+(define prccount+
+  -> (set *prccount* (+ (value *prccount*) 1)))
+  
+(define prccount-
+  -> (set *prccount* (- (value *prccount*) 1)))
+  
+(define processes
+  -> (value *prccount*))
+  
+(define cores 
+  -> (value *cores*))                  
+
+(define terminated?                   
+  Process -> (<-address Process 2))
+
+(define thread-in
+   Process -> (<-address Process 3))
+
+(define p.<-
+  Process -> (if (terminated? Process)
+                 (<-address Process 1)
+                 (error "process has not terminated~%")))
+
+(define print-simple-process
+  Process -> (@s "c#16;" (make-string "~A" (<-address Process 1))  "c#17;")) 
+  
+(define process?
+  P -> (and (absvector? P)
+            (= (<-address P 0) print-simple-process)))  
+  
+(declare prccount+ [--> number])
+(declare prccount- [--> number])
+(declare processes [--> number])
+(declare process? [A --> boolean])
+(declare thread [[lazy A] --> thread])
+(declare thread-in [[sproc A] --> thread])
+(declare terminate [thread --> thread]) 
+(declare proc->-h [[lazy A] --> [sproc A]])
+(declare terminated? [[sproc A] --> boolean])
+(declare p.<- [[sproc A] --> A]) 
+(declare set-kl-extension [number --> number])
+(declare kl-extension [--> number])
+(declare cores [--> number])
+(declare set-cores [number --> number])
+       )

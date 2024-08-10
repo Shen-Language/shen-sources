@@ -1,0 +1,47 @@
+(package numerals (append (external maths) [numeral? numeral radix n#->ns n# n#->n])
+
+   (define n#
+     N Radix -> (let Vector (absvector 4)
+                     PrintV (address-> Vector 0 print-numeral)
+                     NumbersV (address-> Vector 1 (n->numeral N Radix))
+                     BaseV (address-> Vector 2 Radix)
+                     NV (address-> Vector 3 N)
+                     Vector)  where (and (natural? N) (natural? Radix) (> Radix 0))
+     N Radix -> (error "N = ~A, Radix = ~A; N and Radix must be natural numbers where Radix > 0~%"
+                       N Radix))
+                       
+   (define radix
+     Numeral -> (<-address Numeral 2)) 
+     
+   (define numerals
+     Numeral -> (<-address Numeral 1)) 
+     
+   (define n#->n
+     Numeral -> (<-address Numeral 3))  
+     
+   (declare radix [numeral --> number])
+   (declare n#->ns [numeral --> [list number]])
+   (declare n#->n [numeral --> number])
+   (declare n# [number --> [number --> numeral]])
+   (declare numeral? [A --> boolean])
+   
+   (define n#->ns
+     Numeral -> (<-address Numeral 1))
+                    
+   (define print-numeral
+      Numeral -> (let Base (radix Numeral)
+                      Ns (numerals Numeral)
+                      (@s (numeric->string Ns Base) "#" (str Base))))
+                     
+   (define numeric->string
+     {(list number) --> number --> string}
+     [] _ -> ""
+     [N | Ns] Base -> (let Char (cases (< N 10) (str N) 
+                                       (> Base 36) (cn (str N) " ")
+                                       true (n->string (+ N 55))) 
+                           (cn Char (numeric->string Ns Base)))) 
+                           
+   (define numeral?
+      Num -> (and (absvector? Num) (= print-numeral (<-address Num 0))))                           
+                       
+                       ) 

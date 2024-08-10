@@ -1,0 +1,31 @@
+(package rational [r# rational? rational numerator denominator]
+
+(define r#
+  N D -> (let V (absvector 3)
+              PrintF (address-> V 0 print-rational)   
+              Numerator (address-> V 1 N)
+              Denominator (address-> V 2 D)
+              V)  where (and (integer? N) (integer? D))
+  N D -> (error "numerator ~S and divisor ~S must be integers~%" N D))
+              
+(define print-rational
+  V -> (make-string "~S/~S" (<-address V 1) (<-address V 2))) 
+  
+(define rational?
+  R -> (trap-error (and (absvector? R) 
+                        (= (<-address R 0) print-rational)
+                        (integer? (<-address R 1))
+                        (integer? (<-address R 2))) (/. E false)))  
+  
+(define numerator
+  V -> (<-address V 1))
+  
+(define denominator
+  V -> (<-address V 2))
+  
+(declare r# [number --> [number --> rational]])
+(declare rational? [A --> boolean])
+(declare numerator [rational --> number])
+(declare denominator [rational --> number])  )
+  
+                   

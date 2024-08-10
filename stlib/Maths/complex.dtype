@@ -1,0 +1,31 @@
+(package complex [c# complex? real imaginary complex]
+
+(define c#
+  R I -> (let C (absvector 3)
+              PrintF (address-> C 0 print-complex)   
+              Rumerator (address-> C 1 R)
+              Ienominator (address-> C 2 I)
+              C)   where (and (number? R) (number? I))
+  R I -> (error "real ~A and imaginary ~A must be numbers~%" R I))            
+              
+(define print-complex
+  C -> (make-string (cn "(c" "# ~A ~A)") (<-address C 1) (<-address C 2))) 
+  
+(define complex?
+  C -> (trap-error (and (absvector? C) 
+                        (= (<-address C 0) print-complex)
+                        (number? (<-address C 1))
+                        (number? (<-address C 2))) (/. E false)))  
+  
+(define real
+  C -> (<-address C 1))
+  
+(define imaginary
+  C -> (<-address C 2))
+  
+(declare c# [number --> [number --> complex]])
+(declare complex? [A --> boolean])
+(declare real [complex --> number])
+(declare imaginary [complex --> number])  )
+  
+                   
