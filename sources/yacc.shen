@@ -6,12 +6,25 @@
 
 (define compile
   F L -> (let Compile (F L)
-           (cases (parse-failure? Compile) (error "parse failure~%")
-                  (cons? (in-> Compile))   (error "syntax error here: ~S ..." (hd (in-> Compile)))
-                  true                     (<-out Compile))))
+           (cases (parse-failure? Compile)         (error "parse failure~%")
+                  (partial-parse-failure? Compile) (do (set *residue* (in-> Compile))
+                                                       (raise-syntax-error (value *residue*)))
+                  true                             (<-out Compile))))
+
+(define raise-syntax-error
+  Residue -> (error (cn "syntax error here: "
+                     (syntax-error-message (value *maximum-print-sequence-size*) 0 Residue))))
+
+(define syntax-error-message
+  _ _ [] -> "c#10;"
+  Max Max _ -> "...etc c#10;"
+  Max N [X | Y] -> (cn (make-string "~S " X) (syntax-error-message Max (+ N 1) Y)))
 
 (define parse-failure?
   X -> (= X (fail)))
+
+(define partial-parse-failure?
+  Compile -> (cons? (in-> Compile)))
 
 (define objectcode
    [_ ObjectCode] -> ObjectCode
@@ -142,7 +155,7 @@
               [parse-failure]
               (let Continue [let Remainder [in-> TryParse]
                                  (yacc-syntax Type Remainder Syntax Semantics)]
-                   (if (or (prolog-occurs? NonTerminal Semantics) (prolog-occurs? Act Semantics))
+                   (if (or (occurs-check? NonTerminal Semantics) (occurs-check? Act Semantics))
                        [let Act [<-out TryParse] Continue]
                        Continue))]]))
 
@@ -153,7 +166,7 @@
          [if [cons? Input]
              (let Continue [let Remainder [tail Input]
                              (yacc-syntax Type Remainder Syntax Semantics)]
-                  (if (prolog-occurs? Variable Semantics)
+                  (if (occurs-check? Variable Semantics)
                       [let Variable [head Input] Continue]
                       Continue))
              [parse-failure]]))

@@ -35,6 +35,7 @@
          (F X)))
 
 (declare abort [--> A])
+(declare absolute [string --> [list string]])
 (declare absvector? [A --> boolean])
 (declare adjoin [A --> [[list A] --> [list A]]])
 (declare and [boolean --> [boolean --> boolean]])
@@ -173,6 +174,7 @@
 (declare tracked [--> [list symbol]])
 (declare trap-error [A --> [[exception --> A] --> A]])
 (declare tuple? [A --> boolean])
+(declare unabsolute [string --> [list string]])
 (declare undefmacro [symbol --> symbol])
 (declare union [[list A] --> [[list A] --> [list A]]])
 (declare unprofile [symbol --> symbol])
