@@ -9,8 +9,8 @@
               (if (number? M)
                   M
                   N)))
-                  
+
 (put titlefont tk.class tk.font)
-                    
+
 (define toplevel
    -> (do (myIDE) (tk.putw (tk.root) -bg (bg)) (shen.shen)))                 )

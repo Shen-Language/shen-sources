@@ -5,6 +5,6 @@
                 (if (symbol? S1+S2)
                     S1+S2
                     (error "'~A' is not a symbol~%" S1+S2))))
-                    
-(declare concat* [A --> [B --> symbol]]) )                   
+
+(declare concat* [A --> [B --> symbol]]) )
 

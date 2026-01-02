@@ -23,8 +23,8 @@
 
   ______________
   eos : re-next;)
-                    
-\\ re-state holds the state and match data of regular expressions 
+
+\\ re-state holds the state and match data of regular expressions
 
 (define new-state
   {re-state --> re-state}

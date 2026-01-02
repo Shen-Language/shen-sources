@@ -48,10 +48,10 @@
  tan330 sinh cosh tanh sech csch power factorial prime? unix div
  modf product summation set-tolerance tolerance coth for sq cube
  newv abs approx log log2 loge log10 g pps pprint pretty-string
- linelength indentation set-linelength set-indentation]   
- 
+ linelength indentation set-linelength set-indentation]
+
  (defmacro stlib-macros
- 
+
   \\ maths macros
   [log10 N] -> [log10 N [tolerance]]
   [log2 N] -> [log2 N [tolerance]]
@@ -72,32 +72,32 @@
   [max W X Y | Z] -> [max W [max X Y | Z]]
   [min W X Y | Z] -> [min W [min X Y | Z]]
   [tolerance N] -> [tolerance=n N]
-  [for X = N Loop Do Step and] 
+  [for X = N Loop Do Step and]
     -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
          [lazyfor-and N (LBind X Loop) (LBind X Do) Step])
-  [for X = N Loop Do Step or] 
+  [for X = N Loop Do Step or]
     -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-         [lazyfor-or N (LBind X Loop) (LBind X Do) Step])   
+         [lazyfor-or N (LBind X Loop) (LBind X Do) Step])
   [for X = N Loop Do Step Acc] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
                                       [for N (LBind X Loop) (LBind X Do) Step Acc])
   [for X = N Loop Do Step] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
                                    [for N (LBind X Loop) (LBind X Do) Step [fn do]])
   [for X = N Loop Do] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
                            [for N (LBind X Loop) [/. X Do] [+ 1] [fn do]])
-                           
+
   \\ vector macros
-  
+
   [:= V Is] -> (<-array V Is)
   [V Is := V* Is* | Key] -> (key V Is (array-> V Is (<-array V* Is*)) Key)
   [V Is := X | Key] -> (key V Is (array-> V Is X) Key)
-  [array-> V Is X] -> (array-> V Is X) 
+  [array-> V Is X] -> (array-> V Is X)
   [array Is] -> (build-array Is)
   [populate F [cons I Is]] -> (unfold-populate F [cons I Is])
   [vector->list V] -> [vector->list V []]
   [v-op1 F V] -> [v-op1 F V []]
-  [v-op2 F V1 V2] -> [v-op2 F V1 V2 []]                        
-  
+  [v-op2 F V1 V2] -> [v-op2 F V1 V2 []]
+
   \\ string macros
-  
+
   [s-op1 F S] -> [s-op1 F S [/. (protect X) (protect X)]]
   [s-op2 F S1 S2] -> [s-op2 F S1 S2 [/. (protect X) (protect X)]]                         ))

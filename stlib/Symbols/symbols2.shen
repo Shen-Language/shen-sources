@@ -3,7 +3,7 @@
 (define newv
   {--> symbol}
   -> (gensym (protect X)))
-  
-  
-                     
+
+
+
  )
