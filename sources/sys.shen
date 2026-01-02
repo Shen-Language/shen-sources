@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [update-lambda-table occurs? factorise? hush? optimise? system-S? userdefs tracked]
+(package shen [update-lambda-table occurs? factorise? hush? optimise? system-S? userdefs tracked absolute unabsolute *absolute*]
 
 (define thaw
   F -> (F))
@@ -528,5 +528,11 @@
   F 1 -> (do (set *special* (adjoin F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 2 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (adjoin F (value *extraspecial*))) F)
   F _ -> (error "specialise requires values of 0, 1 or 2~%"))
+
+(define absolute
+  Path -> (set *absolute* [Path | (value *absolute*)]))
+
+(define unabsolute
+  Path -> (set *absolute* (remove Path (value *absolute*))))
 
 )

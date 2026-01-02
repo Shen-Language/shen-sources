@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [40.0] - 2026-01-02
+
+### Added
+
+- `absolute`, `unabsolute`, and `*absolute*` for tracking absolute paths.
+
+### Changed
+
+- Reader errors now include a contextual snippet based on `*maximum-print-sequence-size*`.
+- YACC reports partial parse failures with a truncated residue for clearer syntax errors.
+- Occurrence checks in Prolog/YACC now use `occurs-check?` consistently.
+
 ## [39.0] - 2024-08-10
 
 ### Changed
@@ -552,7 +564,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...HEAD
+[40.0]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...shen-40.0
 [39.0]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...shen-39.0
 [38.3]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...shen-38.3
 [38.2]: https://github.com/Shen-Language/shen-sources/compare/shen-38.1...shen-38.2

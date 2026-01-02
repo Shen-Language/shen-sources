@@ -6,19 +6,19 @@
 
 (define read-file
   File -> (let Bytelist (read-file-as-bytelist File)
-               S-exprs (trap-error (compile (/. X (<s-exprs> X)) Bytelist)
-                                   (/. E (print-residue (value *residue*))))
-               Process (process-sexprs S-exprs)
+               S-exprs  (trap-error (compile (/. X (<s-exprs> X)) Bytelist)
+                                    (/. E (reader-error (value *residue*))))
+               Process  (process-sexprs S-exprs)
             Process))
 
-(define print-residue
-  Residue -> (let Err (output "syntax error here:~%")
-                  (nchars 50 Residue)))
+(define reader-error
+  Residue -> (error (cn "reader error near here: "
+                    (reader-error-message (value *maximum-print-sequence-size*) 0 Residue))))
 
-(define nchars
-  0 _ -> (do (pr " ...") (abort))
-  _ [] -> (do (pr " ...") (abort))
-  N [Byte | Bytes] -> (do (pr (n->string Byte)) (nchars (- N 1) Bytes)))
+(define reader-error-message
+  _ _ [] -> ""
+  Max Max _ -> ""
+  Max N [Byte | Bytes] -> (cn (n->string Byte) (reader-error-message Max (+ N 1) Bytes)))
 
 (define it
   -> (value *it*))
