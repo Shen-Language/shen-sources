@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [40.1] - 2026-01-19
+
+- Fix default definition of `*absolute*` which was breaking `absolute`/`unabsolute`.
+
 ## [40.0] - 2026-01-02
 
 ### Added
@@ -564,7 +568,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...HEAD
+[40.1]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...shen-40.1
 [40.0]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...shen-40.0
 [39.0]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...shen-39.0
 [38.3]: https://github.com/Shen-Language/shen-sources/compare/shen-38.2...shen-38.3

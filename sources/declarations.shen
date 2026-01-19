@@ -3,7 +3,7 @@
 \\                  All rights reserved.
 
 (package shen [shen update-lambda-table occurs? factorise? optimise? hush? system-S?
-               hush userdefs tracked datatypes absolute unabsolute]
+               hush userdefs tracked datatypes absolute unabsolute *absolute*]
 
 (set *history* [])
 (set *tc* false)
@@ -30,7 +30,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "40.0")
+(set *version* "40.1")
 (set *names* [])
 (set *step* false)
 (set *it* "")

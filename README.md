@@ -14,7 +14,7 @@ These resources provide complete Shen environments for programming.
 
 ---
 
-[![Current Release](https://img.shields.io/badge/release-40.0-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
+[![Current Release](https://img.shields.io/badge/release-40.1-blue.svg)](https://github.com/Shen-Language/shen-sources/releases)
 
 # Shen Sources
 
@@ -52,7 +52,7 @@ Packages can be created for any version, but when uploading to the releases page
 
 ```
 make pure
-git checkout shen-40.0
+git checkout shen-40.1
 make fetch
 make klambda
 make release
