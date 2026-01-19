@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [40.1] - 2026-01-19
 
+### Fixed
+
 - Fix default definition of `*absolute*` which was breaking `absolute`/`unabsolute`.
 
 ## [40.0] - 2026-01-02
