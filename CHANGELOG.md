@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [41.0] - 2026-03-01
+
+### Added
+
+- `ctxt` side-condition support in `datatype` sequent rules.
+
+### Changed
+
+- Refactored sequent rule compilation; added internal `@c`/`@ch` macro support for context/mode-aware cons forms.
+
 ## [40.1] - 2026-01-19
 
 ### Fixed
@@ -570,7 +580,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...HEAD
+[41.0]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...shen-41.0
 [40.1]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...shen-40.1
 [40.0]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...shen-40.0
 [39.0]: https://github.com/Shen-Language/shen-sources/compare/shen-38.3...shen-39.0

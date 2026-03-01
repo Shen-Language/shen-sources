@@ -2,11 +2,16 @@
 
 \\                  All rights reserved.
 
-(package shen []
+(package shen [ctxt]
 
 (defcc <datatype>
   D <datatype-rules> := (let Prolog (rules->prolog D <datatype-rules>)
                              (remember-datatype D (fn D)));)
+
+(define remember-datatype
+  D Fn -> (do (set *datatypes* (assoc-> D Fn (value *datatypes*)))
+              (set *alldatatypes* (assoc-> D Fn (value *alldatatypes*)))
+              D))
 
 (defcc <datatype-rules>
   <datatype-rule> <datatype-rules> := (append <datatype-rule> <datatype-rules>);
@@ -61,7 +66,7 @@
 (defcc <side>
   if P    := [if P];
   let X Y := [let X Y];
-  let! X Y := [let! X Y];)
+  ctxt X  := [ctxt X] where (variable? X);)
 
 (define lr-rule
   Side Sequents [[] C] -> (let P (gensym (protect P))
@@ -108,149 +113,112 @@
   (@s "=" S) -> (dbl-h? S)
   _ -> false)
 
-(define remember-datatype
-  D Fn -> (do (set *datatypes* (assoc-> D Fn (value *datatypes*)))
-              (set *alldatatypes* (assoc-> D Fn (value *alldatatypes*)))
-              D))
-
 (define rules->prolog
   D Rules -> (let Clauses (mapcan (/. Rule (rule->clause Rule)) Rules)
-                  (eval [defprolog D | Clauses])))
+                  Prolog  [defprolog D | Clauses]
+                  (eval Prolog)))
 
 (define rule->clause
-    [S P [As R]] -> (let Constraints (extract-vars [S P [As R]])
-                         HypVs (append (nvars (length As)) [(protect Delta)])
-                         Active (extract-vars R)
-                         Head (compile-consequent R HypVs)
-                         Goals (goals Constraints As S P HypVs Active)
-                         (append Head [<--] Goals [(intern ";")]))
-    _            -> (simple-error "implementation error in shen.rule->clause"))
+  [S Ps [As Q]] -> (let Active (extract-vars Q)
+                     (append (rule->head Q) [<--] (rule->body Active (protect Assumptions) S Ps As))))
 
-(define compile-consequent
-  R [H | _] -> [(optimise-typing R) H]
-  _ _ -> (simple-error "implementation error in shen.compile-consequent"))
+(define rule->head
+  X       -> [(macro-@ch X) (protect Assumptions)])
+
+(define macro-@ch
+  X -> [@ch X])
+
+(define macro-@c
+  X -> [@c X])
+
+(define rule->body
+  Active Assumptions S Ps []       -> (side-conditions->goals [] Active Assumptions S Ps)
+  Active Assumptions S [] [A]      -> (let Passive (passive-variables A Active)
+                                           NoBystanders (remove-bystanders Active A)
+                                           [(specialise-member A Assumptions NoBystanders Passive)
+                                            | (side-conditions->goals [] Active Assumptions S [])])
+  Active Assumptions S Ps [A | As] -> (let Out     (gensym (protect NewAssumptions))
+                                           Passive (passive-variables A Active)
+                                           NoBystanders (remove-bystanders Active A)
+                                           [(specialise-consume A Assumptions NoBystanders Passive Out)
+                                             | (rule->body (append Active Passive) Out S Ps As)]))
+
+(define specialise-member
+   A Assumptions NoBystanders Passive -> (let F            (gensym member)
+                                              Clause       (member-clause F A NoBystanders Passive)
+                                              [F Assumptions | (append NoBystanders Passive)]))
+
+(define remove-bystanders
+  [] _ -> []
+  [V | Vs] A -> [V | (remove-bystanders Vs A)] where (occurs-check? V A)
+  [V | Vs] A -> (remove-bystanders Vs A))
+
+(define member-clause
+ F A Active Passive -> (let NVars  (nvars (length Passive))
+                            Base   (append [[- [cons (macro-@ch A) _]]] Active NVars [<--] (passive-bind Passive NVars) [(intern ";")])
+                            Ind    (let Hyps (gensym (protect Hypotheses))
+                                        Vars (append Active Passive)
+                                        Head (append [[- [cons _ Hyps]]] Vars)
+                                        Body [[F Hyps | Vars]]
+                                        (append Head [<--] Body [(intern ";")]))
+                            Prolog [defprolog F | (append Base Ind)]
+                            (eval Prolog)))
 
 (define nvars
    0 -> []
-   N -> [(gensym (protect V)) | (nvars (- N 1))])
+   N -> [(gensym (protect NewV)) | (nvars (- N 1))])
 
-(define optimise-typing
-  [X C A] -> (let Expand (expand-mode-forms [- [X C [+ A]]])
-                  (cons-form-with-modes Expand))
-                          where (= C (intern ":"))
-  X -> (let Expand (expand-mode-forms [+ X])
-            (cons-form-with-modes Expand)))
+(define passive-bind
+  [] [] -> []
+  [Pass | Passive] [NVar | NVars] -> [[bind NVar Pass] | (passive-bind Passive NVars)])
 
-(define expand-mode-forms
-  [+ X] -> [mode (expand-mode-forms X) +]
-  [- X] -> [mode (expand-mode-forms X) -]
-  [X | Y] -> (map (/. Z (expand-mode-forms Z)) [X | Y])
-  X -> X)
+(define specialise-consume
+   A Assumptions NoBystanders Passive Out
+   -> (let F      (gensym consume)
+           Clause (consume-clause F A NoBystanders Passive Out)
+           [F Assumptions Out | (append NoBystanders Passive)]))
 
-(define cons-form-with-modes
-  [mode X Mode] -> [Mode (cons-form-with-modes X)]
-  [bar! Y] -> Y
-  [X | Y] -> [cons (cons-form-with-modes X) (cons-form-with-modes Y)]
-  X -> X)
+(define consume-clause
+ F A Active Passive Out -> (let NVars  (nvars (length Passive))
+                                V      (gensym (protect Assumption))
+                                Base   [[- [cons (macro-@ch A) V]] Out
+                                          | (append Active NVars  [<--]
+                                                    (passive-bind Passive NVars)
+                                                    [[bind Out V] (intern ";")])]
+                                Ind    (let Hyps (gensym (protect Hypotheses))
+                                            Vars (append Active Passive)
+                                            BV   (gensym (protect Assumptions))
+                                            Head [[- [cons V Hyps]] [cons BV Out] | Vars]
+                                            Body [[bind BV V] [F Hyps Out | Vars]]
+                                            (append Head [<--] Body [(intern ";")]))
+                                Prolog [defprolog F | (append Base Ind)]
+                                (eval Prolog)))
 
-(define goals
-   Constraints As S P HypVs Active
-   -> (let GoalsAs (compile-assumptions As Constraints HypVs Active)
-           GoalsS (compile-side-conditions S)
-           GoalsP (compile-premises P HypVs)
-           (append GoalsAs GoalsS GoalsP)))
+(define passive-variables
+  A Active -> (difference (extract-vars A) Active))
 
-(define compile-assumptions
-  [] _ _ _ -> []
-  [A | As] Constraints [H1 H2 | HypVs] Active
-   -> (let NewActive (append (extract-vars A) Active)
-           [(compile-assumption A H1 H2 Constraints Active)
-            | (compile-assumptions As Constraints [H2 | HypVs] NewActive)])
-  _ _ _ _ ->  (simple-error "implementation error in shen.compile-assumptions"))
+(define side-conditions->goals
+  CtxtVs _ Assumptions [] Ps                      -> (premises->goals CtxtVs Assumptions Ps)
+  CtxtVs Active Assumptions [[if Boolean] | S] Ps -> [[when Boolean] | (side-conditions->goals CtxtVs Active Assumptions S Ps)]
+  CtxtVs Active Assumptions [[let X Y] | S]    Ps -> (if (element? X Active)
+                                                         [[is! X Y] | (side-conditions->goals CtxtVs Active Assumptions S Ps)]
+                                                         [[bind X Y] | (side-conditions->goals CtxtVs [X | Active] Assumptions S Ps)])
+  CtxtVs Active Assumptions [[ctxt Ctxt] | S]  Ps -> (if (element? Ctxt Active)
+                                                         (side-conditions->goals [Ctxt | CtxtVs] Active Assumptions S Ps)
+                                                         [[bind Ctxt Assumptions]
+                                                           | (side-conditions->goals [Ctxt | CtxtVs] [Ctxt | Active] Ctxt S Ps)]))
 
-(define compile-assumption
-  A H1 H2 Constraints Active
-  -> (let F (gensym search)
-          Compile (compile-search-procedure F A H1 H2 Constraints Active)
-          [F H1 [] H2 | Constraints]))
+(define premises->goals
+  _ _ [] -> [(intern ";")]
+  CtxtVs Assumptions [! | Ps]        -> [! | (premises->goals CtxtVs Assumptions Ps)]
+  CtxtVs Assumptions [fail | Ps]     -> [[when false] | (premises->goals CtxtVs Assumptions Ps)]
+  CtxtVs Assumptions [[As C] | Ps]   -> [[system-S (macro-@c C) (construct-context CtxtVs As Assumptions)]
+                                             | (premises->goals CtxtVs Assumptions Ps)])
 
-(define compile-search-procedure
-    F A H1 H2 Constraints Active
-     -> (let Past (gensym (protect Previous))
-             Base (foundit! A H1 Past H2 Constraints Active)
-             Recursive (keep-looking F H1 Past H2 Constraints)
-             (eval [defprolog F | (append Base Recursive)])))
-
-(define foundit!
-    A H1 Past H2 Constraints Active
-    -> (let  Passive (passive A Active)
-             Table (tabulate-passive Passive)
-             Head  (head-foundit! A H1 Past H2 Constraints Table)
-             Body (body-foundit! H1 Past H2 Table)
-             (append Head [<--] Body [(intern ";")])))
-
-(define keep-looking
-   F H1 Past H2 Constraints
-   ->  (let X (gensym (protect V))
-            Head   [[- [cons X H1]] Past H2 | Constraints]
-            Body   [[F H1 [cons X Past] H2 | Constraints]]
-            (append Head [<--] Body [(intern ";")])))
-
-(define passive
-   [X | Y] Active -> (union (passive X Active) (passive Y Active))
-   X Active -> [X]  where (passive? X Active)
-   _ _ -> [])
-
-(define passive?
-   X Active -> (and (not (element? X Active)) (variable? X)))
-
-(define tabulate-passive
-   Passive -> (map (/. X [X | (gensym (protect V))]) Passive))
-
-(define head-foundit!
-    A H1 Past H2 Constraints Table
-  -> (let Optimise (optimise-passive Constraints Table)
-             [[- [cons (optimise-typing A) H1]] Past H2 | Optimise]))
-
-(define optimise-passive
-   Constraints Table -> (map (/. C (optimise-passive-h C Table)) Constraints))
-
-(define optimise-passive-h
-   C Table -> (let Entry (assoc C Table)
-                   (if (empty? Entry) C (tl Entry))))
-
-(define body-foundit!
-  H1 Past H2 [] -> [[bind H2 [append [1 Past] [1 H1]]]]
-  H1 Past H2 [[C | V] | Table] -> [[bind V C] | (body-foundit! H1 Past H2 Table)]
-  _ _ _ _ -> (simple-error "implementation error in shen.body-foundit!"))
-
-(define compile-side-conditions
-  S -> (map (/. X (compile-side-condition X)) S))
-
-(define compile-side-condition
-  [let X Y] -> [is X Y]
-  [let! X Y] -> [is! X Y]
-  [if P] -> [when P]
-  _ -> (simple-error "implementation error in shen.compile-side-condition"))
-
-(define compile-premises
-  P HypVs -> (let Hyp (hd (reverse HypVs))
-                  (map (/. X (compile-premise X Hyp)) P)))
-
-(define compile-premise
-  ! _ -> !
-  [As R] Hyp -> (compile-premise-h (reverse As) R Hyp)
-  _ _ -> (simple-error "implementation error in shen.premise"))
-
-(define compile-premise-h
-  [] R Hyp -> [system-S (cons-form-no-modes R) Hyp]
-  [A | As] R Hyp -> (compile-premise-h As R [cons (cons-form-no-modes A) Hyp])
-  _ _ _ -> (simple-error "implementation error in shen.compile-premise-h"))
-
-(define cons-form-no-modes
-  [bar! Y] -> Y
-  [X | Y]  -> [cons (cons-form-no-modes X) (cons-form-no-modes Y)]
-  X -> X)
+(define construct-context
+  _ [] Assumptions            -> Assumptions
+  CtxtVs [Ctxt] _             -> Ctxt where (element? Ctxt CtxtVs)
+  CtxtVs [A | As] Assumptions -> [cons (macro-@c A) (construct-context CtxtVs As Assumptions)])
 
 (define preclude
    Types -> (let InternTypes (map (/. X (intern-type X)) Types)

@@ -46,8 +46,17 @@
   [put X Pointer Y]           -> [put X Pointer Y [value *property-vector*]]
   [get X Pointer]             -> [get X Pointer [value *property-vector*]]
   [unput X Pointer]           -> [unput X Pointer [value *property-vector*]]
+  [@c X]                      -> (rcons_form X)
+  [@ch [X Colon A]]           -> (cons-form-respect-modes [- [X Colon [+ A]]]) where (= Colon (intern ":"))
+  [@ch X]                     -> (cons-form-respect-modes X)
   [F W X Y | Z]               -> [F W (process-assoc [F X Y | Z])]
                                    where (element? F [@p @v append and or + * do])
+  X -> X)
+
+(define cons-form-respect-modes
+  [+ X]   -> [+ (cons-form-respect-modes X)]
+  [- X]   -> [- (cons-form-respect-modes X)]
+  [X | Y] -> [cons (cons-form-respect-modes X) (cons-form-respect-modes Y)]
   X -> X)
 
 (define process-def
