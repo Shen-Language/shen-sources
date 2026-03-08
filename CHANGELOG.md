@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [41.1] - 2026-03-08
+
 ### Added
 
 - `make-stlib.shen` for generating `klambda/stlib.kl` with explicit
@@ -600,7 +602,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...HEAD
+[41.1]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...shen-41.1
 [41.0]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...shen-41.0
 [40.1]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...shen-40.1
 [40.0]: https://github.com/Shen-Language/shen-sources/compare/shen-39.0...shen-40.0
