@@ -14,19 +14,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
   `stlib.initialise-*` / `stlib.initialise` setup code.
 - `make klambda-kernel` and `make klambda-stlib` targets; `make klambda` now
   runs both.
+- `Encrypt` is temporarily skipped by the standard-library KLambda build.
 
 ### Changed
 
 - Library sources moved from `stlib/` to `lib/`, with the core standard
   library under `lib/stlib/` and optional libraries under sibling directories
   such as `lib/tk`, `lib/concurrency`, and `lib/ide`.
-- Standard-library KLambda generation now preserves source-load metadata such
-  as packages, arities, lambda forms, declarations, macros, datatypes, and
-  source records through `stlib.initialise-*` / `stlib.initialise`.
-- The standard-library KLambda build now temporarily masks host stlib macros
-  while compiling, so it can be built correctly even from Shen runtimes that
-  already ship with the stlib loaded.
-- `Encrypt` is temporarily skipped by the standard-library KLambda build.
 
 ## [41.0] - 2026-03-01
 
