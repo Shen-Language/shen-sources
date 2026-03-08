@@ -40,9 +40,31 @@ endif
 ShenSchemeVersion=0.43
 UrlRoot=https://github.com/tizoc/shen-scheme/releases/download
 ShenSchemeTag=v$(ShenSchemeVersion)
-ShenSchemeFolderName=shen-scheme-$(ShenSchemeTag)-$(OSName)-bin
+ifeq ($(OSName),windows)
+	ShenSchemeRawArch=$(PROCESSOR_ARCHITECTURE)
+else
+	ShenSchemeRawArch=$(shell uname -m)
+endif
+
+ifneq ($(filter arm64 aarch64,$(ShenSchemeRawArch)),)
+	ShenSchemeArch=arm64
+else ifneq ($(filter x86_64 amd64 AMD64,$(ShenSchemeRawArch)),)
+	ShenSchemeArch=x64
+else
+	ShenSchemeArch=$(ShenSchemeRawArch)
+endif
+
+ifeq ($(OSName),macos)
+	ShenSchemeAssetOSName=macOS
+else
+	ShenSchemeAssetOSName=$(OSName)
+endif
+
+ShenSchemePlatformName=$(ShenSchemeAssetOSName)-$(ShenSchemeArch)
+ShenSchemeFolderName=shen-scheme-$(ShenSchemeTag)-$(ShenSchemePlatformName)-bin
 ShenSchemeArchiveName=$(ShenSchemeFolderName)$(ArchiveSuffix)
 ShenSchemeArchiveUrl=$(UrlRoot)/$(ShenSchemeTag)/$(ShenSchemeArchiveName)
+ShenSchemeExtractRoot=shen-scheme-extract
 
 ifndef Shen
 ifdef SHEN
@@ -93,18 +115,22 @@ endif
 fetch:
 ifeq ($(OSName),windows)
 	$(PS) "Invoke-WebRequest -Uri $(ShenSchemeArchiveUrl) -OutFile $(ShenSchemeArchiveName)"
-	$(PS) "Expand-Archive $(ShenSchemeArchiveName) -DestinationPath $(ShenSchemeFolderName)"
+	$(PS) "if (Test-Path $(ShenSchemeExtractRoot)) { Remove-Item $(ShenSchemeExtractRoot) -Recurse -Force -ErrorAction Ignore }"
+	$(PS) "Expand-Archive $(ShenSchemeArchiveName) -DestinationPath $(ShenSchemeExtractRoot)"
 	$(PS) "if (Test-Path $(ShenSchemeArchiveName)) { Remove-Item $(ShenSchemeArchiveName) -Force -ErrorAction Ignore }"
 	$(PS) "if (Test-Path shen-scheme) { Remove-Item shen-scheme -Recurse -Force -ErrorAction Ignore }"
-	$(PS) "Rename-Item $(ShenSchemeFolderName)$(Slash)$(ShenSchemeFolderName) shen-scheme -ErrorAction Ignore"
-	$(PS) "Remove-Item $(ShenSchemeFolderName) -Recurse -Force -ErrorAction Ignore"
+	$(PS) "$$Direct = '$(ShenSchemeExtractRoot)$(Slash)bin$(Slash)shen-scheme$(BinarySuffix)'; $$Nested = '$(ShenSchemeExtractRoot)$(Slash)$(ShenSchemeFolderName)$(Slash)bin$(Slash)shen-scheme$(BinarySuffix)'; if (Test-Path $$Direct) { Rename-Item $(ShenSchemeExtractRoot) shen-scheme } elseif (Test-Path $$Nested) { Rename-Item '$(ShenSchemeExtractRoot)$(Slash)$(ShenSchemeFolderName)' shen-scheme; Remove-Item $(ShenSchemeExtractRoot) -Recurse -Force -ErrorAction Ignore } else { throw 'Could not locate shen-scheme binary in extracted archive.' }"
 else
 	wget $(ShenSchemeArchiveUrl)
-	mkdir -p $(ShenSchemeFolderName)
-	tar xf $(ShenSchemeArchiveName)
+	rm -rf $(ShenSchemeExtractRoot)
+	mkdir -p $(ShenSchemeExtractRoot)
+	tar xf $(ShenSchemeArchiveName) -C $(ShenSchemeExtractRoot)
 	rm -f $(ShenSchemeArchiveName)
 	rm -rf shen-scheme
-	mv $(ShenSchemeFolderName) shen-scheme
+	if [ -x "$(ShenSchemeExtractRoot)/bin/shen-scheme$(BinarySuffix)" ]; then mv $(ShenSchemeExtractRoot) shen-scheme; \
+	else ExtractedDir=$$(find $(ShenSchemeExtractRoot) -mindepth 1 -maxdepth 1 -type d | head -n 1); \
+	  if [ -n "$$ExtractedDir" ] && [ -x "$$ExtractedDir/bin/shen-scheme$(BinarySuffix)" ]; then mv "$$ExtractedDir" shen-scheme; rmdir $(ShenSchemeExtractRoot); \
+	  else echo "Could not locate shen-scheme binary in extracted archive." >&2; exit 1; fi; fi
 endif
 
 #
