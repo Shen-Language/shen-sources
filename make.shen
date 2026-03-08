@@ -12,12 +12,24 @@
 (set *init-code* [])
 
 (define make ->
+  (let OriginalSystemFunctions
+       (trap-error (get shen shen.external-symbols)
+                   (/. E make.no-external-symbols))
+    (trap-error
+     (let Result (make.build)
+       (do (make.restore-host-system-functions OriginalSystemFunctions)
+           Result))
+     (/. E (do (make.restore-host-system-functions OriginalSystemFunctions)
+               (simple-error (error-to-string E)))))))
+
+(define make.build ->
   (do
     (set *maximum-print-sequence-size* 10000)
     (set shen.*gensym* 0)
     (output "~%")
     (output "compiling *.shen to *.kl:~%")
     (map (fn systemf) [internal receive <!> sterror *sterror* ,])
+    (map (fn make.unsystemf) (make.host-system-function-conflicts))
     (map (fn make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (shen.x.expand-dynamic.initialise)
     (map
@@ -53,6 +65,13 @@
        "expand-dynamic"])
     (output "compilation complete.~%")
     done))
+
+(define make.host-system-function-conflicts
+  -> [abs alpha? digit? expt insert lowercase? mod uppercase? whitespace?])
+
+(define make.restore-host-system-functions
+  make.no-external-symbols -> skip
+  External -> (put shen shen.external-symbols External))
 
 (define make.unsystemf
   Sym -> (put shen shen.external-symbols
