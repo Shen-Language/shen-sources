@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- `make-stlib.shen` for generating `klambda/stlib.kl` with explicit
+  `stlib.initialise-*` / `stlib.initialise` setup code.
+- `make klambda-kernel` and `make klambda-stlib` targets; `make klambda` now
+  runs both.
+- `Encrypt` is temporarily skipped by the standard-library KLambda build.
+
+### Changed
+
+- Library sources moved from `stlib/` to `lib/`, with the core standard
+  library under `lib/stlib/` and optional libraries under sibling directories
+  such as `lib/tk`, `lib/concurrency`, and `lib/ide`.
+
 ## [41.0] - 2026-03-01
 
 ### Added

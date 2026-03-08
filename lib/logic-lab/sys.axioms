@@ -1,0 +1,1249 @@
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (append x y) : 
+     (list Var4))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      () = x)) => 
+    (
+     (append x y) = y)))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (exists z 
+       (exists x1 
+        (
+         (cons z x1) = x))))) => 
+    (
+     (append x y) = 
+     (cons 
+      (hd x) 
+      (append 
+       (tl x) y)))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = x)))))) => 
+    (
+     (append x y) = 
+     (simple-error "attempt to append a non-list"))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (
+   (reverse x) : 
+   (list Var4))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (
+    () = x)) => 
+  (
+   (reverse x) = 
+   ())))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (
+    (~ 
+     (
+      () = x)) & 
+    (exists y 
+     (exists z 
+      (
+       (cons y z) = x))))) => 
+  (
+   (reverse x) = 
+   (append 
+    (reverse 
+     (tl x)) 
+    (cons 
+     (hd x) 
+     ())))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (
+    (~ 
+     (
+      () = x)) & 
+    (all y 
+     (all z 
+      (~ 
+       (
+        (cons y z) = x)))))) => 
+  (
+   (reverse x) = 
+   (simple-error "partial function reverse"))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (y : 
+     (list 
+      (list Var4))) => 
+    (
+     (assoc x y) : 
+     (list Var4))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list 
+       (list Var4))) & 
+     (
+      () = y)) => 
+    (
+     (assoc x y) = 
+     ())))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list 
+       (list Var4))) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = y))) & 
+       (
+        (exists z 
+         (exists x1 
+          (
+           (cons z x1) = 
+           (hd y)))) & 
+        (x = 
+         (hd 
+          (hd y))))))) => 
+    (
+     (assoc x y) = 
+     (hd y))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list 
+       (list Var4))) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (
+        (all z 
+         (all x1 
+          (~ 
+           (
+            (cons z x1) = y)))) v 
+        (
+         (all z 
+          (all x1 
+           (~ 
+            (
+             (cons z x1) = 
+             (hd y))))) v 
+         (~ 
+          (x = 
+           (hd 
+            (hd y)))))) & 
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = y)))))) => 
+    (
+     (assoc x y) = 
+     (assoc x 
+      (tl y)))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list 
+       (list Var4))) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (
+        (all z 
+         (all x1 
+          (~ 
+           (
+            (cons z x1) = y)))) v 
+        (
+         (all z 
+          (all x1 
+           (~ 
+            (
+             (cons z x1) = 
+             (hd y))))) v 
+         (~ 
+          (x = 
+           (hd 
+            (hd y)))))) & 
+       (all z 
+        (all x1 
+         (~ 
+          (
+           (cons z x1) = y))))))) => 
+    (
+     (assoc x y) = 
+     (simple-error "attempt to search a non-list with assoc
+"))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (
+   (boolean? x) : boolean)))
+
+(all x 
+ (
+  (
+   (x : Var4) & 
+   (true = x)) => 
+  (
+   (boolean? x) = true)))
+
+(all x 
+ (
+  (
+   (x : Var4) & 
+   (
+    (~ 
+     (true = x)) & 
+    (false = x))) => 
+  (
+   (boolean? x) = true)))
+
+(all x 
+ (
+  (
+   (x : Var4) & 
+   (
+    (~ 
+     (true = x)) & 
+    (~ 
+     (false = x)))) => 
+  (
+   (boolean? x) = false)))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (difference x y) : 
+     (list Var4))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      () = x)) => 
+    (
+     (difference x y) = 
+     ())))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (element? 
+        (hd x) y)))) => 
+    (
+     (difference x y) = 
+     (difference 
+      (tl x) y))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (~ 
+        (element? 
+         (hd x) y))))) => 
+    (
+     (difference x y) = 
+     (cons 
+      (hd x) 
+      (difference 
+       (tl x) y)))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = x)))))) => 
+    (
+     (difference x y) = 
+     (simple-error "attempt to find the difference with a non-list
+"))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (y : Var5) => 
+    (
+     (do x y) : Var5)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (y : Var5) => 
+    (
+     (do x y) = y)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (element? x y) : boolean)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      () = y)) => 
+    (
+     (element? x y) = false)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = y))) & 
+       (x = 
+        (hd y))))) => 
+    (
+     (element? x y) = true)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (
+        (all z 
+         (all x1 
+          (~ 
+           (
+            (cons z x1) = y)))) v 
+        (~ 
+         (x = 
+          (hd y)))) & 
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = y)))))) => 
+    (
+     (element? x y) = 
+     (element? x 
+      (tl y)))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = y)) & 
+      (
+       (
+        (all z 
+         (all x1 
+          (~ 
+           (
+            (cons z x1) = y)))) v 
+        (~ 
+         (x = 
+          (hd y)))) & 
+       (all z 
+        (all x1 
+         (~ 
+          (
+           (cons z x1) = y))))))) => 
+    (
+     (element? x y) = 
+     (simple-error "attempt to find an element in a non-list
+"))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (
+   (empty? x) : boolean)))
+
+(all x 
+ (
+  (
+   (x : Var4) & 
+   (
+    () = x)) => 
+  (
+   (empty? x) = true)))
+
+(all x 
+ (
+  (
+   (x : Var4) & 
+   (~ 
+    (
+     () = x))) => 
+  (
+   (empty? x) = false)))
+
+(all x 
+ (
+  (x : 
+   (Var4 --> Var4)) => 
+  (all y 
+   (
+    (y : Var4) => 
+    (
+     (fix x y) : Var4)))))
+
+(all x 
+ (
+  (x : 
+   (Var4 --> Var4)) => 
+  (all y 
+   (
+    (y : Var4) => 
+    (
+     (fix x y) = 
+     (fix-help x y 
+      (x y)))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (y = z) => 
+    (
+     (fix-help x y z) = z)))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (~ 
+     (y = z)) => 
+    (
+     (fix-help x y z) = 
+     (fix-help x z 
+      (x z)))))))
+
+(all x 
+ (
+  (x : 
+   (list number)) => 
+  (
+   (sum x) : number)))
+
+(all x 
+ (
+  (
+   (x : 
+    (list number)) & 
+   (
+    () = x)) => 
+  (
+   (sum x) = 0)))
+
+(all x 
+ (
+  (
+   (x : 
+    (list number)) & 
+   (
+    (~ 
+     (
+      () = x)) & 
+    (exists y 
+     (exists z 
+      (
+       (cons y z) = x))))) => 
+  (
+   (sum x) = 
+   (add 
+    (hd x) 
+    (sum 
+     (tl x))))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list number)) & 
+   (
+    (~ 
+     (
+      () = x)) & 
+    (all y 
+     (all z 
+      (~ 
+       (
+        (cons y z) = x)))))) => 
+  (
+   (sum x) = 
+   (simple-error "attempt to sum a non-list
+"))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (
+   (head x) : Var4)))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (exists y 
+    (exists z 
+     (
+      (cons y z) = x)))) => 
+  (
+   (head x) = 
+   (hd x))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (all y 
+    (all z 
+     (~ 
+      (
+       (cons y z) = x))))) => 
+  (
+   (head x) = 
+   (simple-error "head expects a non-empty list
+"))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (
+   (tail x) : 
+   (list Var4))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (exists y 
+    (exists z 
+     (
+      (cons y z) = x)))) => 
+  (
+   (tail x) = 
+   (tl x))))
+
+(all x 
+ (
+  (
+   (x : 
+    (list Var4)) & 
+   (all y 
+    (all z 
+     (~ 
+      (
+       (cons y z) = x))))) => 
+  (
+   (tail x) = 
+   (simple-error "tail expects a non-empty list
+"))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (intersection x y) : 
+     (list Var4))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      () = x)) => 
+    (
+     (intersection x y) = 
+     ())))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (element? 
+        (hd x) y)))) => 
+    (
+     (intersection x y) = 
+     (cons 
+      (hd x) 
+      (intersection 
+       (tl x) y)))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (~ 
+        (element? 
+         (hd x) y))))) => 
+    (
+     (intersection x y) = 
+     (intersection 
+      (tl x) y))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = x)))))) => 
+    (
+     (intersection x y) = 
+     (simple-error "attempt to find the intersection with a non-list
+"))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (union x y) : 
+     (list Var4))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      () = x)) => 
+    (
+     (union x y) = y)))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (element? 
+        (hd x) y)))) => 
+    (
+     (union x y) = 
+     (union 
+      (tl x) y))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (
+       (exists z 
+        (exists x1 
+         (
+          (cons z x1) = x))) & 
+       (~ 
+        (element? 
+         (hd x) y))))) => 
+    (
+     (union x y) = 
+     (cons 
+      (hd x) 
+      (union 
+       (tl x) y)))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (~ 
+       (
+        () = x)) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = x)))))) => 
+    (
+     (union x y) = 
+     (simple-error "attempt to find the union with a non-list
+"))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (y = z) => 
+    (
+     (subst x y z) = x)))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (
+     (~ 
+      (y = z)) & 
+     (exists x1 
+      (exists y1 
+       (
+        (cons x1 y1) = z)))) => 
+    (
+     (subst x y z) = 
+     (cons 
+      (subst x y 
+       (hd z)) 
+      (subst x y 
+       (tl z))))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (
+     (~ 
+      (y = z)) & 
+     (all x1 
+      (all y1 
+       (~ 
+        (
+         (cons x1 y1) = z))))) => 
+    (
+     (subst x y z) = z)))))
+
+(all x 
+ (
+  (x : 
+   (Var4 --> Var5)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (map x y) : 
+     (list Var5))))))
+
+(all x 
+ (
+  (x : 
+   (Var4 --> Var5)) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (map x y) = 
+     (map-h x y 
+      ()))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (
+     () = y) => 
+    (
+     (map-h x y z) = 
+     (reverse z))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (
+     (~ 
+      (
+       () = y)) & 
+     (exists x1 
+      (exists y1 
+       (
+        (cons x1 y1) = y)))) => 
+    (
+     (map-h x y z) = 
+     (map-h x 
+      (tl y) 
+      (cons 
+       (x 
+        (hd y)) z)))))))
+
+(all x 
+ (all y 
+  (all z 
+   (
+    (
+     (~ 
+      (
+       () = y)) & 
+     (all x1 
+      (all y1 
+       (~ 
+        (
+         (cons x1 y1) = y))))) => 
+    (
+     (map-h x y z) = 
+     (simple-error "partial function map-h"))))))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (
+   (length x) : number)))
+
+(all x 
+ (
+  (x : 
+   (list Var4)) => 
+  (
+   (length x) = 
+   (length-h x 0))))
+
+(all x 
+ (all y 
+  (
+   (
+    () = x) => 
+   (
+    (length-h x y) = y))))
+
+(all x 
+ (all y 
+  (
+   (~ 
+    (
+     () = x)) => 
+   (
+    (length-h x y) = 
+    (length-h 
+     (tl x) 
+     (add y 1))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (y : Var5) => 
+    (
+     (occurrences x y) : number)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : Var5) & 
+     (x = y)) => 
+    (
+     (occurrences x y) = 1)))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : Var5) & 
+     (
+      (~ 
+       (x = y)) & 
+      (exists z 
+       (exists x1 
+        (
+         (cons z x1) = y))))) => 
+    (
+     (occurrences x y) = 
+     (add 
+      (occurrences x 
+       (hd y)) 
+      (occurrences x 
+       (tl y))))))))
+
+(all x 
+ (
+  (x : Var4) => 
+  (all y 
+   (
+    (
+     (y : Var5) & 
+     (
+      (~ 
+       (x = y)) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = y)))))) => 
+    (
+     (occurrences x y) = 0)))))
+
+(all x 
+ (all y 
+  (
+   (0 = x) => 
+   (
+    (add x y) = y))))
+
+(all x 
+ (all y 
+  (
+   (~ 
+    (0 = x)) => 
+   (
+    (add x y) = 
+    (
+     (fn succ) 
+     (add 
+      (
+       (fn pred) x) y))))))
+
+(all x 
+ (
+  (x : number) => 
+  (all y 
+   (
+    (y : 
+     (list Var4)) => 
+    (
+     (nth x y) : Var4)))))
+
+(all x 
+ (
+  (x : number) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (1 = x) & 
+      (exists z 
+       (exists x1 
+        (
+         (cons z x1) = y))))) => 
+    (
+     (nth x y) = 
+     (hd y))))))
+
+(all x 
+ (
+  (x : number) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (
+       (~ 
+        (1 = x)) v 
+       (all z 
+        (all x1 
+         (~ 
+          (
+           (cons z x1) = y))))) & 
+      (exists z 
+       (exists x1 
+        (
+         (cons z x1) = y))))) => 
+    (
+     (nth x y) = 
+     (nth 
+      (- x 1) 
+      (tl y)))))))
+
+(all x 
+ (
+  (x : number) => 
+  (all y 
+   (
+    (
+     (y : 
+      (list Var4)) & 
+     (
+      (
+       (~ 
+        (1 = x)) v 
+       (all z 
+        (all x1 
+         (~ 
+          (
+           (cons z x1) = y))))) & 
+      (all z 
+       (all x1 
+        (~ 
+         (
+          (cons z x1) = y)))))) => 
+    (
+     (nth x y) = 
+     (simple-error 
+      (cn "nth applied to " 
+       (shen.app x 
+        (cn ", " 
+         (shen.app y "
+" shen.a)) shen.a))))))))
+

@@ -37,7 +37,7 @@ endif
 # Set shared variables
 #
 
-ShenSchemeVersion=0.35
+ShenSchemeVersion=0.43
 UrlRoot=https://github.com/tizoc/shen-scheme/releases/download
 ShenSchemeTag=v$(ShenSchemeVersion)
 ShenSchemeFolderName=shen-scheme-$(ShenSchemeTag)-$(OSName)-bin
@@ -45,7 +45,11 @@ ShenSchemeArchiveName=$(ShenSchemeFolderName)$(ArchiveSuffix)
 ShenSchemeArchiveUrl=$(UrlRoot)/$(ShenSchemeTag)/$(ShenSchemeArchiveName)
 
 ifndef Shen
+ifdef SHEN
+	Shen=$(SHEN)
+else
 	Shen=.$(Slash)shen-scheme$(Slash)bin$(Slash)shen-scheme$(BinarySuffix)
+endif
 endif
 
 ReleaseFolderName=ShenOSKernel-$(GitVersion)
@@ -58,8 +62,12 @@ ReleaseTarGz=$(ReleaseTar).gz
 #
 
 .DEFAULT: klambda
-.PHONY: klambda
+.PHONY: klambda klambda-kernel klambda-stlib
 klambda:
+	$(MAKE) klambda-kernel
+	$(MAKE) klambda-stlib
+
+klambda-kernel:
 ifeq ($(OSName),windows)
 	$(PS) "if (Test-Path klambda) { Remove-Item klambda -Recurse -Force -ErrorAction Ignore }"
 	$(PS) "New-Item -Path klambda -Force -ItemType Directory"
@@ -68,6 +76,14 @@ else
 	mkdir -p klambda
 endif
 	$(Shen) eval -l make.shen -e "(make)"
+
+klambda-stlib:
+ifeq ($(OSName),windows)
+	$(PS) "New-Item -Path klambda -Force -ItemType Directory"
+else
+	mkdir -p klambda
+endif
+	$(Shen) eval -l make-stlib.shen -e "(make-stlib)"
 
 #
 # Dependency retrieval
