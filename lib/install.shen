@@ -1,20 +1,21 @@
 (tc -)
+(cd "lib")
 (if (= (language) "Scheme") (load "patches-scheme.shen") skip)
 
-(cd "Lib/StLib")
+(cd "lib/stlib")
 (load "install.shen")
 
-(cd "Lib/Tk")
+(cd "lib/tk")
 (load "loadme.shen")
 
 (tc -)
-(cd "Lib/Concurrency")
+(cd "lib/concurrency")
 (load "concurrency.dtype")
 (tc +)
 (load "concurrency.shen")
 
 (tc -)
-(cd "Lib/IDE")
+(cd "lib/ide")
 (load "idedec.shen")
 (tc +)
 (load "ide.shen")
