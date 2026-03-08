@@ -133,7 +133,7 @@
   [] _ -> done
   [[load File] | Steps] TC?
   -> (do
-       (make-stlib.compile-file (make-string "stlib/~A" File) TC?)
+       (make-stlib.compile-file (make-string "lib/stlib/~A" File) TC?)
        (make-stlib.compile-install-plan Steps TC?))
   [[tc +] | Steps] _ -> (make-stlib.compile-install-plan Steps true)
   [[tc -] | Steps] _ -> (make-stlib.compile-install-plan Steps false)
