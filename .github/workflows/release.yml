@@ -54,12 +54,14 @@ jobs:
 
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release edit "$TAG_NAME" \
-              --title "Shen ${VERSION}" \
+              --draft=true \
+              --title "Shen OS Kernel ${VERSION}" \
               --notes-file release-notes.md
           else
             gh release create "$TAG_NAME" \
+              --draft \
               --verify-tag \
-              --title "Shen ${VERSION}" \
+              --title "Shen OS Kernel ${VERSION}" \
               --notes-file release-notes.md
           fi
 
