@@ -122,7 +122,7 @@ ifeq ($(OSName),windows)
 	$(PS) "Copy-Item -Recurse extensions $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse klambda $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse sources $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse stlib $(ReleaseFolderName)"
+	$(PS) "Copy-Item -Recurse lib $(ReleaseFolderName)"
 	$(PS) "Copy-Item -Recurse tests $(ReleaseFolderName)"
 	$(PS) "Copy-Item CHANGELOG.md $(ReleaseFolderName)"
 	$(PS) "Copy-Item LICENSE.txt $(ReleaseFolderName)"
@@ -134,7 +134,7 @@ else
 	mkdir -p release
 	rm -rf $(ReleaseFolderName)
 	mkdir -p $(ReleaseFolderName)
-	cp -rf assets doc extensions klambda sources stlib tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
+	cp -rf assets doc extensions klambda lib sources tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
 	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
 	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
 	rm -rf $(ReleaseFolderName)
