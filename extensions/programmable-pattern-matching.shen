@@ -1,7 +1,7 @@
 \\ Copyright (c) 2019 Bruno Deferrari.  All rights reserved.
 \\ BSD 3-Clause License: http://opensource.org/licenses/BSD-3-Clause
 
-\\ Documentation: docs/extensions/programmable-pattern-matching.md
+\\ Documentation: doc/extensions/programmable-pattern-matching.md
 
 (package shen.x.programmable-pattern-matching []
 
@@ -21,39 +21,48 @@
             _ (address-> S 0 [])
          Res))
 
+(define surface-pattern
+  [cons Head Tail] -> [(surface-pattern Head) | (surface-pattern-tail Tail)]
+  X -> X)
+
+(define surface-pattern-tail
+  [] -> []
+  [cons Head Tail] -> [(surface-pattern Head) | (surface-pattern-tail Tail)]
+  X -> X)
+
 (define compile-pattern
   Patt Handlers OnFail
-  -> (let VarsStack (make-stack)
+  -> (let SurfacePatt (surface-pattern Patt)
+          VarsStack (make-stack)
           Self (protect Self$$7907$$)
-          AddTest (/. _ ignored)
-          Bind (/. Var _ (push VarsStack Var))
-          Result (apply-pattern-handlers Handlers Self AddTest Bind Patt)
+          AddTest (/. Ignored ignored)
+          Bind (/. Pattern Ignored (push VarsStack Pattern))
+          Result (apply-pattern-handlers Handlers Self AddTest Bind SurfacePatt)
        (if (= Result (fail))
            (thaw OnFail)
-           (compile-pattern-h Patt (reverse (pop-all VarsStack))))))
+           [@p shen.custom-pattern
+               (compile-pattern-h SurfacePatt (reverse (pop-all VarsStack)))])))
 
 (define compile-pattern-h
   [Constructor | Args] Vars
-  -> (let Compile (/. X (shen.<pattern> X))
-          Handler (/. E (error "failed to compile ~A" E))
-          NewArgs (map (/. Arg (if (element? Arg Vars)
-                                   (compile Compile [Arg] Handler)
+  -> (let NewArgs (map (/. Arg (if (element? Arg Vars)
+                                   (shen.compile-pattern-fragment Arg)
                                    Arg))
                        Args)
        [Constructor | NewArgs]))
 
 (define reduce
-  [[/. [Constructor | Args] Body] Self] Handlers
-  -> (let SelectorStack (make-stack)
-          AddTest (/. Expr (shen.add_test Expr))
-          Bind (/. Var Expr (push SelectorStack (@p Var Expr)))
-          Result (apply-pattern-handlers Handlers Self AddTest Bind [Constructor | Args])
-          Vars+Sels (reverse (pop-all SelectorStack))
-          Vars (map (function fst) Vars+Sels)
-          Selectors (map (function snd) Vars+Sels)
-          Abstraction (shen.abstraction_build Vars (shen.ebr Self [Constructor | Args] Body))
-          Application (shen.application_build Selectors Abstraction)
-       (shen.reduce_help Application)))
+  (@p Patt Self) Handlers
+  -> (let SurfacePatt (surface-pattern Patt)
+          TestStack (make-stack)
+          SelectorStack (make-stack)
+          AddTest (/. Expr (push TestStack Expr))
+          Bind (/. Pattern Expr (push SelectorStack (@p Pattern Expr)))
+          Result (apply-pattern-handlers Handlers Self AddTest Bind SurfacePatt)
+       (if (= Result (fail))
+           (fail)
+           (@p (reverse (pop-all TestStack))
+               (reverse (pop-all SelectorStack))))))
 
 (define initialise
   -> (do (set shen.*custom-pattern-compiler* (/. Arg OnFail (compile-pattern Arg (value *pattern-handlers*) OnFail)))
@@ -69,14 +78,24 @@
            F))
 
 (define findpos
-  Sym L -> (trap-error (shen.findpos Sym L)
-                       (/. _ (error "~A is not a pattern handler~%" Sym))))
+  Sym L -> (findpos-h Sym L 1))
+
+(define findpos-h
+  Sym [] _ -> (error "~A is not a pattern handler~%" Sym)
+  Sym [Sym | _] N -> N
+  Sym [_ | L] N -> (findpos-h Sym L (+ N 1)))
+
+(define remove-nth
+  N X -> X where (not (and (integer? N) (> N 0)))
+  _ [] -> []
+  1 [_ | Y] -> Y
+  N [X | Y] -> [X | (remove-nth (- N 1) Y)])
 
 (define unregister-handler
   F -> (let Reg (value *pattern-handlers-reg*)
             Pos (findpos F Reg)
             RemoveReg (set *pattern-handlers-reg* (remove F Reg))
-            RemoveFun (set *pattern-handlers* (shen.remove-nth Pos (value *pattern-handlers*)))
+            RemoveFun (set *pattern-handlers* (remove-nth Pos (value *pattern-handlers*)))
          F))
 
 )

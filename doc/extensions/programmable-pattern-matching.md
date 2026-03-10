@@ -22,7 +22,7 @@ Pattern handling functions take as input 4 arguments:
 
 1. An object that represents a reference to the value being matched over. It is used when building expressions that have to reference the object.
 2. A 1-place function that registers the expression that will be used to test if the value being matched over is of the kind of value the pattern can handle. The argument to this function is a sexp that represents the expression to be used.
-3. A 2-place function that binds a vaiable in the pattern to an expression that will obtain its value. It takes as input the variable and the expression it will be bound to.
+3. A 2-place function that binds a variable or subpattern in the pattern to an expression that will obtain its value. It takes as input the pattern fragment and the expression it will be bound to.
 4. The pattern that is being compiled.
 
 If the function cannot handle this pattern, it *MUST* return `(fail)`, so that another
