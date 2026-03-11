@@ -40,6 +40,8 @@
 (set *loading?* false)
 (set *userdefs* [])
 (set *demodulation-function* (/. X X))
+(set *custom-pattern-compiler* false)
+(set *custom-pattern-reducer* false)
 
 (if (not (bound? *home-directory*))
     (set *home-directory* "")

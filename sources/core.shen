@@ -85,9 +85,8 @@
   <e> := [];)
 
 (defcc <pattern>
-  [<constructor> <pattern1> <pattern2>] := [<constructor> <pattern1> <pattern2>];
   [vector 0] := [vector 0];
-  X := (constructor-error X) 	where (cons? X);
+  X := (compound-pattern X) where (cons? X);
   <simple-pattern> := <simple-pattern>;)
 
 (defcc <constructor>
@@ -98,6 +97,40 @@
 
 (define constructor-error
   X -> (error "~R is not a legitimate constructor~%" X))
+
+(define custom-pattern-compiler
+  Arg OnFail -> (let Compiler (value *custom-pattern-compiler*)
+                  (if (= Compiler false)
+                      (thaw OnFail)
+                      (Compiler Arg OnFail))))
+
+(define custom-pattern-reducer
+  Arg -> (let Reducer (value *custom-pattern-reducer*)
+           (if (= Reducer false)
+               (fail)
+               (Reducer Arg))))
+
+(define compound-pattern
+  X -> (custom-pattern-compiler X (freeze (compound-pattern-h X))))
+
+(define compound-pattern-h
+  [C A B] -> [C (compile-pattern-fragment A) (compile-pattern-fragment B)] where (constructor? C)
+  Pattern -> (constructor-error Pattern))
+
+(define compile-pattern-fragment
+  [vector 0] -> [vector 0]
+  Pattern -> (compound-pattern Pattern) where (cons? Pattern)
+  Pattern -> (gensym (protect Y)) where (= Pattern _)
+  Pattern -> Pattern where (not (element? Pattern [-> <-]))
+  Pattern -> (constructor-error Pattern))
+
+(define custom-pattern?
+  [@p shen.custom-pattern _] -> true
+  _ -> false)
+
+(define custom-pattern-body
+  [@p shen.custom-pattern Pattern] -> Pattern
+  _ -> (simple-error "implementation error in shen.custom-pattern-body"))
 
 (defcc <simple-pattern>
   X := (gensym (protect Y)) 	where (= X _);
@@ -229,12 +262,27 @@
   Test [] [] Continue -> [(rectify-test (reverse Test)) Continue]
   Test [Si | S] [Ti | T] Continue -> (triple-stack Test S T (beta Si Ti Continue))
                                                           where (variable? Si)
+  Test [Si | S] [Ti | T] Continue -> (custom-pattern-triple-stack Test (custom-pattern-body Si) S Ti T Continue)
+                                                          where (custom-pattern? Si)
   Test [[C Sa Sb] | S] [Ti | T] Continue -> (triple-stack [[(op-test C) Ti] | Test]
                                                           [Sa Sb | S]
                                                           [[(op1 C) Ti] [(op2 C) Ti] | T]
                                                           (beta [C Sa Sb] Ti Continue))
+                                                          where (constructor? C)
   Test [Si | S] [Ti | T] Continue -> (triple-stack [[= Si Ti] | Test] S T Continue)
   _ _ _ _ -> (simple-error "implementation error in shen.triple-stack"))
+
+(define custom-pattern-triple-stack
+  Test Pattern S Self T Continue
+  -> (let Reduction (custom-pattern-reducer (@p Pattern Self))
+       (if (tuple? Reduction)
+           (let Tests (fst Reduction)
+               Bindings (snd Reduction)
+             (triple-stack (append (reverse Tests) Test)
+                           (append (map (/. X (fst X)) Bindings) S)
+                           (append (map (/. X (snd X)) Bindings) T)
+                           (beta Pattern Self Continue)))
+           (constructor-error Pattern))))
 
 (define rectify-test
   [] -> true

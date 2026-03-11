@@ -61,7 +61,7 @@
       ["features"
        "launcher"
        \\"factorise-defun"
-       \\"programmable-pattern-matching"
+       "programmable-pattern-matching"
        "expand-dynamic"])
     (output "compilation complete.~%")
     done))

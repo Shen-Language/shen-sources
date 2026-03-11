@@ -1,0 +1,150 @@
+name: Compatibility and Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out kernel repository
+        uses: actions/checkout@v4
+
+      - name: Resolve latest shen-scheme release
+        id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          release_json=$(
+            curl -fsSL \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              https://api.github.com/repos/tizoc/shen-scheme/releases/latest
+          )
+
+          tag=$(printf '%s' "$release_json" | jq -r '.tag_name')
+          asset_url=$(
+            printf '%s' "$release_json" |
+              jq -r '.assets[]
+                | select(.name | endswith("-linux-x64-bin.tar.gz"))
+                | .browser_download_url' |
+              head -n 1
+          )
+
+          if [ -z "$tag" ] || [ "$tag" = "null" ]; then
+            echo "Could not resolve latest shen-scheme release tag." >&2
+            exit 1
+          fi
+
+          if [ -z "$asset_url" ] || [ "$asset_url" = "null" ]; then
+            echo "Could not resolve a Linux x64 shen-scheme binary asset for ${tag}." >&2
+            exit 1
+          fi
+
+          asset_name=${asset_url##*/}
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "asset_url=$asset_url" >> "$GITHUB_OUTPUT"
+          echo "asset_name=$asset_name" >> "$GITHUB_OUTPUT"
+
+      - name: Check out matching shen-scheme source
+        uses: actions/checkout@v4
+        with:
+          repository: tizoc/shen-scheme
+          ref: ${{ steps.latest.outputs.tag }}
+          path: _compat/shen-scheme
+
+      - name: Resolve matching Chez Scheme version
+        id: chez
+        run: |
+          set -euo pipefail
+
+          csversion=$(
+            sed -n 's/^csversion[[:space:]]*?=[[:space:]]*//p' _compat/shen-scheme/Makefile |
+              head -n 1
+          )
+
+          if [ -z "$csversion" ]; then
+            echo "Could not resolve Chez Scheme version from _compat/shen-scheme/Makefile." >&2
+            exit 1
+          fi
+
+          echo "version=$csversion" >> "$GITHUB_OUTPUT"
+
+      - name: Chez cache
+        id: chez-cache
+        uses: actions/cache@v3
+        with:
+          path: _compat/shen-scheme/_build/chez
+          key: latest-shen-scheme-compat-chez-${{ runner.os }}-${{ steps.latest.outputs.tag }}-${{ steps.chez.outputs.version }}
+
+      - name: Install deps (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y uuid-dev
+
+      - name: Download latest shen-scheme binary
+        run: |
+          set -euo pipefail
+
+          rm -rf _compat/host-shen _compat/extract
+          mkdir -p _compat/extract
+
+          curl -fsSL \
+            -o "_compat/${{ steps.latest.outputs.asset_name }}" \
+            "${{ steps.latest.outputs.asset_url }}"
+
+          tar xf "_compat/${{ steps.latest.outputs.asset_name }}" -C _compat/extract
+
+          host_bin=$(find _compat/extract -type f -path '*/bin/shen-scheme' | head -n 1)
+          if [ -z "$host_bin" ]; then
+            echo "Could not locate shen-scheme binary in extracted archive." >&2
+            exit 1
+          fi
+
+          host_root=$(dirname "$(dirname "$host_bin")")
+          mv "$host_root" _compat/host-shen
+          rm -rf _compat/extract "_compat/${{ steps.latest.outputs.asset_name }}"
+
+          _compat/host-shen/bin/shen-scheme --version
+
+      - name: Build current KLambda with latest shen-scheme
+        run: |
+          set -euo pipefail
+          make klambda Shen="$PWD/_compat/host-shen/bin/shen-scheme"
+
+      - name: Overlay built kernel into matching shen-scheme source
+        run: |
+          set -euo pipefail
+          cp klambda/*.kl _compat/shen-scheme/kl/
+
+      - name: Precompile matching shen-scheme release with current kernel
+        run: |
+          set -euo pipefail
+          make -C _compat/shen-scheme SHEN="$PWD/_compat/host-shen/bin/shen-scheme" precompile
+
+      - name: Build matching shen-scheme release with current kernel
+        run: |
+          set -euo pipefail
+          make -C _compat/shen-scheme
+
+      - name: Run matching shen-scheme test suite
+        run: |
+          set -euo pipefail
+          make -C _compat/shen-scheme test
+
+      - name: Run extension test suite
+        run: |
+          set -euo pipefail
+          ./_compat/shen-scheme/_build/bin/shen-scheme script tests/extensions/runme.shen
