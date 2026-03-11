@@ -1,4 +1,4 @@
-name: Latest shen-scheme Compatibility
+name: Compatibility and Tests
 
 on:
   pull_request:
@@ -143,3 +143,8 @@ jobs:
         run: |
           set -euo pipefail
           make -C _compat/shen-scheme test
+
+      - name: Run extension test suite
+        run: |
+          set -euo pipefail
+          ./_compat/shen-scheme/_build/bin/shen-scheme script tests/extensions/runme.shen
