@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- A compatibility-and-tests GitHub Actions workflow for validating the
+  current kernel against the latest released `shen-scheme`.
+- A non-interactive extension test harness under `tests/extensions/`, with
+  coverage for the `programmable-pattern-matching` extension.
+
+### Changed
+
+- Restored the `programmable-pattern-matching` extension so it works with the
+  current kernel.
+
 ## [41.1] - 2026-03-08
 
 ### Added
