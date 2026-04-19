@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [41.2] - 2026-04-19
+
 ### Fixed
 
 - Some StLib functions were losing their type signatures when being compiled to KLambda.
@@ -612,7 +614,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...HEAD
+[41.2]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...shen-41.2
 [41.1]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...shen-41.1
 [41.0]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...shen-41.0
 [40.1]: https://github.com/Shen-Language/shen-sources/compare/shen-40.0...shen-40.1
