@@ -1,10 +1,10 @@
 (tc -)
-(cd "lib")
-(if (= (language) "Scheme") (load "patches-scheme.shen") skip)
+\\(cd "lib")
+\\(if (= (language) "Scheme") (load "patches-scheme.shen") skip)
 
-(cd "lib/stlib")
-(load "install.shen")
-
+\\(cd "lib/stlib")
+\\(load "install.shen")
+(declare power [number --> [number --> number]])
 (cd "lib/tk")
 (load "loadme.shen")
 

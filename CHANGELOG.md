@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+
+- Some StLib functions were losing their type signatures when being compiled to KLambda.
+
 ### Added
 
 - A compatibility-and-tests GitHub Actions workflow for validating the
