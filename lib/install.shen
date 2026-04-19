@@ -1,10 +1,12 @@
 (tc -)
+
+\\ StLib is now included, this is not necessary
 \\(cd "lib")
 \\(if (= (language) "Scheme") (load "patches-scheme.shen") skip)
 
 \\(cd "lib/stlib")
 \\(load "install.shen")
-(declare power [number --> [number --> number]])
+
 (cd "lib/tk")
 (load "loadme.shen")
 
