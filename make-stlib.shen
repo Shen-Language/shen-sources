@@ -359,7 +359,8 @@
   false _ -> skip
   true [define F { | X]
   -> (let Sig (shen.type-F F X)
-          Decl [declare F (make-stlib.literal-expression Sig)]
+          Rectified (shen.rectify-type Sig)
+          Decl [declare F (make-stlib.literal-expression Rectified)]
        (make-stlib.queue-runtime-effect type Decl))
   _ _ -> skip)
 
