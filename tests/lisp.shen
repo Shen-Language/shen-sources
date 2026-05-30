@@ -49,7 +49,6 @@
   {(list number) ==> string}
   Byte := (n->string Byte)   where (not (= Byte 34));)
 
-
 (datatype sexpr
 
  S : string;
@@ -60,6 +59,10 @@
  ___________
  S : sexpr;
 
+ N : number;
+ ___________
+ N : sexpr;
 
-
-
+ Xs : (list sexpr);
+ __________________
+ Xs : sexpr;)
