@@ -1,8 +1,8 @@
-\\           Copyright (c) 2010-2019, Mark Tarver
+\\           Copyright (c) 2010-2026, Mark Tarver
 
 \\                  All rights reserved.
 
-(package shen [ctxt]
+(package shen [ctxt sqts]
 
 (defcc <datatype>
   D <datatype-rules> := (let Prolog (rules->prolog D <datatype-rules>)
@@ -66,7 +66,8 @@
 (defcc <side>
   if P    := [if P];
   let X Y := [let X Y];
-  ctxt X  := [ctxt X] where (variable? X);)
+  ctxt X  := [ctxt X] where (variable? X);
+  sqts X  := [sqts X] where (variable? X);)
 
 (define lr-rule
   Side Sequents [[] C] -> (let P (gensym (protect P))
@@ -206,7 +207,8 @@
   CtxtVs Active Assumptions [[ctxt Ctxt] | S]  Ps -> (if (element? Ctxt Active)
                                                          (side-conditions->goals [Ctxt | CtxtVs] Active Assumptions S Ps)
                                                          [[bind Ctxt Assumptions]
-                                                           | (side-conditions->goals [Ctxt | CtxtVs] [Ctxt | Active] Ctxt S Ps)]))
+                                                           | (side-conditions->goals [Ctxt | CtxtVs] [Ctxt | Active] Ctxt S Ps)])
+  CtxtVs Active Assumptions [[sqts _] | S] Ps -> (side-conditions->goals CtxtVs Active Assumptions S Ps))
 
 (define premises->goals
   _ _ [] -> [(intern ";")]

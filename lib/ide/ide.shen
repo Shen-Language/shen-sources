@@ -218,8 +218,6 @@
                                             CoresEntry)
            done))
 
-\\(spy +)
-
 (define compute-settings
    {button --> button --> button --> button --> button --> button --> button --> button -->
       entry --> entry --> entry --> entry --> entry --> entry --> entry --> symbol}

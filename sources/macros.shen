@@ -31,7 +31,7 @@
   [lineread]                  -> [lineread [stinput]]
   [input]                     -> [input [stinput]]
   [read]                      -> [read [stinput]]
-  [input+ Type]               -> [input+ Type [stinput]]
+  [input+ Type | Source]      -> (process-input+ [input+ Type | Source])
   [read-byte]                 -> (process-read-byte)
   [prolog? | Literals]        -> (call-prolog Literals)
   [defprolog F | Clauses]     -> (compile-prolog F Clauses)
@@ -52,6 +52,10 @@
   [F W X Y | Z]               -> [F W (process-assoc [F X Y | Z])]
                                    where (element? F [@p @v append and or + * do])
   X -> X)
+
+(define process-input+
+  [input+ Type] -> [input-h+ (rcons_form Type) [stinput]]
+  [input+ Type Source] -> [input-h+ (rcons_form Type) Source])
 
 (define cons-form-respect-modes
   [+ X]   -> [+ (cons-form-respect-modes X)]

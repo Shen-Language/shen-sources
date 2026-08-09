@@ -1,4 +1,4 @@
-\\           Copyright (c) 2010-2019, Mark Tarver
+\\           Copyright (c) 2010-2026, Mark Tarver
 
 \\                  All rights reserved.
 
@@ -45,10 +45,10 @@
 (define input
   Stream -> (eval-kl (read Stream)))
 
-(define input+
+(define input-h+
   Type Stream -> (let Mono? (monotype Type)
                       Input (read Stream)
-                   (if (= false (typecheck Input (rectify-type Type)))
+                   (if (= false (typecheck Input Type))
                        (error "type error: ~R is not of type ~R~%" Input Type)
                        (eval-kl Input))))
 
