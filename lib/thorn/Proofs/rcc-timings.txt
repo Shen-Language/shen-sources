@@ -1,0 +1,479 @@
+(198+) (<-kb [all x [all y [all z [[[dc x y] & [ec y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.6875 secs
+23696244 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(199+)
+(<-kb [all x [all y [all z [[[dc x y] & [po y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.765625 secs
+23048061 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(200+)
+(<-kb [all x [all y [all z [[[dc x y] & [tpp y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.875 secs
+23601692 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(201+)
+(<-kb [all x [all y [all z [[[dc x y] & [ntpp y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.9375 secs
+23411477 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(202+)
+(<-kb [all x [all y [all z [[[dc x y] & [tpp-1 y z]] => [dc x z]]]]])
+
+run time: 0.0 secs
+6401 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(203+)
+(<-kb [all x [all y [all z [[[dc x y] & [ntpp-1 y z]] => [dc x z]]]]])
+
+run time: 0.015625 secs
+6475 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(204+)
+(<-kb [all x [all y [all z [[[dc x y] & [e= y z]] => [dc x z]]]]])
+
+run time: 0.0 secs
+1095 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(205+)
+(<-kb [all x [all y [all z [[[ec x y] & [dc y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.578125 secs
+23615676 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(206+)
+(<-kb [all x [all y [all z [[[ec x y] & [ec y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [[e= x z] v [tpp x z]]]]]]])
+timeout
+run time: 7.96875 secs
+24120267 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(207+)
+(<-kb [all x [all y [all z [[[ec x y] & [po y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 8.0 secs
+23363894 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(208+)
+(<-kb [all x [all y [all z [[[ec x y] & [tpp y z]] => [[[ec x z] v [po x z]] v [[tpp x z] v [ntpp x z]]]]]]])
+timeout
+run time: 7.625 secs
+22283525 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(209+)
+(<-kb [all x [all y [all z [[[ec x y] & [ntpp y z]] => [[po x z] v [[tpp x z] v [ntpp x z]]]]]]])
+timeout
+run time: 7.828125 secs
+22016389 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(210+)
+(<-kb [all x [all y [all z [[[ec x y] & [tpp-1 y z]] => [[dc x z] v [ec x z]]]]]])
+
+run time: 5.546875 secs
+14242849 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(211+)
+(<-kb [all x [all y [all z [[[ec x y] & [ntpp-1 y z]] => [dc x z]]]]])
+timeout
+run time: 7.5625 secs
+19650795 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(212+)
+(<-kb [all x [all y [all z [[[ec x y] & [e= y z]] => [ec x z]]]]])
+timeout
+run time: 7.828125 secs
+18848202 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(213+)
+(<-kb [all x [all y [all z [[[po x y] & [dc y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.8125 secs
+24009681 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(214+)
+(<-kb [all x [all y [all z [[[po x y] & [ec y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.65625 secs
+23688163 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(215+)
+(<-kb [all x [all y [all z [[[po x y] & [tpp y z]] => [[[po x z] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.75 secs
+22198254 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(216+)
+(<-kb [all x [all y [all z [[[po x y] & [ntpp y z]] => [[[po x z] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.65625 secs
+21924307 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(217+)
+(<-kb [all x [all y [all z [[[po x y] & [tpp-1 y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.65625 secs
+23761112 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(218+)
+(<-kb [all x [all y [all z [[[po x y] & [ntpp-1 y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.8125 secs
+23956893 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(219+)
+(<-kb [all x [all y [all z [[[po x y] & [e= y z]] => [po x z]]]]])
+
+run time: 0.5625 secs
+1382393 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(220+)
+(<-kb [all x [all y [all z [[[tpp x y] & [dc y z]] => [dc x z]]]]])
+
+run time: 0.015625 secs
+4160 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(221+)
+(<-kb [all x [all y [all z [[[tpp x y] & [ec y z]] => [[dc x z] v [ec x z]]]]]])
+
+run time: 3.953125 secs
+9913280 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(222+)
+(<-kb [all x [all y [all z [[[tpp x y] & [po y z]] => [[[[dc x z] v [ec x z]] v [po x z]] v [[tpp x z] v [nttp x z]]]]]]])
+timeout
+run time: 7.734375 secs
+22976349 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(223+)
+(<-kb [all x [all y [all z [[[tpp x y] & [tpp y z]] => [[tpp x z] v [ntpp x z]]]]]])
+timeout
+run time: 7.734375 secs
+20321951 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(224+)
+(<-kb [all x [all y [all z [[[tpp x y] & [ntpp y z]] => [ntpp x z]]]]])
+timeout
+run time: 7.890625 secs
+19585869 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(225+)
+(<-kb [all x [all y [all z [[[tpp x y] & [tpp-1 y z]] => [[[[dc x z] v [ec x z]] v [po x z]] v [[e= x z] v [[tpp x z] v [tpp-1 x z]]]]]]]])
+timeout
+run time: 7.734375 secs
+24652402 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(226+)
+(<-kb [all x [all y [all z [[[tpp x y] & [ntpp-1 y z]] => [[[[dc x z] v [ec x z]] v [po x z]] v [[tpp-1 x z] v [ntpp-1 x z]]]]]]])
+timeout
+run time: 7.859375 secs
+24625911 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(227+)
+(<-kb [all x [all y [all z [[[tpp x y] & [e= y z]] => [tpp x z]]]]])
+timeout
+run time: 7.6875 secs
+18355444 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(228+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [dc y z]] => [dc x z]]]]])
+
+run time: 0.015625 secs
+4202 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(229+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [ec y z]] => [dc x z]]]]])
+timeout
+run time: 7.453125 secs
+19240354 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(230+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [po y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.71875 secs
+23022142 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(231+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [tpp y z]] => [ntpp x z]]]]])
+timeout
+run time: 7.734375 secs
+19481973 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(232+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [ntpp y z]] => [ntpp x z]]]]])
+timeout
+run time: 7.484375 secs
+19461856 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(233+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [tpp-1 y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.984375 secs
+23384972 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(234+)
+(<-kb [all x [all y [all z [[[ntpp x y] & [e= y z]] => [ntpp x z]]]]])
+timeout
+run time: 8.65625 secs
+22305529 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(235+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [dc y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 8.203125 secs
+25353883 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(236+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [ec y z]] => [[[[ec x z] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.671875 secs
+23948548 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(237+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [po y z]] => [[po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]])
+type error
+
+(238+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [tpp y z]] => [[[e= x z] v [po x z]] v [tpp-1 x z]] v [tpp-1 x z]]]]])
+type error
+
+(239+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [ntpp y z]] => [[[po x z] v [tpp x z]] v [ntpp x z]]]]]])
+timeout
+run time: 7.703125 secs
+21700859 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(240+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [tpp-1 y z]] => [[tpp-1 x z] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.984375 secs
+21958187 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(241+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [ntpp-1 y z]] => [ntpp-1 x z]]]]])
+timeout
+run time: 7.78125 secs
+20257691 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(242+)
+(<-kb [all x [all y [all z [[[tpp-1 x y] & [e= y z]] => [tpp-1 x z]]]]])
+timeout
+run time: 7.796875 secs
+20744952 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(243+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [dc y z]] => [[[[[dc x z] v [ec x z]] v [po x z]] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.65625 secs
+24057299 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(244+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [ec y z]] => [[[po x z] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.875 secs
+22801284 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(245+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [po y z]] => [[[po x z] v [tpp-1 x z]] v [ntpp-1 x z]]]]]])
+timeout
+run time: 7.875 secs
+22767282 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(246+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [tpp y z]] => [[[e= x z] v [po x z]] v [[tpp-1 x z] v [tpp-1 x z]]]]]]])
+timeout
+run time: 7.796875 secs
+22912962 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(247+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [ntpp y z]] => [[[[e= x z] v [tpp-1 x y]] v [[nttp-1 x z]
+                                                             v [po x z]]] v [[tpp x z] v [ntpp x z]]]]]]])
+timeout
+run time: 7.625 secs
+24308869 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(248+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [tpp-1 y z]] => [ntpp-1 x z]]]]])
+timeout
+run time: 7.5625 secs
+19983590 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(249+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [ntpp-1 y z]] => [ntpp-1 x z]]]]])
+timeout
+run time: 7.875 secs
+20908435 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(250+)
+(<-kb [all x [all y [all z [[[ntpp-1 x y] & [e= y z]] => [ntpp-1 x z]]]]])
+timeout
+run time: 7.75 secs
+20639390 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(251+)
+(<-kb [all x [all y [all z [[[e= x y] & [dc y z]] => [dc x z]]]]])
+
+run time: 0.015625 secs
+4390 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(252+)
+(<-kb [all x [all y [all z [[[e= x y] & [ec y z]] => [ec x z]]]]])
+timeout
+run time: 7.828125 secs
+18959536 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(253+)
+(<-kb [all x [all y [all z [[[e= x y] & [po y z]] => [po x z]]]]])
+
+run time: 0.59375 secs
+1485377 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean
+
+(254+)
+(<-kb [all x [all y [all z [[[e= x y] & [tpp y z]] => [tpp x z]]]]])
+timeout
+run time: 7.96875 secs
+18418510 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(255+)
+(<-kb [all x [all y [all z [[[e= x y] & [ntpp y z]] => [ntpp x z]]]]])
+timeout
+run time: 7.71875 secs
+19288051 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(256+)
+(<-kb [all x [all y [all z [[[e= x y] & [tpp-1 y z]] => [tpp-1 x z]]]]])
+timeout
+run time: 7.796875 secs
+20782094 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(257+)
+(<-kb [all x [all y [all z [[[e= x y] & [ntpp-1 y z]] => [ntpp-1 x z]]]]])
+timeout
+run time: 8.390625 secs
+21917182 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+false : boolean
+
+(258+)
+(<-kb [all x [all y [all z [[[e= x y] & [e= y z]] => [e= x z]]]]])
+
+run time: 0.0 secs
+21417 inferences, equality = false
+depth = 20, complexity = -1, timeout = 5 secs
+true : boolean

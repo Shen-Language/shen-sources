@@ -1,0 +1,5 @@
+(tc -)
+(cd "")
+(cd "lib/thorn")
+(load "datatypes.shen")
+(load "THORN20.shen")

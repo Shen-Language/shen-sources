@@ -1,0 +1,774 @@
+%--------------------------------------------------------------------------
+% File     : AGT001+1 : TPTP v9.0.0. Released v2.7.0.
+% Domain   : Agents
+% Axioms   : CPlanT events
+% Version  : [Bar03] axioms : Especial.
+% English  :
+
+% Refs     : [Bar03] Barta, J. (2003), Email to G. Sutcliffe
+% Source   : [Bar03]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :  249 ( 249 unt;   0 def)
+%            Number of atoms       :  249 (   0 equ)
+%            Maximal formula atoms :    1 (   1 avg)
+%            Number of connectives :   40 (  40   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth :    2 (   1 avg)
+%            Maximal term depth    :    1 (   1 avg)
+%            Number of predicates  :    5 (   5 usr;   0 prp; 2-4 aty)
+%            Number of functors    :   22 (  22 usr;  22 con; 0-0 aty)
+%            Number of variables   :    0 (   0   !;   0   ?)
+% SPC      : 
+
+% Comments : Requires AGT001+0.ax
+%--------------------------------------------------------------------------
+fof(event_1,axiom,
+    accept_team(countryahumanitarianorganization,countryacivilorganization,cityb,n6) ).
+
+fof(event_2,axiom,
+    accept_team(countryahumanitarianorganization,countryacivilorganization,towna,n6) ).
+
+fof(event_3,axiom,
+    accept_team(countryahumanitarianorganization,countryacivilorganization,coastvillage,n6) ).
+
+fof(event_4,axiom,
+    accept_team(countryahumanitarianorganization,countryafirstaidorganization,coastvillage,n6) ).
+
+fof(event_5,axiom,
+    the_agent_in_all_proposed_teams(countryahumanitarianorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_6,axiom,
+    any_agent_in_all_proposed_teams(countryahumanitarianorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_7,axiom,
+    accept_team(countryccivilorganization,countrybhumanitarianorganization,cityb,n2) ).
+
+fof(event_8,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,cityb,n4) ).
+
+fof(event_9,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,towna,n4) ).
+
+fof(event_10,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,towna,n5) ).
+
+fof(event_11,axiom,
+    the_agent_not_in_any_proposed_teams(muslimcountrybhumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_12,axiom,
+    any_agent_in_all_proposed_teams(muslimcountrybhumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_13,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,coastvillage,n5) ).
+
+fof(event_14,axiom,
+    accept_team(countryamedicalorganization,countryacivilorganization,cityb,n6) ).
+
+fof(event_15,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybhumanitarianorganization,cityb,n4) ).
+
+fof(event_16,axiom,
+    accept_team(countryafirstaidorganization,countryacivilorganization,cityb,n6) ).
+
+fof(event_17,axiom,
+    accept_number(countrybhumanitarianorganization,n4) ).
+
+fof(event_18,axiom,
+    accept_team(countrybcivilorganization,countrybhumanitarianorganization,cityb,n4) ).
+
+fof(event_19,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryacivilorganization,cityb,n6) ).
+
+fof(event_20,axiom,
+    accept_team(sufferterragovernment,countryacivilorganization,cityb,n6) ).
+
+fof(event_21,axiom,
+    accept_number(countrybhumanitarianorganization,n1) ).
+
+fof(event_22,axiom,
+    the_agent_in_all_proposed_teams(countrybhumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_23,axiom,
+    any_agent_in_all_proposed_teams(countrybhumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_24,axiom,
+    accept_team(countrybhumanitarianorganization,christiancountrychumanitarianorganization,coastvillage,n5) ).
+
+fof(event_25,axiom,
+    accept_team(countrybhumanitarianorganization,christiancountrychumanitarianorganization,coastvillage,n6) ).
+
+fof(event_26,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryacivilorganization,towna,n6) ).
+
+fof(event_27,axiom,
+    accept_team(countryamedicalorganization,countryacivilorganization,towna,n6) ).
+
+fof(event_28,axiom,
+    accept_number(countryahumanitarianorganization,n2) ).
+
+fof(event_29,axiom,
+    ~ accept_team(countryamedicalorganization,countryahumanitarianorganization,coastvillage,n2) ).
+
+fof(event_30,axiom,
+    ~ accept_team(countryamedicalorganization,countryafirstaidorganization,coastvillage,n2) ).
+
+fof(event_31,axiom,
+    ~ accept_team(countryamedicalorganization,countryacivilorganization,coastvillage,n2) ).
+
+fof(event_32,axiom,
+    ~ accept_team(countryamedicalorganization,christiansufferterrahumanitarianorganization,coastvillage,n2) ).
+
+fof(event_33,axiom,
+    ~ accept_team(countryamedicalorganization,sufferterragovernment,coastvillage,n2) ).
+
+fof(event_34,axiom,
+    ~ accept_team(countryamedicalorganization,countryahumanitarianorganization,coastvillage,n6) ).
+
+fof(event_35,axiom,
+    ~ accept_team(countryamedicalorganization,countryacivilorganization,coastvillage,n6) ).
+
+fof(event_36,axiom,
+    ~ accept_team(countryamedicalorganization,countryafirstaidorganization,coastvillage,n6) ).
+
+fof(event_37,axiom,
+    the_agent_not_in_any_proposed_teams(countryamedicalorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_38,axiom,
+    any_agent_in_all_proposed_teams(countryamedicalorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_39,axiom,
+    accept_team(countryccivilorganization,countrycmedicalorganization,towna,n4) ).
+
+fof(event_40,axiom,
+    ~ accept_team(countryccivilorganization,countrycmedicalorganization,towna,n5) ).
+
+fof(event_41,axiom,
+    the_agent_in_all_proposed_teams(countryccivilorganization,countryacivilorganization,towna) ).
+
+fof(event_42,axiom,
+    any_agent_in_all_proposed_teams(countryccivilorganization,countryacivilorganization,towna) ).
+
+fof(event_43,axiom,
+    accept_team(countrybcivilorganization,countrycmedicalorganization,towna,n4) ).
+
+fof(event_44,axiom,
+    accept_team(countrybcivilorganization,countrycmedicalorganization,towna,n5) ).
+
+fof(event_45,axiom,
+    accept_number(countrybcivilorganization,n5) ).
+
+fof(event_46,axiom,
+    the_agent_in_all_proposed_teams(countrybcivilorganization,countryacivilorganization,towna) ).
+
+fof(event_47,axiom,
+    any_agent_in_all_proposed_teams(countrybcivilorganization,countryacivilorganization,towna) ).
+
+fof(event_48,axiom,
+    accept_team(sufferterragovernment,countryacivilorganization,towna,n6) ).
+
+fof(event_49,axiom,
+    the_agent_in_all_proposed_teams(countrycmedicalorganization,countryacivilorganization,towna) ).
+
+fof(event_50,axiom,
+    any_agent_in_all_proposed_teams(countrycmedicalorganization,countryacivilorganization,towna) ).
+
+fof(event_51,axiom,
+    accept_team(countrycmedicalorganization,christiancountrychumanitarianorganization,coastvillage,n5) ).
+
+fof(event_52,axiom,
+    accept_number(countrycmedicalorganization,n4) ).
+
+fof(event_53,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrycmedicalorganization,towna,n4) ).
+
+fof(event_54,axiom,
+    accept_number(countrycmedicalorganization,n5) ).
+
+fof(event_55,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrycmedicalorganization,towna,n5) ).
+
+fof(event_56,axiom,
+    the_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_57,axiom,
+    any_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,countryacivilorganization,towna) ).
+
+fof(event_58,axiom,
+    accept_team(countryafirstaidorganization,countryacivilorganization,towna,n6) ).
+
+fof(event_59,axiom,
+    accept_number(countryacivilorganization,n2) ).
+
+fof(event_60,axiom,
+    accept_team(countryacivilorganization,countryahumanitarianorganization,coastvillage,n5) ).
+
+fof(event_61,axiom,
+    accept_team(countryacivilorganization,countryahumanitarianorganization,coastvillage,n6) ).
+
+fof(event_62,axiom,
+    accept_team(countryacivilorganization,countryafirstaidorganization,coastvillage,n6) ).
+
+fof(event_63,axiom,
+    the_agent_in_all_proposed_teams(countryacivilorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_64,axiom,
+    any_agent_in_all_proposed_teams(countryacivilorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_65,axiom,
+    accept_number(countryafirstaidorganization,n2) ).
+
+fof(event_66,axiom,
+    accept_team(countryafirstaidorganization,countryahumanitarianorganization,coastvillage,n5) ).
+
+fof(event_67,axiom,
+    accept_team(countryafirstaidorganization,countryahumanitarianorganization,coastvillage,n6) ).
+
+fof(event_68,axiom,
+    accept_team(countryafirstaidorganization,countryacivilorganization,coastvillage,n6) ).
+
+fof(event_69,axiom,
+    the_agent_in_all_proposed_teams(countryafirstaidorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_70,axiom,
+    any_agent_in_all_proposed_teams(countryafirstaidorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_71,axiom,
+    ~ accept_team(countryccivilorganization,christiancountrychumanitarianorganization,coastvillage,n5) ).
+
+fof(event_72,axiom,
+    ~ accept_team(countryccivilorganization,christiancountrychumanitarianorganization,coastvillage,n6) ).
+
+fof(event_73,axiom,
+    accept_number(christiancountrychumanitarianorganization,n5) ).
+
+fof(event_74,axiom,
+    accept_team(countrybcivilorganization,christiancountrychumanitarianorganization,coastvillage,n5) ).
+
+fof(event_75,axiom,
+    accept_team(countrybcivilorganization,christiancountrychumanitarianorganization,coastvillage,n6) ).
+
+fof(event_76,axiom,
+    accept_team(countrybcivilorganization,muslimcountrybhumanitarianorganization,townc,n6) ).
+
+fof(event_77,axiom,
+    accept_team(countrybcivilorganization,countrybhumanitarianorganization,townc,n6) ).
+
+fof(event_78,axiom,
+    accept_team(countrybcivilorganization,christiancountrychumanitarianorganization,townc,n6) ).
+
+fof(event_79,axiom,
+    accept_team(countrybcivilorganization,countrycmedicalorganization,townc,n6) ).
+
+fof(event_80,axiom,
+    the_agent_in_all_proposed_teams(countrybcivilorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_81,axiom,
+    any_agent_in_all_proposed_teams(countrybcivilorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_82,axiom,
+    accept_team(sufferterragovernment,countryahumanitarianorganization,coastvillage,n5) ).
+
+fof(event_83,axiom,
+    accept_team(sufferterragovernment,countryahumanitarianorganization,coastvillage,n6) ).
+
+fof(event_84,axiom,
+    accept_team(sufferterragovernment,countryacivilorganization,coastvillage,n6) ).
+
+fof(event_85,axiom,
+    accept_team(sufferterragovernment,countryafirstaidorganization,coastvillage,n6) ).
+
+fof(event_86,axiom,
+    the_agent_in_all_proposed_teams(sufferterragovernment,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_87,axiom,
+    any_agent_in_all_proposed_teams(sufferterragovernment,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_88,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n2) ).
+
+fof(event_89,axiom,
+    accept_number(countryahumanitarianorganization,n5) ).
+
+fof(event_90,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryahumanitarianorganization,coastvillage,n5) ).
+
+fof(event_91,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryahumanitarianorganization,coastvillage,n6) ).
+
+fof(event_92,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryacivilorganization,coastvillage,n6) ).
+
+fof(event_93,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryafirstaidorganization,coastvillage,n6) ).
+
+fof(event_94,axiom,
+    the_agent_in_all_proposed_teams(christiansufferterrahumanitarianorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_95,axiom,
+    any_agent_in_all_proposed_teams(christiansufferterrahumanitarianorganization,christiancountrychumanitarianorganization,coastvillage) ).
+
+fof(event_96,axiom,
+    accept_team(countrycmedicalorganization,christiancountrychumanitarianorganization,coastvillage,n6) ).
+
+fof(event_97,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,coastvillage,n6) ).
+
+fof(event_98,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n3) ).
+
+fof(event_99,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countryccivilorganization,townc,n4) ).
+
+fof(event_100,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrybcivilorganization,townc,n6) ).
+
+fof(event_101,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,townc,n6) ).
+
+fof(event_102,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,townc,n6) ).
+
+fof(event_103,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,townc,n6) ).
+
+fof(event_104,axiom,
+    the_agent_in_all_proposed_teams(muslimcountrybhumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_105,axiom,
+    any_agent_in_all_proposed_teams(muslimcountrybhumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_106,axiom,
+    accept_team(countryacivilorganization,countryahumanitarianorganization,townc,n6) ).
+
+fof(event_107,axiom,
+    accept_team(countryafirstaidorganization,countryahumanitarianorganization,townc,n6) ).
+
+fof(event_108,axiom,
+    accept_team(christiancountrychumanitarianorganization,countryccivilorganization,townc,n4) ).
+
+fof(event_109,axiom,
+    accept_team(christiancountrychumanitarianorganization,muslimcountrybhumanitarianorganization,townc,n6) ).
+
+fof(event_110,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybcivilorganization,townc,n6) ).
+
+fof(event_111,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybhumanitarianorganization,townc,n6) ).
+
+fof(event_112,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrycmedicalorganization,townc,n6) ).
+
+fof(event_113,axiom,
+    the_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_114,axiom,
+    any_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_115,axiom,
+    ~ accept_team(countryccivilorganization,muslimcountrybhumanitarianorganization,townc,n6) ).
+
+fof(event_116,axiom,
+    ~ accept_team(countryccivilorganization,countrybcivilorganization,townc,n6) ).
+
+fof(event_117,axiom,
+    ~ accept_team(countryccivilorganization,countrybhumanitarianorganization,townc,n6) ).
+
+fof(event_118,axiom,
+    ~ accept_team(countryccivilorganization,christiancountrychumanitarianorganization,townc,n6) ).
+
+fof(event_119,axiom,
+    ~ accept_team(countryccivilorganization,countrycmedicalorganization,townc,n6) ).
+
+fof(event_120,axiom,
+    the_agent_in_all_proposed_teams(countryccivilorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_121,axiom,
+    any_agent_in_all_proposed_teams(countryccivilorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_122,axiom,
+    accept_team(countrybhumanitarianorganization,countrybcivilorganization,townc,n2) ).
+
+fof(event_123,axiom,
+    accept_team(countrybhumanitarianorganization,muslimcountrybhumanitarianorganization,townc,n6) ).
+
+fof(event_124,axiom,
+    accept_team(sufferterragovernment,countryahumanitarianorganization,townc,n6) ).
+
+fof(event_125,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryahumanitarianorganization,townc,n6) ).
+
+fof(event_126,axiom,
+    accept_team(countryamedicalorganization,countryahumanitarianorganization,townc,n6) ).
+
+fof(event_127,axiom,
+    accept_team(countrycmedicalorganization,countryccivilorganization,townc,n4) ).
+
+fof(event_128,axiom,
+    accept_team(countrycmedicalorganization,muslimcountrybhumanitarianorganization,townc,n6) ).
+
+fof(event_129,axiom,
+    accept_team(countrycmedicalorganization,countrybcivilorganization,townc,n6) ).
+
+fof(event_130,axiom,
+    accept_team(countrycmedicalorganization,countrybhumanitarianorganization,townc,n6) ).
+
+fof(event_131,axiom,
+    accept_team(countrycmedicalorganization,christiancountrychumanitarianorganization,townc,n6) ).
+
+fof(event_132,axiom,
+    the_agent_in_all_proposed_teams(countrycmedicalorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_133,axiom,
+    any_agent_in_all_proposed_teams(countrycmedicalorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_134,axiom,
+    accept_team(countrybhumanitarianorganization,countrybcivilorganization,townc,n6) ).
+
+fof(event_135,axiom,
+    accept_team(countrybhumanitarianorganization,christiancountrychumanitarianorganization,townc,n6) ).
+
+fof(event_136,axiom,
+    accept_team(countrybhumanitarianorganization,countrycmedicalorganization,townc,n6) ).
+
+fof(event_137,axiom,
+    the_agent_in_all_proposed_teams(countrybhumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_138,axiom,
+    any_agent_in_all_proposed_teams(countrybhumanitarianorganization,countryahumanitarianorganization,townc) ).
+
+fof(event_139,axiom,
+    accept_team(christiansufferterrahumanitarianorganization,countryahumanitarianorganization,cityb,n6) ).
+
+fof(event_140,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n6) ).
+
+fof(event_141,axiom,
+    the_agent_in_all_proposed_teams(christiansufferterrahumanitarianorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_142,axiom,
+    any_agent_in_all_proposed_teams(christiansufferterrahumanitarianorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_143,axiom,
+    ~ accept_team(countryccivilorganization,countrybhumanitarianorganization,cityb,n5) ).
+
+fof(event_144,axiom,
+    ~ accept_team(countryccivilorganization,countrybhumanitarianorganization,cityb,n6) ).
+
+fof(event_145,axiom,
+    accept_team(sufferterragovernment,countryahumanitarianorganization,cityb,n6) ).
+
+fof(event_146,axiom,
+    the_agent_in_all_proposed_teams(sufferterragovernment,countrybhumanitarianorganization,cityb) ).
+
+fof(event_147,axiom,
+    any_agent_in_all_proposed_teams(sufferterragovernment,countrybhumanitarianorganization,cityb) ).
+
+fof(event_148,axiom,
+    accept_team(countryafirstaidorganization,countryahumanitarianorganization,cityb,n6) ).
+
+fof(event_149,axiom,
+    accept_number(countryafirstaidorganization,n6) ).
+
+fof(event_150,axiom,
+    the_agent_in_all_proposed_teams(countryafirstaidorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_151,axiom,
+    any_agent_in_all_proposed_teams(countryafirstaidorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_152,axiom,
+    accept_team(countryafirstaidorganization,sufferterragovernment,towna,n5) ).
+
+fof(event_153,axiom,
+    accept_team(countryafirstaidorganization,sufferterragovernment,towna,n6) ).
+
+fof(event_154,axiom,
+    accept_team(countrycmedicalorganization,countrybhumanitarianorganization,cityb,n5) ).
+
+fof(event_155,axiom,
+    accept_team(countrycmedicalorganization,countrybhumanitarianorganization,cityb,n6) ).
+
+fof(event_156,axiom,
+    accept_team(countryamedicalorganization,countryahumanitarianorganization,cityb,n6) ).
+
+fof(event_157,axiom,
+    accept_number(countryamedicalorganization,n6) ).
+
+fof(event_158,axiom,
+    the_agent_in_all_proposed_teams(countryamedicalorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_159,axiom,
+    any_agent_in_all_proposed_teams(countryamedicalorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_160,axiom,
+    accept_team(countrybcivilorganization,countrybhumanitarianorganization,cityb,n5) ).
+
+fof(event_161,axiom,
+    accept_team(countrybcivilorganization,countrybhumanitarianorganization,cityb,n6) ).
+
+fof(event_162,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybhumanitarianorganization,cityb,n5) ).
+
+fof(event_163,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybhumanitarianorganization,cityb,n6) ).
+
+fof(event_164,axiom,
+    the_agent_in_all_proposed_teams(countryahumanitarianorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_165,axiom,
+    any_agent_in_all_proposed_teams(countryahumanitarianorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_166,axiom,
+    accept_number(countryahumanitarianorganization,n6) ).
+
+fof(event_167,axiom,
+    accept_team(countryacivilorganization,countryahumanitarianorganization,cityb,n6) ).
+
+fof(event_168,axiom,
+    accept_number(countryacivilorganization,n6) ).
+
+fof(event_169,axiom,
+    the_agent_in_all_proposed_teams(countryacivilorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_170,axiom,
+    any_agent_in_all_proposed_teams(countryacivilorganization,countrybhumanitarianorganization,cityb) ).
+
+fof(event_171,axiom,
+    accept_number(countrybhumanitarianorganization,n5) ).
+
+fof(event_172,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,cityb,n5) ).
+
+fof(event_173,axiom,
+    accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,cityb,n6) ).
+
+fof(event_174,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrybcivilorganization,towna,n2) ).
+
+fof(event_175,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,towna,n2) ).
+
+fof(event_176,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,towna,n2) ).
+
+fof(event_177,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countryccivilorganization,towna,n2) ).
+
+fof(event_178,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrybcivilorganization,towna,n3) ).
+
+fof(event_179,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,towna,n3) ).
+
+fof(event_180,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,towna,n3) ).
+
+fof(event_181,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countryccivilorganization,towna,n3) ).
+
+fof(event_182,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,towna,n2) ).
+
+fof(event_183,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n2) ).
+
+fof(event_184,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countryccivilorganization,towna,n4) ).
+
+fof(event_185,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrybcivilorganization,towna,n6) ).
+
+fof(event_186,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization,towna,n6) ).
+
+fof(event_187,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization,towna,n6) ).
+
+fof(event_188,axiom,
+    accept_team(countryamedicalorganization,sufferterragovernment,towna,n5) ).
+
+fof(event_189,axiom,
+    accept_team(countryamedicalorganization,sufferterragovernment,towna,n6) ).
+
+fof(event_190,axiom,
+    accept_team(countryahumanitarianorganization,sufferterragovernment,towna,n5) ).
+
+fof(event_191,axiom,
+    accept_team(countryahumanitarianorganization,sufferterragovernment,towna,n6) ).
+
+fof(event_192,axiom,
+    accept_number(christiancountrychumanitarianorganization,n2) ).
+
+fof(event_193,axiom,
+    accept_team(countrybhumanitarianorganization,countrybcivilorganization,towna,n3) ).
+
+fof(event_194,axiom,
+    accept_team(countrybhumanitarianorganization,christiancountrychumanitarianorganization,towna,n3) ).
+
+fof(event_195,axiom,
+    accept_team(countrybhumanitarianorganization,countrycmedicalorganization,towna,n3) ).
+
+fof(event_196,axiom,
+    accept_team(countrybhumanitarianorganization,countryccivilorganization,towna,n3) ).
+
+fof(event_197,axiom,
+    accept_number(countrybhumanitarianorganization,n2) ).
+
+fof(event_198,axiom,
+    accept_team(countrybhumanitarianorganization,countrybcivilorganization,towna,n6) ).
+
+fof(event_199,axiom,
+    accept_team(countrybhumanitarianorganization,christiancountrychumanitarianorganization,towna,n6) ).
+
+fof(event_200,axiom,
+    accept_team(countrybhumanitarianorganization,countrycmedicalorganization,towna,n6) ).
+
+fof(event_201,axiom,
+    the_agent_in_all_proposed_teams(countrybhumanitarianorganization,sufferterragovernment,towna) ).
+
+fof(event_202,axiom,
+    any_agent_in_all_proposed_teams(countrybhumanitarianorganization,sufferterragovernment,towna) ).
+
+fof(event_203,axiom,
+    accept_number(countrybcivilorganization,n2) ).
+
+fof(event_204,axiom,
+    accept_number(countrybcivilorganization,n3) ).
+
+fof(event_205,axiom,
+    accept_team(countrybcivilorganization,countryccivilorganization,towna,n4) ).
+
+fof(event_206,axiom,
+    accept_team(countrybcivilorganization,countrybhumanitarianorganization,towna,n6) ).
+
+fof(event_207,axiom,
+    accept_team(countrybcivilorganization,christiancountrychumanitarianorganization,towna,n6) ).
+
+fof(event_208,axiom,
+    accept_team(countrybcivilorganization,countrycmedicalorganization,towna,n6) ).
+
+fof(event_209,axiom,
+    the_agent_in_all_proposed_teams(countrybcivilorganization,sufferterragovernment,towna) ).
+
+fof(event_210,axiom,
+    any_agent_in_all_proposed_teams(countrybcivilorganization,sufferterragovernment,towna) ).
+
+fof(event_211,axiom,
+    accept_number(sufferterragovernment,n2) ).
+
+fof(event_212,axiom,
+    ~ accept_team(christiansufferterrahumanitarianorganization,sufferterragovernment,towna,n2) ).
+
+fof(event_213,axiom,
+    ~ accept_team(christiansufferterrahumanitarianorganization,sufferterragovernment,towna,n6) ).
+
+fof(event_214,axiom,
+    accept_number(countryccivilorganization,n2) ).
+
+fof(event_215,axiom,
+    accept_number(countryccivilorganization,n3) ).
+
+fof(event_216,axiom,
+    ~ accept_team(countryccivilorganization,countrybcivilorganization,towna,n6) ).
+
+fof(event_217,axiom,
+    ~ accept_team(countryccivilorganization,countrybhumanitarianorganization,towna,n6) ).
+
+fof(event_218,axiom,
+    ~ accept_team(countryccivilorganization,christiancountrychumanitarianorganization,towna,n6) ).
+
+fof(event_219,axiom,
+    ~ accept_team(countryccivilorganization,countrycmedicalorganization,towna,n6) ).
+
+fof(event_220,axiom,
+    the_agent_in_all_proposed_teams(countryccivilorganization,sufferterragovernment,towna) ).
+
+fof(event_221,axiom,
+    any_agent_in_all_proposed_teams(countryccivilorganization,sufferterragovernment,towna) ).
+
+fof(event_222,axiom,
+    accept_number(sufferterragovernment,n5) ).
+
+fof(event_223,axiom,
+    accept_team(countryacivilorganization,sufferterragovernment,towna,n5) ).
+
+fof(event_224,axiom,
+    accept_number(sufferterragovernment,n6) ).
+
+fof(event_225,axiom,
+    accept_team(countryacivilorganization,sufferterragovernment,towna,n6) ).
+
+fof(event_226,axiom,
+    accept_number(countrycmedicalorganization,n2) ).
+
+fof(event_227,axiom,
+    accept_number(countrycmedicalorganization,n3) ).
+
+fof(event_228,axiom,
+    accept_team(countrycmedicalorganization,countryccivilorganization,towna,n4) ).
+
+fof(event_229,axiom,
+    accept_team(countrycmedicalorganization,countrybcivilorganization,towna,n6) ).
+
+fof(event_230,axiom,
+    accept_team(countrycmedicalorganization,countrybhumanitarianorganization,towna,n6) ).
+
+fof(event_231,axiom,
+    accept_team(countrycmedicalorganization,christiancountrychumanitarianorganization,towna,n6) ).
+
+fof(event_232,axiom,
+    the_agent_in_all_proposed_teams(countrycmedicalorganization,sufferterragovernment,towna) ).
+
+fof(event_233,axiom,
+    any_agent_in_all_proposed_teams(countrycmedicalorganization,sufferterragovernment,towna) ).
+
+fof(event_234,axiom,
+    accept_number(christiancountrychumanitarianorganization,n3) ).
+
+fof(event_235,axiom,
+    accept_number(countryccivilorganization,n4) ).
+
+fof(event_236,axiom,
+    accept_team(christiancountrychumanitarianorganization,countryccivilorganization,towna,n4) ).
+
+fof(event_237,axiom,
+    accept_number(countrybcivilorganization,n6) ).
+
+fof(event_238,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybcivilorganization,towna,n6) ).
+
+fof(event_239,axiom,
+    accept_number(countrybhumanitarianorganization,n6) ).
+
+fof(event_240,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrybhumanitarianorganization,towna,n6) ).
+
+fof(event_241,axiom,
+    accept_team(christiancountrychumanitarianorganization,countrycmedicalorganization,towna,n6) ).
+
+fof(event_242,axiom,
+    accept_number(christiancountrychumanitarianorganization,n6) ).
+
+fof(event_243,axiom,
+    the_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,sufferterragovernment,towna) ).
+
+fof(event_244,axiom,
+    any_agent_in_all_proposed_teams(christiancountrychumanitarianorganization,sufferterragovernment,towna) ).
+
+fof(event_245,axiom,
+    accept_number(countrycmedicalorganization,n6) ).
+
+fof(event_246,axiom,
+    ~ accept_team(muslimcountrybhumanitarianorganization,countrycmedicalorganization,towna,n6) ).
+
+fof(event_247,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n6) ).
+
+fof(event_248,axiom,
+    the_agent_not_in_any_proposed_teams(muslimcountrybhumanitarianorganization,sufferterragovernment,towna) ).
+
+fof(event_249,axiom,
+    any_agent_in_all_proposed_teams(muslimcountrybhumanitarianorganization,sufferterragovernment,towna) ).
+
+%--------------------------------------------------------------------------

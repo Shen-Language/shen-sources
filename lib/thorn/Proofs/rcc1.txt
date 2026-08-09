@@ -1,0 +1,153 @@
+*****************************************************
+A problem from the Region Connection Calculus
+
+(prolog-memory 1e6)
+(thorn.defaults)
+(thorn.wipe-kb)
+    
+(define rcc
+  {--> symbol}
+   -> 
+      (kb-> 
+       [[all x [c x x]]
+       [all x [all y [all x [all y [[c x y] => [c y x]]]]]]
+       [all x [all y [[dc x y] <=> [~ [c x y]]]]]
+       [all x [all y [[p x y] <=> [all z [[c z x] => [c z y]]]]]]
+       [all x [all y [[pp x y] <=> [[p x y] & [~ [p y x]]]]]]
+       [all x [all y [[e= x y] <=> [[p x y] & [p y x]]]]]
+       [all x [all y [[o x y] <=> [exists z [[p z x] & [p z y]]]]]]
+       [all x [all y [[po x y] <=> [[o x y] & [[~ [p x y]] & [~ [p y x]]]]]]]
+       [all x [all y [[ec x y] <=> [[c x y] & [~ [o x y]]]]]]
+       [all x [all y [[dr x y] <=> [~ [o x y]]]]]
+       [all x [all y [[tpp x y] <=> [[pp x y] & [exists z [[ec z x] & [ec z y]]]]]]]
+       [all x [all y [[ntpp x y] <=> [[pp x y] & [~ [exists z [[ec z x] & [ec z y]]]]]]]]]))  
+       
+       (rcc)   
+       
+(<-kb [[[tpp a b] & [dc b c]] => [dc a c]]) 
+run time: 0.015625 secs
+3820 inferences, equality = false
+depth = 20, complexity = -1, timeout = 60 secs
+true
+***************************************************************
+Step 1
+
+? (((tpp a b) & (dc b c)) => (dc a c))
+
+
+> revsk
+=============================
+Step 2
+
+? (((~ (tpp a b)) v (~ (dc b c))) v (dc a c))
+
+
+> hypdisj
+=============================
+Step 3
+
+? (dc a c)
+
+1. (dc b c)
+2. (tpp a b)
+
+> ((dc X Y) <-- (~ (c X Y)))
+=============================
+Step 4
+
+? (~ (c a c))
+
+1. (~ (dc a c))
+2. (dc b c)
+3. (tpp a b)
+
+> ((~ (c Y X)) <-- (~ (c X Y)))
+=============================
+Step 5
+
+? (~ (c c a))
+
+1. (c a c)
+2. (~ (dc a c))
+3. (dc b c)
+4. (tpp a b)
+
+> ((~ (c Y X)) <-- (p X Z) (~ (c Y Z)))
+|=============================
+|Step 6
+|
+|? (p a Var40)
+|
+|1. (c c a)
+|2. (c a c)
+|3. (~ (dc a c))
+|4. (dc b c)
+|5. (tpp a b)
+|
+|> ((p X Y) <-- (pp X Y))
+|=============================
+|Step 7
+|
+|? (pp a Var40)
+|
+|1. (~ (p a Var40))
+|2. (c c a)
+|3. (c a c)
+|4. (~ (dc a c))
+|5. (dc b c)
+|6. (tpp a b)
+|
+|> ((pp X Y) <-- (tpp X Y))
+|=============================
+|Step 8
+|
+|? (tpp a Var40)
+|
+|1. (~ (pp a Var40))
+|2. (~ (p a Var40))
+|3. (c c a)
+|4. (c a c)
+|5. (~ (dc a c))
+|6. (dc b c)
+|7. (tpp a b)
+|
+|> hyp
+=============================
+Step 9
+
+? (~ (c c b))
+
+1. (c c a)
+2. (c a c)
+3. (~ (dc a c))
+4. (dc b c)
+5. (tpp a b)
+
+> ((~ (c Y X)) <-- (~ (c X Y)))
+=============================
+Step 10
+
+? (~ (c b c))
+
+1. (c c b)
+2. (c c a)
+3. (c a c)
+4. (~ (dc a c))
+5. (dc b c)
+6. (tpp a b)
+
+> ((~ (c X Y)) <-- (dc X Y))
+=============================
+Step 11
+
+? (dc b c)
+
+1. (c b c)
+2. (c c b)
+3. (c c a)
+4. (c a c)
+5. (~ (dc a c))
+6. (dc b c)
+7. (tpp a b)
+
+> hyp

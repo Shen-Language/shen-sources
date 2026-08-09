@@ -1,0 +1,75 @@
+*****************************************************
+A Hilbert style axiomisation of propositional calculus derived
+from Mendelson 'Introduction to Mathematical Logic'.  Implication
+and negation are primitive.
+
+(define system-L
+ {--> symbol}
+ -> (kb-> 
+
+      (protect [[prv [imp P [imp Q P]]]
+      [prv [imp [imp P [imp Q R]] [imp [imp P Q] [imp P R]]]]
+      [prv [imp [imp [neg P] [neg Q]] [imp [imp [neg P] Q] P]]]
+      [[[prv [imp P Q]] & [prv P]] => [prv Q]]
+      
+      [[prv [or P Q]] <=> [prv [imp [neg P] Q]]]
+      [[prv [and P Q]] <=> [prv [neg [or [neg P] [neg Q]]]]]
+      [[prv [equiv P Q]] <=> [prv [and [imp P Q] [imp Q P]]]]])))
+      
+(system-L)
+
+(<-kb [prv [imp p p]])
+
+run time: 0.0 secs
+325 inferences, equality = false
+depth = 8, complexity = -1, timeout = 60 secs
+true
+*****************************************************
+Step 1
+
+? (prv (imp p p))
+
+
+> revsk
+=============================
+Step 2
+
+? (prv (imp p p))
+
+
+> hypdisj
+=============================
+Step 3
+
+? (prv (imp p p))
+
+
+> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|=============================
+|Step 4
+|
+|? (prv (imp Var38 (imp p p)))
+|
+|
+|> ((prv X) <-- (prv (imp Y X)) (prv Y))
+||=============================
+||Step 5
+||
+||? (prv (imp (imp p (imp Var48 p)) (imp (imp p Var48) (imp p p))))
+||
+||
+||> ((prv (imp (imp Y (imp X Z)) (imp (imp Y X) (imp Y Z)))) <--)
+|=============================
+|Step 6
+|
+|? (prv (imp p (imp Var48 p)))
+|
+|
+|> ((prv (imp Y (imp X Y))) <--)
+=============================
+Step 7
+
+? (prv (imp p (imp Var53 p)))
+
+
+> ((prv (imp Y (imp X Y))) <--)

@@ -1,0 +1,17 @@
+\\ direct dependency table
+
+c      -> [(c-refl) (c-symm)]
+dc     -> [(def-dc) (c-refl) (c-symm)]
+p      -> [(def-p) (c-refl) (c-symm)]
+pp     -> [(def-pp) (def-p) (c-refl) (c-symm)]
+e=     -> [(def-e=) (def-p) (c-refl) (c-symm)]
+o      -> [(def-o) (def-p) (c-refl) (c-symm)]
+po     -> [(def-po) (def-o) (def-p) (c-refl) (c-symm)]
+ec     -> [(def-ec) (def-o) (def-p) (c-refl) (c-symm)]
+dr     -> [(def-dr) (def-o) (def-p) (c-refl) (c-symm)]
+tpp    -> [(def-tpp) (def-pp) (def-p) (def-ec) (def-o) (c-refl) (c-symm)]
+ntpp   -> [(def-ntpp) (def-pp) (def-p) (def-ec) (def-o) (c-refl) (c-symm)]
+p-1    -> [(def-p-1) (def-p) (c-refl) (c-symm)]
+pp-1   -> [(def-pp-1) (def-pp) (def-p) (c-refl) (c-symm)]
+tpp-1  -> [(def-tpp-1) (def-tpp) (def-pp) (def-p) (def-ec) (def-o) (c-refl) (c-symm)]
+ntpp-1 -> [(def-nttp-1) (def-ntpp) (def-pp) (def-p) (def-ec) (def-o) (c-refl) (c-symm)]

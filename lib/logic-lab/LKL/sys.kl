@@ -1,0 +1,55 @@
+(defun append (V14315 V14316) (cond ((= () V14315) V14316) ((cons? V14315) (cons (hd V14315) (append (tl V14315) V14316))) (true (simple-error "attempt to append a non-list"))))
+
+(defun reverse (V14317) (cond ((= () V14317) ()) ((cons? V14317) (append (reverse (tl V14317)) (cons (hd V14317) ()))) (true (simple-error "partial function reverse"))))
+
+(defun assoc (V14329 V14330) (cond ((= () V14330) ()) ((and (cons? V14330) (and (cons? (hd V14330)) (= V14329 (hd (hd V14330))))) (hd V14330)) ((cons? V14330) (assoc V14329 (tl V14330))) (true (simple-error "attempt to search a non-list with assoc
+"))))
+
+(defun boolean? (V14333) (cond ((= true V14333) true) ((= false V14333) true) (true false)))
+
+(defun difference (V14340 V14341) (cond ((= () V14340) ()) ((cons? V14340) (if (element? (hd V14340) V14341) (difference (tl V14340) V14341) (cons (hd V14340) (difference (tl V14340) V14341)))) (true (simple-error "attempt to find the difference with a non-list
+"))))
+
+(defun do (V14342 V14343) V14343)
+
+(defun element? (V14355 V14356) (cond ((= () V14356) false) ((and (cons? V14356) (= V14355 (hd V14356))) true) ((cons? V14356) (element? V14355 (tl V14356))) (true (simple-error "attempt to find an element in a non-list
+"))))
+
+(defun empty? (V14359) (cond ((= () V14359) true) (true false)))
+
+(defun fix (V14360 V14361) (fix-help V14360 V14361 (V14360 V14361)))
+
+(defun fix-help (V14367 V14368 V14369) (cond ((= V14368 V14369) V14369) (true (fix-help V14367 V14369 (V14367 V14369)))))
+
+(defun sum (V14372) (cond ((= () V14372) 0) ((cons? V14372) (add (hd V14372) (sum (tl V14372)))) (true (simple-error "attempt to sum a non-list
+"))))
+
+(defun head (V14377) (cond ((cons? V14377) (hd V14377)) (true (simple-error "head expects a non-empty list
+"))))
+
+(defun tail (V14382) (cond ((cons? V14382) (tl V14382)) (true (simple-error "tail expects a non-empty list
+"))))
+
+(defun intersection (V14389 V14390) (cond ((= () V14389) ()) ((cons? V14389) (if (element? (hd V14389) V14390) (cons (hd V14389) (intersection (tl V14389) V14390)) (intersection (tl V14389) V14390))) (true (simple-error "attempt to find the intersection with a non-list
+"))))
+
+(defun union (V14395 V14396) (cond ((= () V14395) V14396) ((cons? V14395) (if (element? (hd V14395) V14396) (union (tl V14395) V14396) (cons (hd V14395) (union (tl V14395) V14396)))) (true (simple-error "attempt to find the union with a non-list
+"))))
+
+(defun subst (V14402 V14403 V14404) (cond ((= V14403 V14404) V14402) ((cons? V14404) (cons (subst V14402 V14403 (hd V14404)) (subst V14402 V14403 (tl V14404)))) (true V14404)))
+
+(defun map (V14405 V14406) (map-h V14405 V14406 ()))
+
+(defun map-h (V14407 V14408 V14409) (cond ((= () V14408) (reverse V14409)) ((cons? V14408) (map-h V14407 (tl V14408) (cons (V14407 (hd V14408)) V14409))) (true (simple-error "partial function map-h"))))
+
+(defun length (V14410) (length-h V14410 0))
+
+(defun length-h (V14415 V14416) (cond ((= () V14415) V14416) (true (length-h (tl V14415) (add V14416 1)))))
+
+(defun occurrences (V14422 V14423) (cond ((= V14422 V14423) 1) ((cons? V14423) (add (occurrences V14422 (hd V14423)) (occurrences V14422 (tl V14423)))) (true 0)))
+
+(defun add (V14424 V14425) (cond ((= 0 V14424) V14425) (true ((fn succ) (add ((fn pred) V14424) V14425)))))
+
+(defun nth (V14430 V14431) (cond ((and (= 1 V14430) (cons? V14431)) (hd V14431)) ((cons? V14431) (nth (- V14430 1) (tl V14431))) (true (simple-error (cn "nth applied to " (shen.app V14430 (cn ", " (shen.app V14431 "
+" shen.a)) shen.a))))))
+

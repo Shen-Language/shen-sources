@@ -4,17 +4,17 @@
   {--> string}
   -> (transaction-files (transaction-directory)))
              
+(define transaction-directory
+  {--> string}
+  -> (do (output "Enter the absolute path of the directory in which the Shen/tk transaction files should be stored.~%~%")
+         (output "This directory needs to be freely writable, enter the path as a string ending in /~%~%")
+         (output "e.g. c#34;C:/Users/name/ShenTk/c#34;~%~%")
+         (output "Go ahead: ")
+         (trap-error (input+ string) (/. E (transaction-directory)))))
+
 \\(define transaction-directory
  \\ {--> string}
- \\ -> (do (output "Enter the absolute path of the directory in you wish the Shen/tk transaction files to be stored.~%~%")
-  \\       (output "This directory needs to be freely writable, enter the path as a string ending in /~%~%") 
-    \\     (output "e.g. c#34;C:/Users/drmta/OneDrive/Documents/ShenTk/c#34; is my answer to this prompt~%~%")
-     \\    (output "Go ahead: ")
-      \\   (trap-error (input+ string) (/. E (transaction-directory)))))
-
-(define transaction-directory
-   {--> string}
-    -> "C:/Users/drmta/OneDrive/Documents/ShenTk/")  
+ \\ -> "C:/Users/drmta/OneDrive/Documents/ShenTk/")
                         
 (define transaction-files
   {string --> symbol}
@@ -26,7 +26,9 @@
                AbsIn    (absolute In)
                CopyRoot (copy-file-with-subs Path "root.tcl" Root)
                CopyOut  (copy-file "shen-to-tcl.txt" Out)  
-               CopyIn   (copy-file "tcl-to-shen.txt" In) 
+               CopyIn   (copy-file "tcl-to-shen.txt" In)
+               Home     (cd "")
+               Restore  (cd "lib/tk")
                ok))  
                
 (define copy-file-with-subs
@@ -41,4 +43,4 @@
    (@s "{??out??}" Ss) Dir -> (@s "{" Dir "tcl-to-shen.txt" "}" Ss)
    (@s S Ss) Dir -> (@s S (rectify-source Ss Dir)))    
          
-(build-tk-files)         )                                                    
+(build-tk-files)         )

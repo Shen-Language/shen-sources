@@ -1,0 +1,18 @@
+You need the Shen standard library.
+
+To load the derivation rule compiler
+
+(tc -)
+(load "compiler.shen")
+
+To load the General Proof Assistant
+
+(tc +)
+(load "gpa.shen")
+
+Look at the video on the Shen education channel on how to use this technology.
+
+The propositional calculus system discussed in the videos on the Shen Education channel
+can be loaded from the directory PC.  Cd to this directory and type (load "loadme.shen").
+
+

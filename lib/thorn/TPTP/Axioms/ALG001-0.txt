@@ -1,0 +1,145 @@
+
+%--------------------------------------------------------------------------
+% File     : ALG001-0 : TPTP v9.0.0. Released v1.0.0.
+% Domain   : Algebra (Abstract)
+% Axioms   : Abstract algebra axioms, based on Godel set theory
+% Version  : [BL+86] axioms.
+% English  :
+
+% Refs     : [BL+86] Boyer et al. (1986), Set Theory in First-Order Logic:
+%          : [McC92] McCune (1992), Email to G. Sutcliffe
+% Source   : [McC92]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of clauses     :   24 (   0 unt;   7 nHn;  17 RR)
+%            Number of literals    :   66 (  12 equ;  35 neg)
+%            Maximal clause size   :    5 (   2 avg)
+%            Maximal term depth    :    4 (   1 avg)
+%            Number of predicates  :    9 (   8 usr;   0 prp; 2-4 aty)
+%            Number of functors    :   11 (  11 usr;   0 con; 2-4 aty)
+%            Number of variables   :   74 (   4 sgn)
+% SPC      : 
+
+% Comments : Requires SET003-0.ax
+%--------------------------------------------------------------------------
+%----Definition of associative system
+cnf(associative_system1,axiom,
+    ( ~ associative(Xs,Xf)
+    | ~ member(X,Xs)
+    | ~ member(Y,Xs)
+    | ~ member(Z,Xs)
+    | apply_to_two_arguments(Xf,apply_to_two_arguments(Xf,X,Y),Z) = apply_to_two_arguments(Xf,X,apply_to_two_arguments(Xf,Y,Z)) ) ).
+
+cnf(associative_system2,axiom,
+    ( associative(Xs,Xf)
+    | member(f34(Xs,Xf),Xs) ) ).
+
+cnf(associative_system3,axiom,
+    ( associative(Xs,Xf)
+    | member(f35(Xs,Xf),Xs) ) ).
+
+cnf(associative_system4,axiom,
+    ( associative(Xs,Xf)
+    | member(f36(Xs,Xf),Xs) ) ).
+
+cnf(associative_system5,axiom,
+    ( associative(Xs,Xf)
+    | apply_to_two_arguments(Xf,apply_to_two_arguments(Xf,f34(Xs,Xf),f35(Xs,Xf)),f36(Xs,Xf)) != apply_to_two_arguments(Xf,f34(Xs,Xf),apply_to_two_arguments(Xf,f35(Xs,Xf),f36(Xs,Xf))) ) ).
+
+%----Definition of identity (left and right)
+cnf(identity1,axiom,
+    ( ~ identity(Xs,Xf,Xe)
+    | member(Xe,Xs) ) ).
+
+cnf(identity2,axiom,
+    ( ~ identity(Xs,Xf,Xe)
+    | ~ member(X,Xs)
+    | apply_to_two_arguments(Xf,Xe,X) = X ) ).
+
+cnf(identity3,axiom,
+    ( ~ identity(Xs,Xf,Xe)
+    | ~ member(X,Xs)
+    | apply_to_two_arguments(Xf,X,Xe) = X ) ).
+
+cnf(identity4,axiom,
+    ( identity(Xs,Xf,Xe)
+    | ~ member(Xe,Xs)
+    | member(f37(Xs,Xf,Xe),Xs) ) ).
+
+cnf(identity5,axiom,
+    ( identity(Xs,Xf,Xe)
+    | ~ member(Xe,Xs)
+    | apply_to_two_arguments(Xf,Xe,f37(Xs,Xf,Xe)) != f37(Xs,Xf,Xe)
+    | apply_to_two_arguments(Xf,f37(Xs,Xf,Xe),Xe) != f37(Xs,Xf,Xe) ) ).
+
+%----Definition of inverse (left and right)
+cnf(inverse1,axiom,
+    ( ~ inverse(Xs,Xf,Xe,Xg)
+    | maps(Xg,Xs,Xs) ) ).
+
+cnf(inverse2,axiom,
+    ( ~ inverse(Xs,Xf,Xe,Xg)
+    | ~ member(X,Xs)
+    | apply_to_two_arguments(Xf,apply(Xg,X),X) = Xe ) ).
+
+cnf(inverse3,axiom,
+    ( ~ inverse(Xs,Xf,Xe,Xg)
+    | ~ member(X,Xs)
+    | apply_to_two_arguments(Xf,X,apply(Xg,X)) = Xe ) ).
+
+cnf(inverse4,axiom,
+    ( inverse(Xs,Xf,Xe,Xg)
+    | ~ maps(Xg,Xs,Xs)
+    | member(f38(Xs,Xf,Xe,Xg),Xs) ) ).
+
+cnf(inverse5,axiom,
+    ( inverse(Xs,Xf,Xe,Xg)
+    | ~ maps(Xg,Xs,Xs)
+    | apply_to_two_arguments(Xf,apply(Xg,f38(Xs,Xf,Xe,Xg)),f38(Xs,Xf,Xe,Xg)) != Xe
+    | apply_to_two_arguments(Xf,f38(Xs,Xf,Xe,Xg),apply(Xg,f38(Xs,Xf,Xe,Xg))) != Xe ) ).
+
+%----Definition of group
+cnf(group1,axiom,
+    ( ~ group(Xs,Xf)
+    | closed(Xs,Xf) ) ).
+
+cnf(group2,axiom,
+    ( ~ group(Xs,Xf)
+    | associative(Xs,Xf) ) ).
+
+cnf(group3,axiom,
+    ( ~ group(Xs,Xf)
+    | identity(Xs,Xf,f39(Xs,Xf)) ) ).
+
+cnf(group4,axiom,
+    ( ~ group(Xs,Xf)
+    | inverse(Xs,Xf,f39(Xs,Xf),f40(Xs,Xf)) ) ).
+
+cnf(group5,axiom,
+    ( group(Xs,Xf)
+    | ~ closed(Xs,Xf)
+    | ~ associative(Xs,Xf)
+    | ~ identity(Xs,Xf,Xe)
+    | ~ inverse(Xs,Xf,Xe,Xg) ) ).
+
+%----Definition of commutative system
+cnf(commutes1,axiom,
+    ( ~ commutes(Xs,Xf)
+    | ~ member(X,Xs)
+    | ~ member(Y,Xs)
+    | apply_to_two_arguments(Xf,X,Y) = apply_to_two_arguments(Xf,Y,X) ) ).
+
+cnf(commutes2,axiom,
+    ( commutes(Xs,Xf)
+    | member(f41(Xs,Xf),Xs) ) ).
+
+cnf(commutes3,axiom,
+    ( commutes(Xs,Xf)
+    | member(f42(Xs,Xf),Xs) ) ).
+
+cnf(commutes4,axiom,
+    ( commutes(Xs,Xf)
+    | apply_to_two_arguments(Xf,f41(Xs,Xf),f42(Xs,Xf)) != apply_to_two_arguments(Xf,f42(Xs,Xf),f41(Xs,Xf)) ) ).
+
+%--------------------------------------------------------------------------

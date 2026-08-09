@@ -1,0 +1,39 @@
+%------------------------------------------------------------------------------
+% File     : ALG002+0 : TPTP v9.0.0. Released v3.2.0.
+% Domain   : Algebra (Median)
+% Axioms   : Median algebra axioms
+% Version  : [VM05] axioms.
+% English  :
+
+% Refs     : [VMURL] Veroff & McCune (URL), First-order Proof of a Median A
+% Source   : [VMURL]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :    4 (   4 unt;   0 def)
+%            Number of atoms       :    4 (   4 equ)
+%            Maximal formula atoms :    1 (   1 avg)
+%            Number of connectives :    0 (   0   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth :    5 (   4 avg)
+%            Maximal term depth    :    3 (   1 avg)
+%            Number of predicates  :    1 (   0 usr;   0 prp; 2-2 aty)
+%            Number of functors    :    1 (   1 usr;   0 con; 3-3 aty)
+%            Number of variables   :   12 (  12   !;   0   ?)
+% SPC      : 
+
+% Comments :
+%------------------------------------------------------------------------------
+fof(majority,axiom,
+    ! [X,Y] : f(X,X,Y) = X ).
+
+fof(permute1,axiom,
+    ! [X,Y,Z] : f(X,Y,Z) = f(Z,X,Y) ).
+
+fof(permute2,axiom,
+    ! [X,Y,Z] : f(X,Y,Z) = f(X,Z,Y) ).
+
+fof(associativity,axiom,
+    ! [W,X,Y,Z] : f(f(X,W,Y),W,Z) = f(X,W,f(Y,W,Z)) ).
+
+%------------------------------------------------------------------------------
