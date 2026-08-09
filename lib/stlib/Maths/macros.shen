@@ -4,7 +4,8 @@
                 tan120 sin135 cos135 cos150 tan150 cos210 tan210 sin225 cos225 sin240
                 tan240 sin300 tan300 sin315 cos315 cos330 tan330 sinh cosh tanh sech
                 csch power factorial prime? unix div modf product summation set-tolerance tolerance
-                coth for sq cube newv abs approx log log2 loge log10 g]
+                coth for sq cube newv abs approx log log2 loge log10 g
+                to stop step constructor end done]
 
 (defmacro maths-macro
   [log10 N] -> [log10 N [tolerance]]
@@ -26,15 +27,30 @@
   [max W X Y | Z] -> [max W [max X Y | Z]]
   [min W X Y | Z] -> [min W [min X Y | Z]]
   [tolerance N] -> [tolerance=n N]
-  [for X = N Loop Do Step and]
-    -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-         [lazyfor-and N (LBind X Loop) (LBind X Do) Step])
-  [for X = N Loop Do Step or]
-    -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-         [lazyfor-or N (LBind X Loop) (LBind X Do) Step])
-  [for X = N Loop Do Step Acc] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-                                      [for N (LBind X Loop) (LBind X Do) Step Acc])
-  [for X = N Loop Do Step] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-                                   [for N (LBind X Loop) (LBind X Do) Step [fn do]])
-  [for X = N Loop Do] -> (let LBind (/. X Y (if (> (occurrences X Y) 0) [/. X Y] Y))
-                           [for N (LBind X Loop) [/. X Do] [+ 1] [fn do]]))  )
+  [for X = Val stop Stop | Options+Procedure] -> [upto Val Stop | (process-options X Options+Procedure)]
+  [for X = Val to N | Options+Procedure] -> [upto Val [< N] | (process-options X Options+Procedure)])
+
+(define process-options
+  X O+P -> (append (step-option O+P)
+                   (constructor-option O+P)
+                   (end-option O+P)
+                   (process X O+P)))
+
+(define step-option
+  [] -> [[+ 1]]
+  [step Step | _] -> [Step]
+  [_ | O+P] -> (step-option O+P))
+
+(define constructor-option
+  [] -> [[fn do]]
+  [constructor C | _] -> [C]
+  [_ | O+P] -> (constructor-option O+P))
+
+(define end-option
+  [] -> [done]
+  [end End | _] -> [End]
+  [_ | O+P] -> (end-option O+P))
+
+(define process
+  X [Process] -> [[/. X Process]]
+  X [_ | O+P] -> (process X O+P)))

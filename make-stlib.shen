@@ -85,7 +85,8 @@
             MaskedMacros (make-stlib.mask-macro-table MacroNames SavedMacros)
             Mask (set *macros* MaskedMacros)
             Result (trap-error (make-stlib.build)
-                     (/. E (do (set *macros* SavedMacros)
+                     (/. E (do (factorise -)
+                               (set *macros* SavedMacros)
                                (simple-error (error-to-string E)))))
          (do
            (set *macros* SavedMacros)
@@ -108,8 +109,11 @@
   -> [[load "Symbols/symbols1.shen"]
       [tc +]
       [load "Symbols/symbols2.shen"]
-      [tc +]
+      [tc -]
+      [factorise +]
       [load "Maths/macros.shen"]
+      [factorise -]
+      [tc +]
       [load "Maths/maths.shen"]
       [tc -]
       [load "Maths/rationals.dtype"]
@@ -128,11 +132,12 @@
       [load "Strings/strings.shen"]
       [tc -]
       [load "Strings/smart.shen"]
+      [factorise +]
       [load "Vectors/macros.shen"]
+      [factorise -]
       \\ [load "Encrypt/encrypt.shen"] temporarily skipped until its
       \\ precompilation path is stable.
       [tc +]
-      [load "Vectors/vectors.shen"]
       [load "IO/prettyprint.shen"]
       [tc -]
       [load "IO/delete-file.shen"]
@@ -167,6 +172,14 @@
        (make-stlib.compile-install-plan Steps TC?))
   [[tc +] | Steps] _ -> (make-stlib.compile-install-plan Steps true)
   [[tc -] | Steps] _ -> (make-stlib.compile-install-plan Steps false)
+  [[factorise +] | Steps] TC?
+  -> (do
+       (factorise +)
+       (make-stlib.compile-install-plan Steps TC?))
+  [[factorise -] | Steps] TC?
+  -> (do
+       (factorise -)
+       (make-stlib.compile-install-plan Steps TC?))
   [Step | _] _ -> (error "make-stlib: unsupported install step ~R~%" Step))
 
 (define make-stlib.compile-file
