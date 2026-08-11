@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [41.3] - 2026-08-10
+
 ### Added
 
 - `sqts` side-condition markers for sequent rules.
@@ -639,7 +641,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...HEAD
+[41.3]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...shen-41.3
 [41.2]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...shen-41.2
 [41.1]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...shen-41.1
 [41.0]: https://github.com/Shen-Language/shen-sources/compare/shen-40.1...shen-41.0
