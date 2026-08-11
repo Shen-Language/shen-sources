@@ -43,7 +43,6 @@
 (define curry
   [define F | X] -> [define F | X]
   [type X A] -> [type (curry X) A]
-  [input+ A S] -> [input+ A (curry S)]
   [F | X] -> [F | (map (/. Y (curry Y)) X)]   where (special? F)
   [F | X] -> [F | X]   where (extraspecial? F)
   [F X Y | Z] -> (curry [[F X] Y | Z])
@@ -133,13 +132,18 @@
                                        (system-S-h File string Hyp);
   (- [type X A]) B Hyp            <-- !  (is! (rectify-type A) B)
                                          (system-S-h X B Hyp);
-  (- [input+ A Stream]) B Hyp     <--   (is! B (rectify-type A))
-                                        (system-S-h Stream [stream in] Hyp);
+  (- [input-h+ A Stream]) B Hyp   <-- (is B (rectify-type (rdecons A)))
+                                      (system-S-h Stream [stream in] Hyp);
   (- [set Var Val]) A Hyp         <--  (system-S-h Var symbol Hyp)
                                        (system-S-h [value Var] A Hyp)
                                          (system-S-h Val A Hyp);
   X A Hyp                         <-- (l-rules Hyp Normalised false) ! (system-S-h X A Normalised);
   X A Hyp                         <-- (search-user-datatypes [X (intern ":") A] Hyp (value *datatypes*));)
+
+(define rdecons
+  [cons X Y] -> [(rdecons X) | (rdecons Y)]
+  [X | Y] -> [(rdecons X) | (rdecons Y)]
+  X -> X)
 
 (defprolog primitive
   X number        <-- (when (number? (1 X)));
@@ -167,7 +171,7 @@
             V2))
 
 (define print-freshterm
-  V -> (cn "&&" (str (<-address V 1))))
+  V -> (cn "&&" (make-string "~A" (<-address V 1))))
 
 (defprolog search-user-datatypes
    P Hyp (- [[_ | Fn] | _]) <-- (call (Fn P Hyp));
@@ -222,9 +226,9 @@
 
 (define correct
   [where G [fail-if F R]] -> [where [and G [not [F R]]] R]
-  [where G R] -> [where [and G [not [= R [fail]]]] R]
+  [where G R] -> [where [and G [not [== R [fail]]]] R]
   [fail-if F R] -> [where [not [F R]] R]
-  R -> [where [not [= R [fail]]] R])
+  R -> [where [not [== R [fail]]] R])
 
 (defprolog t*-rules
   _ (- []) _ _ <--;

@@ -1,0 +1,10 @@
+[What? : [exists x : A [f x]]]
+
+[[a : [exists x : A [[f x] & [g x]]]]]
+
+[
+(existsr [fst a]) existsl hyp existsl &l hyp env env env env]
+
+["
+(existsr [fst a])" "existsl" "hyp" "existsl" "&l" "hyp" "env" "env" "env" "env"]
+

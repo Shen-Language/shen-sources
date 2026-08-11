@@ -12,11 +12,10 @@
               F))
 
 (defprolog variancy
-  F Rectify <-- (system-S-h F A [])
+  F Rectify <-- (system-S-h [fn F] A [])
                 (variants? F A Rectify);)
 
 (defprolog variants?
-  F symbol _ <-- !;
   F A A <-- ;
   F _ _ <-- (is Warning (output "warning: changing the type of ~A may create errors~%" F));)
 

@@ -122,8 +122,8 @@ Load modules explicitly when needed:
 - Lists: `lib/stlib/Lists/lists.shen`
 - Strings: `lib/stlib/Strings/strings.shen`
 - IO: `lib/stlib/IO/files.shen`, `lib/stlib/IO/prettyprint.shen`
-- Maths: `lib/stlib/Maths/maths.shen`
-- Vectors: `lib/stlib/Vectors/vectors.shen`
+- Maths: `lib/stlib/Maths/macros.shen`, then `lib/stlib/Maths/maths.shen`
+- Vector array macros: `lib/stlib/Vectors/macros.shen` after both Maths files
 
 Minimal examples:
 

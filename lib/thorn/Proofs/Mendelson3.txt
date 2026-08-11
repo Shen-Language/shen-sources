@@ -1,0 +1,160 @@
+*****************************************************
+A Hilbert style axiomisation of propositional calculus derived
+from Mendelson 'Introduction to Mathematical Logic'.  Implication
+and negation are primitive.
+
+(define system-L
+ {--> symbol}
+ -> (kb-> 
+
+      (protect [[prv [imp P [imp Q P]]]
+      [prv [imp [imp P [imp Q R]] [imp [imp P Q] [imp P R]]]]
+      [prv [imp [imp [neg P] [neg Q]] [imp [imp [neg P] Q] P]]]
+      [[[prv [imp P Q]] & [prv P]] => [prv Q]]
+      
+      [[prv [or P Q]] <=> [prv [imp [neg P] Q]]]
+      [[prv [and P Q]] <=> [prv [neg [or [neg P] [neg Q]]]]]
+      [[prv [equiv P Q]] <=> [prv [and [imp P Q] [imp Q P]]]]])))
+      
+(system-L)
+
+(<-kb [prv [imp [neg [neg p]] p]])
+
+run time: 0.25 secs
+367971 inferences, equality = false
+depth = 8, complexity = -1, timeout = 60 secs
+true
+*****************************************************
+
+Step 1
+
+? (prv (imp (neg (neg p)) p))
+
+
+> revsk
+=============================
+Step 2
+
+? (prv (imp (neg (neg p)) p))
+
+
+> hypdisj
+=============================
+Step 3
+
+? (prv (imp (neg (neg p)) p))
+
+
+> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|=============================
+|Step 4
+|
+|? (prv (imp Var84 (imp (neg (neg p)) p)))
+|
+|
+|> ((prv X) <-- (prv (imp Y X)) (prv Y))
+||=============================
+||Step 5
+||
+||? (prv (imp Var87 (imp Var84 (imp (neg (neg p)) p))))
+||
+||
+||> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|||=============================
+|||Step 6
+|||
+|||? (prv (imp (imp Var84 (imp Var97 (imp (neg (neg p)) p))) (imp (imp Var84 Var97) (imp Var84 (imp (neg (neg p)) p)))))
+|||
+|||
+|||> ((prv (imp (imp Y (imp X Z)) (imp (imp Y X) (imp Y Z)))) <--)
+||=============================
+||Step 7
+||
+||? (prv (imp (imp (neg (neg p)) (imp Var104 p)) (imp (imp (neg (neg p)) Var104) (imp (neg (neg p)) p))))
+||
+||
+||> ((prv (imp (imp Y (imp X Z)) (imp (imp Y X) (imp Y Z)))) <--)
+|=============================
+|Step 8
+|
+|? (prv (imp (imp (neg (neg p)) (imp Var104 p)) (imp (neg (neg p)) Var104)))
+|
+|
+|> ((prv X) <-- (prv (imp Y X)) (prv Y))
+||=============================
+||Step 9
+||
+||? (prv (imp (imp (neg (neg p)) Var104) (imp (imp (neg (neg p)) (imp Var104 p)) (imp (neg (neg p)) Var104))))
+||
+||
+||> ((prv (imp Y (imp X Y))) <--)
+|=============================
+|Step 10
+|
+|? (prv (imp (neg (neg p)) (imp Var112 (neg (neg p)))))
+|
+|
+|> ((prv (imp Y (imp X Y))) <--)
+=============================
+Step 11
+
+? (prv (imp (neg (neg p)) (imp (imp Var112 (neg (neg p))) p)))
+
+
+> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|=============================
+|Step 12
+|
+|? (prv (imp (imp (imp Var112 (neg (neg p))) p) (imp (neg (neg p)) (imp (imp Var112 (neg (neg p))) p))))
+|
+|
+|> ((prv (imp Y (imp X Y))) <--)
+=============================
+Step 13
+
+? (prv (imp (imp Var112 (neg (neg p))) p))
+
+
+> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|=============================
+|Step 14
+|
+|? (prv (imp Var121 (imp (imp Var112 (neg (neg p))) p)))
+|
+|
+|> ((prv X) <-- (prv (imp Y X)) (prv Y))
+||=============================
+||Step 15
+||
+||? (prv (imp (imp (imp Var112 (neg (neg p))) (imp Var131 p)) (imp (imp (imp Var112 (neg (neg p))) Var131) (imp (imp Var112 (neg (neg p))) p))))
+||
+||
+||> ((prv (imp (imp Y (imp X Z)) (imp (imp Y X) (imp Y Z)))) <--)
+|=============================
+|Step 16
+|
+|? (prv (imp (imp (neg p) (neg (neg p))) (imp (imp (neg p) (neg p)) p)))
+|
+|
+|> ((prv (imp (imp (neg Y) (neg X)) (imp (imp (neg Y) X) Y))) <--)
+=============================
+Step 17
+
+? (prv (imp (imp (neg p) (neg (neg p))) (imp (neg p) (neg p))))
+
+
+> ((prv X) <-- (prv (imp Y X)) (prv Y))
+|=============================
+|Step 18
+|
+|? (prv (imp (imp (neg p) (imp (neg (neg p)) (neg p))) (imp (imp (neg p) (neg (neg p))) (imp (neg p) (neg p)))))
+|
+|
+|> ((prv (imp (imp Y (imp X Z)) (imp (imp Y X) (imp Y Z)))) <--)
+=============================
+Step 19
+
+? (prv (imp (neg p) (imp (neg (neg p)) (neg p))))
+
+
+> ((prv (imp Y (imp X Y))) <--)

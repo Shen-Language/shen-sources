@@ -1,0 +1,8 @@
+[X18189 : [f b]]
+
+[[a : [all x : A [f x]]] [b : A]]
+
+[(alll b) hyp (alll b) hyp (alll b) hyp hyp env env env]
+
+["(alll b)" "hyp" "(alll b)" "hyp" "(alll b)" "hyp" "hyp" "env" "env" "env"]
+

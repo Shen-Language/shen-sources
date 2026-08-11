@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- `sqts` side-condition markers for sequent rules.
+- The expanded LogicLab distribution and the THORN theorem prover under
+  `lib/logic-lab` and `lib/thorn`.
+
+### Changed
+
+- `input+` now normalizes its type argument through a macro and supports both
+  the default input stream and an explicit stream.
+- StLib iteration now uses `for ... to` / `for ... stop`, with configurable
+  step, constructor, and end values.
+- StLib vector support now focuses on nested array construction and access;
+  the legacy vector utility implementation has been removed.
+- Optional libraries are selected by the installer, and Shen/Tk asks where to
+  create its transaction files.
+
+### Fixed
+
+- Function variancy checks now validate the function value rather than its
+  symbol.
+- YACC recognizes inputs whose head is an empty list.
+- Fresh type variables can print non-symbol labels, and rule failure checks
+  use heterogeneous equality.
+
 ## [41.2] - 2026-04-19
 
 ### Fixed

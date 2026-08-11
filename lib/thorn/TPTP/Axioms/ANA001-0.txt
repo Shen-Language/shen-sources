@@ -1,0 +1,90 @@
+%--------------------------------------------------------------------------
+% File     : ANA001-0 : TPTP v9.0.0. Released v1.0.0.
+% Domain   : Analysis (Limits)
+% Axioms   : Analysis (limits) axioms for continuous functions
+% Version  : [MOW76] axioms.
+% English  :
+
+% Refs     : [MOW76] McCharen et al. (1976), Problems and Experiments for a
+% Source   : [ANL]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of clauses     :   14 (   6 unt;   0 nHn;   9 RR)
+%            Number of literals    :   27 (   5 equ;  14 neg)
+%            Maximal clause size   :    3 (   1 avg)
+%            Maximal term depth    :    3 (   1 avg)
+%            Number of predicates  :    2 (   1 usr;   0 prp; 2-2 aty)
+%            Number of functors    :    6 (   6 usr;   1 con; 0-2 aty)
+%            Number of variables   :   27 (   0 sgn)
+% SPC      : 
+
+% Comments : No natural language descriptions are available.
+%          : "Contributed by W.W. Bledsoe in a private correspondence",
+%            [MOW76].
+%--------------------------------------------------------------------------
+%----Axiom 1
+cnf(right_identity,axiom,
+    add(X,n0) = X ).
+
+cnf(left_identity,axiom,
+    add(n0,X) = X ).
+
+cnf(reflexivity_of_less_than,axiom,
+    ~ less_than(X,X) ).
+
+%----Less than transitivity
+cnf(transitivity_of_less_than,axiom,
+    ( ~ less_than(X,Y)
+    | ~ less_than(Y,Z)
+    | less_than(X,Z) ) ).
+
+%----Axiom 2
+cnf(axiom_2_1,axiom,
+    ( ~ less_than(n0,X)
+    | ~ less_than(n0,Y)
+    | less_than(n0,minimum(X,Y)) ) ).
+
+cnf(axiom_2_2,axiom,
+    ( ~ less_than(n0,X)
+    | ~ less_than(n0,Y)
+    | less_than(minimum(X,Y),X) ) ).
+
+cnf(axiom_2_3,axiom,
+    ( ~ less_than(n0,X)
+    | ~ less_than(n0,Y)
+    | less_than(minimum(X,Y),Y) ) ).
+
+%----Axiom 3
+cnf(axiom_3,axiom,
+    ( ~ less_than(X,half(Xa))
+    | ~ less_than(Y,half(Xa))
+    | less_than(add(X,Y),Xa) ) ).
+
+%----Axiom 4
+cnf(c_17,axiom,
+    ( ~ less_than(add(absolute(X),absolute(Y)),Xa)
+    | less_than(absolute(add(X,Y)),Xa) ) ).
+
+%----Axiom 5
+cnf(axiom_5,axiom,
+    add(add(X,Y),Z) = add(X,add(Y,Z)) ).
+
+%----Axiom 6
+cnf(axiom_6_1,axiom,
+    add(X,Y) = add(Y,X) ).
+
+cnf(axiom_6_2,axiom,
+    ( ~ less_than(n0,Xa)
+    | less_than(n0,half(Xa)) ) ).
+
+%----Axiom 7
+cnf(axiom_7,axiom,
+    ( ~ less_than(n0,Xa)
+    | less_than(n0,half(Xa)) ) ).
+
+%----Axiom 8
+cnf(axiom_8,axiom,
+    minus(add(X,Y)) = add(minus(X),minus(Y)) ).
+
+%--------------------------------------------------------------------------

@@ -1,0 +1,37 @@
+THORN Planning Session Memo
+
+Summary of Results:
+
+1. Developed proof plans for multiple RCC compositions involving:
+   - EC, PO, TPP, NTPP and their inverses.
+
+2. Identified key planning schemas:
+   - Forward mode: derive pp(x,z) then refine.
+   - Inverse mode: derive p(z,x) then refine via inverse relations.
+   - Split mode: use dc(x,z) v c(x,z) when direct propagation fails.
+
+3. Key insights:
+   - Argument order matters (po(x,y) & tpp(y,z) ≠ tpp(x,y) & po(y,z)).
+   - Some cases require exclusion lemmas (~p, ~ec).
+   - Others require case splits rather than direct propagation.
+   - Not all compositions are uniform—distinct structural behaviours exist.
+
+4. Performance observations:
+   - THORN proofs ~120 steps (~1384 lines printed).
+   - Plans ~10 steps → ~100x compression over proof trace.
+
+5. API insight:
+   - Staging reduces depth (N).
+   - Scoping reduces branching (X).
+   - Combined effect reduces X^N search space.
+
+6. Hard case:
+   - tpp + ntpp composition required Prover9 insight.
+   - Key mechanism: contradiction via ec-witness transport.
+   - Direct lemmas (~tpp, ~ec, no witness) all failed in THORN planning.
+
+Conclusion:
+- THORN + planning yields structured, interpretable proofs.
+- Emerging theory: compositional algebra of RCC relations with proof schemas.
+
+Generated: 2026-03-21 17:19:31.173984

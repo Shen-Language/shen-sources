@@ -3,7 +3,7 @@
 \\                  All rights reserved.
 
 (package shen [shen update-lambda-table occurs? factorise? optimise? hush? system-S?
-               hush userdefs tracked datatypes absolute unabsolute *absolute*]
+               hush userdefs tracked datatypes absolute unabsolute *absolute* sqts]
 
 (set *history* [])
 (set *tc* false)
@@ -12,7 +12,7 @@
 (set *gensym* 0)
 (set *tracking* [])
 (set *profiled* [])
-(set *special* [@p @s @v cons lambda let where set open input+ type])
+(set *special* [@p @s @v cons lambda let where set open input-h+ type])
 (set *extraspecial* [])
 (set *spy* false)
 (set *datatypes* [])
@@ -30,7 +30,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "41.2")
+(set *version* "41.3")
 (set *names* [])
 (set *step* false)
 (set *it* "")
@@ -118,7 +118,7 @@
      < >> <> y-or-n? write-to-file write-byte where when warn version verified variable? var?
      value vector-> <-vector vector vector? u! update-lambda-table unspecialise untrack unit unix union unput unprofile undefmacro
      unabsolute return type tuple? true trap-error track time thaw tc? tc tl tlstr tlv tail systemf synonyms symbol symbol?
-     string->symbol sum subst string? string->n stream string stinput sterror stoutput step spy specialise snd simple-error
+     string->symbol sum subst string? string->n stream string stinput sterror stoutput step sqts spy specialise snd simple-error
      set save str run reverse retract remove release read receive read-file read-file-as-bytelist read-file-as-string
      read-byte read-from-string read-from-string-unprocessed package? put preclude preclude-all-but ps prolog?
      protect profile-results profile prolog-memory print pr pos porters port package output out os or

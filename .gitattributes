@@ -3,4 +3,7 @@
 *.shen      text
 *.svg       text
 *.txt       text
+*.docx      binary
+*.pdf       binary
+*.zip       binary
 Makefile    text

@@ -1,0 +1,1128 @@
+%--------------------------------------------------------------------------
+% File     : AGT001+2 : TPTP v9.0.0. Released v2.7.0.
+% Domain   : Agents
+% Axioms   : CPlanT lemmas
+% Version  : [Bar03] axioms : Especial.
+% English  :
+
+% Refs     : [Bar03] Barta, J. (2003), Email to G. Sutcliffe
+% Source   : [Bar03]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :  367 ( 367 unt;   0 def)
+%            Number of atoms       :  367 (   0 equ)
+%            Maximal formula atoms :    1 (   1 avg)
+%            Number of connectives :    5 (   5   ~;   0   |;   0   &)
+%                                         (   0 <=>;   0  =>;   0  <=;   0 <~>)
+%            Maximal formula depth :    2 (   1 avg)
+%            Maximal term depth    :    1 (   1 avg)
+%            Number of predicates  :    4 (   4 usr;   0 prp; 2-3 aty)
+%            Number of functors    :   36 (  36 usr;  36 con; 0-0 aty)
+%            Number of variables   :    0 (   0   !;   0   ?)
+% SPC      : 
+
+% Comments : Requires AGT001+0.ax
+%--------------------------------------------------------------------------
+fof(deduced_1,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countryacivilorganization) ).
+
+fof(deduced_2,axiom,
+    accept_leader(christiancountrychumanitarianorganization,muslimcountrybhumanitarianorganization) ).
+
+fof(deduced_3,axiom,
+    accept_population(christiancountrychumanitarianorganization,other,n5) ).
+
+fof(deduced_4,axiom,
+    accept_population(christiancountrychumanitarianorganization,muslim,n65) ).
+
+fof(deduced_5,axiom,
+    accept_population(christiancountrychumanitarianorganization,christian,n0) ).
+
+fof(deduced_6,axiom,
+    accept_population(christiancountrychumanitarianorganization,atheist,n30) ).
+
+fof(deduced_7,axiom,
+    accept_city(christiancountrychumanitarianorganization,townc) ).
+
+fof(deduced_8,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countryahumanitarianorganization) ).
+
+fof(deduced_9,axiom,
+    accept_population(christiancountrychumanitarianorganization,other,n1) ).
+
+fof(deduced_10,axiom,
+    accept_population(christiancountrychumanitarianorganization,christian,n20) ).
+
+fof(deduced_11,axiom,
+    accept_population(christiancountrychumanitarianorganization,atheist,n78) ).
+
+fof(deduced_12,axiom,
+    accept_city(christiancountrychumanitarianorganization,cityb) ).
+
+fof(deduced_13,axiom,
+    ~ accept_city(countryamedicalorganization,coastvillage) ).
+
+fof(deduced_14,axiom,
+    accept_leader(countryamedicalorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_15,axiom,
+    accept_population(countryamedicalorganization,other,n5) ).
+
+fof(deduced_16,axiom,
+    accept_population(countryamedicalorganization,muslim,n65) ).
+
+fof(deduced_17,axiom,
+    accept_population(countryamedicalorganization,christian,n0) ).
+
+fof(deduced_18,axiom,
+    accept_population(countryamedicalorganization,atheist,n30) ).
+
+fof(deduced_19,axiom,
+    accept_leader(countryamedicalorganization,countryahumanitarianorganization) ).
+
+fof(deduced_20,axiom,
+    accept_city(countryamedicalorganization,townc) ).
+
+fof(deduced_21,axiom,
+    accept_leader(countryahumanitarianorganization,countryamedicalorganization) ).
+
+fof(deduced_22,axiom,
+    accept_leader(countryahumanitarianorganization,countryafirstaidorganization) ).
+
+fof(deduced_23,axiom,
+    accept_population(countryahumanitarianorganization,native,n85) ).
+
+fof(deduced_24,axiom,
+    accept_population(countryahumanitarianorganization,muslim,n0) ).
+
+fof(deduced_25,axiom,
+    accept_population(countryahumanitarianorganization,christian,n3) ).
+
+fof(deduced_26,axiom,
+    accept_population(countryahumanitarianorganization,atheist,n12) ).
+
+fof(deduced_27,axiom,
+    accept_city(countryahumanitarianorganization,coastvillage) ).
+
+fof(deduced_28,axiom,
+    accept_leader(countryahumanitarianorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_29,axiom,
+    accept_leader(countryafirstaidorganization,countryamedicalorganization) ).
+
+fof(deduced_30,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,countryamedicalorganization) ).
+
+fof(deduced_31,axiom,
+    accept_leader(countrycmedicalorganization,countryacivilorganization) ).
+
+fof(deduced_32,axiom,
+    accept_population(countrycmedicalorganization,native,n85) ).
+
+fof(deduced_33,axiom,
+    accept_population(countrycmedicalorganization,muslim,n0) ).
+
+fof(deduced_34,axiom,
+    accept_population(countrycmedicalorganization,christian,n3) ).
+
+fof(deduced_35,axiom,
+    accept_population(countrycmedicalorganization,atheist,n12) ).
+
+fof(deduced_36,axiom,
+    accept_city(countrycmedicalorganization,coastvillage) ).
+
+fof(deduced_37,axiom,
+    accept_leader(countrybcivilorganization,countryacivilorganization) ).
+
+fof(deduced_38,axiom,
+    accept_population(countrybcivilorganization,native,n85) ).
+
+fof(deduced_39,axiom,
+    accept_population(countrybcivilorganization,muslim,n0) ).
+
+fof(deduced_40,axiom,
+    accept_population(countrybcivilorganization,christian,n3) ).
+
+fof(deduced_41,axiom,
+    accept_population(countrybcivilorganization,atheist,n12) ).
+
+fof(deduced_42,axiom,
+    accept_city(countrybcivilorganization,coastvillage) ).
+
+fof(deduced_43,axiom,
+    accept_leader(countrybcivilorganization,muslimcountrybhumanitarianorganization) ).
+
+fof(deduced_44,axiom,
+    accept_population(countrybcivilorganization,other,n5) ).
+
+fof(deduced_45,axiom,
+    accept_population(countrybcivilorganization,muslim,n65) ).
+
+fof(deduced_46,axiom,
+    accept_population(countrybcivilorganization,christian,n0) ).
+
+fof(deduced_47,axiom,
+    accept_population(countrybcivilorganization,atheist,n30) ).
+
+fof(deduced_48,axiom,
+    accept_city(countrybcivilorganization,townc) ).
+
+fof(deduced_49,axiom,
+    accept_leader(countrybcivilorganization,countryahumanitarianorganization) ).
+
+fof(deduced_50,axiom,
+    accept_population(countrybcivilorganization,other,n1) ).
+
+fof(deduced_51,axiom,
+    accept_population(countrybcivilorganization,christian,n20) ).
+
+fof(deduced_52,axiom,
+    accept_population(countrybcivilorganization,atheist,n78) ).
+
+fof(deduced_53,axiom,
+    accept_city(countrybcivilorganization,cityb) ).
+
+fof(deduced_54,axiom,
+    accept_leader(sufferterragovernment,countryamedicalorganization) ).
+
+fof(deduced_55,axiom,
+    accept_population(sufferterragovernment,christian,n24) ).
+
+fof(deduced_56,axiom,
+    accept_population(sufferterragovernment,atheist,n75) ).
+
+fof(deduced_57,axiom,
+    accept_city(sufferterragovernment,towna) ).
+
+fof(deduced_58,axiom,
+    ~ accept_number(countryccivilorganization,n5) ).
+
+fof(deduced_59,axiom,
+    accept_population(countryccivilorganization,other,n1) ).
+
+fof(deduced_60,axiom,
+    accept_population(countryccivilorganization,christian,n20) ).
+
+fof(deduced_61,axiom,
+    accept_population(countryccivilorganization,atheist,n78) ).
+
+fof(deduced_62,axiom,
+    ~ accept_number(countryccivilorganization,n6) ).
+
+fof(deduced_63,axiom,
+    accept_leader(countryccivilorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_64,axiom,
+    accept_city(countryccivilorganization,cityb) ).
+
+fof(deduced_65,axiom,
+    accept_leader(countryccivilorganization,countryacivilorganization) ).
+
+fof(deduced_66,axiom,
+    accept_leader(countryacivilorganization,countryamedicalorganization) ).
+
+fof(deduced_67,axiom,
+    accept_leader(countryacivilorganization,countryafirstaidorganization) ).
+
+fof(deduced_68,axiom,
+    accept_population(countryacivilorganization,native,n85) ).
+
+fof(deduced_69,axiom,
+    accept_population(countryacivilorganization,muslim,n0) ).
+
+fof(deduced_70,axiom,
+    accept_population(countryacivilorganization,christian,n3) ).
+
+fof(deduced_71,axiom,
+    accept_population(countryacivilorganization,atheist,n12) ).
+
+fof(deduced_72,axiom,
+    accept_city(countryacivilorganization,coastvillage) ).
+
+fof(deduced_73,axiom,
+    accept_leader(countryacivilorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_74,axiom,
+    accept_population(countryacivilorganization,other,n5) ).
+
+fof(deduced_75,axiom,
+    accept_population(countryacivilorganization,muslim,n65) ).
+
+fof(deduced_76,axiom,
+    accept_population(countryacivilorganization,christian,n0) ).
+
+fof(deduced_77,axiom,
+    accept_population(countryacivilorganization,atheist,n30) ).
+
+fof(deduced_78,axiom,
+    accept_leader(countryacivilorganization,countryahumanitarianorganization) ).
+
+fof(deduced_79,axiom,
+    accept_city(countryacivilorganization,townc) ).
+
+fof(deduced_80,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,christian,n24) ).
+
+fof(deduced_81,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,atheist,n75) ).
+
+fof(deduced_82,axiom,
+    ~ accept_leader(christiansufferterrahumanitarianorganization,sufferterragovernment) ).
+
+fof(deduced_83,axiom,
+    accept_city(christiansufferterrahumanitarianorganization,towna) ).
+
+fof(deduced_84,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,countryafirstaidorganization) ).
+
+fof(deduced_85,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,other,n0) ).
+
+fof(deduced_86,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,native,n85) ).
+
+fof(deduced_87,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,muslim,n0) ).
+
+fof(deduced_88,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,christian,n3) ).
+
+fof(deduced_89,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,atheist,n12) ).
+
+fof(deduced_90,axiom,
+    accept_city(christiansufferterrahumanitarianorganization,coastvillage) ).
+
+fof(deduced_91,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_92,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countryacivilorganization) ).
+
+fof(deduced_93,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,other,n0) ).
+
+fof(deduced_94,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,native,n85) ).
+
+fof(deduced_95,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,muslim,n0) ).
+
+fof(deduced_96,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,christian,n3) ).
+
+fof(deduced_97,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,atheist,n12) ).
+
+fof(deduced_98,axiom,
+    accept_city(muslimcountrybhumanitarianorganization,coastvillage) ).
+
+fof(deduced_99,axiom,
+    accept_population(countryafirstaidorganization,native,n85) ).
+
+fof(deduced_100,axiom,
+    accept_population(countryafirstaidorganization,muslim,n0) ).
+
+fof(deduced_101,axiom,
+    accept_population(countryafirstaidorganization,christian,n3) ).
+
+fof(deduced_102,axiom,
+    accept_population(countryafirstaidorganization,atheist,n12) ).
+
+fof(deduced_103,axiom,
+    accept_city(countryafirstaidorganization,coastvillage) ).
+
+fof(deduced_104,axiom,
+    accept_leader(countryafirstaidorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_105,axiom,
+    accept_population(countryafirstaidorganization,other,n5) ).
+
+fof(deduced_106,axiom,
+    accept_population(countryafirstaidorganization,muslim,n65) ).
+
+fof(deduced_107,axiom,
+    accept_population(countryafirstaidorganization,christian,n0) ).
+
+fof(deduced_108,axiom,
+    accept_population(countryafirstaidorganization,atheist,n30) ).
+
+fof(deduced_109,axiom,
+    accept_leader(countryafirstaidorganization,countryahumanitarianorganization) ).
+
+fof(deduced_110,axiom,
+    accept_city(countryafirstaidorganization,townc) ).
+
+fof(deduced_111,axiom,
+    accept_leader(countryafirstaidorganization,countryacivilorganization) ).
+
+fof(deduced_112,axiom,
+    accept_population(countryafirstaidorganization,other,n1) ).
+
+fof(deduced_113,axiom,
+    accept_population(countryafirstaidorganization,christian,n20) ).
+
+fof(deduced_114,axiom,
+    accept_population(countryafirstaidorganization,atheist,n78) ).
+
+fof(deduced_115,axiom,
+    accept_city(countryafirstaidorganization,cityb) ).
+
+fof(deduced_116,axiom,
+    accept_leader(countryafirstaidorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_117,axiom,
+    accept_leader(countrybhumanitarianorganization,countryacivilorganization) ).
+
+fof(deduced_118,axiom,
+    accept_population(countrybhumanitarianorganization,native,n85) ).
+
+fof(deduced_119,axiom,
+    accept_population(countrybhumanitarianorganization,muslim,n0) ).
+
+fof(deduced_120,axiom,
+    accept_population(countrybhumanitarianorganization,christian,n3) ).
+
+fof(deduced_121,axiom,
+    accept_population(countrybhumanitarianorganization,atheist,n12) ).
+
+fof(deduced_122,axiom,
+    accept_city(countrybhumanitarianorganization,coastvillage) ).
+
+fof(deduced_123,axiom,
+    accept_leader(countrybhumanitarianorganization,muslimcountrybhumanitarianorganization) ).
+
+fof(deduced_124,axiom,
+    accept_population(countrybhumanitarianorganization,other,n5) ).
+
+fof(deduced_125,axiom,
+    accept_population(countrybhumanitarianorganization,muslim,n65) ).
+
+fof(deduced_126,axiom,
+    accept_population(countrybhumanitarianorganization,christian,n0) ).
+
+fof(deduced_127,axiom,
+    accept_population(countrybhumanitarianorganization,atheist,n30) ).
+
+fof(deduced_128,axiom,
+    accept_city(countrybhumanitarianorganization,townc) ).
+
+fof(deduced_129,axiom,
+    accept_leader(countrybhumanitarianorganization,countryahumanitarianorganization) ).
+
+fof(deduced_130,axiom,
+    accept_leader(countrybhumanitarianorganization,countryccivilorganization) ).
+
+fof(deduced_131,axiom,
+    accept_leader(countrybhumanitarianorganization,countrybcivilorganization) ).
+
+fof(deduced_132,axiom,
+    accept_leader(countrybhumanitarianorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_133,axiom,
+    accept_leader(countrybhumanitarianorganization,countrycmedicalorganization) ).
+
+fof(deduced_134,axiom,
+    accept_population(countrybhumanitarianorganization,other,n0) ).
+
+fof(deduced_135,axiom,
+    accept_population(countrybhumanitarianorganization,native,n0) ).
+
+fof(deduced_136,axiom,
+    accept_population(countrybhumanitarianorganization,muslim,n1) ).
+
+fof(deduced_137,axiom,
+    accept_population(countrybhumanitarianorganization,christian,n24) ).
+
+fof(deduced_138,axiom,
+    accept_population(countrybhumanitarianorganization,atheist,n75) ).
+
+fof(deduced_139,axiom,
+    accept_city(countrybhumanitarianorganization,towna) ).
+
+fof(deduced_140,axiom,
+    accept_leader(countrybhumanitarianorganization,sufferterragovernment) ).
+
+fof(deduced_141,axiom,
+    accept_leader(sufferterragovernment,countryafirstaidorganization) ).
+
+fof(deduced_142,axiom,
+    accept_population(sufferterragovernment,other,n0) ).
+
+fof(deduced_143,axiom,
+    accept_population(sufferterragovernment,native,n85) ).
+
+fof(deduced_144,axiom,
+    accept_population(sufferterragovernment,muslim,n0) ).
+
+fof(deduced_145,axiom,
+    accept_population(sufferterragovernment,christian,n3) ).
+
+fof(deduced_146,axiom,
+    accept_population(sufferterragovernment,atheist,n12) ).
+
+fof(deduced_147,axiom,
+    accept_city(sufferterragovernment,coastvillage) ).
+
+fof(deduced_148,axiom,
+    accept_leader(sufferterragovernment,christiancountrychumanitarianorganization) ).
+
+fof(deduced_149,axiom,
+    accept_population(sufferterragovernment,other,n5) ).
+
+fof(deduced_150,axiom,
+    accept_population(sufferterragovernment,muslim,n65) ).
+
+fof(deduced_151,axiom,
+    accept_population(sufferterragovernment,christian,n0) ).
+
+fof(deduced_152,axiom,
+    accept_population(sufferterragovernment,atheist,n30) ).
+
+fof(deduced_153,axiom,
+    accept_leader(sufferterragovernment,countryahumanitarianorganization) ).
+
+fof(deduced_154,axiom,
+    accept_city(sufferterragovernment,townc) ).
+
+fof(deduced_155,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countryccivilorganization) ).
+
+fof(deduced_156,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countrybcivilorganization) ).
+
+fof(deduced_157,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,other,n5) ).
+
+fof(deduced_158,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,muslim,n65) ).
+
+fof(deduced_159,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,christian,n0) ).
+
+fof(deduced_160,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,atheist,n30) ).
+
+fof(deduced_161,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,countryahumanitarianorganization) ).
+
+fof(deduced_162,axiom,
+    accept_city(christiansufferterrahumanitarianorganization,townc) ).
+
+fof(deduced_163,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,countryacivilorganization) ).
+
+fof(deduced_164,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n5) ).
+
+fof(deduced_165,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n4) ).
+
+fof(deduced_166,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n3) ).
+
+fof(deduced_167,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n2) ).
+
+fof(deduced_168,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n1) ).
+
+fof(deduced_169,axiom,
+    accept_number(christiansufferterrahumanitarianorganization,n6) ).
+
+fof(deduced_170,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,other,n1) ).
+
+fof(deduced_171,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,native,n0) ).
+
+fof(deduced_172,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,muslim,n1) ).
+
+fof(deduced_173,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,christian,n20) ).
+
+fof(deduced_174,axiom,
+    accept_population(christiansufferterrahumanitarianorganization,atheist,n78) ).
+
+fof(deduced_175,axiom,
+    accept_city(christiansufferterrahumanitarianorganization,cityb) ).
+
+fof(deduced_176,axiom,
+    accept_leader(christiansufferterrahumanitarianorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_177,axiom,
+    accept_population(countryccivilorganization,other,n5) ).
+
+fof(deduced_178,axiom,
+    accept_population(countryccivilorganization,muslim,n65) ).
+
+fof(deduced_179,axiom,
+    accept_population(countryccivilorganization,christian,n0) ).
+
+fof(deduced_180,axiom,
+    accept_population(countryccivilorganization,atheist,n30) ).
+
+fof(deduced_181,axiom,
+    accept_city(countryccivilorganization,townc) ).
+
+fof(deduced_182,axiom,
+    accept_leader(countryccivilorganization,countryahumanitarianorganization) ).
+
+fof(deduced_183,axiom,
+    accept_leader(countrycmedicalorganization,muslimcountrybhumanitarianorganization) ).
+
+fof(deduced_184,axiom,
+    accept_population(countrycmedicalorganization,other,n5) ).
+
+fof(deduced_185,axiom,
+    accept_population(countrycmedicalorganization,muslim,n65) ).
+
+fof(deduced_186,axiom,
+    accept_population(countrycmedicalorganization,christian,n0) ).
+
+fof(deduced_187,axiom,
+    accept_population(countrycmedicalorganization,atheist,n30) ).
+
+fof(deduced_188,axiom,
+    accept_city(countrycmedicalorganization,townc) ).
+
+fof(deduced_189,axiom,
+    accept_leader(countrycmedicalorganization,countryahumanitarianorganization) ).
+
+fof(deduced_190,axiom,
+    accept_population(countrycmedicalorganization,other,n1) ).
+
+fof(deduced_191,axiom,
+    accept_population(countrycmedicalorganization,christian,n20) ).
+
+fof(deduced_192,axiom,
+    accept_population(countrycmedicalorganization,atheist,n78) ).
+
+fof(deduced_193,axiom,
+    accept_city(countrycmedicalorganization,cityb) ).
+
+fof(deduced_194,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countrycmedicalorganization) ).
+
+fof(deduced_195,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_196,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,other,n5) ).
+
+fof(deduced_197,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,muslim,n65) ).
+
+fof(deduced_198,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,christian,n0) ).
+
+fof(deduced_199,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,atheist,n30) ).
+
+fof(deduced_200,axiom,
+    accept_city(muslimcountrybhumanitarianorganization,townc) ).
+
+fof(deduced_201,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countryahumanitarianorganization) ).
+
+fof(deduced_202,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,other,n1) ).
+
+fof(deduced_203,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,native,n0) ).
+
+fof(deduced_204,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,muslim,n1) ).
+
+fof(deduced_205,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,christian,n20) ).
+
+fof(deduced_206,axiom,
+    accept_population(muslimcountrybhumanitarianorganization,atheist,n78) ).
+
+fof(deduced_207,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_208,axiom,
+    accept_city(muslimcountrybhumanitarianorganization,cityb) ).
+
+fof(deduced_209,axiom,
+    accept_leader(countryamedicalorganization,countryacivilorganization) ).
+
+fof(deduced_210,axiom,
+    accept_population(countryamedicalorganization,other,n1) ).
+
+fof(deduced_211,axiom,
+    accept_population(countryamedicalorganization,christian,n20) ).
+
+fof(deduced_212,axiom,
+    accept_population(countryamedicalorganization,atheist,n78) ).
+
+fof(deduced_213,axiom,
+    accept_city(countryamedicalorganization,cityb) ).
+
+fof(deduced_214,axiom,
+    accept_leader(countryamedicalorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_215,axiom,
+    accept_number(countryamedicalorganization,n5) ).
+
+fof(deduced_216,axiom,
+    accept_number(countryamedicalorganization,n4) ).
+
+fof(deduced_217,axiom,
+    accept_number(countryamedicalorganization,n3) ).
+
+fof(deduced_218,axiom,
+    accept_number(countryamedicalorganization,n2) ).
+
+fof(deduced_219,axiom,
+    accept_number(countryamedicalorganization,n1) ).
+
+fof(deduced_220,axiom,
+    accept_population(countryamedicalorganization,other,n0) ).
+
+fof(deduced_221,axiom,
+    accept_population(countryamedicalorganization,native,n0) ).
+
+fof(deduced_222,axiom,
+    accept_population(countryamedicalorganization,muslim,n1) ).
+
+fof(deduced_223,axiom,
+    accept_population(countryamedicalorganization,christian,n24) ).
+
+fof(deduced_224,axiom,
+    accept_population(countryamedicalorganization,atheist,n75) ).
+
+fof(deduced_225,axiom,
+    accept_number(countryamedicalorganization,n6) ).
+
+fof(deduced_226,axiom,
+    accept_leader(countryamedicalorganization,sufferterragovernment) ).
+
+fof(deduced_227,axiom,
+    accept_city(countryamedicalorganization,towna) ).
+
+fof(deduced_228,axiom,
+    accept_population(countryacivilorganization,other,n1) ).
+
+fof(deduced_229,axiom,
+    accept_population(countryacivilorganization,christian,n20) ).
+
+fof(deduced_230,axiom,
+    accept_population(countryacivilorganization,atheist,n78) ).
+
+fof(deduced_231,axiom,
+    accept_city(countryacivilorganization,cityb) ).
+
+fof(deduced_232,axiom,
+    accept_leader(countryacivilorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_233,axiom,
+    accept_leader(countryahumanitarianorganization,countryacivilorganization) ).
+
+fof(deduced_234,axiom,
+    accept_population(countryahumanitarianorganization,other,n1) ).
+
+fof(deduced_235,axiom,
+    accept_population(countryahumanitarianorganization,christian,n20) ).
+
+fof(deduced_236,axiom,
+    accept_population(countryahumanitarianorganization,atheist,n78) ).
+
+fof(deduced_237,axiom,
+    accept_city(countryahumanitarianorganization,cityb) ).
+
+fof(deduced_238,axiom,
+    accept_leader(countryahumanitarianorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_239,axiom,
+    accept_number(countryahumanitarianorganization,n5) ).
+
+fof(deduced_240,axiom,
+    accept_number(countryahumanitarianorganization,n4) ).
+
+fof(deduced_241,axiom,
+    accept_number(countryahumanitarianorganization,n3) ).
+
+fof(deduced_242,axiom,
+    accept_number(countryahumanitarianorganization,n2) ).
+
+fof(deduced_243,axiom,
+    accept_number(countryahumanitarianorganization,n1) ).
+
+fof(deduced_244,axiom,
+    accept_population(countryahumanitarianorganization,other,n0) ).
+
+fof(deduced_245,axiom,
+    accept_population(countryahumanitarianorganization,native,n0) ).
+
+fof(deduced_246,axiom,
+    accept_population(countryahumanitarianorganization,muslim,n1) ).
+
+fof(deduced_247,axiom,
+    accept_population(countryahumanitarianorganization,christian,n24) ).
+
+fof(deduced_248,axiom,
+    accept_population(countryahumanitarianorganization,atheist,n75) ).
+
+fof(deduced_249,axiom,
+    accept_number(countryahumanitarianorganization,n6) ).
+
+fof(deduced_250,axiom,
+    accept_leader(countryahumanitarianorganization,sufferterragovernment) ).
+
+fof(deduced_251,axiom,
+    accept_city(countryahumanitarianorganization,towna) ).
+
+fof(deduced_252,axiom,
+    accept_leader(sufferterragovernment,countryacivilorganization) ).
+
+fof(deduced_253,axiom,
+    accept_population(sufferterragovernment,other,n1) ).
+
+fof(deduced_254,axiom,
+    accept_population(sufferterragovernment,native,n0) ).
+
+fof(deduced_255,axiom,
+    accept_population(sufferterragovernment,muslim,n1) ).
+
+fof(deduced_256,axiom,
+    accept_population(sufferterragovernment,christian,n20) ).
+
+fof(deduced_257,axiom,
+    accept_population(sufferterragovernment,atheist,n78) ).
+
+fof(deduced_258,axiom,
+    accept_city(sufferterragovernment,cityb) ).
+
+fof(deduced_259,axiom,
+    accept_leader(sufferterragovernment,countrybhumanitarianorganization) ).
+
+fof(deduced_260,axiom,
+    accept_population(countryccivilorganization,other,n0) ).
+
+fof(deduced_261,axiom,
+    accept_population(countryccivilorganization,native,n0) ).
+
+fof(deduced_262,axiom,
+    accept_population(countryccivilorganization,muslim,n1) ).
+
+fof(deduced_263,axiom,
+    accept_population(countryccivilorganization,christian,n24) ).
+
+fof(deduced_264,axiom,
+    accept_population(countryccivilorganization,atheist,n75) ).
+
+fof(deduced_265,axiom,
+    accept_city(countryccivilorganization,towna) ).
+
+fof(deduced_266,axiom,
+    accept_leader(countryccivilorganization,sufferterragovernment) ).
+
+fof(deduced_267,axiom,
+    accept_number(countryafirstaidorganization,n5) ).
+
+fof(deduced_268,axiom,
+    accept_number(countryafirstaidorganization,n4) ).
+
+fof(deduced_269,axiom,
+    accept_number(countryafirstaidorganization,n3) ).
+
+fof(deduced_270,axiom,
+    accept_number(countryafirstaidorganization,n2) ).
+
+fof(deduced_271,axiom,
+    accept_number(countryafirstaidorganization,n1) ).
+
+fof(deduced_272,axiom,
+    accept_population(countryafirstaidorganization,other,n0) ).
+
+fof(deduced_273,axiom,
+    accept_population(countryafirstaidorganization,native,n0) ).
+
+fof(deduced_274,axiom,
+    accept_population(countryafirstaidorganization,muslim,n1) ).
+
+fof(deduced_275,axiom,
+    accept_population(countryafirstaidorganization,christian,n24) ).
+
+fof(deduced_276,axiom,
+    accept_population(countryafirstaidorganization,atheist,n75) ).
+
+fof(deduced_277,axiom,
+    accept_number(countryafirstaidorganization,n6) ).
+
+fof(deduced_278,axiom,
+    accept_leader(countryafirstaidorganization,sufferterragovernment) ).
+
+fof(deduced_279,axiom,
+    accept_city(countryafirstaidorganization,towna) ).
+
+fof(deduced_280,axiom,
+    accept_leader(countrycmedicalorganization,countryccivilorganization) ).
+
+fof(deduced_281,axiom,
+    accept_leader(countrycmedicalorganization,countrybcivilorganization) ).
+
+fof(deduced_282,axiom,
+    accept_leader(countrycmedicalorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_283,axiom,
+    accept_leader(countrycmedicalorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_284,axiom,
+    accept_population(countrycmedicalorganization,other,n0) ).
+
+fof(deduced_285,axiom,
+    accept_population(countrycmedicalorganization,native,n0) ).
+
+fof(deduced_286,axiom,
+    accept_population(countrycmedicalorganization,muslim,n1) ).
+
+fof(deduced_287,axiom,
+    accept_population(countrycmedicalorganization,christian,n24) ).
+
+fof(deduced_288,axiom,
+    accept_population(countrycmedicalorganization,atheist,n75) ).
+
+fof(deduced_289,axiom,
+    accept_city(countrycmedicalorganization,towna) ).
+
+fof(deduced_290,axiom,
+    accept_leader(countrycmedicalorganization,sufferterragovernment) ).
+
+fof(deduced_291,axiom,
+    accept_leader(countrybcivilorganization,countryccivilorganization) ).
+
+fof(deduced_292,axiom,
+    accept_leader(countrybcivilorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_293,axiom,
+    accept_leader(countrybcivilorganization,christiancountrychumanitarianorganization) ).
+
+fof(deduced_294,axiom,
+    accept_leader(countrybcivilorganization,countrycmedicalorganization) ).
+
+fof(deduced_295,axiom,
+    accept_population(countrybcivilorganization,other,n0) ).
+
+fof(deduced_296,axiom,
+    accept_population(countrybcivilorganization,native,n0) ).
+
+fof(deduced_297,axiom,
+    accept_population(countrybcivilorganization,muslim,n1) ).
+
+fof(deduced_298,axiom,
+    accept_population(countrybcivilorganization,christian,n24) ).
+
+fof(deduced_299,axiom,
+    accept_population(countrybcivilorganization,atheist,n75) ).
+
+fof(deduced_300,axiom,
+    accept_city(countrybcivilorganization,towna) ).
+
+fof(deduced_301,axiom,
+    accept_leader(countrybcivilorganization,sufferterragovernment) ).
+
+fof(deduced_302,axiom,
+    accept_number(sufferterragovernment,n5) ).
+
+fof(deduced_303,axiom,
+    accept_number(sufferterragovernment,n4) ).
+
+fof(deduced_304,axiom,
+    accept_number(sufferterragovernment,n3) ).
+
+fof(deduced_305,axiom,
+    accept_number(sufferterragovernment,n2) ).
+
+fof(deduced_306,axiom,
+    accept_number(sufferterragovernment,n1) ).
+
+fof(deduced_307,axiom,
+    accept_number(sufferterragovernment,n6) ).
+
+fof(deduced_308,axiom,
+    accept_number(countryacivilorganization,n5) ).
+
+fof(deduced_309,axiom,
+    accept_number(countryacivilorganization,n4) ).
+
+fof(deduced_310,axiom,
+    accept_number(countryacivilorganization,n3) ).
+
+fof(deduced_311,axiom,
+    accept_number(countryacivilorganization,n2) ).
+
+fof(deduced_312,axiom,
+    accept_number(countryacivilorganization,n1) ).
+
+fof(deduced_313,axiom,
+    accept_population(countryacivilorganization,other,n0) ).
+
+fof(deduced_314,axiom,
+    accept_population(countryacivilorganization,native,n0) ).
+
+fof(deduced_315,axiom,
+    accept_population(countryacivilorganization,muslim,n1) ).
+
+fof(deduced_316,axiom,
+    accept_population(countryacivilorganization,christian,n24) ).
+
+fof(deduced_317,axiom,
+    accept_population(countryacivilorganization,atheist,n75) ).
+
+fof(deduced_318,axiom,
+    accept_number(countryacivilorganization,n6) ).
+
+fof(deduced_319,axiom,
+    accept_leader(countryacivilorganization,sufferterragovernment) ).
+
+fof(deduced_320,axiom,
+    accept_city(countryacivilorganization,towna) ).
+
+fof(deduced_321,axiom,
+    accept_number(countryccivilorganization,n3) ).
+
+fof(deduced_322,axiom,
+    accept_number(countryccivilorganization,n2) ).
+
+fof(deduced_323,axiom,
+    accept_number(countryccivilorganization,n1) ).
+
+fof(deduced_324,axiom,
+    accept_number(countryccivilorganization,n4) ).
+
+fof(deduced_325,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countryccivilorganization) ).
+
+fof(deduced_326,axiom,
+    accept_number(countrybcivilorganization,n5) ).
+
+fof(deduced_327,axiom,
+    accept_number(countrybcivilorganization,n4) ).
+
+fof(deduced_328,axiom,
+    accept_number(countrybcivilorganization,n3) ).
+
+fof(deduced_329,axiom,
+    accept_number(countrybcivilorganization,n2) ).
+
+fof(deduced_330,axiom,
+    accept_number(countrybcivilorganization,n1) ).
+
+fof(deduced_331,axiom,
+    accept_number(countrybcivilorganization,n6) ).
+
+fof(deduced_332,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countrybcivilorganization) ).
+
+fof(deduced_333,axiom,
+    accept_number(countrybhumanitarianorganization,n5) ).
+
+fof(deduced_334,axiom,
+    accept_number(countrybhumanitarianorganization,n4) ).
+
+fof(deduced_335,axiom,
+    accept_number(countrybhumanitarianorganization,n3) ).
+
+fof(deduced_336,axiom,
+    accept_number(countrybhumanitarianorganization,n2) ).
+
+fof(deduced_337,axiom,
+    accept_number(countrybhumanitarianorganization,n1) ).
+
+fof(deduced_338,axiom,
+    accept_number(countrybhumanitarianorganization,n6) ).
+
+fof(deduced_339,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countrybhumanitarianorganization) ).
+
+fof(deduced_340,axiom,
+    accept_leader(christiancountrychumanitarianorganization,countrycmedicalorganization) ).
+
+fof(deduced_341,axiom,
+    accept_number(christiancountrychumanitarianorganization,n5) ).
+
+fof(deduced_342,axiom,
+    accept_number(christiancountrychumanitarianorganization,n4) ).
+
+fof(deduced_343,axiom,
+    accept_number(christiancountrychumanitarianorganization,n3) ).
+
+fof(deduced_344,axiom,
+    accept_number(christiancountrychumanitarianorganization,n2) ).
+
+fof(deduced_345,axiom,
+    accept_number(christiancountrychumanitarianorganization,n1) ).
+
+fof(deduced_346,axiom,
+    accept_number(christiancountrychumanitarianorganization,n6) ).
+
+fof(deduced_347,axiom,
+    accept_population(christiancountrychumanitarianorganization,other,n0) ).
+
+fof(deduced_348,axiom,
+    accept_population(christiancountrychumanitarianorganization,native,n0) ).
+
+fof(deduced_349,axiom,
+    accept_population(christiancountrychumanitarianorganization,muslim,n1) ).
+
+fof(deduced_350,axiom,
+    accept_population(christiancountrychumanitarianorganization,christian,n24) ).
+
+fof(deduced_351,axiom,
+    accept_population(christiancountrychumanitarianorganization,atheist,n75) ).
+
+fof(deduced_352,axiom,
+    accept_city(christiancountrychumanitarianorganization,towna) ).
+
+fof(deduced_353,axiom,
+    accept_leader(christiancountrychumanitarianorganization,sufferterragovernment) ).
+
+fof(deduced_354,axiom,
+    accept_number(countrycmedicalorganization,n5) ).
+
+fof(deduced_355,axiom,
+    accept_number(countrycmedicalorganization,n4) ).
+
+fof(deduced_356,axiom,
+    accept_number(countrycmedicalorganization,n3) ).
+
+fof(deduced_357,axiom,
+    accept_number(countrycmedicalorganization,n2) ).
+
+fof(deduced_358,axiom,
+    accept_number(countrycmedicalorganization,n1) ).
+
+fof(deduced_359,axiom,
+    accept_number(countrycmedicalorganization,n6) ).
+
+fof(deduced_360,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n5) ).
+
+fof(deduced_361,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n4) ).
+
+fof(deduced_362,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n3) ).
+
+fof(deduced_363,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n2) ).
+
+fof(deduced_364,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n1) ).
+
+fof(deduced_365,axiom,
+    accept_number(muslimcountrybhumanitarianorganization,n6) ).
+
+fof(deduced_366,axiom,
+    ~ accept_city(muslimcountrybhumanitarianorganization,towna) ).
+
+fof(deduced_367,axiom,
+    accept_leader(muslimcountrybhumanitarianorganization,sufferterragovernment) ).
+
+%--------------------------------------------------------------------------

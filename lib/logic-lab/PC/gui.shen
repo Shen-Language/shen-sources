@@ -1,0 +1,17 @@
+(widget .hyp -text "hyp" -command (freeze (fn hyp)))
+(widget .vl -text "vL" -command (freeze (fn vl)))
+(widget .vr1 -text "vR1" -command (freeze (fn vr1)))
+(widget .vr2 -text "vR2" -command (freeze (fn vr2)))
+(widget .andr -text "&R" -command (freeze (fn &r)))
+(widget .andl -text "&L" -command (freeze (fn &l)))
+(widget .impr -text "=>R" -command (freeze (fn =>r)))
+(widget .impl -text "=>L" -command (freeze (fn =>l)))
+(widget .negr -text "~R" -command (freeze (fn ~r)))
+(widget .negl -text "~L" -command (freeze (fn ~l)))
+(widget .equivr -text "<=>R" -command (freeze (fn <=>r)))
+(widget .equivl -text "<=>L" -command (freeze (fn <=>l)))
+(widget .exp -text "exp" -command (freeze (fn exp)))
+(widget .read -text "reader" -command (freeze (do (pr "> ")(input))))
+
+(grid [[.hyp .vl .vr1 .vr2 .andr .andl .impr]
+       [.impl .negr .negl .equivr .equivl .expr .read]])

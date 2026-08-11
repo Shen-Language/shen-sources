@@ -1,0 +1,549 @@
+*****************************************************************
+YQL from equivalential calculus
+
+(define mp
+  {--> prop}
+  -> [all x [all y [[[p [e x y]] & [p x]] => [p y]]]])       
+
+(define yql
+  {--> prop}
+   -> [all x [all y [all z [p [e [e x y] [e [e z y] [e x z]]]]]]])
+   
+(define ec   
+  {--> prop}
+   -> [[[p [e x x]] & [p [e [e x y] [e y x]]]] 
+                               & [p [e [e x y] [e [e y z] [e x z]]]]]) 
+                               
+(kb-> [(mp) (yql)])
+
+(<-kb (ec))
+run time: 1.234375 secs
+4144451 inferences, equality = false
+depth = 13, complexity = -1, timeout = 60 secs
+true         
+*****************************************************************                          
+   
+Step 1
+
+? (((p (e x x)) & (p (e (e x y) (e y x)))) & (p (e (e x y) (e (e y z) (e x z)))))
+
+
+> revsk
+=============================
+Step 2
+
+? (((p (e x x)) & (p (e (e x y) (e y x)))) & (p (e (e x y) (e (e y z) (e x z)))))
+
+
+> &r
+|=============================
+|Step 3
+|
+|? ((p (e x x)) & (p (e (e x y) (e y x))))
+|
+|
+|> &r
+||=============================
+||Step 4
+||
+||? (p (e x x))
+||
+||
+||> hypdisj
+||=============================
+||Step 5
+||
+||? (p (e x x))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 6
+|||
+|||? (p (e Var332 (e x x)))
+|||
+|||
+|||> ((p X) <-- (p (e Y X)) (p Y))
+||||=============================
+||||Step 7
+||||
+||||? (p (e Var335 (e Var332 (e x x))))
+||||
+||||
+||||> ((p X) <-- (p (e Y X)) (p Y))
+|||||=============================
+|||||Step 8
+|||||
+|||||? (p (e (e Var332 Var344) (e (e (e x x) Var344) (e Var332 (e x x)))))
+|||||
+|||||
+|||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||||=============================
+||||Step 9
+||||
+||||? (p (e Var332 Var344))
+||||
+||||
+||||> ((p X) <-- (p (e Y X)) (p Y))
+|||||=============================
+|||||Step 10
+|||||
+|||||? (p (e (e Var354 Var353) (e (e Var355 Var353) (e Var354 Var355))))
+|||||
+|||||
+|||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||||=============================
+||||Step 11
+||||
+||||? (p (e (e Var362 Var361) (e (e Var363 Var361) (e Var362 Var363))))
+||||
+||||
+||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|||=============================
+|||Step 12
+|||
+|||? (p (e (e x x) (e (e Var367 x) (e x Var367))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 13
+||
+||? (p (e (e x x) (e (e Var363 x) (e x Var363))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 14
+|
+|? (p (e (e x y) (e y x)))
+|
+|
+|> hypdisj
+|=============================
+|Step 15
+|
+|? (p (e (e x y) (e y x)))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 16
+||
+||? (p (e (e y y) (e (e x y) (e y x))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 17
+|
+|? (p (e y y))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 18
+||
+||? (p (e Var383 (e y y)))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 19
+|||
+|||? (p (e Var386 (e Var383 (e y y))))
+|||
+|||
+|||> ((p X) <-- (p (e Y X)) (p Y))
+||||=============================
+||||Step 20
+||||
+||||? (p (e (e Var383 Var395) (e (e (e y y) Var395) (e Var383 (e y y)))))
+||||
+||||
+||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|||=============================
+|||Step 21
+|||
+|||? (p (e Var383 Var395))
+|||
+|||
+|||> ((p X) <-- (p (e Y X)) (p Y))
+||||=============================
+||||Step 22
+||||
+||||? (p (e (e Var405 Var404) (e (e Var406 Var404) (e Var405 Var406))))
+||||
+||||
+||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|||=============================
+|||Step 23
+|||
+|||? (p (e (e Var413 Var412) (e (e Var414 Var412) (e Var413 Var414))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 24
+||
+||? (p (e (e y y) (e (e Var418 y) (e y Var418))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 25
+|
+|? (p (e (e y y) (e (e Var414 y) (e y Var414))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 26
+
+? (p (e (e x y) (e (e y z) (e x z))))
+
+
+> hypdisj
+=============================
+Step 27
+
+? (p (e (e x y) (e (e y z) (e x z))))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 28
+|
+|? (p (e Var427 (e (e x y) (e (e y z) (e x z)))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 29
+||
+||? (p (e (e (e x y) Var436) (e (e (e (e y z) (e x z)) Var436) (e (e x y) (e (e y z) (e x z))))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 30
+|
+|? (p (e (e x y) (e (e Var442 y) (e x Var442))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 31
+
+? (p (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442))))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 32
+|
+|? (p (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 33
+||
+||? (p (e Var448 (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442))))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 34
+|||
+|||? (p (e Var451 (e Var448 (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))))))
+|||
+|||
+|||> ((p X) <-- (p (e Y X)) (p Y))
+||||=============================
+||||Step 35
+||||
+||||? (p (e (e Var448 Var460) (e (e (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))) Var460) (e Var448 (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442))))))))
+||||
+||||
+||||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|||=============================
+|||Step 36
+|||
+|||? (p (e (e Var467 Var466) (e (e Var468 Var466) (e Var467 Var468))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 37
+||
+||? (p (e (e Var445 (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))) (e (e Var468 Var466) (e Var467 Var468))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 38
+|||
+|||? (p (e (e (e Var468 Var466) (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))) (e (e (e Var467 Var468) (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))) (e (e Var468 Var466) (e Var467 Var468)))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 39
+||
+||? (p (e (e Var468 Var466) (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442)))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 40
+|||
+|||? (p (e (e (e (e y z) (e x z)) Var466) (e (e (e (e Var442 y) (e x Var442)) Var466) (e (e (e y z) (e x z)) (e (e Var442 y) (e x Var442))))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 41
+||
+||? (p (e (e (e y z) (e x z)) (e (e Var488 (e x z)) (e (e y z) Var488))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 42
+|
+|? (p (e Var467 (e (e Var488 (e x z)) (e (e y z) Var488))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 43
+||
+||? (p (e Var491 (e Var467 (e (e Var488 (e x z)) (e (e y z) Var488)))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 44
+|||
+|||? (p (e (e Var467 Var500) (e (e (e (e Var488 (e x z)) (e (e y z) Var488)) Var500) (e Var467 (e (e Var488 (e x z)) (e (e y z) Var488))))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 45
+||
+||? (p (e (e Var507 Var506) (e (e Var508 Var506) (e Var507 Var508))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 46
+|
+|? (p (e (e (e Var488 (e x z)) (e (e y z) Var488)) (e (e Var508 Var506) (e Var507 Var508))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 47
+||
+||? (p (e (e (e (e x z) Var506) (e (e y z) Var507)) (e (e (e Var507 (e x z)) (e (e y z) Var507)) (e (e (e x z) Var506) (e Var507 (e x z))))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 48
+|
+|? (p (e (e (e x z) Var506) (e (e y z) Var507)))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 49
+||
+||? (p (e (e (e y z) Var506) (e (e (e x z) Var506) (e (e y z) (e x z)))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 50
+|
+|? (p (e (e y z) (e (e Var528 z) (e y Var528))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 51
+
+? (p (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 52
+|
+|? (p (e Var531 (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442)))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 53
+||
+||? (p (e Var534 (e Var531 (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 54
+|||
+|||? (p (e (e Var531 Var543) (e (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) Var543) (e Var531 (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442)))))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 55
+||
+||? (p (e (e Var550 Var549) (e (e Var551 Var549) (e Var550 Var551))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 56
+|
+|? (p (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) (e (e Var551 Var549) (e Var550 Var551))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 57
+||
+||? (p (e Var554 (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) (e (e Var551 Var549) (e Var550 Var551)))))
+||
+||
+||> ((p X) <-- (p (e Y X)) (p Y))
+|||=============================
+|||Step 58
+|||
+|||? (p (e (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) Var563) (e (e (e (e Var551 Var549) (e Var550 Var551)) Var563) (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) (e (e Var551 Var549) (e Var550 Var551))))))
+|||
+|||
+|||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+||=============================
+||Step 59
+||
+||? (p (e (e (e (e x z) (e (e Var528 z) (e y Var528))) (e (e Var442 y) (e x Var442))) (e (e Var569 (e (e Var442 y) (e x Var442))) (e (e (e x z) (e (e Var528 z) (e y Var528))) Var569))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 60
+|
+|? (p (e (e (e Var551 Var549) (e Var550 Var551)) (e (e Var569 (e (e Var442 y) (e x Var442))) (e (e (e x z) (e (e Var528 z) (e y Var528))) Var569))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 61
+||
+||? (p (e (e (e Var569 (e (e Var442 y) (e x Var442))) (e Var550 (e (e x z) (e (e Var528 z) (e y Var528))))) (e (e (e (e (e x z) (e (e Var528 z) (e y Var528))) Var569) (e Var550 (e (e x z) (e (e Var528 z) (e y Var528))))) (e (e Var569 (e (e Var442 y) (e x Var442))) (e (e (e x z) (e (e Var528 z) (e y Var528))) Var569)))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 62
+|
+|? (p (e (e (e x z) (e (e Var442 y) (e x Var442))) (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) (e (e x z) (e (e Var528 z) (e y Var528))))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 63
+
+? (p (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) (e x z)))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 64
+|
+|? (p (e Var583 (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) (e x z))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 65
+||
+||? (p (e (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) Var592) (e (e (e x z) Var592) (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) (e x z)))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 66
+|
+|? (p (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) Var592))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 67
+||
+||? (p (e (e Var600 (e (e Var442 y) (e x Var442))) (e (e (e (e Var528 z) (e y Var528)) (e (e Var442 y) (e x Var442))) (e Var600 (e (e Var528 z) (e y Var528))))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 68
+|
+|? (p (e (e x y) (e (e Var442 y) (e x Var442))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 69
+
+? (p (e (e x z) (e (e x y) (e (e Var528 z) (e y Var528)))))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 70
+|
+|? (p (e Var608 (e (e x z) (e (e x y) (e (e Var528 z) (e y Var528))))))
+|
+|
+|> ((p X) <-- (p (e Y X)) (p Y))
+||=============================
+||Step 71
+||
+||? (p (e (e (e x z) Var617) (e (e (e (e x y) (e (e Var528 z) (e y Var528))) Var617) (e (e x z) (e (e x y) (e (e Var528 z) (e y Var528)))))))
+||
+||
+||> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+|=============================
+|Step 72
+|
+|? (p (e (e x z) (e (e Var623 z) (e x Var623))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 73
+
+? (p (e (e (e x y) (e (e Var528 z) (e y Var528))) (e (e Var623 z) (e x Var623))))
+
+
+> ((p X) <-- (p (e Y X)) (p Y))
+|=============================
+|Step 74
+|
+|? (p (e (e (e y z) (e (e Var528 z) (e y Var528))) (e (e (e x y) (e (e Var528 z) (e y Var528))) (e (e y z) (e x y)))))
+|
+|
+|> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)
+=============================
+Step 75
+
+? (p (e (e y z) (e (e Var528 z) (e y Var528))))
+
+
+> ((p (e (e Y X) (e (e Z X) (e Y Z)))) <--)

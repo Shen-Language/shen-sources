@@ -1,0 +1,650 @@
+**********************************************************
+A first-order Tarski-style formalisation of the semantics of natural language.
+
+If you give a Tarski-style truth-conditions for a language L and one for 
+a language L* you end up with T-sentences of the form |- S is true-in-L 
+iff p and S* is true-in-L* iff p.   If you join them together you have 
+a model of translation;  |- S is true-in-L iff S* is true-in-L*.
+
+Here are the axioms for translating a bit of French to English.  
+
+(define axiomsEng
+  {--> (list prop)}
+  -> [[all x [[sat x "bald"] <=> [bald x]]]
+      [all x [all y [all z [[[name x] & [[copEng y] & [adjEng z]]]
+        <=> [[istrueEng [cn x [cn y z]]] <=> [sat [den x] z]]]]]]
+      [all p [all q [[istrueEng [cn p [cn "and" q]]] 
+            <=> [[istrueEng p] & [istrueEng q]]]]]
+      [[den "Tom"] = tom]
+      [[den "Jerry"] = jerry]
+      [name "Tom"]
+      [name "Jerry"]
+      [adjEng "bald"]order THORN to compile this theory.
+      [copEng "is"]])
+
+(define axiomsFr
+  {--> (list prop)}
+  -> [[all x [[sat x "chauve"] <=> [bald x]]]
+      [all x [all y [all z [[[name x] & [[copFr y] & [adjFr z]]]
+        <=> [[istrueFr [cn x [cn y z]]] <=> [sat [den x] z]]]]]]
+      [all p [all q [[istrueFr [cn p [cn "et" q]]] 
+                 <=> [[istrueFr p] & [istrueFr q]]]]]  
+      [adjFr "chauve"]
+      [copFr "est"]])
+     
+(kb-> (append (axiomsEng) (axiomsFr)))      \\ order THORN to compile
+
+Now for the challenge
+
+(thorn.complex 21)  \\ bound the complexity of the goals
+(thorn.depth 20)
+
+\\  |- "Tom is bald and Jerry is bald" is true in English 
+\\      iff  "Tom est chauve et Jerry  est chauve " is true in French
+
+(<-kb [[istrueEng [cn [cn "Tom" [cn "is" "bald"]]
+            [cn "and" [cn "Jerry" [cn "is" "bald"]]]]]
+     <=> [istrueFr [cn [cn "Tom" [cn "est" "chauve"]]
+              [cn "et" [cn "Jerry" [cn "est" "chauve"]]]]]]) 
+
+run time: 3.828125 secs
+13553194 inferences, equality = true
+depth = 20, complexity = 21, timeout = 60 secs
+true
+
+****************************************************************************
+Step 1
+
+? ((istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))) <=> (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+
+
+> revsk
+=============================
+Step 2
+
+? (((~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))) v (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))) & ((~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))) v (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))))
+
+
+> &r
+|=============================
+|Step 3
+|
+|? ((~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))) v (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|
+|
+|> hypdisj
+|=============================
+|Step 4
+|
+|? (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|1. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((istrueFr (cn X (cn "et" Y))) <-- (istrueFr X) (istrueFr Y))
+||=============================
+||Step 5
+||
+||? (istrueFr (cn "Tom" (cn "est" "chauve")))
+||
+||1. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||2. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((istrueFr (cn Y (cn X Z))) <-- (name Y) (copFr X) (adjFr Z) (sat (den Y) Z))
+|||||=============================
+|||||Step 6
+|||||
+|||||? (name "Tom")
+|||||
+|||||1. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+|||||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||||
+|||||> ((name "Tom") <--)
+||||=============================
+||||Step 7
+||||
+||||? (copFr "est")
+||||
+||||1. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||||
+||||> ((copFr "est") <--)
+|||=============================
+|||Step 8
+|||
+|||? (adjFr "chauve")
+|||
+|||1. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+|||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||
+|||> ((adjFr "chauve") <--)
+||=============================
+||Step 9
+||
+||? (sat (den "Tom") "chauve")
+||
+||1. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((sat X "chauve") <-- (bald X))
+||=============================
+||Step 10
+||
+||? (bald (den "Tom"))
+||
+||1. (~ (sat (den "Tom") "chauve"))
+||2. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||3. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||4. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((bald X) <-- (sat X "bald"))
+||=============================
+||Step 11
+||
+||? (sat (den "Tom") "bald")
+||
+||1. (~ (bald (den "Tom")))
+||2. (~ (sat (den "Tom") "chauve"))
+||3. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||4. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||5. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((sat (den X) Z) <-- (name X) (copEng Y) (adjEng Z) (istrueEng (cn X (cn Y Z))))
+|||||=============================
+|||||Step 12
+|||||
+|||||? (name "Tom")
+|||||
+|||||1. (~ (sat (den "Tom") "bald"))
+|||||2. (~ (bald (den "Tom")))
+|||||3. (~ (sat (den "Tom") "chauve"))
+|||||4. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+|||||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||||
+|||||> ((name "Tom") <--)
+||||=============================
+||||Step 13
+||||
+||||? (copEng "is")
+||||
+||||1. (~ (sat (den "Tom") "bald"))
+||||2. (~ (bald (den "Tom")))
+||||3. (~ (sat (den "Tom") "chauve"))
+||||4. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||||
+||||> ((copEng "is") <--)
+|||=============================
+|||Step 14
+|||
+|||? (adjEng "bald")
+|||
+|||1. (~ (sat (den "Tom") "bald"))
+|||2. (~ (bald (den "Tom")))
+|||3. (~ (sat (den "Tom") "chauve"))
+|||4. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+|||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||
+|||> ((adjEng "bald") <--)
+||=============================
+||Step 15
+||
+||? (istrueEng (cn "Tom" (cn "is" "bald")))
+||
+||1. (~ (sat (den "Tom") "bald"))
+||2. (~ (bald (den "Tom")))
+||3. (~ (sat (den "Tom") "chauve"))
+||4. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((istrueEng X) <-- (istrueEng (cn X (cn "and" Y))))
+||=============================
+||Step 16
+||
+||? (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" Var155)))
+||
+||1. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+||2. (~ (sat (den "Tom") "bald"))
+||3. (~ (bald (den "Tom")))
+||4. (~ (sat (den "Tom") "chauve"))
+||5. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+||6. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||7. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> hyp
+|=============================
+|Step 17
+|
+|? (istrueFr (cn "Jerry" (cn "est" "chauve")))
+|
+|1. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|2. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((istrueFr (cn Y (cn X Z))) <-- (name Y) (copFr X) (adjFr Z) (sat (den Y) Z))
+||||=============================
+||||Step 18
+||||
+||||? (name "Jerry")
+||||
+||||1. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+||||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||||
+||||> ((name "Jerry") <--)
+|||=============================
+|||Step 19
+|||
+|||? (copFr "est")
+|||
+|||1. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||
+|||> ((copFr "est") <--)
+||=============================
+||Step 20
+||
+||? (adjFr "chauve")
+||
+||1. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+||2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((adjFr "chauve") <--)
+|=============================
+|Step 21
+|
+|? (sat (den "Jerry") "chauve")
+|
+|1. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|2. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|3. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((sat X "chauve") <-- (bald X))
+|=============================
+|Step 22
+|
+|? (bald (den "Jerry"))
+|
+|1. (~ (sat (den "Jerry") "chauve"))
+|2. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|3. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|4. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((bald X) <-- (sat X "bald"))
+|=============================
+|Step 23
+|
+|? (sat (den "Jerry") "bald")
+|
+|1. (~ (bald (den "Jerry")))
+|2. (~ (sat (den "Jerry") "chauve"))
+|3. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|4. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|5. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((sat (den X) Z) <-- (name X) (copEng Y) (adjEng Z) (istrueEng (cn X (cn Y Z))))
+||||=============================
+||||Step 24
+||||
+||||? (name "Jerry")
+||||
+||||1. (~ (sat (den "Jerry") "bald"))
+||||2. (~ (bald (den "Jerry")))
+||||3. (~ (sat (den "Jerry") "chauve"))
+||||4. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+||||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||||
+||||> ((name "Jerry") <--)
+|||=============================
+|||Step 25
+|||
+|||? (copEng "is")
+|||
+|||1. (~ (sat (den "Jerry") "bald"))
+|||2. (~ (bald (den "Jerry")))
+|||3. (~ (sat (den "Jerry") "chauve"))
+|||4. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|||
+|||> ((copEng "is") <--)
+||=============================
+||Step 26
+||
+||? (adjEng "bald")
+||
+||1. (~ (sat (den "Jerry") "bald"))
+||2. (~ (bald (den "Jerry")))
+||3. (~ (sat (den "Jerry") "chauve"))
+||4. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+||5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+||6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+||
+||> ((adjEng "bald") <--)
+|=============================
+|Step 27
+|
+|? (istrueEng (cn "Jerry" (cn "is" "bald")))
+|
+|1. (~ (sat (den "Jerry") "bald"))
+|2. (~ (bald (den "Jerry")))
+|3. (~ (sat (den "Jerry") "chauve"))
+|4. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|5. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|6. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> ((istrueEng Y) <-- (istrueEng (cn X (cn "and" Y))))
+|=============================
+|Step 28
+|
+|? (istrueEng (cn Var180 (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|1. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+|2. (~ (sat (den "Jerry") "bald"))
+|3. (~ (bald (den "Jerry")))
+|4. (~ (sat (den "Jerry") "chauve"))
+|5. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+|6. (~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve"))))))
+|7. (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+|
+|> hyp
+=============================
+Step 29
+
+? ((~ (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))) v (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+
+
+> hypdisj
+=============================
+Step 30
+
+? (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald")))))
+
+1. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((istrueEng (cn X (cn "and" Y))) <-- (istrueEng X) (istrueEng Y))
+|=============================
+|Step 31
+|
+|? (istrueEng (cn "Tom" (cn "is" "bald")))
+|
+|1. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|2. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((istrueEng (cn Y (cn X Z))) <-- (name Y) (copEng X) (adjEng Z) (sat (den Y) Z))
+||||=============================
+||||Step 32
+||||
+||||? (name "Tom")
+||||
+||||1. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+||||2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||||3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||||
+||||> ((name "Tom") <--)
+|||=============================
+|||Step 33
+|||
+|||? (copEng "is")
+|||
+|||1. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|||2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|||3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|||
+|||> ((copEng "is") <--)
+||=============================
+||Step 34
+||
+||? (adjEng "bald")
+||
+||1. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+||2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||
+||> ((adjEng "bald") <--)
+|=============================
+|Step 35
+|
+|? (sat (den "Tom") "bald")
+|
+|1. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((sat X "bald") <-- (bald X))
+|=============================
+|Step 36
+|
+|? (bald (den "Tom"))
+|
+|1. (~ (sat (den "Tom") "bald"))
+|2. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|3. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|4. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((bald X) <-- (sat X "chauve"))
+|=============================
+|Step 37
+|
+|? (sat (den "Tom") "chauve")
+|
+|1. (~ (bald (den "Tom")))
+|2. (~ (sat (den "Tom") "bald"))
+|3. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|4. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|5. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((sat (den X) Z) <-- (name X) (copFr Y) (adjFr Z) (istrueFr (cn X (cn Y Z))))
+||||=============================
+||||Step 38
+||||
+||||? (name "Tom")
+||||
+||||1. (~ (sat (den "Tom") "chauve"))
+||||2. (~ (bald (den "Tom")))
+||||3. (~ (sat (den "Tom") "bald"))
+||||4. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+||||5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||||6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||||
+||||> ((name "Tom") <--)
+|||=============================
+|||Step 39
+|||
+|||? (copFr "est")
+|||
+|||1. (~ (sat (den "Tom") "chauve"))
+|||2. (~ (bald (den "Tom")))
+|||3. (~ (sat (den "Tom") "bald"))
+|||4. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|||5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|||6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|||
+|||> ((copFr "est") <--)
+||=============================
+||Step 40
+||
+||? (adjFr "chauve")
+||
+||1. (~ (sat (den "Tom") "chauve"))
+||2. (~ (bald (den "Tom")))
+||3. (~ (sat (den "Tom") "bald"))
+||4. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+||5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||
+||> ((adjFr "chauve") <--)
+|=============================
+|Step 41
+|
+|? (istrueFr (cn "Tom" (cn "est" "chauve")))
+|
+|1. (~ (sat (den "Tom") "chauve"))
+|2. (~ (bald (den "Tom")))
+|3. (~ (sat (den "Tom") "bald"))
+|4. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((istrueFr X) <-- (istrueFr (cn X (cn "et" Y))))
+|=============================
+|Step 42
+|
+|? (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" Var211)))
+|
+|1. (~ (istrueFr (cn "Tom" (cn "est" "chauve"))))
+|2. (~ (sat (den "Tom") "chauve"))
+|3. (~ (bald (den "Tom")))
+|4. (~ (sat (den "Tom") "bald"))
+|5. (~ (istrueEng (cn "Tom" (cn "is" "bald"))))
+|6. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|7. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> hyp
+=============================
+Step 43
+
+? (istrueEng (cn "Jerry" (cn "is" "bald")))
+
+1. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+2. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((istrueEng (cn Y (cn X Z))) <-- (name Y) (copEng X) (adjEng Z) (sat (den Y) Z))
+|||=============================
+|||Step 44
+|||
+|||? (name "Jerry")
+|||
+|||1. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+|||2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|||3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|||
+|||> ((name "Jerry") <--)
+||=============================
+||Step 45
+||
+||? (copEng "is")
+||
+||1. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+||2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||
+||> ((copEng "is") <--)
+|=============================
+|Step 46
+|
+|? (adjEng "bald")
+|
+|1. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+|2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((adjEng "bald") <--)
+=============================
+Step 47
+
+? (sat (den "Jerry") "bald")
+
+1. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+2. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+3. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((sat X "bald") <-- (bald X))
+=============================
+Step 48
+
+? (bald (den "Jerry"))
+
+1. (~ (sat (den "Jerry") "bald"))
+2. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+3. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+4. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((bald X) <-- (sat X "chauve"))
+=============================
+Step 49
+
+? (sat (den "Jerry") "chauve")
+
+1. (~ (bald (den "Jerry")))
+2. (~ (sat (den "Jerry") "bald"))
+3. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+4. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+5. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((sat (den X) Z) <-- (name X) (copFr Y) (adjFr Z) (istrueFr (cn X (cn Y Z))))
+|||=============================
+|||Step 50
+|||
+|||? (name "Jerry")
+|||
+|||1. (~ (sat (den "Jerry") "chauve"))
+|||2. (~ (bald (den "Jerry")))
+|||3. (~ (sat (den "Jerry") "bald"))
+|||4. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+|||5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|||6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|||
+|||> ((name "Jerry") <--)
+||=============================
+||Step 51
+||
+||? (copFr "est")
+||
+||1. (~ (sat (den "Jerry") "chauve"))
+||2. (~ (bald (den "Jerry")))
+||3. (~ (sat (den "Jerry") "bald"))
+||4. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+||5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+||6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+||
+||> ((copFr "est") <--)
+|=============================
+|Step 52
+|
+|? (adjFr "chauve")
+|
+|1. (~ (sat (den "Jerry") "chauve"))
+|2. (~ (bald (den "Jerry")))
+|3. (~ (sat (den "Jerry") "bald"))
+|4. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+|5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+|6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+|
+|> ((adjFr "chauve") <--)
+=============================
+Step 53
+
+? (istrueFr (cn "Jerry" (cn "est" "chauve")))
+
+1. (~ (sat (den "Jerry") "chauve"))
+2. (~ (bald (den "Jerry")))
+3. (~ (sat (den "Jerry") "bald"))
+4. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+5. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+6. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> ((istrueFr Y) <-- (istrueFr (cn X (cn "et" Y))))
+=============================
+Step 54
+
+? (istrueFr (cn Var236 (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+1. (~ (istrueFr (cn "Jerry" (cn "est" "chauve"))))
+2. (~ (sat (den "Jerry") "chauve"))
+3. (~ (bald (den "Jerry")))
+4. (~ (sat (den "Jerry") "bald"))
+5. (~ (istrueEng (cn "Jerry" (cn "is" "bald"))))
+6. (~ (istrueEng (cn (cn "Tom" (cn "is" "bald")) (cn "and" (cn "Jerry" (cn "is" "bald"))))))
+7. (istrueFr (cn (cn "Tom" (cn "est" "chauve")) (cn "et" (cn "Jerry" (cn "est" "chauve")))))
+
+> hyp

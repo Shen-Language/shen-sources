@@ -1,0 +1,8 @@
+[What? : [[p v q] --> [q v p]]]
+
+[]
+
+[-->r vl -->r vr2 hyp -->r vr1 hyp env env env env env env env env]
+
+["-->r" "vl" "-->r" "vr2" "hyp" "-->r" "vr1" "hyp" "env" "env" "env" "env" "env" "env" "env" "env"]
+

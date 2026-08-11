@@ -1,0 +1,108 @@
+****************************************************************
+From group theory
+
+(define group
+  {--> symbol}
+-> (kb-> 
+      [[all x [all y [all z [[+ x [+ y z]] = [+ [+ x y] z]]]]]
+       [all x [[+ e x] = x]]
+       [all x [[+ x e] =  x]]
+       [all x [[+ x [inv x]] = e]]]))
+       
+(group) 
+
+(<-kb [all x [[inv [inv x]] = x]])
+run time: 0.234375 secs
+312375 inferences, equality = true
+depth = 8, complexity = 16, timeout = 60 secs
+true
+
+(define group
+  {--> symbol}
+-> (kb-> 
+      [[all x [all y [all z [[+ x [+ y z]] = [+ [+ x y] z]]]]]
+       [all x [[+ e x] = x]]
+       [all x [[+ x e] =  x]]
+       [all x [[+ x [inv x]] = e]]
+       [all x [[inv [inv x]] = x]]]))
+       
+(group) 
+(<-kb [all x [[+ [inv x] x] = e]])
+
+****************************************************************
+Step 1
+
+? (all x ((inv (inv x)) = x))
+
+
+> revsk
+=============================
+Step 2
+
+? ((inv (inv c22739)) = c22739)
+
+
+> hypdisj
+=============================
+Step 3
+
+? ((inv (inv c22739)) = c22739)
+
+
+> rewriteB (inv (inv c22739))
+|=============================
+|Step 4
+|
+|? ((+ e (inv (inv c22739))) = (inv (inv c22739)))
+|
+|
+|> (((+ e X) = X) <--)
+=============================
+Step 5
+
+? ((+ e (inv (inv c22739))) = c22739)
+
+
+> rewriteB e
+|=============================
+|Step 6
+|
+|? ((+ Var77 (inv Var77)) = e)
+|
+|
+|> (((+ X (inv X)) = e) <--)
+=============================
+Step 7
+
+? ((+ (+ c22739 (inv c22739)) (inv (inv c22739))) = c22739)
+
+
+> rewriteB (+ (+ c22739 (inv c22739)) (inv (inv c22739)))
+|=============================
+|Step 8
+|
+|? ((+ c22739 (+ (inv c22739) (inv (inv c22739)))) = (+ (+ c22739 (inv c22739)) (inv (inv c22739))))
+|
+|
+|> (((+ X (+ Y Z)) = (+ (+ X Y) Z)) <--)
+=============================
+Step 9
+
+? ((+ c22739 (+ (inv c22739) (inv (inv c22739)))) = c22739)
+
+
+> rewriteA (+ (inv c22739) (inv (inv c22739)))
+|=============================
+|Step 10
+|
+|? ((+ (inv c22739) (inv (inv c22739))) = e)
+|
+|
+|> (((+ X (inv X)) = e) <--)
+=============================
+Step 11
+
+? ((+ c22739 e) = c22739)
+
+
+> (((+ X e) = X) <--)

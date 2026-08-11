@@ -1,0 +1,157 @@
+%TPTP Axioms File: NUM005+1.ax
+%------------------------------------------------------------------------------
+% File     : NUM005+1 : TPTP v9.0.0. Released v3.1.0.
+% Domain   : Number Theory
+% Axioms   : Less in RDN format
+% Version  : Especial.
+% English  : Impements a "human style" less using RDN format.
+
+% Refs     :
+% Source   : [TPTP]
+% Names    :
+
+% Status   : Satisfiable
+% Syntax   : Number of formulae    :   30 (  18 unt;   0 def)
+%            Number of atoms       :   52 (   2 equ)
+%            Maximal formula atoms :    4 (   1 avg)
+%            Number of connectives :   24 (   2   ~;   1   |;   9   &)
+%                                         (   2 <=>;  10  =>;   0  <=;   0 <~>)
+%            Maximal formula depth :    8 (   3 avg)
+%            Maximal term depth    :    3 (   1 avg)
+%            Number of predicates  :    8 (   7 usr;   0 prp; 1-3 aty)
+%            Number of functors    :   14 (  14 usr;  10 con; 0-2 aty)
+%            Number of variables   :   35 (  35   !;   0   ?)
+% SPC      : 
+
+% Comments : Requires NUM005+0.ax
+%------------------------------------------------------------------------------
+fof(rdn_digit1,axiom,
+    rdn_non_zero_digit(rdnn(n1)) ).
+
+fof(rdn_digit2,axiom,
+    rdn_non_zero_digit(rdnn(n2)) ).
+
+fof(rdn_digit3,axiom,
+    rdn_non_zero_digit(rdnn(n3)) ).
+
+fof(rdn_digit4,axiom,
+    rdn_non_zero_digit(rdnn(n4)) ).
+
+fof(rdn_digit5,axiom,
+    rdn_non_zero_digit(rdnn(n5)) ).
+
+fof(rdn_digit6,axiom,
+    rdn_non_zero_digit(rdnn(n6)) ).
+
+fof(rdn_digit7,axiom,
+    rdn_non_zero_digit(rdnn(n7)) ).
+
+fof(rdn_digit8,axiom,
+    rdn_non_zero_digit(rdnn(n8)) ).
+
+fof(rdn_digit9,axiom,
+    rdn_non_zero_digit(rdnn(n9)) ).
+
+fof(rdn_positive_less01,axiom,
+    rdn_positive_less(rdnn(n0),rdnn(n1)) ).
+
+fof(rdn_positive_less12,axiom,
+    rdn_positive_less(rdnn(n1),rdnn(n2)) ).
+
+fof(rdn_positive_less23,axiom,
+    rdn_positive_less(rdnn(n2),rdnn(n3)) ).
+
+fof(rdn_positive_less34,axiom,
+    rdn_positive_less(rdnn(n3),rdnn(n4)) ).
+
+fof(rdn_positive_less45,axiom,
+    rdn_positive_less(rdnn(n4),rdnn(n5)) ).
+
+fof(rdn_positive_less56,axiom,
+    rdn_positive_less(rdnn(n5),rdnn(n6)) ).
+
+fof(rdn_positive_less67,axiom,
+    rdn_positive_less(rdnn(n6),rdnn(n7)) ).
+
+fof(rdn_positive_less78,axiom,
+    rdn_positive_less(rdnn(n7),rdnn(n8)) ).
+
+fof(rdn_positive_less89,axiom,
+    rdn_positive_less(rdnn(n8),rdnn(n9)) ).
+
+fof(rdn_positive_less_transitivity,axiom,
+    ! [X,Y,Z] :
+      ( ( rdn_positive_less(rdnn(X),rdnn(Y))
+        & rdn_positive_less(rdnn(Y),rdnn(Z)) )
+     => rdn_positive_less(rdnn(X),rdnn(Z)) ) ).
+
+fof(rdn_positive_less_multi_digit_high,axiom,
+    ! [Ds,Os,Db,Ob] :
+      ( rdn_positive_less(Os,Ob)
+     => rdn_positive_less(rdn(rdnn(Ds),Os),rdn(rdnn(Db),Ob)) ) ).
+
+fof(rdn_positive_less_multi_digit_low,axiom,
+    ! [Ds,O,Db] :
+      ( ( rdn_positive_less(rdnn(Ds),rdnn(Db))
+        & rdn_non_zero(O) )
+     => rdn_positive_less(rdn(rdnn(Ds),O),rdn(rdnn(Db),O)) ) ).
+
+fof(rdn_extra_digits_positive_less,axiom,
+    ! [D,Db,Ob] :
+      ( rdn_non_zero(Ob)
+     => rdn_positive_less(rdnn(D),rdn(rdnn(Db),Ob)) ) ).
+
+fof(rdn_non_zero_by_digit,axiom,
+    ! [X] :
+      ( rdn_non_zero_digit(rdnn(X))
+     => rdn_non_zero(rdnn(X)) ) ).
+
+fof(rdn_non_zero_by_structure,axiom,
+    ! [D,O] :
+      ( rdn_non_zero(O)
+     => rdn_non_zero(rdn(rdnn(D),O)) ) ).
+
+fof(less_entry_point_pos_pos,axiom,
+    ! [X,Y,RDN_X,RDN_Y] :
+      ( ( rdn_translate(X,rdn_pos(RDN_X))
+        & rdn_translate(Y,rdn_pos(RDN_Y))
+        & rdn_positive_less(RDN_X,RDN_Y) )
+     => less(X,Y) ) ).
+
+fof(less_entry_point_neg_pos,axiom,
+    ! [X,Y,RDN_X,RDN_Y] :
+      ( ( rdn_translate(X,rdn_neg(RDN_X))
+        & rdn_translate(Y,rdn_pos(RDN_Y)) )
+     => less(X,Y) ) ).
+
+fof(less_entry_point_neg_neg,axiom,
+    ! [X,Y,RDN_X,RDN_Y] :
+      ( ( rdn_translate(X,rdn_neg(RDN_X))
+        & rdn_translate(Y,rdn_neg(RDN_Y))
+        & rdn_positive_less(RDN_Y,RDN_X) )
+     => less(X,Y) ) ).
+
+fof(less_property,axiom,
+    ! [X,Y] :
+      ( less(X,Y)
+    <=> ( ~ less(Y,X)
+        & Y != X ) ) ).
+
+%----Old axiom from the days of natural numbers
+%fof(less0,axiom,(
+%    ~ ( ? [X] : less(X,n0) )   )).
+
+fof(less_or_equal,axiom,
+    ! [X,Y] :
+      ( less_or_equal(X,Y)
+    <=> ( less(X,Y)
+        | X = Y ) ) ).
+
+%----Successive integers
+fof(less_successor,axiom,
+    ! [X,Y,Z] :
+      ( ( sum(X,n1,Y)
+        & less(Z,Y) )
+     => less_or_equal(Z,X) ) ).
+
+%------------------------------------------------------------------------------

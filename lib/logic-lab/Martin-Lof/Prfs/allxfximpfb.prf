@@ -1,0 +1,8 @@
+[What? : [[f b] --> [g b]]]
+
+[[a : [all x : A [[f x] --> [g x]]]] [b : A]]
+
+[(alll b) hyp hyp env env]
+
+["(alll b)" "hyp" "hyp" "env" "env"]
+

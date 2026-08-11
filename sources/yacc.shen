@@ -205,6 +205,7 @@
 
 (define ccons?
   [[_ | _] | _] -> true
+  [[] | _] -> true
   _ -> false)
 
 (define decons

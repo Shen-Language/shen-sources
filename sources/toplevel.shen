@@ -1,4 +1,4 @@
-\\           Copyright (c) 2010-2019, Mark Tarver
+\\           Copyright (c) 2010-2026, Mark Tarver
 
 \\                  All rights reserved.
 
