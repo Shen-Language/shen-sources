@@ -199,7 +199,18 @@
                               (is Sig A);)
 
 (define sigxrules
-  Def -> (compile (/. X (<sig*rules> X)) Def))
+  Def -> (let Sig+Rules (compile (/. X (<sig*rules> X)) Def)
+         (@p (fst Sig+Rules)
+             (map (fn unmark-rule-custom-patterns) (snd Sig+Rules)))))
+
+(define unmark-rule-custom-patterns
+  (@p Patterns Action)
+  -> (@p (map (fn unmark-custom-pattern) Patterns) Action))
+
+(define unmark-custom-pattern
+  [@p shen.custom-pattern Pattern] -> (unmark-custom-pattern (curry Pattern))
+  [X | Y] -> [(unmark-custom-pattern X) | (unmark-custom-pattern Y)]
+  X -> X)
 
 (defcc <sig*rules>
   F { <signature> } <rules*> := (let Rectified (rectify-type <signature>)

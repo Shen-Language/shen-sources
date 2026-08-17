@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 - The programmable-pattern-matching extension now publishes types for its
   handler registration API when initialised.
+- System S now typechecks the surface form of programmable patterns instead of
+  exposing their compiler-internal marker to datatype rules.
 
 ## [41.3] - 2026-08-10
 

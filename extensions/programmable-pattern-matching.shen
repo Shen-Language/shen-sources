@@ -23,12 +23,23 @@
 
 (define surface-pattern
   [cons Head Tail] -> [(surface-pattern Head) | (surface-pattern-tail Tail)]
-  X -> X)
+  Pattern -> (let Application (surface-application Pattern)
+               (if (= Application (fail))
+                   Pattern
+                   Application)))
 
 (define surface-pattern-tail
   [] -> []
   [cons Head Tail] -> [(surface-pattern Head) | (surface-pattern-tail Tail)]
   X -> X)
+
+(define surface-application
+  [[fn F] X] -> [F (surface-pattern X)]
+  [F X] -> (let Application (surface-application F)
+             (if (= Application (fail))
+                 (fail)
+                 (append Application [(surface-pattern X)])))
+  _ -> (fail))
 
 (define compile-pattern
   Patt Handlers OnFail
