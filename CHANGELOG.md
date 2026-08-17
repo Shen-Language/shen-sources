@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - System S now typechecks the surface form of programmable patterns instead of
   exposing their compiler-internal marker to datatype rules.
 
+### Fixed
+
+- `update-lambda-table` now stores callable lambda forms without duplicating
+  their function names and removes stale forms for zero or unknown arities.
+
 ## [41.3] - 2026-08-10
 
 ### Added

@@ -520,7 +520,9 @@
 (define update-lambda-table
   F Arity -> (let AssertArity (put F arity Arity)
                   LambdaEntry (lambda-entry F)
-                  Update (set-lambda-form-entry [F | LambdaEntry])
+                  Update (if (empty? LambdaEntry)
+                             (unput F lambda-form)
+                             (set-lambda-form-entry LambdaEntry))
                F))
 
 (define specialise
