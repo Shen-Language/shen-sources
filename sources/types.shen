@@ -13,7 +13,12 @@
 
 (defprolog variancy
   F Rectify <-- (system-S-h [fn F] A [])
-                (variants? F A Rectify);)
+                (variancy-signature F A Signature)
+                (variants? F Signature Rectify);)
+
+(defprolog variancy-signature
+  F A [--> A] <-- (when (= (arity F) 0)) !;
+  _ A A <-- ;)
 
 (defprolog variants?
   F A A <-- ;

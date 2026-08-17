@@ -1,5 +1,19 @@
 (maxinferences 1e7)
 
+(report "type declaration variancy"
+
+  (prolog? (shen.variancy-signature (receive version) (receive string) Signature)
+           (return Signature))
+  [--> string]
+
+  (prolog? (shen.variancy-signature (receive version) (receive string)
+                                     (receive [--> number])))
+  false
+
+  (prolog? (shen.variancy-signature (receive append) (receive [number --> number]) Signature)
+           (return Signature))
+  [number --> number])
+
 (report "cartesian product"
 
     (load "cartprod.shen") loaded
