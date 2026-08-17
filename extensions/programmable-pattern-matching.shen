@@ -65,7 +65,9 @@
                (reverse (pop-all SelectorStack))))))
 
 (define initialise
-  -> (do (set shen.*custom-pattern-compiler* (/. Arg OnFail (compile-pattern Arg (value *pattern-handlers*) OnFail)))
+  -> (do (declare register-handler [symbol --> symbol])
+         (declare unregister-handler [symbol --> symbol])
+         (set shen.*custom-pattern-compiler* (/. Arg OnFail (compile-pattern Arg (value *pattern-handlers*) OnFail)))
          (set shen.*custom-pattern-reducer* (/. Arg (reduce Arg (value *pattern-handlers*))))
          (set *pattern-handlers* [])
          (set *pattern-handlers-reg* [])

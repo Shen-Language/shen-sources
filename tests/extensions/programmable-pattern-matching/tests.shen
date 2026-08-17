@@ -2,6 +2,29 @@
 (load "tests/extensions/programmable-pattern-matching/code.shen")
 
 (extension-tests.assert-equal
+  "register-handler has a type"
+  (shen.typecheck
+    [shen.x.programmable-pattern-matching.register-handler ppm.two-handler]
+    symbol)
+  symbol)
+
+(extension-tests.assert-equal
+  "unregister-handler has a type"
+  (shen.typecheck
+    [shen.x.programmable-pattern-matching.unregister-handler ppm.two-handler]
+    symbol)
+  symbol)
+
+(extension-tests.assert-equal
+  "registration can be sequenced with do"
+  (shen.typecheck
+    [do
+      [shen.x.programmable-pattern-matching.register-handler ppm.two-handler]
+      ppm.two-handler]
+    symbol)
+  symbol)
+
+(extension-tests.assert-equal
   "simple custom pattern"
   (ppm.match-simple (@p 1 2))
   [1 2])

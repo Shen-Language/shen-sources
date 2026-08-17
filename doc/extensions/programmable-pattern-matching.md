@@ -58,12 +58,18 @@ Once a pattern handler function has been defined, it can be registered and enabl
 (shen.x.programmable-pattern-matching.register-handler tuple-pattern-handler)
 ```
 
+The function has type `symbol --> symbol` and returns the registered handler's
+name.
+
 A handler can be disabled by passing its name to the `shen.x.programmable-pattern-matching.unregister-handler` function:
 
 ```shen
 (shen.x.programmable-pattern-matching.unregister-handler cons-pattern-handler)
 (shen.x.programmable-pattern-matching.unregister-handler tuple-pattern-handler)
 ```
+
+This function also has type `symbol --> symbol` and returns the unregistered
+handler's name.
 
 ### Notes:
 

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- The programmable-pattern-matching extension now publishes types for its
+  handler registration API when initialised.
+
 ## [41.3] - 2026-08-10
 
 ### Added
