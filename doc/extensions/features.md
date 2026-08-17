@@ -17,12 +17,15 @@ have to call the initialization function `shen.x.features.initialise`
 with a list of symbols representing the features it provides.
 As a minimum, the list should contain at least one symbol
 that uniquely identifies the port. The return value is the previous
-list of features.
+list of features. Its type is `(list symbol) --> (list symbol)`.
 
 Shen/CL, in it's SBCL version for example could include these
 symbols: `[shen/cl shen/cl.sbcl]`, while the CLisp version would
 include these: `[shen/cl shen/cl.clisp]`.
 Shen/Scheme: `[shen/scheme shen/scheme.chez]`.
+
+The current list can be read with `shen.x.features.current`, which has type
+`--> (list symbol)`.
 
 In addition to this, it is a good idea to also include a symbol
 for the operating system:
@@ -34,7 +37,8 @@ for the operating system:
 Adding a new feature to the list (let's say, provided by a library),
 is done by calling the `shen.x.features.add` function. It takes
 a single input, a symbol representing the feature, and returns
-the list of features as it was before the new addition.
+the list of features as it was before the new addition. Its type is
+`symbol --> (list symbol)`.
 
 When none of the clause matches, an error will be raised. For
 the expansion of code when none of the clause matches, a `true`

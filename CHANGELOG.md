@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Changed
 
+- The feature-conditional-expansion extension now publishes types for its
+  initialisation and feature-list API.
 - The programmable-pattern-matching extension now publishes types for its
   handler registration API when initialised.
 - System S now typechecks the surface form of programmable patterns instead of
