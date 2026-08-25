@@ -344,7 +344,7 @@
   [[[and P Q] R] | Body] -> (let Pivot        (pivot-on P [[[and P Q] R] | Body] [])
                                  Before       (fst Pivot)
                               (if (bad-pivot? Before)
-                                  [if [and P Q] R (factor-recognisors Body)]
+                                  (append [if] (recursively-factor-selectors [and P Q] R) [(factor-recognisors Body)])
                                   (let After  (snd Pivot)
                                        Else   (factor-recognisors After)
                                        Go     (gensym (protect GoTo))
@@ -355,6 +355,17 @@
                                                    [thaw Go]]]
                                     (remove-indirection Code))))
   [[P R] | Body]         -> [if P R (factor-recognisors Body)])
+
+(define recursively-factor-selectors
+  [let X Y P] R -> (restore-local X Y (recursively-factor-selectors P R))
+  [and P Q] R   -> (restore-P P (recursively-factor-selectors (factor-selectors P Q) (factor-selectors P R)))
+  P R           -> [P R])
+
+(define restore-P
+  P [Q R] -> [[and P Q] R])
+
+(define restore-local
+  X Y [Q R] -> [[let X Y Q] R])
 
 (define bad-pivot?
   [_] -> true

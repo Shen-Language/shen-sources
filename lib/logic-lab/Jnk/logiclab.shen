@@ -1,0 +1,6 @@
+(cd "C:/Users/User/Google Drive/Shen Professional/Shen/S31/LogicLab")
+(tc -)
+(load "sequent.shen")
+(load "gui.shen")
+(tc +)
+(load "gpa.shen")

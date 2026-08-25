@@ -1,7 +1,6 @@
 (define append
   [] X -> X
-  [X | Y] Z -> [X | (append Y Z)]
-  _ _ -> (simple-error "attempt to append a non-list"))
+  [X | Y] Z -> [X | (append Y Z)])
   
 (define reverse
   [] -> []
@@ -10,8 +9,7 @@
 (define assoc
   _ [] -> []
   X [[X | Y] | _] -> [X | Y]
-  X [_ | Y] -> (assoc X Y)
-  _ _ -> (error "attempt to search a non-list with assoc~%"))
+  X [_ | Y] -> (assoc X Y))
 
 (define boolean?
   true -> true
@@ -20,8 +18,7 @@
 
 (define difference
   [] _ -> []
-  [X | Y] Z -> (if (element? X Z) (difference Y Z) [X | (difference Y Z)])
-  _ _ -> (error "attempt to find the difference with a non-list~%"))
+  [X | Y] Z -> (if (element? X Z) (difference Y Z) [X | (difference Y Z)]))
 
 (define do
   X Y -> Y)
@@ -29,8 +26,7 @@
 (define element?
   _ [] -> false
   X [X | _] -> true
-  X [_ | Z] -> (element? X Z)
-  _ _ -> (error "attempt to find an element in a non-list~%"))
+  X [_ | Z] -> (element? X Z))
 
 (define empty?
   [] -> true
@@ -45,8 +41,7 @@
 
 (define sum
   [] -> 0
-  [N | Ns] -> (add N (sum Ns))
-  _ -> (error "attempt to sum a non-list~%"))
+  [N | Ns] -> (add N (sum Ns)))
 
 (define head
   [X | _] -> X
@@ -58,13 +53,11 @@
 
 (define intersection
   [] _ -> []
-  [X | Y] Z -> (if (element? X Z) [X | (intersection Y Z)] (intersection Y Z))
-  _ _ -> (error "attempt to find the intersection with a non-list~%"))
+  [X | Y] Z -> (if (element? X Z) [X | (intersection Y Z)] (intersection Y Z)))
   
 (define union
   [] X -> X
-  [X | Y] Z -> (if (element? X Z) (union Y Z) [X | (union Y Z)])
-  _ _ -> (error "attempt to find the union with a non-list~%"))
+  [X | Y] Z -> (if (element? X Z) (union Y Z) [X | (union Y Z)]))
 
 (define subst
   X Y Y -> X
@@ -83,8 +76,7 @@
 
 (define length-h
   [] N -> N
-  X N -> (length-h (tl X) (add N 1))
-  _ _ -> (error "attempt to find the length of a non-list~%"))
+  X N -> (length-h (tl X) (add N 1)))
 
 (define occurrences
   X X -> 1
@@ -97,6 +89,5 @@
 
 (define nth 
   1 [X | _] -> X
-  N [_ | Y] -> (nth (- N 1) Y)
-  N X -> (error "nth applied to ~A, ~A~%" N X))
+  N [_ | Y] -> (nth (- N 1) Y))
   
