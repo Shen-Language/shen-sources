@@ -6,19 +6,37 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [42.0] - 2026-08-25
+
+### Added
+
+- The remaining experimental LogicLab/LKL sources and THORN planner material
+  distributed with Shen 42.0.
+
 ### Changed
 
+- The kernel now reports version 42.0 and incorporates Shen 42.0's recursive
+  selector factorisation.
 - The feature-conditional-expansion extension now publishes types for its
   initialisation and feature-list API.
 - The programmable-pattern-matching extension now publishes types for its
   handler registration API when initialised.
 - System S now typechecks the surface form of programmable patterns instead of
   exposing their compiler-internal marker to datatype rules.
+- LogicLab's reduced LKL system definitions now match Shen 42.0's behaviour for
+  invalid list inputs.
 
 ### Fixed
 
+- Variancy checking now constructs the correct signature for zero-place
+  functions.
 - `update-lambda-table` now stores callable lambda forms without duplicating
   their function names and removes stale forms for zero or unknown arities.
+
+### Removed
+
+- The unused `lib/stlib/Encrypt/tbos.txt`, which was not loaded by the library
+  installer or KLambda build.
 
 ## [41.3] - 2026-08-10
 
@@ -655,7 +673,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.0...HEAD
+[42.0]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...shen-42.0
 [41.3]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...shen-41.3
 [41.2]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...shen-41.2
 [41.1]: https://github.com/Shen-Language/shen-sources/compare/shen-41.0...shen-41.1
