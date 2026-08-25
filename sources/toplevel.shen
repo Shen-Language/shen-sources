@@ -8,12 +8,15 @@
  -> (do (credits)
         (loop)))
 
+(define toplevel-exception
+  "error: empty stream" _ -> 0
+  E C -> (do (pr E (stoutput)) (nl 0) (C)))
+
 (define loop
    -> (do (initialise_environment)
           (prompt)
-          (trap-error (read-evaluate-print)
-                      (/. E (toplevel-display-exception E)))
-          (loop)))
+          (trap-error (do (read-evaluate-print) (loop))
+                      (/. E (toplevel-exception (error-to-string E) loop)))))
 
 (define toplevel-display-exception
   E -> (do (pr (error-to-string E) (stoutput)) (nl 0)))
