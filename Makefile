@@ -10,14 +10,6 @@ else
 	OSName=linux
 endif
 
-Tag=$(shell git tag -l --contains HEAD)
-
-ifeq ("$(Tag)","")
-	GitVersion=$(shell git rev-parse --short HEAD)
-else
-	GitVersion=$(Tag:shen-%=%)
-endif
-
 #
 # Set OS-specific variables
 #
@@ -44,6 +36,30 @@ ifeq ($(OSName),windows)
 	ShenSchemeRawArch=$(PROCESSOR_ARCHITECTURE)
 else
 	ShenSchemeRawArch=$(shell uname -m)
+endif
+
+#
+# Identify the release version
+#
+
+ifneq ("$(strip $(ReleaseVersion))","")
+	GitVersion=$(strip $(ReleaseVersion))
+else
+ifneq ("$(wildcard VERSION)","")
+ifeq ($(OSName),windows)
+	GitVersion=$(strip $(shell powershell.exe -NoProfile -Command "(Get-Content VERSION -Raw).Trim()"))
+else
+	GitVersion=$(strip $(shell cat VERSION))
+endif
+else
+	Tag=$(shell git tag -l --contains HEAD)
+
+ifeq ("$(Tag)","")
+	GitVersion=$(shell git rev-parse --short HEAD)
+else
+	GitVersion=$(Tag:shen-%=%)
+endif
+endif
 endif
 
 ifneq ($(filter arm64 aarch64,$(ShenSchemeRawArch)),)
@@ -78,6 +94,8 @@ ReleaseFolderName=ShenOSKernel-$(GitVersion)
 ReleaseZip=$(ReleaseFolderName).zip
 ReleaseTar=$(ReleaseFolderName).tar
 ReleaseTarGz=$(ReleaseTar).gz
+ReleaseContents=assets benchmarks doc extensions klambda lib sources tests \
+	CHANGELOG.md LICENSE.txt Makefile README.md make.shen make-stlib.shen
 
 #
 # KLambda rendering
@@ -143,16 +161,8 @@ ifeq ($(OSName),windows)
 	$(PS) "New-Item -Path release -Force -ItemType Directory"
 	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
 	$(PS) "New-Item -Path $(ReleaseFolderName) -Force -ItemType Directory"
-	$(PS) "Copy-Item -Recurse assets $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse doc $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse extensions $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse klambda $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse sources $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse lib $(ReleaseFolderName)"
-	$(PS) "Copy-Item -Recurse tests $(ReleaseFolderName)"
-	$(PS) "Copy-Item CHANGELOG.md $(ReleaseFolderName)"
-	$(PS) "Copy-Item LICENSE.txt $(ReleaseFolderName)"
-	$(PS) "Copy-Item README.md $(ReleaseFolderName)"
+	$(PS) "'$(ReleaseContents)'.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { Copy-Item -Recurse $$_ '$(ReleaseFolderName)' }"
+	$(PS) "Set-Content -NoNewline -Path '$(ReleaseFolderName)$(Slash)VERSION' -Value '$(GitVersion)'"
 	$(PS) "Compress-Archive -Force -DestinationPath release\\$(ReleaseZip) -LiteralPath $(ReleaseFolderName)"
 	7z a -ttar -so $(ReleaseTar) $(ReleaseFolderName) | 7z a -si release\\\\$(ReleaseTarGz)
 	$(PS) "if (Test-Path $(ReleaseFolderName)) { Remove-Item $(ReleaseFolderName) -Recurse -Force -ErrorAction Ignore }"
@@ -160,7 +170,8 @@ else
 	mkdir -p release
 	rm -rf $(ReleaseFolderName)
 	mkdir -p $(ReleaseFolderName)
-	cp -rf assets doc extensions klambda lib sources tests CHANGELOG.md LICENSE.txt README.md $(ReleaseFolderName)
+	cp -rf $(ReleaseContents) $(ReleaseFolderName)
+	printf '%s\n' '$(GitVersion)' > $(ReleaseFolderName)/VERSION
 	zip -r release/$(ReleaseZip) $(ReleaseFolderName)
 	tar -vczf release/$(ReleaseTarGz) $(ReleaseFolderName)
 	rm -rf $(ReleaseFolderName)

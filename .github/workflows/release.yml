@@ -24,6 +24,38 @@ jobs:
           make klambda
           make release
 
+      - name: Verify release archive contents
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          VERSION="${TAG_NAME#shen-}"
+          ROOT="ShenOSKernel-${VERSION}"
+          ZIP_ASSET="release/${ROOT}.zip"
+          TAR_ASSET="release/${ROOT}.tar.gz"
+          EXPECTED_PATHS=(
+            VERSION
+            Makefile
+            make.shen
+            make-stlib.shen
+            benchmarks/benchmarks.shen
+            benchmarks/control-flow.shen
+            benchmarks/data.shen
+            benchmarks/equality-check.shen
+            benchmarks/pattern-matching.shen
+            benchmarks/shen-compilation.shen
+            klambda/init.kl
+            klambda/stlib.kl
+            tests/runme.shen
+          )
+
+          for PATH_IN_RELEASE in "${EXPECTED_PATHS[@]}"; do
+            tar -tzf "$TAR_ASSET" "$ROOT/$PATH_IN_RELEASE" >/dev/null
+            unzip -Z1 "$ZIP_ASSET" "$ROOT/$PATH_IN_RELEASE" >/dev/null
+          done
+
+          test "$(tar -xOzf "$TAR_ASSET" "$ROOT/VERSION")" = "$VERSION"
+          test "$(unzip -p "$ZIP_ASSET" "$ROOT/VERSION")" = "$VERSION"
+
       - name: Extract release notes from CHANGELOG
         env:
           TAG_NAME: ${{ github.ref_name }}

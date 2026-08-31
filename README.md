@@ -46,7 +46,7 @@ Using your own executable is the same as above, except you override the `Shen` v
 
 ## Releases
 
-Release packages containing the pre-built Kλ and the test suite are created using `make release`. Archives appear under the `release/` folder in both `zip` and `tar.gz` format.
+Release packages containing the pre-built Kλ, Shen sources and build scripts, standard library, test suite, and benchmarks are created using `make release`. Archives appear under the `release/` folder in both `zip` and `tar.gz` format. The included `Makefile` uses the packaged `VERSION` file when Git metadata is not available, so the Kλ can be rebuilt directly from an extracted release.
 
 Packages can be created for any version, but when uploading to the releases page, make sure to have built the specific tagged revision.
 
