@@ -28,6 +28,41 @@ Python, Ruby, Rust, JavaScript, Java, and the Lisp family. The appropriate
 mechanism may be a host function, a compiler intrinsic, a specialised bytecode,
 or a small runtime type, but the optimisation opportunity is the same.
 
+## Contents
+
+* [Host representations](#host-representations)
+  * [Booleans](#booleans)
+  * [Numbers](#numbers)
+  * [Symbols](#symbols)
+  * [Lists and pairs](#lists-and-pairs)
+  * [Vectors and tuples](#vectors-and-tuples)
+  * [Strings](#strings)
+* [Direct translation of KLambda](#direct-translation-of-klambda)
+* [Function application and currying](#function-application-and-currying)
+* [Tail calls](#tail-calls)
+* [Expand dynamic code before loading](#expand-dynamic-code-before-loading)
+* [Equality](#equality)
+* [Kernel functions worth overriding](#kernel-functions-worth-overriding)
+  * [Hashing](#hashing)
+  * [Dictionaries](#dictionaries)
+  * [Booleans and numeric predicates](#booleans-and-numeric-predicates)
+  * [Symbols and variables](#symbols-and-variables)
+  * [Reader character operations](#reader-character-operations)
+  * [Prolog variables](#prolog-variables)
+  * [Tuples](#tuples)
+  * [Vectors](#vectors)
+  * [String helpers](#string-helpers)
+  * [File and stream I/O](#file-and-stream-io)
+* [Property access](#property-access)
+* [Other possible kernel overrides](#other-possible-kernel-overrides)
+* [Avoid exceptions for ordinary absence checks](#avoid-exceptions-for-ordinary-absence-checks)
+* [Pattern matching](#pattern-matching)
+* [Globals and function metadata](#globals-and-function-metadata)
+* [What Shen/Scheme overrides](#what-shenscheme-overrides)
+  * [Kernel overrides](#kernel-overrides)
+  * [Compiler translations and rewrites](#compiler-translations-and-rewrites)
+* [Semantic requirements](#semantic-requirements)
+
 ## Host representations
 
 Choose representations that make Shen's common operations natural in the host
