@@ -5,9 +5,9 @@ it assumes very little about the host platform. As a result, it contains many
 functions implemented in deliberately general Shen code even though most host
 languages provide a much faster equivalent.
 
-A port is expected to replace suitable kernel definitions with host-specific
-versions, provided that their Shen-visible behaviour is preserved. This is
-often more important than low-level tuning: functions such as `hash`,
+Many ports replace suitable kernel definitions with host-specific versions
+while preserving their Shen-visible behaviour. This is often more important
+than low-level tuning: functions such as `hash`,
 `integer?`, and the dictionary operations occur on important execution paths,
 so an inefficient portable implementation is multiplied across the whole
 system. Other candidates have narrower benefits. For example, `variable?` is a
@@ -37,8 +37,10 @@ or a small runtime type, but the optimisation opportunity is the same.
   * [Lists and pairs](#lists-and-pairs)
   * [Vectors and tuples](#vectors-and-tuples)
   * [Strings](#strings)
+  * [Sentinels and native representations](#sentinels-and-native-representations)
 * [Direct translation of KLambda](#direct-translation-of-klambda)
 * [Function application and currying](#function-application-and-currying)
+* [Sealed implementation code](#sealed-implementation-code)
 * [Tail calls](#tail-calls)
 * [Expand dynamic code before loading](#expand-dynamic-code-before-loading)
 * [Equality](#equality)
@@ -55,107 +57,145 @@ or a small runtime type, but the optimisation opportunity is the same.
   * [File and stream I/O](#file-and-stream-io)
 * [Property access](#property-access)
 * [Other possible kernel overrides](#other-possible-kernel-overrides)
-* [Avoid exceptions for ordinary absence checks](#avoid-exceptions-for-ordinary-absence-checks)
+* [Exception-based absence checks](#exception-based-absence-checks)
 * [Pattern matching](#pattern-matching)
 * [Globals and function metadata](#globals-and-function-metadata)
 * [What Shen/Scheme overrides](#what-shenscheme-overrides)
   * [Kernel overrides](#kernel-overrides)
   * [Compiler translations and rewrites](#compiler-translations-and-rewrites)
+* [Benchmarks](#benchmarks)
 * [Semantic requirements](#semantic-requirements)
 
 ## Host representations
 
-Choose representations that make Shen's common operations natural in the host
-language. Avoid wrapping host values unless the wrapper is required to preserve
-Shen semantics.
+Representations that make Shen's common operations natural in the host language
+usually perform best. Wrapping host values adds cost and is useful mainly when
+it is needed to preserve Shen semantics.
 
 ### Booleans
 
-Represent Shen `true` and `false` as host booleans when possible. They should
-not be ordinary interned symbols internally.
+Host booleans are usually a better representation for Shen `true` and `false`
+than ordinary interned symbols.
 
 Shen/Scheme maps them to Scheme `#t` and `#f`. Its compiler emits boolean
 literals directly, uses Scheme conditionals, and records which expressions are
 known to produce booleans. This makes `if`, `and`, `or`, `not`, and `boolean?`
 ordinary host operations while preserving Shen's boolean checks.
 
-The reader and `intern` implementation must still map the textual names
-`"true"` and `"false"` to those boolean values, and `str` must print them as
-Shen expects.
+Using host control flow does not mean adopting host truthiness. Python and
+Ruby, for example, accept many non-boolean conditions, and Python and
+JavaScript `and`/`or` expressions can return an operand rather than a boolean.
+Shen's boolean checks, short-circuit evaluation, and boolean results remain
+observable even when they compile to small host operations.
+
+This representation still requires the reader and `intern` to map the textual
+names `"true"` and `"false"` to those values, while `str` retains Shen's
+expected printed form.
 
 ### Numbers
 
-Use the host's ordinary integer and floating-point values when their semantics
-are suitable. In particular, do not heap-allocate a wrapper for every small
-integer if the host already represents it efficiently.
+The host's ordinary integer and floating-point values are generally suitable
+when their semantics match Shen's. A wrapper around every small integer, for
+example, adds allocation without benefit when the host already has an efficient
+representation.
 
-Arithmetic and numeric comparisons should map directly to host operations.
-`number?` and `integer?`, however, must implement Shen's numeric categories,
-which may not be identical to the host's type hierarchy. For example, Python
-booleans are instances of `int` and must still be excluded from Shen numbers;
+Direct host arithmetic and comparison operations avoid general dispatch, though
+the host operator itself is not always semantically suitable: integer division
+may truncate, fixed-width arithmetic may wrap, and a host may preserve exact
+rational results that Shen does not expose.
+Shen/Scheme maps most arithmetic directly but wraps Scheme `/` so an integral
+result remains an integer and a non-integral exact result becomes inexact.
+
+Shen's numeric categories may not be identical to the host's type hierarchy.
+For example, Python booleans are instances of `int` but are not Shen numbers;
 conversely, a host may distinguish an integral floating-point value from an
 integer type even where Shen `integer?` treats it as numerically integral.
 
 The portable definition of `integer?` performs a lengthy numeric computation
 because it cannot assume that the host provides the required predicate. Most
-hosts can implement the same semantics much more directly, but the replacement
-must test Shen integrality rather than merely the nearest host storage type.
+hosts can implement the same semantics much more directly. The relevant test is
+Shen integrality rather than merely the nearest host storage type.
 
 ### Symbols
 
-Symbols should normally be interned objects. Interning permits cheap identity
-comparison and avoids storing the same symbol name repeatedly.
+Interned objects are usually an effective representation for symbols. Interning
+permits cheap identity comparison and avoids storing the same symbol name
+repeatedly.
 
-Keep symbols distinct from strings even on hosts where both are represented by
-strings. A tagged string, intern table entry, enum-like value, or dedicated
-symbol object can provide that distinction.
+Shen distinguishes symbols from strings even on hosts where both might
+otherwise use strings. A tagged string, intern table entry, enum-like value, or
+dedicated symbol object can preserve that distinction.
 
-The KLambda primitive `intern` should use the same canonical symbol table. It
-must also preserve the kernel's special treatment of the textual names `true`
+The KLambda primitive `intern` normally shares this canonical symbol table. Its
+semantics include the kernel's special treatment of the textual names `true`
 and `false`, along with any other behaviour required by the kernel version.
+Shen/Scheme also recognises supported numeric strings in `intern`. The exact
+contract of the chosen kernel version therefore matters; not every input
+necessarily becomes a symbol.
+
+A source-generating port can evaluate `(intern "literal")` while compiling and
+emit the canonical value directly. This removes an intern-table lookup from
+runtime code, provided that the compile-time implementation applies exactly the
+same boolean, number, and symbol rules as runtime `intern`.
 
 ### Lists and pairs
 
-Map Shen lists to the host's natural linked-pair representation when it has one.
-On hosts without pairs, a small pair object with `head` and `tail` fields is
-usually preferable to copying arrays for `cons` and `tl`.
+A host's natural linked-pair representation is a good match for Shen lists when
+one exists. On hosts without pairs, a small pair object with `head` and `tail`
+fields is usually less costly than copying arrays for `cons` and `tl`.
 
-The empty list should have one canonical representation. That permits an
-identity or tag check for `[]` while non-empty list patterns use a pair test and
-direct field access.
+A canonical representation for the empty list permits an identity or tag check
+for `[]`, while non-empty list patterns can use a pair test and direct field
+access.
 
 ### Vectors and tuples
 
 The portable kernel represents Shen vectors using an underlying absolute
 vector. Slot zero contains the Shen limit, and the remaining slots are
 initialised with `(fail)`. A port can retain this layout or use a dedicated
-vector type, but it must preserve the behaviour of `vector`, `vector?`,
-`limit`, `vector->`, and `<-vector`.
+vector type. Either representation still exposes the behaviour of `vector`,
+`vector?`, `limit`, `vector->`, and `<-vector`.
 
 Tuples have a fixed two-element shape. The portable `@p` builds a tagged
 three-slot absolute vector. A host record, a small tuple type, or a directly
 initialised three-slot vector is more efficient than general vector creation
-followed by repeated generic stores. `fst`, `snd`, and `tuple?` should then be
-simple field or slot operations.
+followed by repeated generic stores. It also allows `fst`, `snd`, and `tuple?`
+to become simple field or slot operations.
 
 ### Strings
 
-Use the host string representation directly when it can implement Shen string
-semantics. Operations such as `cn`, `pos`, `hdstr`, `tlstr`, `n->string`, and
-`string->n` should not decompose strings into Shen lists or repeatedly allocate
-one-character strings unless the public result requires one.
+A direct host string representation can make `cn`, `pos`, `hdstr`, `tlstr`,
+`n->string`, and `string->n` inexpensive. Decomposing strings into Shen lists or
+repeatedly allocating one-character strings creates avoidable work unless the
+public result requires it.
 
-The port's byte, character, and indexing operations must implement the string
-semantics required by the Shen/KLambda version being ported. The internal
-representation may use bytes, code points, or host characters, but that choice
-must not silently alter the observable behaviour of `pos`, `string->n`, or
-character I/O. This is especially important on hosts whose strings use a
-multibyte encoding.
+The relevant string semantics come from the Shen/KLambda version being ported.
+An internal representation based on bytes, code points, or host characters can
+have different indexing behaviour, especially on hosts with multibyte strings;
+that difference is observable through `pos`, `string->n`, and character I/O.
+
+### Sentinels and native representations
+
+Distinct canonical representations for `[]`, `(fail)`, and private
+missing-value markers make identity fast paths unambiguous. Reusing a common
+host value such as `null` or `None` can also make a stored dictionary value
+indistinguishable from a failed lookup.
+
+A native record or collection may replace a portable vector encoding, but the
+new representation remains observable through operations such as `=`, `hash`,
+`str`, predicates, and accessors. Those relationships form part of the semantic
+cost of adopting a specialised representation.
 
 ## Direct translation of KLambda
 
-KLambda primitives and special forms should translate to the closest host
-construct rather than become calls to a generic Shen dispatcher.
+KLambda primitives and special forms are natural candidates for translation to
+the closest host construct. This avoids routing fundamental operations through
+a generic Shen dispatcher.
+
+"Closest" refers to executed work, not merely spelling. A host construct that
+uses truthiness, truncating division, unchecked wraparound, a different string
+indexing unit, or a different error convention still needs a small adapter or
+an explicit check to implement the KLambda operation.
 
 Typical direct translations include:
 
@@ -178,43 +218,59 @@ This applies equally to source-generating ports and interpreters. An interpreter
 can give these forms dedicated evaluation cases or bytecodes rather than
 looking them up and applying them as ordinary functions.
 
-Host exceptions need a Shen-compatible boundary. `simple-error` must construct
-an error whose value can be passed to a `trap-error` handler, and errors raised
-by KLambda primitives must participate in the same mechanism. Avoid treating
-unrelated process-control events, such as host interrupts or exits, as ordinary
-Shen errors. Likewise, do not let the host exception used to implement Shen
-errors escape `trap-error` merely because its concrete class differs from an
-accessor or arithmetic failure.
+Host exceptions need a Shen-compatible boundary: `simple-error`, errors raised
+by primitives, and values passed to `trap-error` all participate in the same
+observable error semantics.
 
 ## Function application and currying
 
 Most calls generated by the Shen kernel name a known function and supply its
-full arity. Those calls should use the host's ordinary multi-argument calling
-convention.
+full arity. The host's ordinary multi-argument calling convention handles these
+calls without the overhead of general currying.
 
-Do not curry every call into a chain of one-argument calls. That creates
-unnecessary closures and intermediate calls, and can interfere with tail-call
-optimisation. Instead:
+Currying every call into a chain of one-argument calls creates unnecessary
+closures and intermediate calls and can interfere with tail-call optimisation.
+A typical application strategy therefore distinguishes these cases:
 
-* call a known function directly when all arguments are present;
-* create a closure only for a real partial application;
-* for over-application, call the known saturated part and apply the remaining
+* a known function with all arguments present becomes a direct call;
+* a real partial application creates a closure;
+* over-application calls the known saturated part and applies the remaining
   arguments to its result; and
-* use the fully dynamic apply path only when the function value or effective
+* the fully dynamic apply path remains for cases where the function or effective
   arity is not known.
 
 The kernel maintains arity and lambda-form information specifically to support
-these cases. Ports should keep this metadata cheap to access and must update it
-correctly when functions are defined or redefined.
+these distinctions. Cheap access to that metadata benefits every dynamic call,
+and definitions and redefinitions need to keep it current.
 
 Calls through higher-order arguments still require full Shen application
-semantics. Optimising known calls must not break first-class functions, partial
-applications, over-applications, or redefinition. A direct call bypasses the
-general currying/apply path; it does not necessarily bypass a replaceable
-function binding. On hosts where a direct reference would permanently bind the
-old definition, call through a mutable global binding or function cell. A port
-may direct-bind implementation-owned functions only when that restriction is
-part of its documented semantics or compilation mode.
+semantics. Direct calls are simplest for sealed definitions. Open definitions
+need an indirection or invalidation strategy so that first-class functions,
+partial and over-application, and redefinition—including an arity change—retain
+their Shen behaviour.
+
+## Sealed implementation code
+
+Kernel and implementation-owned code can be compiled as a closed unit. Calls
+between definitions in that unit then have fixed targets and known arities, so
+they do not need a global function lookup, redefinition check, arity dispatch,
+or general currying path when the call is saturated. Higher-order calls and
+real partial applications still require their normal Shen semantics.
+
+Shen/Scheme uses this arrangement for its kernel. The generated kernel and
+runtime definitions are compiled together inside the `(shen-scheme runtime)`
+library, and calls within that library resolve to its own bindings. Port
+overrides selected while building the library replace the corresponding
+portable definitions before it is sealed. Where redefinition is permitted, a
+later definition visible to user code can replace or shadow the exported name,
+but it does not rewrite the kernel's internal call graph. Such a runtime
+override affects open calls made by user code, not calls already bound inside
+the kernel.
+
+This boundary is observable and belongs in a port's documentation. Kernel,
+primitive, and implementation-owned definitions are natural candidates for a
+sealed unit, whereas ordinary user code normally retains Shen's redefinition
+behaviour. Some ports may expose both open and sealed compilation modes.
 
 ## Tail calls
 
@@ -223,7 +279,8 @@ such as Scheme, can normally use its ordinary call mechanism. On a host without
 them, translating tail calls as ordinary recursion eventually exhausts the host
 stack in kernel functions that are intended to run in constant space.
 
-Such ports must turn tail calls into iteration. Common representations include:
+Such ports need an iterative representation for tail calls. Common choices
+include:
 
 * a loop for self-tail recursion;
 * a trampoline for general calls between functions;
@@ -231,9 +288,9 @@ Such ports must turn tail calls into iteration. Common representations include:
   or
 * a compiler transformation that emits jumps or state-machine transitions.
 
-This should apply to multi-argument functions without forcing all functions
-through one-argument currying. Static currying can hide the tail position behind
-closure calls and defeat the host's optimiser. Shen/Scheme relies on Chez
+The same issue applies to multi-argument functions; forcing all calls through
+one-argument currying can hide the tail position behind closure calls and defeat
+the host's optimiser. Shen/Scheme relies on Chez
 Scheme's proper tail calls, including the calls to local failure continuations
 produced by the S-kernel's pattern factorisation.
 
@@ -255,11 +312,11 @@ visible as static functions to the host compiler, while the genuinely dynamic
 work is isolated in a small initialisation function. That enables direct calls,
 normal host optimisation, and faster startup.
 
-The distributed KLambda is generated with `expand-dynamic` enabled. A port
-that generates KLambda for additional Shen sources should apply the same
-expansion when those sources contain declarations or other supported dynamic
-forms. This is a staging optimisation, not a semantic change: forms whose
-effects are genuinely required at runtime must remain in initialisation order.
+The distributed KLambda is generated with `expand-dynamic` enabled. Applying
+the same expansion to additional Shen sources exposes their declarations and
+other supported dynamic forms to equivalent static optimisation. This is a
+staging optimisation rather than a semantic change; genuinely dynamic effects
+remain in runtime initialisation order.
 
 ## Equality
 
@@ -280,9 +337,9 @@ equality routine also begins with identity equality, then handles numbers,
 pairs, strings, and vectors. The identity test makes equal symbols, booleans,
 the empty list, and identical compound objects return immediately.
 
-A port must not replace structural equality with identity equality in the
-general case. Independently constructed equal lists, strings, tuples, and
-vectors must continue to compare as required by Shen.
+Identity equality is not a replacement for structural equality in the general
+case. Independently constructed equal lists, strings, tuples, and vectors still
+compare as required by Shen.
 
 ## Kernel functions worth overriding
 
@@ -298,11 +355,10 @@ The portable implementation converts a value to a printable form, explodes it,
 maps characters to numbers, combines them recursively, and implements modulus
 in Shen. It is intentionally portable but much slower than a host hash.
 
-Use a host structural hash consistent with the equality used for dictionary
-keys. Equal Shen values must produce the same hash for the same bound. The
-function has type `A --> number --> number`; for a positive `Bound`, its result
-must be a non-negative integer no greater than `Bound`. Normalise hosts that can
-produce negative hash codes before applying the bound.
+A host structural hash can replace this work when it is consistent with the
+equality used for dictionary keys. Equal Shen values produce the same hash for
+the same bound. The function has type `A --> number --> number`; for a positive
+`Bound`, its result is a non-negative integer no greater than `Bound`.
 
 Replacing `hash` alone can substantially improve the portable dictionary even
 when the rest of that implementation is retained.
@@ -313,11 +369,11 @@ The portable dictionary is an absolute vector of buckets, with association
 lists used for collisions. Most hosts provide a substantially better hash table
 or map implementation.
 
-Override the dictionary family as a unit:
+The dictionary family is best treated as a unit:
 
-* `shen.dict` — construct a dictionary; the size must be a positive integer and
-  invalid sizes must raise the expected error. A valid size is an initial
-  capacity hint and may be ignored if the host has no equivalent;
+* `shen.dict` — construct a dictionary from a positive integer size, with the
+  expected error for invalid sizes. The size is an initial capacity hint and
+  may be ignored if the host has no equivalent;
 * `shen.dict?` — recognise the port's dictionary representation;
 * `shen.dict-count` — return the number of entries;
 * `shen.dict->` — associate a key with a value and return the value;
@@ -330,10 +386,14 @@ Override the dictionary family as a unit:
 `shen.dict-keys` and `shen.dict-values` can remain defined in terms of
 `shen.dict-fold`, but direct host implementations may avoid intermediate work.
 
-The host dictionary's key semantics must match Shen. A host table that compares
-keys only by identity is not sufficient when structurally equal Shen values are
-valid interchangeable keys. Hosts that cannot directly hash lists or vectors
-need a Shen-aware hash/equality adapter or a custom dictionary wrapper.
+The callback passed to `shen.dict-fold` remains a Shen function value with the
+argument order `Key`, `Value`, `Accumulator`; a native map does not turn it into
+an ordinary host callback with different application semantics.
+
+Dictionary key semantics are significant because structurally equal Shen values
+are interchangeable keys. A host table based only on identity is therefore not
+sufficient; hosts that cannot directly hash lists or vectors need Shen-aware
+hashing and equality around the native table.
 
 Dictionaries are especially important because the kernel uses them internally
 for properties and metadata. Improving them speeds up compilation, loading,
@@ -343,17 +403,16 @@ typechecking, and user dictionary operations.
 
 #### `boolean?`
 
-Replace the two-clause portable recogniser with a direct host boolean test or
-tag test.
+A direct host boolean or tag test avoids the two-clause portable recogniser.
 
 #### `not`
 
-Map it to the host boolean negation operation while preserving Shen's
-requirement that conditional values are booleans.
+Host boolean negation is sufficient when it preserves Shen's requirement that
+conditional values are booleans.
 
 #### `integer?`
 
-Replace the portable arithmetic test with a direct implementation of Shen
+The portable arithmetic test can usually become a direct test of Shen
 integrality. A host integer predicate is sufficient only when it accepts and
 rejects exactly the same values. This is one of the clearest high-value
 overrides in the kernel.
@@ -375,35 +434,33 @@ general symbol-name analyser. Once the argument is known to be a valid,
 non-empty symbol, a Shen variable can be recognised by checking whether the
 first character of its name is uppercase.
 
-Perform that check directly on the interned symbol name. Avoid allocating a new
-string or scanning the entire name on every call. This is worthwhile for ports
-where compilation speed matters, but it should not be presented or measured as
-a general program-execution optimisation. It affects regular program execution
-only when the program itself calls `variable?` or invokes Shen's compilation
-machinery.
+Checking the interned symbol name directly avoids allocating a new string or
+scanning the entire name on every call. This matters for compilation speed, not
+for ordinary program execution unless that program invokes `variable?` or
+Shen's compilation machinery. The direct check still has to preserve the
+portable result for values outside the normal compiler path.
 
 #### `symbol?`
 
-Use the host symbol tag or the port's dedicated symbol representation, then
-apply Shen's symbol-name validity rules. Booleans must not be reported as
-symbols when they use a distinct host representation.
+A host symbol tag or dedicated symbol representation makes the initial test
+cheap; Shen's symbol-name validity rules still determine the result. Booleans
+remain distinct from symbols when represented by host booleans.
 
 #### `shen.analyse-symbol?` and `shen.analyse-variable?`
 
-Scan the host string directly with character predicates. The portable versions
-recursively split the string into one-character pieces. A single indexed scan
-avoids many allocations and calls.
+The portable versions recursively split the string into one-character pieces.
+A single indexed scan over the host string avoids many allocations and calls.
 
 ### Reader character operations
 
 #### `shen.digit?` or `shen.numbyte?`
 
-Kernel versions use one of these names for the reader's digit test. Implement
-it as a direct character test or the numeric range check `48 <= N <= 57`.
+Kernel versions use one of these names for the reader's digit test. A direct
+character test or numeric range check replaces several Shen calls.
 
 #### `shen.byte->digit`
 
-Implement it as subtraction of the code for `0`, normally `N - 48`.
+Its host implementation is normally a subtraction of the code for `0`.
 
 These operations are tiny but occur repeatedly while reading numbers and source
 text. They improve parsing and source-loading speed rather than the execution of
@@ -414,8 +471,8 @@ ordinary code after it has been loaded.
 #### `shen.pvar?`
 
 The portable definition tests for an absolute vector, attempts to read its tag
-under `trap-error`, and compares the tag with `pvar`. A port that controls the
-representation should use a direct type or tag test.
+under `trap-error`, and compares the tag with `pvar`. A direct type or tag test
+removes that exception-based path when the port controls the representation.
 
 This predicate is extremely frequent in Prolog execution and typechecking. A
 cheap `shen.pvar?` also improves the Shen implementations of `shen.lazyderef`,
@@ -424,12 +481,18 @@ to be rewritten in the host language. Its effect is therefore concentrated in
 Prolog, typechecking, and compilation workloads rather than general arithmetic
 or list-processing programs.
 
+A specialised Prolog-variable representation can go further, particularly for
+dereferencing and binding chains. Its benefit and complexity extend across the
+whole group of functions that construct and inspect Prolog variables, rather
+than `shen.pvar?` alone.
+
 ### Tuples
 
 #### `@p`, `fst`, `snd`, and `tuple?`
 
-Use a fixed-size host record, tuple object, or directly initialised tagged
-vector. Accessors should be field reads rather than general Shen vector access.
+A fixed-size host record, tuple object, or directly initialised tagged vector
+turns the accessors into field or slot reads rather than general Shen vector
+operations.
 
 Tuple construction and matching occur frequently in compiler and type-system
 code, so avoiding general vector initialisation and repeated stores can have a
@@ -440,61 +503,59 @@ visible effect.
 #### `vector`
 
 The portable definition allocates an absolute vector and recursively fills
-every element with `(fail)`. Use the host's filled-array constructor or a loop
-implemented at the host level.
+every element with `(fail)`. A host filled-array constructor or host-level loop
+performs the same work with much less dispatch.
 
 #### `vector?`, `limit`, `vector->`, and `<-vector`
 
 These are worth direct implementations when the port has a dedicated vector
 representation or when the portable definitions cause exception handling and
-several generic calls per access. Preserve the special treatment of index zero,
-uninitialised elements, bounds, return values, and error behaviour.
+several generic calls per access. Their semantics include the special treatment
+of index zero, uninitialised elements, bounds, return values, and errors.
 
 ### String helpers
 
 #### `hdstr`
 
-Implement as direct access to the first character rather than another general
-Shen call when function-call overhead is significant.
+Direct access to the first character can avoid another general Shen call when
+function-call overhead is significant.
 
 The underlying `cn`, `pos`, and `tlstr` operations are KLambda primitives, not
-kernel overrides. Their host implementations must nevertheless be efficient
-because the portable reader and symbol functions build other operations from
-them. If `hdstr` compiles to a direct `pos` operation with negligible call
-overhead, a separate override is unnecessary.
+kernel overrides. Their performance still matters because the portable reader
+and symbol functions build other operations from them. If `hdstr` compiles to a
+direct `pos` operation with negligible call overhead, a separate override is
+unnecessary.
 
 ### File and stream I/O
 
 #### `read-file-as-bytelist`
 
 The portable implementation calls `read-byte` once per byte and builds a
-reversed list. Read the file in one operation or in large blocks, then construct
-the required Shen list efficiently.
+reversed list. Whole-file or block input removes most of that per-byte overhead
+before the required Shen list is constructed.
 
 #### `read-file-as-string`
 
 The portable implementation reads one byte at a time and repeatedly appends to
-a growing string. Use the host's whole-file or buffered text-reading facility.
-Preserve the encoding semantics required by the kernel version, along with its
-`*home-directory*` handling.
+a growing string. Whole-file or buffered host input avoids the resulting
+quadratic copying while retaining the kernel's encoding and path semantics.
 
 #### `read-char-code` and `read-file-as-charlist`
 
-Override these on hosts where byte input is not equivalent to character input,
-especially for multibyte encodings. `read-file-as-charlist` should use bulk
-input rather than character-at-a-time Shen recursion.
+Some older kernels also define these character-oriented functions. Where they
+are present, bulk host input has the same advantage over character-at-a-time
+Shen recursion.
 
 #### `pr`
 
-Use the host's buffered string output rather than writing one byte at a time.
-Preserve `*hush*`, textual versus binary streams, flushing behaviour, and the
-required return value.
+Buffered host string output avoids writing one byte at a time. Its observable
+behaviour still includes `*hush*`, stream mode, flushing, and the return value.
 
 ## Property access
 
 The kernel implements `get`, `put`, and `unput` over dictionaries containing
-association lists. A host dictionary override removes much of their cost, so
-optimise dictionaries first.
+association lists. A host dictionary override removes much of their cost before
+any separate property-operation optimisation is considered.
 
 If property access remains important, a port may provide a more direct
 implementation of:
@@ -503,10 +564,10 @@ implementation of:
 * `put`; and
 * `unput`.
 
-The replacement must preserve missing-property errors, return values, and the
-relationship with `*property-vector*`. Because these functions are visible to
-Shen programs and used by the compiler, changing their observable data model is
-not safe merely for speed.
+Missing-property errors, return values, and the relationship with
+`*property-vector*` are observable parts of these operations. Their use by both
+Shen programs and the compiler makes a purely internal change safer than a
+different public data model.
 
 ## Other possible kernel overrides
 
@@ -522,26 +583,23 @@ for frequently used functions such as:
 * `element?`; and
 * `assoc`, `assoc-set`, and `assoc-rm`.
 
-These replacements must preserve structural equality, improper-list errors,
-callback application, and the exact behaviour of the kernel version being
-ported. In particular, `map` behaviour for a non-list argument has changed
-between Shen releases, so an override must follow the corresponding source
-definition rather than assume the host's `map` semantics.
+Their host equivalents are useful only when they retain the kernel version's
+structural equality, error, and callback-application semantics.
 
 `explode` and string/list conversion helpers may also be worthwhile on hosts
 that can traverse a string directly. Their main effect is normally on reading,
 printing, symbol processing, and compilation rather than steady-state numeric
 or data-structure code.
 
-## Avoid exceptions for ordinary absence checks
+## Exception-based absence checks
 
 Portable Shen sometimes uses `trap-error` to ask whether an operation would
 fail. Exception handling is expensive on many hosts, including common Python,
 Ruby, Java, and JavaScript implementations.
 
-For recognised kernel expressions whose handler simply returns a default, a
-port can perform the corresponding presence or bounds check directly. Useful
-cases include:
+When a recognised kernel expression uses `trap-error` only to return a default,
+a direct presence or bounds check can be equivalent and much cheaper. Examples
+include:
 
 * `(value Symbol)` — test whether the global is bound;
 * `(get Object Property Dictionary)` — test whether the property exists;
@@ -549,39 +607,44 @@ cases include:
 * `(<-vector Vector Index)` — test the Shen-vector bounds and whether the slot
   contains `(fail)`.
 
-Shen/Scheme applies this transformation only while compiling trusted kernel
-sources. That restriction matters: replacing a general `trap-error` is not safe
-when evaluating an operand can raise another error, when the handler uses the
-error object, or when the checked version changes type errors or evaluation
-order.
+This is a specialisation of a recognised expression, not a general replacement
+for `trap-error`. It is valid only when other errors, use of the error value,
+types, and evaluation order remain unchanged.
 
-Predicates such as `vector?`, `tuple?`, and `shen.pvar?` are even better served
-by direct representation tests, avoiding both the accessor and the exception.
+Predicates such as `vector?`, `tuple?`, and `shen.pvar?` often reduce further to
+direct representation tests, avoiding both the accessor and the exception.
 
 ## Pattern matching
 
-The KLambda produced for several pattern clauses can repeat the same type tests
-and selectors in every clause. The S-kernel factorises this code, but the form
-of its output depends on the kernel release. Porters should not confuse its two
-built-in factorisation schemes.
+The KLambda produced for several pattern clauses can repeat the same type tests,
+selectors, and failure paths. The S-kernel factorises this code, although the
+representation has changed between kernel generations.
 
-Earlier S-kernel releases generated additional `defun`s for shared failure
-branches. Each helper accepted the values it needed as explicit arguments, and
-the parent function called it by name. From S33.1.1, creation of a branch
-definition passed through `shen.eval-factorised-branch`, allowing a port to
-retain the helper definition instead of immediately evaluating it.
+S-kernel releases through 36 generated additional `defun`s for shared failure
+branches. In schematic form, the parent called a generated helper with all the
+state used by the branch:
 
-Shen/Scheme used that hook to collect the branch `defun`s while compiling their
-parent. It then emitted the helpers as internal Scheme definitions inside the
-parent procedure. Their identities did not escape, their calls had statically
-known targets, and required state was passed explicitly. Chez could therefore
-compile tail calls to those helpers as direct jumps without allocating
-closures. This is the multiple-`defun` mechanism used by S-kernel releases
-through 36.
+```shen
+[defun Parent [X Y] ... [Failure X Y]]
+[defun Failure [X Y] Else]
+```
 
-S37 replaced that factoriser with the simplified algorithm used by the current
-kernel. It shares repeated selectors but represents a shared failure branch in
-KLambda approximately as:
+Shen/Scheme collected those generated definitions while compiling the parent
+and emitted an internal Scheme procedure:
+
+```scheme
+(define (parent x y)
+  (define (failure x y) else)
+  ...
+  (failure x y))
+```
+
+Because `failure` has no free variables, does not escape, and has statically
+known call sites, even Chez versions without consistent procedure lifting can
+compile the tail calls as direct jumps without allocating a closure.
+
+From S37, the factoriser instead represents a shared failure branch
+approximately as:
 
 ```shen
 [let Go [freeze Else]
@@ -595,90 +658,75 @@ A direct Shen/Scheme translation turns this into the equivalent of:
   (if test then (go)))
 ```
 
-This form also need not allocate a closure. `go` never escapes, its identity is
-statically known, and its calls are in tail position. Shen/Scheme preserves
-that local binding and those direct calls; Chez can eliminate the closure and
-compile the calls as jumps. This is a different lowering from the earlier
-multiple-`defun` mechanism even though both are intended to give the host
-compiler equivalent non-escaping control flow.
-
-That optimisation depends on the host compiler. [Chez
-10.0](https://cisco.github.io/ChezScheme/release_notes/v10.0/release_notes.html)
-added consistent procedure lifting: when a local procedure has only known call
-sites, captures only immutable variables, and is called within the scope of
-those variables, Chez can turn the captured values into extra arguments and
-rewrite the calls automatically. Earlier Chez versions did not do this
-consistently. To guarantee closure-free code with those versions,
-Shen/Scheme's earlier factorisation path gave each internal helper explicit
-parameters for the values used by its failure branch.
-
-A port whose host does not eliminate the capturing zero-argument procedure can
-perform the same lambda lifting itself. For example, it can lower the effective
-shape
-
-```scheme
-(let ([go (lambda () (else x y))])
-  (if test then (go)))
-```
-
-to
+Here `go` is a zero-argument procedure that captures any values used by `else`.
+[Chez 10.0](https://cisco.github.io/ChezScheme/release_notes/v10.0/release_notes.html)
+introduced consistent procedure lifting for local procedures with known call
+sites and immutable captured values. It can therefore transform the effective
+shape into something equivalent to:
 
 ```scheme
 (let ([go (lambda (x y) (else x y))])
   (if test then (go x y)))
 ```
 
-Here `x` and `y` stand for the free values actually used by the branch. Passing
-a superset of the values in scope—often all parameters of the containing
-function—is a simpler conservative strategy, but passing only the used free
-values reduces argument traffic. Either form makes the helper closed and gives
-even a less aggressive host compiler a direct call target without an
-environment allocation. Preserve the original tail position and evaluation
-order when applying this transformation.
+This recovers the important property of the older factorisation: captured state
+becomes ordinary arguments and the tail call can become a jump. Older Chez
+versions, and other hosts without equivalent closure optimisation, can obtain
+the same result by lambda-lifting the continuation explicitly. Passing every
+value in scope is conservative; passing only its free variables reduces
+argument traffic.
 
-Other ports should preserve the same property. A compiler can lower the local,
-non-escaping continuation to a label, a direct local call, or a state-machine
-transition. An interpreter can represent it as an internal code location and
-environment rather than constructing a general first-class closure each time
-the containing function runs. The exact lowering is host-specific, but the
-shared failure path should not become repeated generic function application or
-heap allocation.
+A backend with labels can express the same structure without a local procedure:
 
-By the ordinary KLambda backend stage, source patterns have already become
-predicates, equality checks, and selectors. The backend should ensure that the
-resulting operations map efficiently to its chosen representations:
+```text
+if test:
+    goto then_branch
+goto failure
+
+failure:
+    ... else, using x and y from the surrounding frame ...
+```
+
+An interpreter can represent `failure` as an internal program location plus the
+existing environment. These are different implementations of the same useful
+facts: the continuation does not escape, its destination is known, its calls
+are in tail position, and it does not require general function application or
+a freshly allocated closure.
+
+By the ordinary KLambda stage, source patterns have already become predicates,
+equality checks, and selectors. Their cost then follows from the port's chosen
+representations:
 
 * list tests and selectors become empty/pair tests and direct head/tail access;
 * tuple tests and selectors become one tag test and direct field reads;
 * vector tests reuse representation and length information where safe; and
 * string tests use host length, indexing, or prefix operations.
 
-The S-kernel's factorisation exposes repeated tests, selectors, and failure
-paths explicitly. A port integrated earlier in the Shen compiler may perform
-equivalent work before KLambda is emitted. Once a shape has been checked, avoid
-repeating the same predicate or using a generic accessor that checks it again
-unless correctness requires it.
+The factorised code exposes repeated tests, selectors, and failure paths. A port
+integrated earlier in the Shen compiler can make equivalent choices before
+KLambda is emitted; a later implementation can still reuse a successful shape
+test rather than immediately repeating it through a generic accessor.
 
 ## Globals and function metadata
 
 When the name in `value` or `set` is a literal, a source-generating port can
-usually refer directly to a host global cell. An interpreter can resolve or
-cache the corresponding binding instead of repeating a symbol-table lookup.
-Computed names still require the general symbol-to-binding path.
+often refer directly to a host global cell. An interpreter can resolve or cache
+the corresponding binding instead of repeating a symbol-table lookup. Computed
+names still require the general symbol-to-binding path.
 
 Shen/Scheme uses direct host bindings for a set of frequently accessed kernel
 globals. This avoids a dictionary lookup while retaining the dynamic path for
 computed names.
 
-Function arity and lambda-form metadata are updated by `update-lambda-table` and
-`shen.update-lambdatable`. Ports with a host function representation may
-override these operations or store the same information directly on function
-objects, but must preserve redefinition and higher-order application semantics.
+Function arity and lambda-form metadata are maintained by
+`update-lambda-table` and `shen.update-lambdatable`. A port may represent that
+information differently, but it remains part of redefinition and higher-order
+application semantics.
 
 ## What Shen/Scheme overrides
 
-Shen/Scheme provides a practical baseline for other ports, but its literal
-kernel overrides should be distinguished from work performed by its compiler.
+Shen/Scheme provides a practical baseline for other ports. Its literal kernel
+overrides are distinct from the work performed by its compiler.
 
 ### Kernel overrides
 
@@ -690,7 +738,8 @@ replaces:
 * `variable?` (for source-processing and compilation throughput), `symbol?`,
   and `shen.analyse-symbol?`;
 * `shen.pvar?`;
-* `shen.numbyte?` and `shen.byte->digit`;
+* the reader's digit recognition and byte-to-digit operations, whose names vary
+  between kernel versions;
 * the complete `shen.dict` family;
 * `read-file-as-bytelist` and `read-file-as-string`;
 * `pr`;
@@ -705,36 +754,59 @@ The Shen/Scheme compiler additionally:
 * translates arithmetic, comparisons, pair operations, type predicates,
   strings, and absolute-vector operations directly to Scheme;
 * emits ordinary multi-argument Scheme calls for known functions;
+* resolves literal `intern` expressions while compiling;
 * specialises equality from literal and type information;
 * compiles selected literal globals as direct bindings;
 * replaces safe kernel accessor/`trap-error` patterns with checked operations;
-* lowers the S-kernel's factorised failure continuations to non-escaping local
-  procedures: it collected generated branch `defun`s on older kernels and
-  preserves the current kernel's local `freeze`/`thaw` structure, allowing Chez
-  to compile the calls as direct jumps without allocating closures; and
+* compiles the kernel and runtime as one closed library, keeping internal calls
+  bound to the implementation definitions even when a user-visible name is
+  later replaced or shadowed;
+* preserves the S-kernel's factorised failure continuations as non-escaping
+  local procedures, allowing Chez to compile their calls as direct jumps
+  without allocating closures; and
 * consumes the statically expanded kernel produced by `expand-dynamic`, rather
   than reconstructing known declarations and lambda forms at startup.
 
 Not every port needs a literal override for every function on this list. For
-example, if `hdstr` compiles to `pos` and `pos` is already a direct host string
-operation, the portable one-line definition may be sufficiently efficient.
-Likewise, a small Shen predicate may be cheap when the host compiler inlines it.
-The important question is whether the common operation reaches an efficient
-host implementation without repeated allocation, generic dispatch, string
-decomposition, or exception handling.
+example, the portable definition of `hdstr` is already cheap if it reaches a
+direct host `pos` operation, and a host compiler may inline other small Shen
+predicates. The relevant question is whether a common operation reaches an
+efficient host implementation without repeated allocation, generic dispatch,
+string decomposition, or exception handling.
+
+## Benchmarks
+
+The repository includes a portable benchmark suite in
+[`benchmarks/`](../benchmarks/), documented in the
+[`benchmarks` guide](benchmarks.md). Its entry point is
+[`benchmarks/benchmarks.shen`](../benchmarks/benchmarks.shen), which can be run
+as a script or loaded and invoked through `run-all-benchmarks`.
+
+The suite contains focused measurements for data operations, control flow,
+equality, pattern matching, and Shen compilation. Ports can use these cases to
+find expensive primitives and kernel paths, compare alternative
+representations or overrides, and check whether an optimisation affects the
+workload it is intended to improve. Benchmark results complement rather than
+replace the test suite: a faster result is useful only when the port continues
+to implement the same Shen behaviour.
 
 ## Semantic requirements
 
-All overrides and compiler specialisations must remain observationally
-equivalent to the kernel definitions. In particular, preserve:
+Overrides and compiler specialisations remain observationally equivalent to the
+kernel definitions. Important invariants include:
 
 * structural equality and compatible dictionary hashing;
 * the distinction between booleans, symbols, strings, and numbers;
+* boolean validation rather than host truthiness;
+* numeric division, comparison, and overflow behaviour;
 * exact success values and required errors;
+* Shen error values and handling behaviour;
 * left-to-right evaluation where it is observable;
 * short-circuit behaviour;
 * proper and improper list behaviour;
 * function redefinition, arity changes, and first-class functions;
+* the documented boundary between sealed implementation calls and open
+  user-visible bindings;
 * partial and over-application;
 * tail calls required by recursive kernel code; and
 * the vector, tuple, dictionary, and Prolog-variable behaviour expected by other
