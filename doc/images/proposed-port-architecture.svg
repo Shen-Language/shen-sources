@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1000 640"
+     role="img"
+     aria-labelledby="title description">
+  <title id="title">Proposed Shen port architecture</title>
+  <desc id="description">
+    In this proposed architecture, a compiler backend, kernel, and port support
+    written in Shen are processed by a compatible Shen implementation. The
+    generated target code is combined with a handwritten runtime in the target
+    language to produce a running Shen port. The build host and target platform
+    may differ.
+  </desc>
+
+  <style>
+    text {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", sans-serif;
+    }
+
+    .stage-label {
+      fill: #5d6879;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+    }
+
+    .node-title {
+      fill: #172033;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .node-copy {
+      fill: #5d6879;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .edge-label {
+      fill: #172033;
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .benefit {
+      fill: #edf1f7;
+    }
+
+    .benefit-text {
+      fill: #172033;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .stage-label,
+      .node-copy {
+        fill: #cbd5e1;
+      }
+
+      .node-title,
+      .edge-label,
+      .benefit-text {
+        fill: #f8fafc;
+      }
+
+      .box-backend {
+        fill: #1e3a8a !important;
+        stroke: #60a5fa !important;
+      }
+
+      .box-shen {
+        fill: #172554 !important;
+        stroke: #60a5fa !important;
+      }
+
+      .box-seed {
+        fill: #3a1c57 !important;
+        stroke: #c084fc !important;
+      }
+
+      .box-runtime {
+        fill: #421d13 !important;
+        stroke: #fb923c !important;
+      }
+
+      .box-result {
+        fill: #123524 !important;
+        stroke: #4ade80 !important;
+      }
+
+      .benefit {
+        fill: #1e293b;
+      }
+
+      .connector,
+      .divider,
+      .separator {
+        stroke: #aab5c5 !important;
+      }
+
+      .arrowhead {
+        fill: #aab5c5 !important;
+      }
+    }
+  </style>
+
+  <g transform="translate(0 10)">
+    <text class="stage-label" x="28" y="29">PORTABLE SHEN SIDE</text>
+    <text class="stage-label" x="375" y="29">BUILD ENVIRONMENT</text>
+    <text class="stage-label" x="724" y="29">TARGET PLATFORM</text>
+
+    <line class="divider" x1="680" y1="18" x2="680" y2="586"
+          stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="5 7"/>
+    <rect class="benefit" x="600" y="59" width="160" height="28" rx="14"/>
+    <text class="benefit-text" x="680" y="78" text-anchor="middle">HOST MAY DIFFER</text>
+
+    <rect class="box-backend" x="28" y="62" width="300" height="130" rx="14"
+          fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+    <text class="node-title" x="52" y="94">Backend written in Shen</text>
+    <text class="node-copy" x="52" y="123">KLambda -&gt; target code</text>
+    <text class="node-copy" x="52" y="154">Pattern matching, lists, recursion</text>
+    <text class="node-copy" x="52" y="175">make symbolic transformation direct.</text>
+
+    <rect class="box-shen" x="28" y="230" width="300" height="88" rx="12"
+          fill="#eaf2ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text class="node-title" x="52" y="262">Shen kernel</text>
+    <text class="node-copy" x="52" y="289">Written in Shen; released as KLambda</text>
+
+    <rect class="box-shen" x="28" y="348" width="300" height="88" rx="12"
+          fill="#eaf2ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text class="node-title" x="52" y="380">Port support</text>
+    <text class="node-copy" x="52" y="407">Written in Shen; compiled to KLambda</text>
+
+    <rect class="box-seed" x="382" y="104" width="250" height="286" rx="16"
+          fill="#f4ebff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text class="node-title" x="507" y="140" text-anchor="middle">Compatible Shen port</text>
+    <text class="node-copy" x="507" y="165" text-anchor="middle">the bootstrap seed</text>
+    <line class="separator" x1="414" y1="188" x2="600" y2="188" stroke="#cbd5e1"/>
+    <text class="node-copy" x="418" y="224">1. Loads the backend</text>
+    <text class="node-copy" x="418" y="268">2. Compiles port Shen to KL</text>
+    <text class="node-copy" x="418" y="312">3. Runs backend on all KL</text>
+    <rect class="benefit" x="414" y="338" width="186" height="30" rx="15"/>
+    <text class="benefit-text" x="507" y="358" text-anchor="middle">PORTABLE BOOTSTRAP</text>
+
+    <line class="connector" x1="328" y1="127" x2="374" y2="127"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 382 127 L 373 122 L 373 132 Z" fill="#687386"/>
+    <line class="connector" x1="328" y1="274" x2="352" y2="274"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <line class="connector" x1="352" y1="274" x2="352" y2="246"
+          stroke="#687386" stroke-width="1.7"/>
+    <line class="connector" x1="352" y1="246" x2="374" y2="246"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 382 246 L 373 241 L 373 251 Z" fill="#687386"/>
+    <line class="connector" x1="328" y1="392" x2="352" y2="392"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <line class="connector" x1="352" y1="392" x2="352" y2="322"
+          stroke="#687386" stroke-width="1.7"/>
+    <line class="connector" x1="352" y1="322" x2="374" y2="322"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 382 322 L 373 317 L 373 327 Z" fill="#687386"/>
+
+    <rect class="box-shen" x="724" y="118" width="248" height="112" rx="14"
+          fill="#eaf2ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text class="node-title" x="748" y="153">Generated target code</text>
+    <text class="node-copy" x="748" y="181">Backend + kernel + port support</text>
+    <text class="node-copy" x="748" y="204">The seed is not linked into the result.</text>
+
+    <line class="connector" x1="632" y1="214" x2="716" y2="214"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 724 214 L 715 209 L 715 219 Z" fill="#687386"/>
+    <text class="edge-label" x="678" y="202" text-anchor="middle">generates</text>
+
+    <rect class="box-runtime" x="724" y="300" width="248" height="112" rx="14"
+          fill="#fff0e5" stroke="#f97316" stroke-width="1.5"/>
+    <text class="node-title" x="748" y="335">Handwritten runtime</text>
+    <text class="node-copy" x="748" y="363">Written in the target language</text>
+    <text class="node-copy" x="748" y="383">Values and primitives</text>
+    <text class="node-copy" x="748" y="402">I/O and host integration</text>
+
+    <line class="connector" x1="948" y1="230" x2="984" y2="230"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <line class="connector" x1="984" y1="230" x2="984" y2="461"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <line class="connector" x1="984" y1="461" x2="865" y2="461"
+          stroke="#687386" stroke-width="1.7"/>
+    <line class="connector" x1="865" y1="461" x2="865" y2="481"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 865 489 L 860 480 L 870 480 Z" fill="#687386"/>
+    <line class="connector" x1="774" y1="412" x2="774" y2="461"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <line class="connector" x1="774" y1="461" x2="831" y2="461"
+          stroke="#687386" stroke-width="1.7"/>
+    <line class="connector" x1="831" y1="461" x2="831" y2="481"
+          stroke="#687386" stroke-width="1.7" stroke-linecap="round"/>
+    <path class="arrowhead" d="M 831 489 L 826 480 L 836 480 Z" fill="#687386"/>
+    <text class="edge-label" x="848" y="454" text-anchor="middle">combine</text>
+
+    <rect class="box-result" x="724" y="489" width="248" height="88" rx="18"
+          fill="#e8f7ef" stroke="#16a34a" stroke-width="2"/>
+    <text class="node-title" x="848" y="526" text-anchor="middle">Running Shen port</text>
+    <text class="node-copy" x="848" y="552" text-anchor="middle">It can seed a later build.</text>
+
+    <rect class="benefit" x="56" y="486" width="244" height="34" rx="17"/>
+    <text class="benefit-text" x="178" y="508" text-anchor="middle">NATURAL COMPILER CONSTRUCTION</text>
+    <rect class="benefit" x="395" y="486" width="224" height="34" rx="17"/>
+    <text class="benefit-text" x="507" y="508" text-anchor="middle">PORTABLE ACROSS PORTS</text>
+    <rect class="benefit" x="724" y="589" width="248" height="28" rx="14"/>
+    <text class="benefit-text" x="848" y="608" text-anchor="middle">CROSS-GENERATION IS NATURAL</text>
+  </g>
+</svg>
