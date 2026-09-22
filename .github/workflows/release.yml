@@ -48,6 +48,10 @@ jobs:
             tests/runme.shen
           )
 
+          while IFS= read -r -d '' DOCUMENT_PATH; do
+            EXPECTED_PATHS+=("$DOCUMENT_PATH")
+          done < <(git ls-files -z -- doc/)
+
           for PATH_IN_RELEASE in "${EXPECTED_PATHS[@]}"; do
             tar -tzf "$TAR_ASSET" "$ROOT/$PATH_IN_RELEASE" >/dev/null
             unzip -Z1 "$ZIP_ASSET" "$ROOT/$PATH_IN_RELEASE" >/dev/null
