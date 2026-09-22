@@ -12,12 +12,18 @@ main worked example here because it also exposes the surrounding bootstrap,
 initialisation, target assembly, and generated-source distribution machinery.
 
 The central proposal is to write each KLambda-to-target backend in Shen while
-keeping the low-level runtime in the target platform's language. This has two
+keeping the low-level runtime in the target platform's language. This has three
 main advantages:
 
 * **Handling Shen with Shen is easier.** KLambda is symbolic code. Shen's
   pattern matching, lists, recursion, symbols, and higher-order functions make
   the translation rules direct to express and easy to relate to their input.
+* **Backends can use the Shen compilation environment.** A backend written in
+  Shen runs inside a live Shen system, not merely over isolated KLambda data.
+  It can query signatures, arities, symbol properties, packages, datatypes,
+  compiler flags, and other state established during compilation. A backend
+  written directly in the target language would need this information to be
+  encoded in KLambda, exported separately, or exposed through a bridge.
 * **Backends are portable across Shen ports.** A backend written in Shen can be
   loaded by any compatible Shen implementation. The port running the backend
   and the platform receiving its output do not have to be the same.
@@ -28,9 +34,10 @@ platform on which that code will run.
 
 ![Proposed Shen port architecture](images/proposed-port-architecture.svg)
 
-In this division of labour, Shen handles symbolic transformation, the target
-language supplies the low-level runtime, and a compatible working Shen executes
-the backend during the build.
+In this division of labour, Shen handles symbolic transformation and provides
+the build-time compilation environment, the target language supplies the
+low-level runtime, and a compatible working Shen executes the backend during
+the build.
 
 During the build, the Shen-written kernel and port support become target code;
 the backend can be compiled and included in the same way when the deployed port
@@ -71,6 +78,25 @@ visitor hierarchy, or collection of tagged syntax classes.
 
 Shen/Scheme demonstrates this in `src/compiler.shen`, where pattern-matching
 rules translate KLambda forms into Scheme forms.
+
+### Shen exposes more than KLambda
+
+KLambda does not contain all the information available while it is being
+compiled. The surrounding Shen environment may contain declarations and
+metadata useful for target-specific lowering and optimisation. Since a
+Shen-written backend executes in that environment, it can access this
+information through ordinary Shen interfaces.
+
+For example, a backend can retrieve a function's type signature even when no
+type annotations appear in its KLambda. It can similarly inspect arities,
+properties, or build configuration without duplicating the corresponding Shen
+machinery in the target language.
+
+This is a practical advantage of implementing the backend in Shen: the
+frontend and backend can share compilation knowledge without introducing a
+separate metadata representation or host-language API. When a backend depends
+on that knowledge, however, the build must ensure that the environment
+corresponds to the code being compiled.
 
 ### Portable backends decouple ports from targets
 
@@ -118,13 +144,15 @@ handwritten runtime, and any target toolchain, but not the seed implementation.
 
 ## The proposed implementation boundary
 
-This proposal takes KLambda as the boundary between Shen and a port.
-The Shen kernel is authored in Shen, but kernel releases provide generated
-KLambda for ports to consume. A port therefore does not ordinarily need to
-reimplement the Shen reader, pattern compiler, typechecker, Prolog system, or
-other kernel facilities in the target language. This boundary is versioned
-rather than immutable: a kernel release can change the KLambda contract in ways
-that require corresponding changes in the backend or runtime.
+This proposal takes KLambda as the syntactic code boundary between Shen and a
+port. It does not require KLambda to be the backend's only build-time input: a
+backend can also consult the Shen environment in which it runs. The Shen kernel
+is authored in Shen, but kernel releases provide generated KLambda for ports to
+consume. A port therefore does not ordinarily need to reimplement the Shen
+reader, pattern compiler, typechecker, Prolog system, or other kernel facilities
+in the target language. This boundary is versioned rather than immutable: a
+kernel release can change the KLambda contract in ways that require
+corresponding changes in the backend or runtime.
 
 Under this architecture, a compiled port provides a Shen-written backend which
 accepts KLambda and produces something its target can execute. That output
@@ -199,6 +227,31 @@ backend.shen -> backend.kl -> backend.target
 The backend therefore compiles its own KLambda representation. This is
 self-compilation of the backend, but the new port becomes self-hosting only
 when it can run the same build itself.
+
+### The backend's Shen environment
+
+KLambda is the backend's explicit code input, but the backend does not have to
+operate as a closed transformation over that value. Because the backend
+executes inside a live Shen system, it can inspect build-time state established
+by the frontend and by previously loaded code. This can include function
+signatures, arities, symbol properties, packages, datatypes, feature flags, and
+other compiler metadata.
+
+This allows a backend to recover information which is not represented directly
+in KLambda. For example, it can retrieve a function's signature from the Shen
+type environment and use it to guide representation choices or optimisations.
+
+Whenever generated output depends on this state, the state is also a build
+input. The build driver must establish the appropriate environment before
+invoking the backend. Merely reading released KLambda as data does not install
+its associated metadata, and the seed's metadata may not match the kernel being
+compiled when their versions differ.
+
+Backends should distinguish required metadata from optional optimisation
+information. Missing required information should produce a build-time error;
+optional information should have a well-defined fallback. Portable backends
+should prefer stable Shen interfaces over direct access to
+implementation-specific globals.
 
 ### Port sources and kernel
 
