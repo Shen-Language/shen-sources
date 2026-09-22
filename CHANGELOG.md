@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- A proposed architecture guide for compiled ports, covering Shen-written
+  backends, bootstrap and deployment models, the KLambda/runtime boundary, and
+  access to the Shen compilation environment.
+- A `type-annotations` extension for adding available signature information to
+  KLambda without evaluating or replacing the supplied code.
+
+### Changed
+
+- Release archives now include the Shen sources, build scripts, standard
+  library, benchmarks, and a `VERSION` file, and the release workflow verifies
+  their expected contents.
+- The port performance guide now covers host representations, efficient
+  KLambda execution, static specialisation, kernel overrides, benchmarks, and
+  semantic requirements in detail.
+- The port upgrade guide now documents minimum port requirements and
+  optimisation opportunities for relevant kernel releases.
+
 ## [42.0] - 2026-08-25
 
 ### Added
