@@ -4,5 +4,6 @@
 
 (load "tests/extensions/features/tests.shen")
 (load "tests/extensions/programmable-pattern-matching/tests.shen")
+(load "tests/extensions/type-annotations/tests.shen")
 
 (extension-tests.finish)
