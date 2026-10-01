@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [42.2] - 2026-10-01
+
 ### Changed
 
 - Namespace `externals` and `with-externals` now accept expressions producing
@@ -708,7 +710,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.1...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.2...HEAD
+[42.2]: https://github.com/Shen-Language/shen-sources/compare/shen-42.1...shen-42.2
 [42.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.0...shen-42.1
 [42.0]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...shen-42.0
 [41.3]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...shen-41.3

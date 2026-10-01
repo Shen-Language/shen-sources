@@ -12,6 +12,12 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 42.2
+
+Ports bundling the namespace extension should regenerate or replace
+`extension-namespaces.kl` to support evaluated external-symbol expressions.
+No new primitives or initialisation steps are required.
+
 ## 42.1
 
 ### Source-form expansion hooks
