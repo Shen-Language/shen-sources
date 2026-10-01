@@ -1,5 +1,7 @@
 \\ Source-form hooks are kernel APIs; no namespace extension is needed here.
 
+(set source-tests.*initial-handlers* (value shen.*source-form-handlers*))
+
 (define source-tests.sequence
   [_ | Forms] -> Forms)
 
@@ -102,8 +104,8 @@
 (map (fn shen.unregister-source-form)
   [source-tests.sequence source-tests.package source-tests.failure source-tests.invalid source-tests.empty])
 (shen.unregister-source-form source-tests.sequence)
-(extension-tests.assert-equal "unregister is idempotent and restores the empty registry"
-  (value shen.*source-form-handlers*) [])
+(extension-tests.assert-equal "unregister is idempotent and restores the initial registry"
+  (value shen.*source-form-handlers*) (value source-tests.*initial-handlers*))
 
 \\ Exercise source initialisation separately from generated KLambda metadata.
 (unput shen.register-source-form shen.lambda-form)
