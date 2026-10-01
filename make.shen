@@ -62,7 +62,8 @@
        "launcher"
        \\"factorise-defun"
        "programmable-pattern-matching"
-       "expand-dynamic"])
+       "expand-dynamic"
+       "namespaces"])
     (output "compilation complete.~%")
     done))
 

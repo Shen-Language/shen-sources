@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Added
 
+- Source-form handlers that expand containers before ordinary macros.
+- An experimental namespace extension with optional prefix renaming and
+  scoped external symbols.
+
 - A proposed architecture guide for compiled ports, covering Shen-written
   backends, bootstrap and deployment models, the KLambda/runtime boundary, and
   access to the Shen compilation environment.
@@ -24,6 +28,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
   semantic requirements in detail.
 - The port upgrade guide now documents minimum port requirements and
   optimisation opportunities for relevant kernel releases.
+
+### Fixed
+
+- `read` and `lineread` now expand input at EOF without a trailing newline,
+  consistently with newline-terminated input.
 
 ## [42.0] - 2026-08-25
 

@@ -38,6 +38,9 @@
   X -> (let F (value *demodulation-function*)
          (F X)))
 
+(declare register-source-form [symbol --> [[A --> [list B]] --> symbol]])
+(declare unregister-source-form [symbol --> symbol])
+
 (declare abort [--> A])
 (declare absolute [string --> [list string]])
 (declare absvector? [A --> boolean])
