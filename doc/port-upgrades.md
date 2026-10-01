@@ -12,6 +12,22 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+### Source-form expansion hooks
+
+The reader supports [source-form handlers](source-forms.md) that run before
+ordinary macros.
+
+**Minimum Requirements**
+
+- Replace the generated kernel and run its normal initialisation. No new
+  KLambda primitive is required.
+- Ports overriding the reader or `macroexpand` must preserve the documented
+  expansion order. `shen.macroexpand-h` now takes a fourth argument containing
+  the handler registry.
+- `shen.try-parse` now returns parsed forms; the read loop expands them after
+  parsing. Stream overrides must also process input at EOF without a newline
+  and consume empty expansions without retrying the handler.
+
 ## 42.0
 
 ### Factorised Code

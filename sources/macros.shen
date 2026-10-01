@@ -6,15 +6,25 @@
 
 (define macroexpand
   X -> (let Fs (map (/. X (tl X)) (value *macros*))
-         (macroexpand-h X Fs Fs)))
+         (macroexpand-h X Fs Fs (value *source-form-handlers*))))
 
 (define macroexpand-h
-  X [] _ -> X
-  X [F | Fs] Macros -> (let Y (walk F X)
-                         (if (= X Y)
-                             (macroexpand-h X Fs Macros)
-                             (macroexpand-h Y Macros Macros)))
-  _ _ _ -> (simple-error "implementation error in shen.macroexpand-h"))
+  X [] _ _ -> X
+  X [F | Fs] Macros Handlers ->
+    (let Y (source-macro-walk F X Handlers)
+      (if (= X Y)
+          (macroexpand-h X Fs Macros Handlers)
+          (macroexpand-h Y Macros Macros Handlers)))
+  _ _ _ _ -> (simple-error "implementation error in shen.macroexpand-h"))
+
+\* Preserve the ordinary walker when the registry is empty. Otherwise a
+   registered container is opaque, including one produced by another macro.
+   The source reader, not an inner macro, expands its body. *\
+(define source-macro-walk
+  F X [] -> (walk F X)
+  _ X Handlers -> X where (cons? (source-form-handler X Handlers))
+  F [X | Y] Handlers -> (F (map (/. Z (source-macro-walk F Z Handlers)) [X | Y]))
+  F X _ -> (F X))
 
 (define walk
   F [X | Y] -> (F (map (/. Z (walk F Z)) [X | Y]))

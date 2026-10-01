@@ -86,7 +86,7 @@
    _ 94 Bytes Terminate?      -> (error "read aborted")
   _ -1 Bytes Terminate?       -> (if (empty? Bytes)
                                      (simple-error "error: empty stream")
-                                     (compile (/. X (<s-exprs> X)) Bytes))
+                                     (process-sexprs (compile (/. X (<s-exprs> X)) Bytes)))
   Stream 0 Bytes Terminate?    -> (read-loop Stream (my-read-byte Stream) Bytes Terminate?)
   Stream Byte Bytes Terminate? -> (if (Terminate? Byte)
                                       (let Parse (try-parse Bytes)
@@ -95,17 +95,16 @@
                                                          (my-read-byte Stream)
                                                          (append Bytes [Byte])
                                                          Terminate?)
-                                              (do (record-it Bytes) Parse)))
+                                              (do (record-it Bytes) (process-sexprs Parse))))
                                       (read-loop Stream
                                                 (my-read-byte Stream)
                                                 (append Bytes [Byte])
                                                 Terminate?)))
 
+\\ Only parsing is speculative. An empty expansion still consumes its input,
+\\ and source-handler errors must not be retried as incomplete input.
 (define try-parse
-   Bytes -> (let S-exprs (trap-error (compile (/. X (<s-exprs> X)) Bytes) (/. E i-failed!))
-                 (if (nothing-doing? S-exprs)
-                     i-failed!
-                     (process-sexprs S-exprs))))
+  Bytes -> (trap-error (compile (/. X (<s-exprs> X)) Bytes) (/. E i-failed!)))
 
 (define nothing-doing?
    i-failed! -> true
@@ -427,13 +426,50 @@
   9  -> true
   _  -> false)
 
+\* Source containers own their bodies before ordinary macros walk them.
+   Expansions are source sequences, processed before arity discovery. *\
+(define register-source-form
+  Head Transformer ->
+    (do (set *source-form-handlers*
+          (update-assoc Head Transformer (value *source-form-handlers*)))
+        Head)
+      where (and (symbol? Head) (not (variable? Head)) (not (= Head package)))
+  Head _ -> (error "invalid source-form head: ~S~%" Head))
+
+(define unregister-source-form
+  Head -> (do (set *source-form-handlers*
+                (remove (assoc Head (value *source-form-handlers*))
+                        (value *source-form-handlers*)))
+              Head))
+
+(define source-form-handler
+  [Head | _] Handlers -> (assoc Head Handlers)
+  _ _ -> [])
+
+(define source-form-expansion
+  Form [_ | Transformer] ->
+    (let Forms (Transformer Form)
+      (if (source-form-list? Forms)
+          Forms
+          (error "source-form handler must return a list of forms: ~S~%" Form))))
+
+(define source-form-list?
+  [] -> true
+  [_ | Forms] -> (source-form-list? Forms)
+  _ -> false)
+
 (define unpackage&macroexpand
   [] -> []
   [Package | S-exprs] -> (unpackage&macroexpand (append (unpackage Package) S-exprs))  where (packaged? Package)
-  [S-expr | S-exprs]  -> (let M (macroexpand S-expr)
-                           (if (packaged? M)
-                               (unpackage&macroexpand [M | S-exprs])
-                               [M | (unpackage&macroexpand S-exprs)])))
+  [Form | Forms] ->
+    (let Handler (source-form-handler Form (value *source-form-handlers*))
+      (if (cons? Handler)
+          (unpackage&macroexpand (append (source-form-expansion Form Handler) Forms))
+          (let Expanded (macroexpand Form)
+            (if (or (packaged? Expanded)
+                    (cons? (source-form-handler Expanded (value *source-form-handlers*))))
+                (unpackage&macroexpand [Expanded | Forms])
+                [Expanded | (unpackage&macroexpand Forms)])))))
 
 (define packaged?
   [package P E | Code] -> true

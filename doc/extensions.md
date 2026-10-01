@@ -6,3 +6,6 @@ and documented in `doc/extensions/<extension-name>.md`.
 
 Follow the instructions on the documentation file of each extension
 on how to integrate them.
+
+The experimental [namespaces](extensions/namespaces.md) extension adds prefix
+renaming and scoped externals using [source-form hooks](source-forms.md).

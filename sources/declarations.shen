@@ -9,6 +9,7 @@
 (set *tc* false)
 (set *property-vector* (dict 20000))
 (set *macros* [ [macros | (/. X (macros X))] ])
+(set *source-form-handlers* [])
 (set *gensym* 0)
 (set *tracking* [])
 (set *profiled* [])
@@ -96,6 +97,7 @@
   print-prolog-vector 1 print-freshterm 1 printF 1 prolog-memory 1 profile-results 1 pr 2 ps 1 preclude 1
   preclude-all-but 1 protect 1 put 4 read-file-as-string 1 read-file-as-bytelist 1 read-file 1 read 1
   read-byte 1 read-from-string 1 read-from-string-unprocessed 1 read-unit-string 1 receive 1 release 0
+  register-source-form 2 unregister-source-form 1
   remove 2 reverse 1 set 2 simple-error 1 snd 1 specialise 2 spy 1 spy? 0 step 1 step? 0 stinput 0
   stoutput 0 str 1 string->n 1 string->symbol 1 string? 1 subst 3 sum 1 symbol? 1 systemf 1 tail 1 tl 1
   tc 1 tc? 0 thaw 1 tlstr 1 track 1 tracked 0 trap-error 2 tuple? 1 type 2 return 5 unabsolute 1 undefmacro 1 unput 3
@@ -143,7 +145,9 @@
 (define build-lambda-table
   Fs -> (let LambdaEntries (map (/. X (lambda-entry X)) Fs)
              (for-each (/. X (set-lambda-form-entry X))
-                  [[tuple | (/. X (tuple X))]
+                  [[register-source-form | (/. Head Transformer (register-source-form Head Transformer))]
+                   [unregister-source-form | (/. Head (unregister-source-form Head))]
+                   [tuple | (/. X (tuple X))]
                    [pvar | (/. X (pvar X))]
                    [dictionary | (/. X (dictionary X))]
                    [print-prolog-vector | (/. X (print-prolog-vector X))]
