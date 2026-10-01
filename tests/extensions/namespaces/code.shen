@@ -7,10 +7,10 @@
 (shen.x.namespace namespace-tests.client
   (use namespace-tests.model)
   (use namespace-tests.model => model)
-  (externals [shared namespace-tests-global-twice])
+  (externals (append (namespace-tests.vocabulary) [namespace-tests-global-twice]))
 
   (define compute-value X ->
-    (with-externals [asm mov return]
+    (with-externals (append [asm mov] [return])
       (asm (mov R (model.box.value (model.make X))) (return R))))
   (define full-reference X ->
     (namespace-tests.model.box.value (namespace-tests.model.make X)))

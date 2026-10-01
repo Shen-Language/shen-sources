@@ -3,6 +3,12 @@
 (load "tests/extensions/namespaces/macros.shen")
 (load "tests/extensions/namespaces/code.shen")
 
+(define namespace-tests.record-vocabulary
+  Name ->
+    (do (set namespace-tests.*vocabulary-order*
+             [Name | (value namespace-tests.*vocabulary-order*)])
+        [Name]))
+
 \\ Generated extensions need not retain their own source package metadata.
 (extension-tests.assert-equal "namespace is not an extension external"
   (element? namespace (trap-error (external shen.x.namespaces) (/. E []))) false)
@@ -99,6 +105,53 @@
   (read-from-string "(shen.x.namespace namespace-tests.compare (externals (cons plain ())) (define ref -> plain))")
   [[define namespace-tests.compare.ref -> plain]])
 
+(extension-tests.assert-equal "external expressions compose shared vocabularies like package"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (externals (append (namespace-tests.vocabulary) [extra])) (define names -> [plain shared extra local]))")
+  (read-from-string "(package namespace-tests.compare (append (namespace-tests.vocabulary) [extra]) (define names -> [plain shared extra local]))"))
+(extension-tests.assert-equal "scoped expressions compose vocabulary without escaping"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (define names -> (cons (with-externals (append (namespace-tests.vocabulary) [extra]) extra) [extra])))")
+  [[define namespace-tests.compare.names -> [cons extra [cons namespace-tests.compare.extra []]]]])
+(extension-tests.assert-equal "existing package metadata can supply external symbols"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (externals (external namespace-tests.model)) (define tag -> boxed))")
+  [[define namespace-tests.compare.tag -> boxed]])
+(extension-tests.assert-equal "external expressions run before use aliases rewrite their names"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (use missing => namespace-tests) (externals (namespace-tests.vocabulary)) (define item -> plain))")
+  [[define namespace-tests.compare.item -> plain]])
+(extension-tests.assert-equal "scoped expressions run before use aliases rewrite their names"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (use missing => namespace-tests) (define item -> (with-externals (namespace-tests.vocabulary) shared)))")
+  [[define namespace-tests.compare.item -> shared]])
+
+(set namespace-tests.*vocabulary-order* [])
+(extension-tests.assert-equal "evaluated scopes inherit their enclosing vocabularies"
+  (read-from-string "(shen.x.namespace namespace-tests.evaluation (externals (namespace-tests.record-vocabulary first)) (externals (namespace-tests.record-vocabulary second)) (define item -> (with-externals (namespace-tests.record-vocabulary outer) (with-externals (namespace-tests.record-vocabulary inner) [first second outer inner]))))")
+  [[define namespace-tests.evaluation.item ->
+    [cons first [cons second [cons outer [cons inner []]]]]]])
+(extension-tests.assert-equal "vocabulary expressions evaluate once in source order"
+  (reverse (value namespace-tests.*vocabulary-order*)) [first second outer inner])
+(extension-tests.assert-equal "evaluated namespace vocabulary is recorded"
+  (element? first (external namespace-tests.evaluation)) true)
+(extension-tests.assert-equal "evaluated scoped vocabulary stays out of namespace metadata"
+  (element? outer (external namespace-tests.evaluation)) false)
+
+(extension-tests.assert-error "external expressions must produce lists"
+  (freeze (read-from-string "(shen.x.namespace a (externals (hd [42])))")))
+(extension-tests.assert-error "external expressions must produce proper lists"
+  (freeze (read-from-string "(shen.x.namespace a (externals (cons plain tail)))")))
+(extension-tests.assert-error "external expressions must produce symbols"
+  (freeze (read-from-string "(shen.x.namespace a (externals (append [plain] [42])))")))
+(extension-tests.assert-error "computed variables cannot be external symbols"
+  (freeze (read-from-string "(shen.x.namespace a (externals [(intern c#34;Variablec#34;)]))")))
+(extension-tests.assert-error "scoped expressions must produce symbol lists"
+  (freeze (read-from-string "(shen.x.namespace a (with-externals (append [plain] [42]) plain))")))
+(extension-tests.assert-equal "external expression errors propagate unchanged"
+  (trap-error (read-from-string "(shen.x.namespace a (externals (simple-error c#34;vocabulary failedc#34;)))")
+              (/. E (error-to-string E)))
+  "vocabulary failed")
+(extension-tests.assert-equal "scoped expression errors propagate unchanged"
+  (trap-error (read-from-string "(shen.x.namespace a (with-externals (simple-error c#34;vocabulary failedc#34;) plain))")
+              (/. E (error-to-string E)))
+  "vocabulary failed")
+
 (extension-tests.assert-error "duplicate aliases are rejected"
   (freeze (read-from-string "(shen.x.namespace a (use b => x) (use c => x))")))
 (extension-tests.assert-error "unrenamed and renamed uses cannot claim the same prefix"
@@ -115,10 +168,6 @@
   (freeze (read-from-string "(shen.x.namespace a (define f -> 1) (externals [plain]))")))
 (extension-tests.assert-error "variables cannot be external symbols"
   (freeze (read-from-string "(shen.x.namespace a (externals [X]))")))
-(extension-tests.assert-error "external lists are not evaluated"
-  (freeze (read-from-string "(shen.x.namespace a (externals (append [foo] [])))")))
-(extension-tests.assert-error "scope lists are not evaluated"
-  (freeze (read-from-string "(shen.x.namespace a (with-externals (append [foo] []) foo))")))
 (extension-tests.assert-error "variables cannot be scoped external symbols"
   (freeze (read-from-string "(shen.x.namespace a (with-externals [X] X))")))
 (extension-tests.assert-error "with-externals requires an enclosed form"

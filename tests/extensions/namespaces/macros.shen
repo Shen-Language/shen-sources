@@ -1,6 +1,8 @@
 \\ Deliberately small consumers of qualification-before-expansion.
 (set namespace-tests.*record-names* [])
 
+(define namespace-tests.vocabulary -> [plain shared])
+
 (package namespace-tests [defrecord asm mov return]
 
 (defmacro record

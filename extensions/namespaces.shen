@@ -17,8 +17,8 @@
     (header Name Forms (add-use Owner Owner Uses) Externals)
   Name [[use Owner => Alias] | Forms] Uses Externals ->
     (header Name Forms (add-use Owner Alias Uses) Externals)
-  Name [[externals Literal] | Forms] Uses Externals ->
-    (header Name Forms Uses (union (literal-symbols Literal) Externals))
+  Name [[externals Expression] | Forms] Uses Externals ->
+    (header Name Forms Uses (union (external-symbols (eval Expression)) Externals))
   _ [[Directive | Args] | _] _ _ ->
     (error "invalid namespace directive: ~S~%" [Directive | Args])
       where (element? Directive [use externals])
@@ -43,17 +43,17 @@
 (define name?
   Name -> (and (symbol? Name) (not (variable? Name))))
 
-\\ Header and scope lists are literal; expressions are not evaluated.
-(define literal-symbols
+\\ Like package, evaluate externals before qualification; validate the result.
+(define external-symbols
   [] -> []
-  [cons Symbol Rest] -> [Symbol | (literal-symbols Rest)] where (name? Symbol)
-  X -> (error "externals expects a literal list of symbols: ~S~%" X))
+  [Symbol | Rest] -> [Symbol | (external-symbols Rest)] where (name? Symbol)
+  X -> (error "externals expects a list of non-variable symbols: ~S~%" X))
 
 \\ Return the qualified form and the original local names for package metadata.
 \\ Scoped externals affect this walk only; they are not published as externals.
 (define qualify
-  [with-externals Literal Form] Owner Uses Externals ->
-    (qualify Form Owner Uses (union (literal-symbols Literal) Externals))
+  [with-externals Expression Form] Owner Uses Externals ->
+    (qualify Form Owner Uses (union (external-symbols (eval Expression)) Externals))
   [with-externals | Args] _ _ _ -> (error "invalid with-externals: ~S~%" Args)
   [X | Xs] Owner Uses Externals -> (qualify-list [X | Xs] Owner Uses Externals)
   X Owner Uses Externals ->

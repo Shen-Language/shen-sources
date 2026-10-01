@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- Namespace `externals` and `with-externals` now accept expressions producing
+  symbol lists, evaluated before qualification as with `package`.
+
 ## [42.1] - 2026-10-01
 
 ### Added
