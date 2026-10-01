@@ -8,7 +8,10 @@ recorded definition.
 ## How to use
 
 Load `extensions/type-annotations.shen`, then pass KLambda to
-`shen.x.type-annotations.annotate-kl`:
+`shen.x.type-annotations.annotate-kl`. Ports can instead load the generated
+`klambda/extension-type-annotations.kl`; no initialiser is required.
+
+For example:
 
 ```shen
 (tc +)

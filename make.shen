@@ -63,7 +63,8 @@
        \\"factorise-defun"
        "programmable-pattern-matching"
        "expand-dynamic"
-       "namespaces"])
+       "namespaces"
+       "type-annotations"])
     (output "compilation complete.~%")
     done))
 

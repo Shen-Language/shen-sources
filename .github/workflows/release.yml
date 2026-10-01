@@ -45,6 +45,7 @@ jobs:
             benchmarks/shen-compilation.shen
             klambda/init.kl
             klambda/stlib.kl
+            klambda/extension-type-annotations.kl
             tests/runme.shen
           )
 
