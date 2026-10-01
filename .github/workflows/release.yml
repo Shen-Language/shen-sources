@@ -46,6 +46,13 @@ jobs:
             klambda/init.kl
             klambda/stlib.kl
             klambda/extension-type-annotations.kl
+            klambda/extension-namespaces.kl
+            extensions/type-annotations.shen
+            extensions/namespaces.shen
+            tests/extensions/runme.shen
+            tests/extensions/type-annotations/tests.shen
+            tests/extensions/namespaces/tests.shen
+            tests/extensions/source-forms/tests.shen
             tests/runme.shen
           )
 

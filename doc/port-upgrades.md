@@ -12,6 +12,8 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 42.1
+
 ### Source-form expansion hooks
 
 The reader supports [source-form handlers](source-forms.md) that run before

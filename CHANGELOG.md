@@ -6,17 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [42.1] - 2026-10-01
+
 ### Added
 
 - Source-form handlers that expand containers before ordinary macros.
 - An experimental namespace extension with optional prefix renaming and
   scoped external symbols.
-
 - A proposed architecture guide for compiled ports, covering Shen-written
   backends, bootstrap and deployment models, the KLambda/runtime boundary, and
   access to the Shen compilation environment.
 - A `type-annotations` extension for adding available signature information to
-  KLambda without evaluating or replacing the supplied code.
+  KLambda without evaluating or replacing the supplied code, distributed as
+  both Shen source and generated KLambda.
 
 ### Changed
 
@@ -701,7 +703,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.0...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.1...HEAD
+[42.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.0...shen-42.1
 [42.0]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...shen-42.0
 [41.3]: https://github.com/Shen-Language/shen-sources/compare/shen-41.2...shen-41.3
 [41.2]: https://github.com/Shen-Language/shen-sources/compare/shen-41.1...shen-41.2

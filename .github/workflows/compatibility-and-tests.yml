@@ -129,6 +129,26 @@ jobs:
           set -euo pipefail
           cp klambda/*.kl _compat/shen-scheme/kl/
 
+      - name: Match compatibility assertion to current kernel version
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import re
+
+          declarations = Path("sources/declarations.shen").read_text()
+          version = re.search(r'\(set \*version\* "([^"]+)"\)', declarations).group(1)
+          test = Path("_compat/shen-scheme/tests/kernel-compatibility.shen")
+          if test.exists():
+              source, count = re.subn(
+                  r'("kernel version"\s+)"[^"]+"',
+                  lambda match: match.group(1) + '"' + version + '"',
+                  test.read_text(),
+              )
+              if count != 1:
+                  raise SystemExit("Expected exactly one kernel version assertion")
+              test.write_text(source)
+          PYTHON
+
       - name: Precompile matching shen-scheme release with current kernel
         run: |
           set -euo pipefail
@@ -143,6 +163,12 @@ jobs:
         run: |
           set -euo pipefail
           make -C _compat/shen-scheme test
+
+      - name: Run current kernel test suite
+        run: |
+          set -euo pipefail
+          cd tests
+          ../_compat/shen-scheme/_build/bin/shen-scheme script runme.shen
 
       - name: Run extension test suite
         run: |
