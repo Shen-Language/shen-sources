@@ -1,5 +1,42 @@
 (maxinferences 1e7)
 
+(report "S43.1 public functions"
+
+  (map (fn arity) [char-stream? read-unit-string write-string])
+  [1 1 2]
+
+  (map (/. F (element? F (external shen)))
+       [char-stream? read-unit-string write-string occurs? factorise?
+        optimise? hush? system-S? hush userdefs tracked included spy? step? ctxt])
+  [true true true true true true true true true true true true true true true]
+
+  (map (/. F (not (empty? (assoc F (value shen.*sigf*)))))
+       [char-stream? read-unit-string write-string])
+  [true true true]
+
+  (boolean? ((fn char-stream?) (stinput)))
+  true
+
+  (let Before (value *absolute*)
+       Added (absolute "kernel-test-absolute")
+       Removed (unabsolute "kernel-test-absolute")
+    [(element? "kernel-test-absolute" Added) (= Before Removed)])
+  [true true])
+
+(report "context macro list tails"
+
+  (macroexpand [shen.@c (cons a (cons (intern "bar!") (cons (protect Tail) [])))])
+  [cons a (protect Tail)]
+
+  (macroexpand [shen.@ch (cons a (cons (intern "bar!") (cons (protect Tail) [])))])
+  [cons a (protect Tail)]
+
+  (macroexpand [shen.@ch [+ (cons a (cons (intern "bar!") (cons (protect Tail) [])))]])
+  [+ [cons a (protect Tail)]]
+
+  (macroexpand [shen.@c [a b]])
+  [cons a [cons b []]])
+
 (report "lambda table updates"
 
   (update-lambda-table append 2)

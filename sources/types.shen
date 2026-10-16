@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [occurs? factorise? optimise? hush? system-S? hush userdefs tracked included datatypes]
+(package shen []
 
 (define declare
   F A -> (let Rectify (rectify-type A)
@@ -58,6 +58,7 @@
 (declare cd [string --> string])
 (declare close [[stream A] --> [list B]])
 (declare cn [string --> [string --> string]])
+(declare char-stream? [[stream A] --> boolean])
 (declare compile [[[list A] --> [str [list A] B]] --> [[list A] --> B]])
 (declare cons? [A --> boolean])
 (declare datatypes [--> [list symbol]])
@@ -144,6 +145,7 @@
 (declare prolog-memory [number --> number])
 (declare ps [symbol --> [list unit]])
 (declare read [[stream in] --> unit])
+(declare read-unit-string [[stream in] --> string])
 (declare read-byte [[stream in] --> number])
 (declare read-file-as-bytelist [string --> [list number]])
 (declare read-file-as-string [string --> string])
@@ -192,6 +194,7 @@
 (declare version [--> string])
 (declare write-to-file [string --> [A --> A]])
 (declare write-byte [number --> [[stream out] --> number]])
+(declare write-string [string --> [[stream out] --> string]])
 (declare y-or-n? [string --> boolean])
 (declare > [number --> [number --> boolean]])
 (declare < [number --> [number --> boolean]])

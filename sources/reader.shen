@@ -78,7 +78,7 @@
   Stream -> (hd (read-loop Stream (my-read-byte Stream) [] (/. X (whitespace? X)))))
 
 (define my-read-byte
-  Stream -> (if (char-stinput? Stream)
+  Stream -> (if (char-stream? Stream)
                 (string->n (read-unit-string Stream))
                 (read-byte Stream)))
 

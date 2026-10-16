@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [shen]
+(package shen []
 
 (define shen->kl
   Shen -> (let KL (shen->kl-h Shen)

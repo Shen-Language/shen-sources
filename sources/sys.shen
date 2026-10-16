@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [update-lambda-table occurs? factorise? hush? optimise? system-S? userdefs tracked absolute unabsolute *absolute*]
+(package shen [update-lambda-table *absolute*]
 
 (define thaw
   F -> (F))
