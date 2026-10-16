@@ -7,8 +7,8 @@
 
   (map (/. F (element? F (external shen)))
        [char-stream? read-unit-string write-string occurs? factorise?
-        optimise? hush? system-S? hush userdefs tracked included spy? step? ctxt])
-  [true true true true true true true true true true true true true true true]
+        optimise? hush? system-S? hush userdefs tracked included spy? step? ctxt sqts])
+  [true true true true true true true true true true true true true true true true]
 
   (map (/. F (not (empty? (assoc F (value shen.*sigf*)))))
        [char-stream? read-unit-string write-string])
@@ -22,6 +22,14 @@
        Removed (unabsolute "kernel-test-absolute")
     [(element? "kernel-test-absolute" Added) (= Before Removed)])
   [true true])
+
+(report "datatype side-condition keywords"
+
+  (compile (/. Tokens (shen.<side> Tokens)) [ctxt (protect Context)])
+  [ctxt (protect Context)]
+
+  (compile (/. Tokens (shen.<side> Tokens)) [sqts (protect Sequents)])
+  [sqts (protect Sequents)])
 
 (report "context macro list tails"
 

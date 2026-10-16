@@ -42,11 +42,12 @@ The reader, writer, and zero-argument `read-byte` macro now dispatch through
 
 ### Building the kernel
 
-Build with the updated `make.shen`: public symbols must be registered in the
-bootstrap host before package qualification. Older hosts otherwise qualify
-new public names, and names formerly exported by individual files, into the
-`shen` package. Keep the declaration package's explicit `*absolute*` export so
-its initializer and the path functions use the same global.
+The default bootstrap is Shen/Scheme 0.51. Build with the updated `make.shen`:
+public symbols must be registered in the bootstrap host before package
+qualification. Older hosts otherwise qualify new public names, and names formerly
+exported by individual files, into the `shen` package. Keep the declaration
+package's explicit `*absolute*` export so its initializer and the path functions
+use the same global.
 
 ## 42.2
 

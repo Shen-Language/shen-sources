@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 - Integrate the S43.1 kernel changes, including public `char-stream?`,
   `read-unit-string`, and `write-string` interfaces and their type signatures.
+- Use Shen/Scheme 0.51 to build the release artifacts.
 - Consolidate public symbol registration and simplify kernel package exports.
   Bootstrap builds register these symbols before qualifying source packages,
   retaining the existing standard-error and source-form extensions.
@@ -21,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Context macros `@c` and `@ch` splice list tails rather than treating the
   reader's `bar!` marker as an ordinary list element.
 - Preserve the shared `*absolute*` initialization when reducing package exports.
+- Keep `sqts` public when building with a host that predates this side condition.
 
 ## [42.2] - 2026-10-01
 
