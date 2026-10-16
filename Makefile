@@ -29,7 +29,7 @@ endif
 # Set shared variables
 #
 
-ShenSchemeVersion=0.43
+ShenSchemeVersion=0.51
 UrlRoot=https://github.com/tizoc/shen-scheme/releases/download
 ShenSchemeTag=v$(ShenSchemeVersion)
 ifeq ($(OSName),windows)

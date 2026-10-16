@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen []
+(package shen [char-stream?]
 
 (define macroexpand
   X -> (let Fs (map (/. X (tl X)) (value *macros*))
@@ -70,6 +70,7 @@
 (define cons-form-respect-modes
   [+ X]   -> [+ (cons-form-respect-modes X)]
   [- X]   -> [- (cons-form-respect-modes X)]
+  [bar! Y] -> Y
   [X | Y] -> [cons (cons-form-respect-modes X) (cons-form-respect-modes Y)]
   X -> X)
 
@@ -167,7 +168,7 @@
   _ _ _ -> (simple-error "implementation error in shen.update-assoc"))
 
 (define process-read-byte
-  ->  (if (char-stinput? (stinput))
+  ->  (if (char-stream? (stinput))
           [string->n [read-unit-string [stinput]]]
           [read-byte [stinput]]))
 
@@ -200,6 +201,7 @@
   X -> X)
 
 (define rcons_form
+  [bar! Y] -> Y
   [X | Y] -> [cons (rcons_form X) (rcons_form Y)]
   X -> X)
 

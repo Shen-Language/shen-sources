@@ -28,7 +28,12 @@
     (set shen.*gensym* 0)
     (output "~%")
     (output "compiling *.shen to *.kl:~%")
-    (map (fn systemf) [internal receive <!> sterror *sterror* ,])
+    \\ Register public names before package qualification on older hosts.
+    \\ S43.1 no longer repeats these in individual package export lists.
+    (map (fn systemf)
+         [internal receive <!> sterror *sterror* , ctxt sqts unix
+          char-stream? read-unit-string write-string occurs? factorise?
+          optimise? hush? system-S? hush userdefs tracked included spy? step?])
     (map (fn make.unsystemf) (make.host-system-function-conflicts))
     (map (fn make.unsystemf) [\* FOR TESTING: Add function names here to be able to redefine them *\])
     (shen.x.expand-dynamic.initialise)

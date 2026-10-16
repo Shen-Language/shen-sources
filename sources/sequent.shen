@@ -2,7 +2,7 @@
 
 \\                  All rights reserved.
 
-(package shen [ctxt sqts]
+(package shen []
 
 (defcc <datatype>
   D <datatype-rules> := (let Prolog (rules->prolog D <datatype-rules>)

@@ -12,6 +12,43 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.1
+
+### Public character stream interfaces
+
+The reader, writer, and zero-argument `read-byte` macro now dispatch through
+`char-stream?`. Character I/O uses the public names `read-unit-string` and
+`write-string`. These replace the port hooks `shen.char-stinput?`,
+`shen.char-stoutput?`, `shen.read-unit-string`, and `shen.write-string`.
+
+**Minimum Requirements**
+
+- Provide `char-stream?` with arity 1, `read-unit-string` with arity 1, and
+  `write-string` with arity 2, using the public names without a `shen.` prefix.
+  `char-stream?` returns a Shen Boolean. `read-unit-string` reads a unit string;
+  `write-string` writes its string argument and returns that string.
+- Byte-oriented ports can return `false` from `char-stream?`. They must still
+  define the other two functions so the callable metadata can be compiled;
+  unsupported character stream operations can report an error.
+- Ports with character streams should reuse their previous character I/O
+  implementations. Preserve reader overrides that report EOF as `-1` to the
+  read loop, including final input without a trailing newline.
+- Replace the complete generated kernel and run its normal initialization.
+  The kernel supplies arities, callable forms, and types for the public APIs.
+
+**Optimisation Opportunities**
+
+- A single stream capability predicate can serve both input and output.
+
+### Building the kernel
+
+The default bootstrap is Shen/Scheme 0.51. Build with the updated `make.shen`:
+public symbols must be registered in the bootstrap host before package
+qualification. Older hosts otherwise qualify new public names, and names formerly
+exported by individual files, into the `shen` package. Keep the declaration
+package's explicit `*absolute*` export so its initializer and the path functions
+use the same global.
+
 ## 42.2
 
 Ports bundling the namespace extension should regenerate or replace

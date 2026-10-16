@@ -11,7 +11,7 @@
 
 (define pr
   String Stream -> (cases (value *hush*) String
-                          (char-stoutput? Stream) (write-string String Stream)
+                          (char-stream? Stream) (write-string String Stream)
                           true (write-chars String Stream (string->byte String 0) 1)))
 
 (define string->byte
