@@ -154,9 +154,13 @@
 
 \\ X is dereferenced once here rather than once per hypothesis: a failed
 \\ hypothesis unwinds its bindings, so (deref X) is the same on every iteration.
+\\ An empty Hyp fails at once, without copying X.
 (define by-hypothesis
   X A Hyp Bindings Lock Key Continuation
-  -> (by-hypothesis-h (deref X Bindings) A Hyp Bindings Lock Key Continuation))
+  -> (if (= (lazyderef Hyp Bindings) [])
+         false
+         (by-hypothesis-h (deref X Bindings) A Hyp
+                          Bindings Lock Key Continuation)))
 
 (defprolog by-hypothesis-h
  X A (- [[Y Colon B] | _]) <-- (when (= Colon (intern ":"))) (when (= (0 X) Y)) (is! A B);
@@ -181,10 +185,13 @@
 
 \\ P and Hyp are dereferenced once here rather than once per datatype: a failed
 \\ datatype unwinds its bindings, so (deref P) and (deref Hyp) do not change.
+\\ An empty Datatypes fails at once, without copying P or Hyp.
 (define search-user-datatypes
   P Hyp Datatypes Bindings Lock Key Continuation
-  -> (search-user-datatypes-h (deref P Bindings) (deref Hyp Bindings) Datatypes
-                              Bindings Lock Key Continuation))
+  -> (if (= (lazyderef Datatypes Bindings) [])
+         false
+         (search-user-datatypes-h (deref P Bindings) (deref Hyp Bindings)
+                                  Datatypes Bindings Lock Key Continuation)))
 
 (defprolog search-user-datatypes-h
    P Hyp (- [[_ | Fn] | _]) <-- (call (Fn (0 P) (0 Hyp)));
