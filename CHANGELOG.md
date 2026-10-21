@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- The type checker dereferences the checked term once per call in
+  `shen.search-user-datatypes` and `shen.by-hypothesis`, rather than once per
+  datatype rule and once per hypothesis. A failed iteration unwinds its
+  bindings, so the term is the same on every iteration.
+
 ## [43.1] - 2026-10-16
 
 ### Changed
