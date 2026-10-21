@@ -215,3 +215,54 @@
   "trap-error with <-vector and handler that uses error (error raised)"
   (trap-error/<-vector-using-error (@v 1 2 3 4 <>) 10 unit)
   6)
+
+
+\\ Returning-call composition. Survivor counts are source-level managed
+\\ values used after the inner call, not register or root-map guarantees.
+\\ All three leaf controls reconstruct three cells around a 32-item tail.
+(define control-call-input
+  0 -> []
+  N -> [N | (control-call-input (- N 1))])
+
+(define control-call-copy
+  [] -> []
+  [X | Xs] -> [X | (control-call-copy Xs)])
+
+(define control-call-identity
+  X -> X)
+
+(define control-call-zero-survivors
+  X -> (let R (control-call-identity X) [marker marker marker | R]))
+
+(define control-call-one-survivor
+  [A | Xs] -> (let R (control-call-identity Xs) [A marker marker | R]))
+
+(define control-call-three-survivors
+  [A B C | Xs] -> (let R (control-call-identity Xs) [A B C | R]))
+
+(define control-call-three-allocating
+  [A B C | Xs] -> (let R (control-call-copy Xs) [A B C | R]))
+
+(define control-captured-caller
+  A B C -> (/. Xs (let AA A BB B CC C
+                       R (control-call-identity Xs)
+                    [AA BB CC | R])))
+
+(define control-returning-call
+  _ _ R 0 -> R
+  F X _ N -> (control-returning-call F X (F X) (- N 1)))
+
+(let Xs (control-call-input 32)
+     Live [[a] [b] [c] | Xs]
+     Closure (control-captured-caller [a] [b] [c])
+  (do
+    (add-benchmark control-flow "returning call (zero managed survivors)"
+      (control-returning-call (function control-call-zero-survivors) Xs []) 6)
+    (add-benchmark control-flow "returning call (one managed survivor)"
+      (control-returning-call (function control-call-one-survivor) [[a] | Xs] []) 6)
+    (add-benchmark control-flow "returning call (three managed survivors)"
+      (control-returning-call (function control-call-three-survivors) Live []) 6)
+    (add-benchmark control-flow "allocating recursive call (three managed survivors)"
+      (control-returning-call (function control-call-three-allocating) Live []) 5)
+    (add-benchmark control-flow "captured returning call (three managed values)"
+      (control-returning-call Closure Xs []) 6)))

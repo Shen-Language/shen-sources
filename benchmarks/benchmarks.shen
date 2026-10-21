@@ -47,6 +47,7 @@
 (load "benchmarks/shen-compilation.shen")
 (load "benchmarks/pattern-matching.shen")
 (load "benchmarks/equality-check.shen")
+(load "benchmarks/arithmetic.shen")
 (set *hush* false)
 
 (if (bound? *argv*)

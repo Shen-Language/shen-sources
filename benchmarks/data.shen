@@ -170,3 +170,82 @@
   "dict create"
   (dict-create (shen.dict 100))
   7)
+
+
+\\ Fixed 32-item lists and bounded live allocation windows. Inputs and
+\\ initial closures are constructed at registration, outside the clock.
+(define list-benchmark-input
+  0 -> []
+  N -> [N | (list-benchmark-input (- N 1))])
+
+(define list-benchmark-sum
+  [] R -> R
+  [X | Xs] R -> (list-benchmark-sum Xs (+ R X)))
+
+(define list-benchmark-copy
+  [] -> []
+  [X | Xs] -> [X | (list-benchmark-copy Xs)])
+
+(define list-traverse
+  _ R 0 -> R
+  Xs _ N -> (list-traverse Xs (list-benchmark-sum Xs 0) (- N 1)))
+
+(define list-length
+  _ R 0 -> R
+  Xs _ N -> (list-length Xs (length Xs) (- N 1)))
+
+(define list-rebuild
+  _ R 0 -> R
+  Xs _ N -> (list-rebuild Xs (list-benchmark-copy Xs) (- N 1)))
+
+(define list-append
+  _ _ R 0 -> R
+  Xs Ys _ N -> (list-append Xs Ys (append Xs Ys) (- N 1)))
+
+(define list-reverse
+  _ R 0 -> R
+  Xs _ N -> (list-reverse Xs (reverse Xs) (- N 1)))
+
+(define list-member
+  _ _ R 0 -> R
+  X Xs _ N -> (list-member X Xs (element? X Xs) (- N 1)))
+
+(define list-allocation-live
+  _ A B C 0 -> [A B C]
+  Seed A B _ N -> (list-allocation-live Seed
+                    (list-benchmark-copy Seed) A B (- N 1)))
+
+(define closure-benchmark-prepend
+  X -> (/. Xs [X | Xs]))
+
+(define closure-allocation-live
+  _ A B C 0 -> (A (B (C [])))
+  Seed A B _ N -> (closure-allocation-live Seed
+                    (closure-benchmark-prepend Seed) A B (- N 1)))
+
+(let Xs (list-benchmark-input 32)
+     Ys (list-benchmark-input 32)
+     A (closure-benchmark-prepend Xs)
+     B (closure-benchmark-prepend Xs)
+     C (closure-benchmark-prepend Xs)
+  (do
+    (add-benchmark data "list traversal (32 items)"
+      (list-traverse Xs 0) 5)
+    (add-benchmark data "list length (32 items)"
+      (list-length Xs 0) 5)
+    (add-benchmark data "recursive list rebuild (32 items)"
+      (list-rebuild Xs []) 5)
+    (add-benchmark data "append (32 + 32 items)"
+      (list-append Xs Ys []) 5)
+    (add-benchmark data "reverse (32 items)"
+      (list-reverse Xs []) 5)
+    (add-benchmark data "list membership (first item)"
+      (list-member 32 Xs false) 6)
+    (add-benchmark data "list membership (last item)"
+      (list-member 1 Xs false) 5)
+    (add-benchmark data "list membership (absent item)"
+      (list-member 0 Xs true) 5)
+    (add-benchmark data "list allocation (three live generations)"
+      (list-allocation-live Xs Xs Ys Xs) 5)
+    (add-benchmark data "closure allocation (three live generations)"
+      (closure-allocation-live Xs A B C) 6)))

@@ -161,3 +161,22 @@
   "match string (multiple clauses, not matching)"
   (match-string-multiple other)
   8)
+
+
+\\ Nested matching adds early and late failures to the existing flat cases.
+(define match-nested-list
+  [branch [leaf A] [branch [leaf B] [leaf C]]] -> (+ A (+ B C))
+  _ -> no-match)
+
+(define match-nested-list-loop
+  _ R 0 -> R
+  Tree _ N -> (match-nested-list-loop Tree (match-nested-list Tree) (- N 1)))
+
+(let Tree [branch [leaf 1] [branch [leaf 2] [leaf 3]]]
+  (do
+    (add-benchmark pattern-matching "nested list pattern (matching)"
+      (match-nested-list-loop Tree no-match) 6)
+    (add-benchmark pattern-matching "nested list pattern (early mismatch)"
+      (match-nested-list-loop other 0) 6)
+    (add-benchmark pattern-matching "nested list pattern (late mismatch)"
+      (match-nested-list-loop [branch [leaf 1] [branch [leaf 2] [other 3]]] 0) 6)))
