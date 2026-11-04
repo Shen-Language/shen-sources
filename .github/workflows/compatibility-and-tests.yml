@@ -194,3 +194,9 @@ jobs:
         run: |
           set -euo pipefail
           ./_compat/shen-scheme/_build/bin/shen-scheme script tests/extensions/runme.shen
+
+      - name: Run benchmark registration and result smoke check
+        run: |
+          set -euo pipefail
+          ./_compat/shen-scheme/_build/bin/shen-scheme eval \
+            -l tests/benchmark-coverage.shen -e '(benchmark-coverage.run)'

@@ -54,6 +54,7 @@ jobs:
             tests/extensions/namespaces/tests.shen
             tests/extensions/source-forms/tests.shen
             tests/runme.shen
+            tests/benchmark-coverage.shen
           )
 
           while IFS= read -r -d '' DOCUMENT_PATH; do

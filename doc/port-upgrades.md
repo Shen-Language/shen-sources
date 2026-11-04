@@ -12,6 +12,30 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.2
+
+### Type annotations and Prolog variables
+
+Ports bundling the type-annotations extension should regenerate or replace
+`extension-type-annotations.kl`. Type reification now identifies Prolog variables
+by the variables themselves, without reading their internal vector offsets.
+This supports ports with other Prolog-variable representations. No new
+primitives or initialisation steps are required.
+
+### Type-checker overrides
+
+`shen.by-hypothesis` and `shen.search-user-datatypes` now dereference the checked
+term once before entering their respective `-h` helper loops. Ports overriding
+these functions can adopt the optimisation while preserving the immediate
+failure for empty hypothesis or datatype lists and backtracking behaviour.
+
+### Benchmark runners
+
+The benchmark suite includes 29 additional cases and uses `benchmarks.power`
+for its exponentiation helper to avoid protected host names. Runners selecting
+cases by position should switch to descriptions or tags; see [Benchmarks](benchmarks.md)
+for workloads and the registration/result smoke check.
+
 ## 43.1
 
 ### Public character stream interfaces

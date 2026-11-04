@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [43.2] - 2026-11-04
+
 ### Changed
 
 - The type checker dereferences the checked term once per call in
@@ -19,11 +21,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Add 29 benchmark cases for list processing, nested pattern matching,
   structural equality, mixed numeric arithmetic, returning-call preservation,
   and allocation with live data, integrated into the existing categories.
-- Add a benchmark registration/result smoke check and document its invocation
-  and the new workloads' measurement boundaries.
+- Add a benchmark registration/result smoke check, run it in compatibility CI,
+  and document its invocation and the new workloads' measurement boundaries.
 
 ### Fixed
 
+- Give the benchmark exponentiation helper its own name so the suite loads on
+  hosts that protect `power` as a system function.
 - The type annotations extension no longer reads a Prolog variable's internal
   offset. `reify-type` keys each variable on the variable itself, so a port may
   represent Prolog variables differently.
@@ -750,7 +754,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-42.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.2...HEAD
+[43.2]: https://github.com/Shen-Language/shen-sources/compare/shen-43.1...shen-43.2
+[43.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.2...shen-43.1
 [42.2]: https://github.com/Shen-Language/shen-sources/compare/shen-42.1...shen-42.2
 [42.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.0...shen-42.1
 [42.0]: https://github.com/Shen-Language/shen-sources/compare/shen-41.3...shen-42.0
