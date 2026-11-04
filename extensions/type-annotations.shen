@@ -29,11 +29,10 @@
           Rest (reify-type Xs (snd First))
        (@p [(fst First) | (fst Rest)] (snd Rest)))
   X Vars
-  -> (let Key (<-address X 1)
-          Entry (assoc Key Vars)
+  -> (let Entry (assoc X Vars)
        (if (empty? Entry)
            (let Var (gensym (protect A))
-             (@p Var [[Key | Var] | Vars]))
+             (@p Var [[X | Var] | Vars]))
            (@p (tl Entry) Vars))) where (shen.pvar? X)
   X Vars -> (@p X Vars))
 

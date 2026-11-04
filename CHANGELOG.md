@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - Add a benchmark registration/result smoke check and document its invocation
   and the new workloads' measurement boundaries.
 
+### Fixed
+
+- The type annotations extension no longer reads a Prolog variable's internal
+  offset. `reify-type` keys each variable on the variable itself, so a port may
+  represent Prolog variables differently.
+
 ## [43.1] - 2026-10-16
 
 ### Changed
