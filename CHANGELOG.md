@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+
+- Factorise explicit `cond` expressions without a `true` clause, preserving
+  the runtime `condition failure` error when no clause matches.
+  Reported by @pyrex41.
+
 ## [43.2] - 2026-11-04
 
 ### Changed

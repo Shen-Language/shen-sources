@@ -354,7 +354,8 @@
                                                    (factor-selectors P (factor-recognisors Then))
                                                    [thaw Go]]]
                                     (remove-indirection Code))))
-  [[P R] | Body]         -> [if P R (factor-recognisors Body)])
+  [[P R] | Body]         -> [if P R (factor-recognisors Body)]
+  []                    -> [simple-error "condition failure"])
 
 (define recursively-factor-selectors
   [let X Y P] R -> (restore-local X Y (recursively-factor-selectors P R))
