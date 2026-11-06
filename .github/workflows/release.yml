@@ -47,13 +47,16 @@ jobs:
             klambda/stlib.kl
             klambda/extension-type-annotations.kl
             klambda/extension-namespaces.kl
+            extensions/expand-dynamic.shen
             extensions/type-annotations.shen
             extensions/namespaces.shen
             tests/extensions/runme.shen
+            tests/extensions/expand-dynamic/tests.shen
             tests/extensions/type-annotations/tests.shen
             tests/extensions/namespaces/tests.shen
             tests/extensions/source-forms/tests.shen
             tests/runme.shen
+            tests/regressions/factoriser-cond.shen
             tests/benchmark-coverage.shen
           )
 

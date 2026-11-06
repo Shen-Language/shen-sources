@@ -12,6 +12,26 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.3
+
+### Precompiled stlib signatures
+
+Replace or regenerate the kernel and `stlib.kl` together. The stlib initializer
+now calls `shen.declare-with-signature`, supplied by the updated `types.kl`,
+for precompiled literal signatures. Runtime type validation and variancy checks
+still run before each signature is installed. Computed signatures continue to
+use ordinary `declare`. No new host primitive or initialization phase is needed.
+
+Ports precompiling their own declarations can use the checked expansion in
+[expand-dynamic](extensions/expand-dynamic.md). Apply it to top-level KLambda
+expressions before wrapping them in initializer functions.
+
+### Factorised conditions
+
+Regenerate the kernel to include the corrected factoriser. Explicit `cond`
+expressions without a default clause now preserve the `condition failure`
+error when no clause matches, including when factorisation is enabled.
+
 ## 43.2
 
 ### Type annotations and Prolog variables

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [43.3] - 2026-11-06
+
 ### Added
 
 - Add checked declaration expansion to `expand-dynamic`, preserving runtime
@@ -772,7 +774,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.2...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.3...HEAD
+[43.3]: https://github.com/Shen-Language/shen-sources/compare/shen-43.2...shen-43.3
 [43.2]: https://github.com/Shen-Language/shen-sources/compare/shen-43.1...shen-43.2
 [43.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.2...shen-43.1
 [42.2]: https://github.com/Shen-Language/shen-sources/compare/shen-42.1...shen-42.2
