@@ -9,4 +9,6 @@
 (load "tests/extensions/source-forms/tests.shen")
 (load "tests/extensions/namespaces/tests.shen")
 
+(load "tests/extensions/expand-dynamic/tests.shen")
+
 (extension-tests.finish)

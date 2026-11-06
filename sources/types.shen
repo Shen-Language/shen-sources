@@ -5,11 +5,18 @@
 (package shen []
 
 (define declare
-  F A -> (let Rectify (rectify-type A)
-              Variant? (prolog? (variancy (receive F) (receive Rectify)))
-              Abstraction (eval-kl (prolog-abstraction A))
-              UpDate (set *sigf* (assoc-> F Abstraction (value *sigf*)))
-              F))
+  F A -> (declare-with-signature F A
+            (freeze (eval-kl (prolog-abstraction A)))))
+
+\\ Keep validation before signature construction for ordinary and precompiled
+\\ declarations alike. The factory allows build-time expansion to supply code.
+(define declare-with-signature
+  F A MakeSignature
+  -> (let Rectify (rectify-type A)
+          Variant? (prolog? (variancy (receive F) (receive Rectify)))
+          Abstraction (thaw MakeSignature)
+          UpDate (set *sigf* (assoc-> F Abstraction (value *sigf*)))
+       F))
 
 (defprolog variancy
   F Rectify <-- (system-S-h [fn F] A [])

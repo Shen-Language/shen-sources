@@ -69,6 +69,9 @@
 (define make-stlib.add-init
   Phase KL
   -> (let Variable (make-stlib.phase-variable Phase)
+          KL (if (= Phase type)
+                 (shen.x.expand-dynamic.expand-declare/checked KL)
+                 KL)
        (set Variable [KL | (value Variable)])))
 
 \\ Public entrypoints.

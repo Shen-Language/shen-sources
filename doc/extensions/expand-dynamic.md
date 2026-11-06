@@ -49,3 +49,31 @@ to wrap.
 
 **Output:** The input expressions, converted into a single expression with `do`,
 and wrapped into a defun of the given name.
+
+### shen.x.expand-dynamic.expand-declare/checked
+
+Pre-expand one top-level KLambda declaration while retaining runtime
+validation. This is the path used by the stlib builder.
+
+**Input:** One top-level KLambda expression.
+
+**Output:** A literal `declare` is replaced by a call to the kernel's
+`shen.declare-with-signature`, carrying a factory for the precompiled signature
+function. Other expressions, including computed signatures, are unchanged.
+
+The factory is invoked after the usual type rectification and variancy check.
+The declaration still returns its name. Its generated signature function uses
+the ordinary Prolog allocation and cleanup code, including fresh variables on
+each call. There is no limit on the number of type variables.
+
+Literal signatures are the `cons`/`protect` expressions produced by the
+compiler. Apply this function before wrapping initializer expressions in a
+`defun`; it does not analyze lexical scopes in arbitrary function bodies.
+Rebuild the kernel and stlib together: the checked expansion uses the new
+kernel helper in `types.kl`.
+
+The existing trusted kernel expansion continues to omit runtime validation.
+Use the checked path for metadata that must preserve source-loading checks.
+
+See [precompiled startup signatures](../startup-signatures.md) for the
+stlib integration and rebuild requirements.

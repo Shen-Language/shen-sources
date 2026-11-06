@@ -41,6 +41,21 @@
        RecordSig
        ))
 
+\\ Preserve declaration checks when precompiling load-equivalent metadata.
+\\ Computed signatures retain declare so their effects happen at runtime.
+(define expand-declare/checked
+  [declare Name Sig]
+  -> (let Abstraction (shen.prolog-abstraction (eval-kl Sig))
+       [shen.declare-with-signature Name Sig [freeze Abstraction]])
+    where (literal-signature? Sig)
+  Expr -> Expr)
+
+(define literal-signature?
+  [protect X] -> (symbol? X)
+  [cons X Y] -> (and (literal-signature? X) (literal-signature? Y))
+  [] -> true
+  X -> (or (symbol? X) (or (number? X) (or (string? X) (boolean? X)))))
+
 (define expand-lambda-entries
   [] -> []
   [F Arity | Rest] -> (append

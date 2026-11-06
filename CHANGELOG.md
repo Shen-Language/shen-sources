@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- Add checked declaration expansion to `expand-dynamic`, preserving runtime
+  type validation and declaration results while compiling literal signatures
+  ahead of initialization. Computed signatures keep their runtime behavior.
+
+### Changed
+
+- Pre-expand stlib type declarations through the portable kernel extension,
+  including polymorphic signatures, instead of rebuilding their functions at
+  startup. Ordinary `declare` still constructs its signature after validation.
+
 ### Fixed
 
 - Factorise explicit `cond` expressions without a `true` clause, preserving
