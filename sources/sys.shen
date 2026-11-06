@@ -525,6 +525,22 @@
                              (set-lambda-form-entry LambdaEntry))
                F))
 
+\\ Ports may override this hook when a compiled adapter preserves the current
+\\ function binding. The default retains dynamic lookup and forward references.
+(define precompiled-function?
+  _ -> false)
+
+(define update-lambda-table/precompiled
+  F Arity MakeAdapter Safe?
+  -> (if Safe?
+         (let AssertArity (put F arity Arity)
+              Adapter (thaw MakeAdapter)
+              Update (if (= Arity 0)
+                         (unput F lambda-form)
+                         (set-lambda-form-entry [F | Adapter]))
+           F)
+         (update-lambda-table F Arity)))
+
 (define specialise
   F 0 -> (do (set *special* (remove F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)
   F 1 -> (do (set *special* (adjoin F (value *special*))) (set *extraspecial* (remove F (value *extraspecial*))) F)

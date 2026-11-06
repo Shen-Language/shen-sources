@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- Share scope-aware initializer expansion and precompiled currying adapters
+  through `expand-dynamic`. Ports can opt in through a conservative binding
+  hook; dynamic and shadowed registrations retain ordinary runtime behavior.
+
+### Changed
+
+- Pre-expand extension initializer signatures and stlib arity registrations,
+  preserving declaration checks and metadata installation order.
+
 ## [43.3] - 2026-11-06
 
 ### Added

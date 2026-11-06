@@ -122,3 +122,91 @@
       (value expand-dynamic-tests.*names*) 1)))
 
 (delete-file "tests/extensions/expand-dynamic/warnings.tmp")
+
+
+(define expand-dynamic-tests.initializer
+  Expr -> (shen.x.expand-dynamic.expand-initializer Expr [expand-dynamic-tests.identity]))
+
+(let Original [update-lambda-table expand-dynamic-tests.identity 1]
+     Expanded (expand-dynamic-tests.initializer Original)
+  (do
+    (extension-tests.assert-equal "known registrations use the portable installer"
+      (hd Expanded) shen.update-lambda-table/precompiled)
+    (extension-tests.assert-equal "expanded registration contains no eval-kl"
+      (occurrences eval-kl Expanded) 0)
+    (extension-tests.assert-equal "registration expansion is idempotent"
+      (expand-dynamic-tests.initializer Expanded) Expanded)))
+
+(map (/. Expr
+       (extension-tests.assert-equal "dynamic or unknown registrations retain their form"
+         (expand-dynamic-tests.initializer Expr) Expr))
+     [[update-lambda-table unknown-function 1]
+      [update-lambda-table expand-dynamic-tests.identity [value dynamic-arity]]
+      [update-lambda-table expand-dynamic-tests.identity -1]
+      [quote [update-lambda-table expand-dynamic-tests.identity 1]]
+      [protect [update-lambda-table expand-dynamic-tests.identity 1]]
+      [apply update-lambda-table expand-dynamic-tests.identity 1]
+      [(intern "scm.") [update-lambda-table expand-dynamic-tests.identity 1]]
+      [(intern "scm.letrec") [[bound value]] [update-lambda-table expand-dynamic-tests.identity 1]]
+      [lambda update-lambda-table [update-lambda-table expand-dynamic-tests.identity 1]]
+      [lambda expand-dynamic-tests.identity [update-lambda-table expand-dynamic-tests.identity 1]]
+      [lambda shen.precompiled-function? [update-lambda-table expand-dynamic-tests.identity 1]]
+      [lambda shen.update-lambda-table/precompiled [update-lambda-table expand-dynamic-tests.identity 1]]])
+
+(let Decl [declare expand-dynamic-tests.identity [cons number [cons --> [cons number []]]]]
+     Body [cond [true [freeze Decl]]]
+     Expanded (expand-dynamic-tests.initializer [defun initializer [] Body])
+  (do
+    (extension-tests.assert-equal "known initializer bodies precompile declarations"
+      (occurrences declare Expanded) 0)
+    (extension-tests.assert-equal "initializer declarations use checked installation"
+      (occurrences shen.declare-with-signature Expanded) 1)))
+
+(map (/. Expr
+       (extension-tests.assert-equal "lexical signature dependencies stay dynamic"
+         (expand-dynamic-tests.initializer Expr) Expr))
+     [[lambda declare [declare expand-dynamic-tests.identity number]]
+      [lambda is! [declare expand-dynamic-tests.identity number]]
+      [lambda shen.newpv [declare expand-dynamic-tests.identity number]]
+      [lambda shen.gc [declare expand-dynamic-tests.identity number]]
+      [lambda number [declare expand-dynamic-tests.identity number]]
+      [lambda cons [declare expand-dynamic-tests.identity [cons number []]]]
+      [lambda shen.declare-with-signature [declare expand-dynamic-tests.identity number]]
+      [let (protect A) number [declare expand-dynamic-tests.identity (protect A)]]])
+
+(let Expr [let number [declare expand-dynamic-tests.identity symbol]
+             [declare expand-dynamic-tests.identity number]]
+     Expanded (expand-dynamic-tests.initializer Expr)
+  (extension-tests.assert-equal "let values use the outer scope and bodies the bound scope"
+    (occurrences declare Expanded) 1))
+
+(let Expanded (expand-dynamic-tests.initializer
+                [lambda (protect A)
+                  [declare expand-dynamic-tests.identity [protect (protect A)]]])
+  (extension-tests.assert-equal "protected type symbols stay literal under matching binders"
+    (occurrences declare Expanded) 0))
+
+(extension-tests.assert-equal "unconfigured ports conservatively reject compiled adapters"
+  (shen.precompiled-function? expand-dynamic-tests.identity) false)
+(extension-tests.assert-equal "portable adapter installation returns its function name"
+  (shen.update-lambda-table/precompiled expand-dynamic-tests.identity 1
+    (freeze (/. X X)) true) expand-dynamic-tests.identity)
+(extension-tests.assert-equal "portable adapter installation preserves currying"
+  ((fn expand-dynamic-tests.identity) portable-result) portable-result)
+
+(put expand-dynamic-tests.zero shen.lambda-form stale)
+(shen.update-lambda-table/precompiled expand-dynamic-tests.zero 0 (freeze false) true)
+(extension-tests.assert-error "zero arity clears the old adapter"
+  (freeze (get expand-dynamic-tests.zero shen.lambda-form)))
+(extension-tests.assert-equal "zero arity metadata is installed"
+  (arity expand-dynamic-tests.zero) 0)
+
+(extension-tests.assert-equal "fallback does not invoke the compiled-adapter factory"
+  (shen.update-lambda-table/precompiled expand-dynamic-tests.identity 1
+    (freeze (simple-error "must not build this adapter")) false)
+  expand-dynamic-tests.identity)
+(extension-tests.assert-error "compiled-adapter factory errors remain catchable"
+  (freeze (shen.update-lambda-table/precompiled expand-dynamic-tests.factory 2
+            (freeze (simple-error "factory error")) true)))
+(extension-tests.assert-equal "arity is installed before adapter construction"
+  (arity expand-dynamic-tests.factory) 2)

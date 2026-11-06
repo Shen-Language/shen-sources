@@ -12,6 +12,18 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+### Shared initializer expansion
+
+Rebuild the kernel and stlib together. The generated stlib arity initializer
+uses `shen.update-lambda-table/precompiled` and `shen.precompiled-function?`.
+The default binding hook returns `false`, so ports retain ordinary registration
+until they opt in. No new host primitive is required for the fallback.
+
+Ports with their own adapter-generation passes can replace them with
+`expand-initializer` and retain only the binding policy appropriate to their
+host. Extension initializer signatures also use checked precompilation. See
+[expand-dynamic](extensions/expand-dynamic.md) for the API and binding contract.
+
 ## 43.3
 
 ### Precompiled stlib signatures

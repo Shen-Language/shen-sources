@@ -12,8 +12,10 @@ preserves declaration results and warnings. Generated signature functions
 retain ordinary Prolog variable allocation, sharing, and cleanup on each call.
 
 The checked expansion applies to top-level KLambda expressions before they
-are wrapped in initializer functions. The existing trusted kernel expansion
-continues to omit runtime declaration checks.
+are wrapped in initializer functions. The scope-aware `expand-initializer` pass
+also handles literal declarations inside known initializer bodies, including
+extension initialization. The existing trusted kernel expansion continues to
+omit runtime declaration checks.
 
 Ports must rebuild the kernel and stlib together: the generated initializer
 depends on the helper supplied by the kernel. No new host primitive is needed.
