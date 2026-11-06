@@ -3,7 +3,7 @@
 
 \\ Documentation: docs/extensions/expand-dynamic.md
 
-(package shen.x.expand-dynamic [shen quote]
+(package shen.x.expand-dynamic [shen]
 
 (define initialise
   -> (set *arities* []))
@@ -73,32 +73,31 @@
                     true [[shen.set-lambda-form-entry
                             [cons F (shen.lambda-function [F] Arity)]]]))
 
-\\ Expand executable KL only; parameter lists, cond clauses, and quoted data
+\\ Expand executable KL only; parameter lists, cond clauses, and literal data
 \\ have different structure. Known lists the functions supplied by this build.
 (define expand-initializer
-  Expr Known -> (expand-initializer-h Expr [] Known))
+  Expr Known Opaque? -> (expand-initializer-h Expr [] Known Opaque?))
 
 (define expand-initializer-h
-  [quote X] _ _ -> [quote X]
-  [Op | Args] _ _ -> [Op | Args] where (opaque-initializer? Op)
-  [protect X] _ _ -> [protect X]
-  [defun F Params Body] _ Known
-  -> [defun F Params (expand-initializer-h Body Params Known)]
-  [lambda V Body] Scope Known
-  -> [lambda V (expand-initializer-h Body [V | Scope] Known)]
-  [let V Value Body] Scope Known
-  -> [let V (expand-initializer-h Value Scope Known)
-            (expand-initializer-h Body [V | Scope] Known)]
-  [cond | Clauses] Scope Known
-  -> [cond | (map (/. Clause (expand-initializer-clause Clause Scope Known)) Clauses)]
-  [shen.update-lambda-table/precompiled | Args] _ _
+  Expr _ _ Opaque? -> Expr where (Opaque? Expr)
+  [protect X] _ _ _ -> [protect X]
+  [defun F Params Body] _ Known Opaque?
+  -> [defun F Params (expand-initializer-h Body Params Known Opaque?)]
+  [lambda V Body] Scope Known Opaque?
+  -> [lambda V (expand-initializer-h Body [V | Scope] Known Opaque?)]
+  [let V Value Body] Scope Known Opaque?
+  -> [let V (expand-initializer-h Value Scope Known Opaque?)
+            (expand-initializer-h Body [V | Scope] Known Opaque?)]
+  [cond | Clauses] Scope Known Opaque?
+  -> [cond | (map (/. Clause (expand-initializer-clause Clause Scope Known Opaque?)) Clauses)]
+  [shen.update-lambda-table/precompiled | Args] _ _ _
   -> [shen.update-lambda-table/precompiled | Args]
-  [declare Name Sig] Scope _
+  [declare Name Sig] Scope _ _
   -> (expand-declare/checked [declare Name Sig])
     where (and (empty? (intersection [declare shen.declare-with-signature
                                         is! cons shen.newpv shen.gc] Scope))
                (literal-in-scope? Sig Scope))
-  [update-lambda-table F N] Scope Known
+  [update-lambda-table F N] Scope Known Opaque?
   -> [shen.update-lambda-table/precompiled F N
        [freeze (if (= N 0) false (shen.lambda-function [F] N))]
        [shen.precompiled-function? F]]
@@ -109,23 +108,15 @@
                               (and (not (element? update-lambda-table Scope))
                                    (and (not (element? shen.precompiled-function? Scope))
                                         (not (element? shen.update-lambda-table/precompiled Scope))))))))
-  [Op | Args] Scope Known
-  -> [(expand-initializer-h Op Scope Known)
-       | (map (/. Arg (expand-initializer-h Arg Scope Known)) Args)]
-  X _ _ -> X)
-
-(define opaque-initializer?
-  Op -> (opaque-initializer-name? (explode (str Op))) where (symbol? Op)
-  _ -> false)
-
-(define opaque-initializer-name?
-  ["s" "c" "m" "." | _] -> true
-  _ -> false)
+  [Op | Args] Scope Known Opaque?
+  -> [(expand-initializer-h Op Scope Known Opaque?)
+       | (map (/. Arg (expand-initializer-h Arg Scope Known Opaque?)) Args)]
+  X _ _ _ -> X)
 
 (define expand-initializer-clause
-  [Test Body] Scope Known
-  -> [(expand-initializer-h Test Scope Known)
-      (expand-initializer-h Body Scope Known)])
+  [Test Body] Scope Known Opaque?
+  -> [(expand-initializer-h Test Scope Known Opaque?)
+      (expand-initializer-h Body Scope Known Opaque?)])
 
 (define literal-in-scope?
   [protect X] _ -> (symbol? X)

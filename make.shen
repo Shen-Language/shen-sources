@@ -98,7 +98,7 @@
           License (make.file-license ShenFile)
           ShenCode (read-file ShenFile)
           KlCode (map (fn make.make-kl-code) ShenCode)
-          Expanded (map (/. Expr (shen.x.expand-dynamic.expand-initializer Expr [])) KlCode)
+          Expanded (map (/. Expr (shen.x.expand-dynamic.expand-initializer Expr [] (/. Ignored false))) KlCode)
           KlString (make-string "c#34;~Ac#34;~%~%~A" License (make.list->string Expanded))
           Write (write-to-file KlFile KlString)
        KlFile))

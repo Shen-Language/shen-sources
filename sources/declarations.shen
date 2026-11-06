@@ -29,7 +29,7 @@
 (set *infs* 0)
 (set *hush* false)
 (set *optimise* false)
-(set *version* "43.3")
+(set *version* "43.4")
 (set *names* [])
 (set *step* false)
 (set *it* "")

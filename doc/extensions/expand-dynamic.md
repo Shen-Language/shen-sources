@@ -82,7 +82,10 @@ stlib integration and rebuild requirements.
 
 Expand one trusted initializer expression or `defun` in standard KLambda.
 
-**Input:** The expression and a list of function names provided by the build.
+**Input:** The expression, a list of function names provided by the build,
+and a predicate receiving each expression. Return `true` to leave the whole
+expression untouched, including its contents. The predicate must return a
+Boolean; use `(/. Ignored false)` for ordinary KLambda without host escape syntax.
 
 **Output:** Literal declarations use checked, precompiled signatures. Literal
 `update-lambda-table` calls for known functions carry a precompiled adapter
@@ -90,14 +93,18 @@ factory and a `shen.precompiled-function?` check. Unknown functions and computed
 registrations retain their original path.
 
 The pass tracks `defun`, `lambda`, and `let` bindings and handles `cond` clauses
-as expressions. Quoted data and Scheme escape forms are opaque. Declarations
-with lexical signature dependencies or shadowed helper names remain dynamic.
+as expressions. Protected symbols are preserved. Host syntax, including its
+literal-data forms, is identified by the caller-supplied predicate without
+host-specific names in the shared pass. Declarations with lexical signature
+dependencies or shadowed helper names remain dynamic.
 Apply it before lowering KL into a host language; it is not a walker for
 arbitrary host syntax or a general optimization of user code. Reapplying it to
 an expanded arity registration leaves the registration unchanged.
 
 The kernel and stlib builders use this pass. Port builders can use it for
-port-specific initializer code as well.
+port-specific initializer code as well, supplying their own host-syntax
+predicate. This uses the expansion function from the released KLambda;
+ports do not need to regenerate the kernel to supply a predicate.
 
 ### Compiled-adapter binding policy
 

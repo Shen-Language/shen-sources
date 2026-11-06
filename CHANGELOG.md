@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [43.4] - 2026-11-06
+
 ### Added
 
 - Share scope-aware initializer expansion and precompiled currying adapters
@@ -785,7 +787,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.3...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.4...HEAD
+[43.4]: https://github.com/Shen-Language/shen-sources/compare/shen-43.3...shen-43.4
 [43.3]: https://github.com/Shen-Language/shen-sources/compare/shen-43.2...shen-43.3
 [43.2]: https://github.com/Shen-Language/shen-sources/compare/shen-43.1...shen-43.2
 [43.1]: https://github.com/Shen-Language/shen-sources/compare/shen-42.2...shen-43.1

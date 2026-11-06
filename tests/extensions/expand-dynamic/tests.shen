@@ -2,6 +2,7 @@
 
 (define expand-dynamic-tests.identity X -> X)
 (define expand-dynamic-tests.four X Y Z -> X)
+(define expand-dynamic-tests.arguments X Y Z -> X)
 
 (define expand-dynamic-tests.literal
   [] -> []
@@ -125,7 +126,7 @@
 
 
 (define expand-dynamic-tests.initializer
-  Expr -> (shen.x.expand-dynamic.expand-initializer Expr [expand-dynamic-tests.identity]))
+  Expr -> (shen.x.expand-dynamic.expand-initializer Expr [expand-dynamic-tests.identity] (/. Ignored false)))
 
 (let Original [update-lambda-table expand-dynamic-tests.identity 1]
      Expanded (expand-dynamic-tests.initializer Original)
@@ -143,11 +144,8 @@
      [[update-lambda-table unknown-function 1]
       [update-lambda-table expand-dynamic-tests.identity [value dynamic-arity]]
       [update-lambda-table expand-dynamic-tests.identity -1]
-      [quote [update-lambda-table expand-dynamic-tests.identity 1]]
       [protect [update-lambda-table expand-dynamic-tests.identity 1]]
-      [apply update-lambda-table expand-dynamic-tests.identity 1]
-      [(intern "scm.") [update-lambda-table expand-dynamic-tests.identity 1]]
-      [(intern "scm.letrec") [[bound value]] [update-lambda-table expand-dynamic-tests.identity 1]]
+      [expand-dynamic-tests.arguments update-lambda-table expand-dynamic-tests.identity 1]
       [lambda update-lambda-table [update-lambda-table expand-dynamic-tests.identity 1]]
       [lambda expand-dynamic-tests.identity [update-lambda-table expand-dynamic-tests.identity 1]]
       [lambda shen.precompiled-function? [update-lambda-table expand-dynamic-tests.identity 1]]
@@ -210,3 +208,28 @@
             (freeze (simple-error "factory error")) true)))
 (extension-tests.assert-equal "arity is installed before adapter construction"
   (arity expand-dynamic-tests.factory) 2)
+
+
+(define expand-dynamic-tests.opaque?
+  [host-syntax | _] -> true
+  _ -> false)
+
+(let Opaque [host-syntax [update-lambda-table expand-dynamic-tests.identity 1]]
+     Plain [update-lambda-table expand-dynamic-tests.identity 1]
+     Expr [do Opaque Plain]
+     Expanded (shen.x.expand-dynamic.expand-initializer Expr
+                [expand-dynamic-tests.identity] (fn expand-dynamic-tests.opaque?))
+  (do
+    (extension-tests.assert-equal "caller predicate preserves a whole opaque expression"
+      (hd (tl Expanded)) Opaque)
+    (extension-tests.assert-equal "opaque contents are not recursively expanded"
+      (occurrences update-lambda-table Expanded) 1)
+    (extension-tests.assert-equal "ordinary expressions beside opaque syntax are expanded"
+      (occurrences shen.update-lambda-table/precompiled Expanded) 1)
+    (extension-tests.assert-equal "false predicate treats the same form as ordinary KL"
+      (occurrences update-lambda-table
+        (shen.x.expand-dynamic.expand-initializer Expr
+          [expand-dynamic-tests.identity] (/. Ignored false))) 0)
+    (extension-tests.assert-equal "a predicate can protect the root expression"
+      (shen.x.expand-dynamic.expand-initializer Expr
+        [expand-dynamic-tests.identity] (/. Ignored true)) Expr)))

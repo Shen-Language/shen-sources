@@ -481,7 +481,7 @@
   -> (let Defuns (reverse (value make-stlib.*defuns*))
           InitDefuns (make-stlib.initialiser-defuns)
           Known (map (fn make-stlib.defun-name) Defuns)
-          ExpandedInit (map (/. Expr (shen.x.expand-dynamic.expand-initializer Expr Known)) InitDefuns)
+          ExpandedInit (map (/. Expr (shen.x.expand-dynamic.expand-initializer Expr Known (/. Ignored false))) InitDefuns)
           KlString (make-stlib.list->string (append Defuns ExpandedInit))
        (do
          (write-to-file File KlString)

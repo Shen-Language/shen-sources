@@ -12,6 +12,8 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.4
+
 ### Shared initializer expansion
 
 Rebuild the kernel and stlib together. The generated stlib arity initializer
