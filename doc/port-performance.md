@@ -346,6 +346,19 @@ other supported dynamic forms to equivalent static optimisation. This is a
 staging optimisation rather than a semantic change; genuinely dynamic effects
 remain in runtime initialisation order.
 
+From 43.3, stlib signature initialization uses checked precompiled factories;
+43.4 also expands extension signatures and supplies guarded adapters for stlib
+arity registration. The adapter hook defaults to `false`: ports must opt in
+according to their binding model to remove that runtime compilation. Static
+signature expansion does not eliminate compilation of arbitrary user code or
+computed declarations.
+
+Port builders can use `expand-initializer` from the released extension KL for
+their own code. Pass the known function names and a predicate protecting host
+syntax; no kernel regeneration is needed. Keep the metadata order, redefinition
+semantics, and runtime declaration coverage described in the
+[Port Upgrade Guide](port-upgrades.md#434) when replacing port-specific passes.
+
 ### Equality
 
 Shen `=` is structural and can compare values of any type. Calling the complete

@@ -16,35 +16,75 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ### Shared initializer expansion
 
-Rebuild the kernel and stlib together. The generated stlib arity initializer
-uses `shen.update-lambda-table/precompiled` and `shen.precompiled-function?`.
-The default binding hook returns `false`, so ports retain ordinary registration
-until they opt in. No new host primitive is required for the fallback.
+**Minimum requirements**
 
-Ports with their own adapter-generation passes can replace them with
-`expand-initializer` and retain only the binding policy appropriate to their
-host. Extension initializer signatures also use checked precompilation. See
-[expand-dynamic](extensions/expand-dynamic.md) for the API and binding contract.
+- Replace the complete generated kernel and bundled `stlib.kl` together. The
+  stlib arity initializer calls `shen.update-lambda-table/precompiled` from
+  `sys.kl`; these are ordinary kernel functions, not new host primitives.
+- Keep the existing initialization sequence. There is no new phase or required
+  port override. The binding hook defaults to `false`, which uses ordinary
+  `update-lambda-table` without invoking the compiled-adapter factory.
+- Review port overrides of arity and lambda-form registration. Opting in to
+  precompiled registration also means using the shared metadata installer.
+
+**Optimization opportunities**
+
+Ports can replace their own static adapter-generation passes with the shared
+`expand-initializer` function. It takes three arguments: one KL expression,
+the function names supplied by the build, and a Boolean predicate identifying
+whole expressions that must remain opaque. Kernel builders pass an always-false
+predicate. A port supplies recognition of its own host escapes and literal-data
+syntax; the shared walker does not interpret host-language syntax.
+
+Use the function from the released `extension-expand-dynamic.kl` through the
+port's existing KL loader. Processing port-specific initializers does not
+require regenerating the released kernel.
+
+To avoid adapter compilation, provide or lower `shen.precompiled-function?`
+while compiling the initializers. Return `true` only when the compiled adapter
+preserves ordinary lookup and redefinition behavior. Hosts that capture
+bindings must check for shadowing and mutable aliases as appropriate; a known
+function name and arity alone are insufficient. Redefining the hook later may
+not affect calls already compiled to an earlier binding.
+
+Extension initializer signatures are also precompiled with declaration checks.
+Ports can remove equivalent startup workarounds after checking their coverage;
+a helper that also accelerates runtime user declarations may still be useful.
+See [expand-dynamic](extensions/expand-dynamic.md) for the factory and binding
+contracts, and run the kernel and extension suites after integration.
 
 ## 43.3
 
 ### Precompiled stlib signatures
 
-Replace or regenerate the kernel and `stlib.kl` together. The stlib initializer
-now calls `shen.declare-with-signature`, supplied by the updated `types.kl`,
-for precompiled literal signatures. Runtime type validation and variancy checks
-still run before each signature is installed. Computed signatures continue to
-use ordinary `declare`. No new host primitive or initialization phase is needed.
+**Minimum requirements**
 
-Ports precompiling their own declarations can use the checked expansion in
-[expand-dynamic](extensions/expand-dynamic.md). Apply it to top-level KLambda
-expressions before wrapping them in initializer functions.
+- Replace the generated kernel and `stlib.kl` as one versioned set. The stlib
+  initializer now calls `shen.declare-with-signature`, supplied by `types.kl`.
+  Consuming the released KL is sufficient; kernel regeneration is optional.
+- No new host primitive or initialization phase is required. The helper keeps
+  type rectification and variancy checks before signature construction and
+  installation, and declarations still return their function names.
+- Review overrides of `declare` or signature construction: static stlib
+  declarations now enter the checked helper directly. Computed declarations
+  keep the ordinary runtime path. Preserve per-call fresh Prolog variables,
+  sharing within a call, and cleanup when a signature fails.
+
+**Optimization opportunities**
+
+Ports precompiling their own declarations can use `expand-declare/checked` on
+literal top-level declarations before wrapping them in initializer functions.
+The scope-aware initializer walker is available from 43.4. See
+[expand-dynamic](extensions/expand-dynamic.md) for both APIs.
 
 ### Factorised conditions
 
-Regenerate the kernel to include the corrected factoriser. Explicit `cond`
-expressions without a default clause now preserve the `condition failure`
-error when no clause matches, including when factorisation is enabled.
+Replace the generated kernel to include the corrected factoriser. Explicit
+`cond` expressions without a default clause must raise `condition failure`
+when no clause matches, with factorisation enabled or disabled. Backends must
+also preserve that behavior when lowering ordinary KL `cond` expressions.
+Run the [factoriser regressions](../tests/regressions/factoriser-cond.shen)
+alongside the normal kernel suite.
 
 ## 43.2
 

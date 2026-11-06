@@ -62,6 +62,10 @@ Building release packages on Windows currently requires the [7-zip](http://www.7
 
 ## Porting Shen
 
+Start with the [porting guide](doc/porting.md). For existing ports, read the
+[versioned upgrade guide](doc/port-upgrades.md) for each kernel release and the
+[performance guide](doc/port-performance.md) for optional backend improvements.
+
 Refer to `doc/` and [the wiki](https://github.com/Shen-Language/wiki/wiki) for instructions on building a certifiable port of Shen. If you get your port to run the standard test suite successfully, let us know on [the mailing list](https://groups.google.com/forum/#!forum/qilang) and your port will be certified.
 
 Happy Programming!

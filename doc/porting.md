@@ -4,6 +4,7 @@ The document you are reading is in the folder Porting Instructions. This documen
 
 ## Table of Contents
 
+  * [Maintaining an existing port](#maintaining-an-existing-port)
   * [What is in your Download](#what-is-in-your-download)
   * [Step by step guide](#step-by-step-guide)
   * [Setting Up the Primitive Instruction Set](#setting-up-the-primitive-instruction-set)
@@ -13,6 +14,32 @@ The document you are reading is in the folder Porting Instructions. This documen
   * [Tail Recursion Optimisation](#tail-recursion-optimisation)
   * [Currying and Partial Applications](#currying-and-partial-applications)
   * [Optimising your Port](#optimising-your-port)
+
+## Maintaining an existing port
+
+The instructions below include historical background. For each kernel upgrade,
+read the versioned [Port Upgrade Guide](port-upgrades.md) for required backend
+changes, initialization requirements, and optional optimization hooks. The
+[port performance guide](port-performance.md) covers representation and compiler
+choices across hosts.
+
+Use a complete set of generated KL files from one release, including bundled
+extensions and `stlib.kl`. Kernel helpers called by a new initializer may be
+absent from an older kernel. Compile/load the release as usual and retain its
+normal initialization sequence; upgrading does not generally require rebuilding
+KL from the Shen sources.
+
+For 43.3 and 43.4, signature and currying-adapter precompilation are shared
+kernel facilities. No new host primitives are required. Signature expansion is
+already in the release; adapter acceleration requires an appropriate binding
+policy. A port can process its own initializers with the released
+[expand-dynamic extension](extensions/expand-dynamic.md), supplying a predicate
+for host-specific syntax without adding that syntax to the kernel.
+
+Validate with `tests/runme.shen` from the `tests/` directory and
+`tests/extensions/runme.shen` from the release root, plus the port's own tests
+for raw redefinition, mutable aliases, and forward references. Measure startup
+and an independent workload before deleting an existing optimization.
 
 ## What is in Your Download
 
