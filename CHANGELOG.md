@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+
+- Namespaces can `export` names, optionally under other names, `import` another
+  namespace's names, renaming them, and `shadow` system names. References
+  through `use` prefixes and imports are checked against the owner's exports
+  when read; a namespace without exports stays open. A datatype label that is a
+  system name must be shadowed inside a namespace.
+
 ### Changed
 
 - `let`, `do` and the other right-associated macros (`@p`, `@v`, `append`,

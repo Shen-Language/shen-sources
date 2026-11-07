@@ -38,3 +38,26 @@
   (define second X -> (local.field X)))
 
 (namespace-tests.generated)
+
+\\ Exports, imports and shadowing.
+(shen.x.namespace namespace-tests.shape
+  (export make area side => width tag)
+  (define make S -> [tag S])
+  (define side [tag S] -> S)
+  (define area Shape -> (* (side Shape) (side Shape)))
+  (define hidden -> secret))
+
+(shen.x.namespace namespace-tests.facade
+  (use namespace-tests.shape => s)
+  (export s.make => square s.area => area))
+
+(shen.x.namespace namespace-tests.user
+  (use namespace-tests.shape => s)
+  (use namespace-tests.facade => f)
+  (import namespace-tests.shape make area => size)
+  (shadow length)
+  (define length Shape -> (s.width Shape))
+  (define sized X -> (size (make X)))
+  (define via-facade X -> (f.area (f.square X)))
+  (define measure X -> (length (s.make X)))
+  (define tag-of -> s.tag))

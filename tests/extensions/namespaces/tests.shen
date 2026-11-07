@@ -175,4 +175,80 @@
 (extension-tests.assert-error "with-externals accepts exactly one enclosed form"
   (freeze (read-from-string "(shen.x.namespace a (with-externals [foo] foo bar))")))
 
+(extension-tests.assert-equal "exported names resolve through a use prefix, renamed or not"
+  (namespace-tests.user.measure 3) 3)
+(extension-tests.assert-equal "imports bind bare names, renamed or not"
+  (namespace-tests.user.sized 3) 9)
+(extension-tests.assert-equal "a facade re-exports another namespace's names"
+  (namespace-tests.user.via-facade 4) 16)
+(extension-tests.assert-equal "exported data symbols keep their owner's identity"
+  (namespace-tests.user.tag-of) namespace-tests.shape.tag)
+(extension-tests.assert-equal "shadowing leaves the system function alone elsewhere"
+  (length [1 2 3]) 3)
+(extension-tests.assert-equal "a renamed export stands for the original definition"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (use namespace-tests.shape => s) (define ref -> [s.width s.make]))")
+  [[define namespace-tests.compare.ref -> [cons namespace-tests.shape.side [cons namespace-tests.shape.make []]]]])
+(extension-tests.assert-equal "imports resolve to their owner's symbols"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (import namespace-tests.shape make area => size) (define ref -> [make size]))")
+  [[define namespace-tests.compare.ref -> [cons namespace-tests.shape.make [cons namespace-tests.shape.area []]]]])
+(extension-tests.assert-equal "a facade's names stand for the original definitions"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (use namespace-tests.facade => f) (define ref -> [f.square f.area]))")
+  [[define namespace-tests.compare.ref -> [cons namespace-tests.shape.make [cons namespace-tests.shape.area []]]]])
+(extension-tests.assert-equal "owners without exports stay open"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (use namespace-tests.model => model) (define ref -> [model.anything]))")
+  [[define namespace-tests.compare.ref -> [cons namespace-tests.model.anything []]]])
+(extension-tests.assert-equal "shadowed names are qualified, others keep the system's"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (shadow length) (define ref -> [length map]))")
+  [[define namespace-tests.compare.ref -> [cons namespace-tests.compare.length [cons map []]]]])
+(extension-tests.assert-equal "a shadowed system name can label a datatype"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (shadow print) (datatype print X : number; ________ X : thing;))")
+  [namespace-tests.compare.print#type])
+(extension-tests.assert-equal "scoped externals take precedence over imports"
+  (read-from-string "(shen.x.namespace namespace-tests.compare (import namespace-tests.shape make) (define ref -> (cons (with-externals [make] make) [make])))")
+  [[define namespace-tests.compare.ref -> [cons make [cons namespace-tests.shape.make []]]]])
+(extension-tests.assert-equal "exported vocabularies stay unqualified"
+  (read-from-string "(shen.x.namespace namespace-tests.vocabulary-owner (externals [mov]) (export mov)) (shen.x.namespace namespace-tests.compare (import namespace-tests.vocabulary-owner mov) (define ref -> [mov local]))")
+  [[define namespace-tests.compare.ref -> [cons mov [cons namespace-tests.compare.local []]]]])
+(extension-tests.assert-equal "a shadowed name can be defined and exported"
+  (do (read-from-string "(shen.x.namespace namespace-tests.lists (shadow length) (export length) (define length -> zero))")
+      (get namespace-tests.lists shen.x.namespaces.exports))
+  [[length | namespace-tests.lists.length]])
+(extension-tests.assert-equal "reading a namespace again keeps its interface"
+  (do (read-from-string "(shen.x.namespace namespace-tests.lists (shadow length) (export length) (define length -> zero))")
+      (get namespace-tests.lists shen.x.namespaces.exports))
+  [[length | namespace-tests.lists.length]])
+(extension-tests.assert-equal "blocks add to an interface"
+  (do (read-from-string "(shen.x.namespace namespace-tests.lists (export total) (define total -> 0))")
+      (get namespace-tests.lists shen.x.namespaces.exports))
+  [[total | namespace-tests.lists.total] [length | namespace-tests.lists.length]])
+
+(extension-tests.assert-error "names an owner does not export are refused"
+  (freeze (read-from-string "(shen.x.namespace a (use namespace-tests.shape => s) (define f -> (s.hidden)))")))
+(extension-tests.assert-error "a renamed export is not public under its own name"
+  (freeze (read-from-string "(shen.x.namespace a (use namespace-tests.shape => s) (define f -> s.side))")))
+(extension-tests.assert-error "unexported names cannot be imported"
+  (freeze (read-from-string "(shen.x.namespace a (import namespace-tests.shape hidden))")))
+(extension-tests.assert-error "a local name is imported once"
+  (freeze (read-from-string "(shen.x.namespace a (import namespace-tests.shape make => x area => x))")))
+(extension-tests.assert-error "a name is not both shadowed and imported"
+  (freeze (read-from-string "(shen.x.namespace a (shadow make) (import namespace-tests.shape make))")))
+(extension-tests.assert-error "imported names cannot be defined"
+  (freeze (read-from-string "(shen.x.namespace a (import namespace-tests.shape make) (define make X -> X))")))
+(extension-tests.assert-error "imported names cannot also be external"
+  (freeze (read-from-string "(shen.x.namespace a (externals [make]) (import namespace-tests.shape make))")))
+(extension-tests.assert-error "re-exports through a prefix need a name of their own"
+  (freeze (read-from-string "(shen.x.namespace a (use namespace-tests.shape => s) (export s.make))")))
+(extension-tests.assert-error "a public name stands for one thing"
+  (freeze (read-from-string "(shen.x.namespace a (export b => x c => x))")))
+(extension-tests.assert-error "datatype labels cannot be system names"
+  (freeze (read-from-string "(shen.x.namespace a (datatype print X : number; ________ X : thing;))")))
+(extension-tests.assert-error "import needs a non-variable owner"
+  (freeze (read-from-string "(shen.x.namespace a (import Owner f))")))
+(extension-tests.assert-error "a rename needs a name after =>"
+  (freeze (read-from-string "(shen.x.namespace a (export f =>))")))
+(extension-tests.assert-error "variables cannot be shadowed"
+  (freeze (read-from-string "(shen.x.namespace a (shadow X))")))
+(extension-tests.assert-error "exports must precede the body"
+  (freeze (read-from-string "(shen.x.namespace a (define f -> 1) (export f))")))
+
 (shen.unregister-source-form shen.x.namespace)
