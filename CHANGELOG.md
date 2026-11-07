@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- `let`, `do` and the other right-associated macros (`@p`, `@v`, `append`,
+  `and`, `or`, `+`, `*`) nest all their arguments in one macro pass, rather
+  than one or two per pass over the whole form. The expansion is the same.
+- `shen.alpha-convert` renames variables in one pass with a list of pending
+  renamings, rather than one `shen.beta` pass over the body per binding.
+  Gensyms are made in the same order.
+- The reader collects the pieces of a string literal in a new internal
+  `shen.<strpieces>`, and `shen.<strcontents>` joins neighbours in rounds, in
+  O(n log n), rather than prepending each character to the rest of the
+  string. `shen.<str>` and `shen.<strcontents>` still return strings. `shen.bytes->string` joins the same way, and `shen.str->bytes`
+  reads past the first 64 characters by index with `pos`, rather than
+  copying the rest of the string with `tlstr` for every character.
+
 ## [43.4] - 2026-11-06
 
 ### Added
