@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+
+- `let`, `do` and the other right-associated macros (`@p`, `@v`, `append`,
+  `and`, `or`, `+`, `*`) nest all their arguments in one macro pass, rather
+  than one or two per pass over the whole form. The expansion is the same.
+
 ## [43.4] - 2026-11-06
 
 ### Added
