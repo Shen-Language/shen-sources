@@ -71,8 +71,20 @@
                  S-exprs))
 
 (define str->bytes
-  "" -> []
-  (@s S Ss) -> [(string->n S) | (str->bytes Ss)])
+  String -> (str->bytes-h String 64)  where (string? String))
+
+\\ tlstr copies the rest of the string on some ports, so past the first 64
+\\ characters the bytes are read by index instead.
+(define str->bytes-h
+  "" _ -> []
+  String 0 -> (index->bytes String 0 [])
+  (@s S Ss) N -> [(string->n S) | (str->bytes-h Ss (- N 1))])
+
+(define index->bytes
+  String N Bytes -> (let Byte (string->byte String N)
+                      (if (= Byte eos)
+                          (reverse Bytes)
+                          (index->bytes String (+ N 1) [Byte | Bytes]))))
 
 (define read
   Stream -> (hd (read-loop Stream (my-read-byte Stream) [] (/. X (whitespace? X)))))
@@ -115,8 +127,20 @@
   Bytes -> (set *it* (bytes->string Bytes)))
 
 (define bytes->string
-    [] -> ""
-    [Byte | Bytes] -> (cn (n->string Byte) (bytes->string Bytes)))
+  [] -> ""
+  [Byte | Bytes] -> (join-strings (map (/. B (n->string B)) [Byte | Bytes])))
+
+\\ Concatenating neighbours in rounds copies each character once per round,
+\\ where cn onto a growing string copies it once per piece.
+(define join-strings
+  [] -> ""
+  [String] -> String
+  Strings -> (join-strings (reverse (join-pairs Strings []))))
+
+(define join-pairs
+  [S1 S2 | Strings] Joined -> (join-pairs Strings [(cn S1 S2) | Joined])
+  [S] Joined -> [S | Joined]
+  [] Joined -> Joined)
 
 (define process-sexprs
    S-exprs -> (let Unpack&Expand (unpackage&macroexpand S-exprs)
@@ -322,8 +346,11 @@
   34 := skip;)
 
 (defcc <strcontents>
-  <strc> <strcontents> := (cn <strc> <strcontents>);
-  <e> := "";)
+  <strpieces> := (join-strings <strpieces>);)
+
+(defcc <strpieces>
+  <strc> <strpieces> := [<strc> | <strpieces>];
+  <e> := [];)
 
 (defcc <strc>
    <control>;

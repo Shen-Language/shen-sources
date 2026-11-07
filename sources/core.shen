@@ -243,14 +243,34 @@
   X V Y -> Y)
 
 (define alpha-convert
-  [lambda X Y] -> (let NewV (gensym (protect Z))
-                       Alpha [lambda NewV (beta X NewV Y)]
-                       (map (/. Z (alpha-convert Z)) Alpha))
-  [let X Y Z]  -> (let NewV (gensym (protect W))
-                       Alpha [let NewV Y (beta X NewV Z)]
-                       (map (/. Z (alpha-convert Z)) Alpha))
-  [X | Y]      -> (map (/. Z (alpha-convert Z)) [X | Y])
-  X -> X)
+  X -> (alpha-convert-h X []))
+
+\* Renames is a list of [Variable | NewV], innermost binding first, so one
+   pass renames each variable to its nearest binder. A binder that is not a
+   variable applies the pending renamings with beta, as alpha-convert used to. *\
+(define alpha-convert-h
+  [lambda X Y] Renames -> (let NewV (gensym (protect Z))
+                            [lambda NewV (alpha-convert-h Y [[X | NewV] | Renames])])
+                                                                where (variable? X)
+  [let X Y Z] Renames  -> (let NewV (gensym (protect W))
+                               Value (alpha-convert-h Y Renames)
+                            [let NewV Value (alpha-convert-h Z [[X | NewV] | Renames])])
+                                                                where (variable? X)
+  [lambda X Y] []      -> (let NewV (gensym (protect Z))
+                               Alpha [lambda NewV (beta X NewV Y)]
+                            (map (/. Z (alpha-convert-h Z [])) Alpha))
+  [let X Y Z] []       -> (let NewV (gensym (protect W))
+                               Alpha [let NewV Y (beta X NewV Z)]
+                            (map (/. Z (alpha-convert-h Z [])) Alpha))
+  [lambda X Y] Renames -> (alpha-convert-h (alpha-rename [lambda X Y] Renames) [])
+  [let X Y Z] Renames  -> (alpha-convert-h (alpha-rename [let X Y Z] Renames) [])
+  [X | Y] Renames      -> (map (/. Z (alpha-convert-h Z Renames)) [X | Y])
+  X Renames            -> (let Rename (assoc X Renames)
+                            (if (empty? Rename) X (tl Rename))))
+
+(define alpha-rename
+  X [] -> X
+  X [[V | NewV] | Renames] -> (alpha-rename (beta V NewV X) Renames))
 
 (define kl-body
    Rules Parameters -> (map (/. R (triple-stack [] (fst R) Parameters
