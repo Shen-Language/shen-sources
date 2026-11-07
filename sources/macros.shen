@@ -81,7 +81,7 @@
               F))
 
 (define process-let
-  [let W X Y Z | Rest] -> [let W X [let Y Z | Rest]]
+  [let W X Y Z | Rest] -> [let W X (process-let [let Y Z | Rest])]
   X -> X)
 
 (define process-@s
@@ -145,7 +145,7 @@
     X -> X)
 
 (define process-assoc
-  [F W X Y | Z] -> [F W [F X Y | Z]]
+  [F W X Y | Z] -> [F W (process-assoc [F X Y | Z])]
   X -> X)
 
 (define make-uppercase
