@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
   `and`, `or`, `+`, `*`) nest all their arguments in one macro pass, rather
   than one or two per pass over the whole form. The expansion is the same.
 
+### Fixed
+
+- The portable dictionary works at size 1, where its first access went past the
+  end, and with a `hash` that gives its limit. It also uses every bucket, where
+  the first stayed empty, so a dictionary of size 2 was one list. The order of
+  `dict-fold`, `dict-keys` and `dict-values` changes for that dictionary.
+
 ## [43.4] - 2026-11-06
 
 ### Added

@@ -38,8 +38,17 @@
                                 (dict-count->
                                  Dict (+ Diff (dict-count Dict)))))
 
+\\ Buckets count from 0. The kernel's hash counts from 1 and stays below its limit, so a limit
+\\ one past the capacity reaches them all, but a port's hash may also give 0 or the limit.
+(define dict-index
+  Dict Key -> (let Capacity (dict-capacity Dict)
+                   Hash (hash Key (+ 1 Capacity))
+                (if (and (> Hash 0) (<= Hash Capacity))
+                    (- Hash 1)
+                    0)))
+
 (define dict->
-  Dict Key Value -> (let N (hash Key (dict-capacity Dict))
+  Dict Key Value -> (let N (dict-index Dict Key)
                          Bucket (<-dict-bucket Dict N)
                          NewBucket (assoc-set Key Value Bucket)
                          Change (dict-bucket-> Dict N NewBucket)
@@ -47,7 +56,7 @@
                       Value))
 
 (define <-dict
-  Dict Key -> (let N (hash Key (dict-capacity Dict))
+  Dict Key -> (let N (dict-index Dict Key)
                    Bucket (<-dict-bucket Dict N)
                    Result (assoc Key Bucket)
                 (if (empty? Result)
@@ -55,7 +64,7 @@
                     (tl Result))))
 
 (define dict-rm
-  Dict Key -> (let N (hash Key (dict-capacity Dict))
+  Dict Key -> (let N (dict-index Dict Key)
                    Bucket (<-dict-bucket Dict N)
                    NewBucket (assoc-rm Key Bucket)
                    Change (dict-bucket-> Dict N NewBucket)
