@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [43.6] - 2026-11-09
+
 ### Fixed
 
 - A list pattern as an argument of a custom pattern, such as `(two [A | _] B)`,
@@ -822,7 +824,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.5...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.6...HEAD
+[43.6]: https://github.com/Shen-Language/shen-sources/compare/shen-43.5...shen-43.6
 [43.5]: https://github.com/Shen-Language/shen-sources/compare/shen-43.4...shen-43.5
 [43.4]: https://github.com/Shen-Language/shen-sources/compare/shen-43.3...shen-43.4
 [43.3]: https://github.com/Shen-Language/shen-sources/compare/shen-43.2...shen-43.3

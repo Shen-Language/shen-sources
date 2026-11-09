@@ -12,6 +12,16 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.6
+
+### Programmable pattern matching
+
+Ports bundling the programmable pattern-matching extension should regenerate
+`extension-programmable-pattern-matching.kl`. A list pattern among a custom
+pattern's arguments now compiles, and handlers see it as compiled code does:
+`(two [A | _] B)` reaches a handler as `[two [cons A _] B]`, where it was
+`[two [A | _] B]`. Handlers that only bind their arguments need no change.
+
 ## 43.5
 
 ### Namespace interfaces and syntax annotation
