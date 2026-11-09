@@ -12,14 +12,42 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
-### Namespace syntax annotation
+## 43.5
+
+### Namespace interfaces and syntax annotation
 
 Ports bundling namespaces should regenerate `extension-namespaces.kl` and keep
-calling `shen.x.namespaces.initialise`. It now preserves `protect` forms and
-supports optional syntax annotators and declaration name enumerators, registered
-before reading their consumers. Existing namespace syntax is unchanged. There
-are no new host primitives or initialization phases. See
-[namespaces](extensions/namespaces.md#syntax-annotation-hooks) for the contracts.
+calling `shen.x.namespaces.initialise`. The extension adds exports, imports and
+shadowing, and checks references against declared interfaces. Namespaces without
+exports remain open. See [namespaces](extensions/namespaces.md) for the interface
+rules.
+
+The qualifier also preserves `protect` forms and supports optional syntax
+annotators and declaration name enumerators, registered before reading their
+consumers. These let DSLs preserve literal syntax while qualifying expressions,
+and check generated definitions against imports. There are no new host
+primitives or initialization phases. See
+[syntax annotation hooks](extensions/namespaces.md#syntax-annotation-hooks) for
+the contracts.
+
+### Portable dictionary buckets
+
+Replace the generated `dict.kl` when using the portable dictionary. The bucket
+index now reaches every bucket, works at capacity one and accepts a host hash
+that returns either endpoint of its documented range. Dictionary traversal
+order changes, including `dict-fold`, `dict-keys` and `dict-values`.
+
+Rebuild the initial image when adopting the updated portable dictionary code.
+Existing portable dictionaries must be reconstructed rather than reused with
+the new bucket mapping. Ports overriding dictionary operations should check
+that insertion, lookup and removal use a consistent index.
+
+### Polyadic macro expansion
+
+Regenerate `macros.kl` to use one-pass right association for long `let`, `do`,
+`@p`, `@v`, `append`, `and`, `or`, `+` and `*` forms. Their expanded forms are
+unchanged. Port macro overrides can be checked against
+`tests/regressions/long-forms.shen`.
 
 ## 43.4
 
