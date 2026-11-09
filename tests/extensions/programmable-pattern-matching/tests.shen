@@ -48,6 +48,31 @@
   [1 2 3])
 
 (extension-tests.assert-equal
+  "list pattern as a custom pattern's argument"
+  [(ppm.match-list-argument (@p [1 2] 3)) (ppm.match-list-argument (@p [] 3))]
+  [[1 3] no])
+
+(extension-tests.assert-equal
+  "literal list pattern as a custom pattern's argument"
+  [(ppm.match-literal-list-argument (@p [1 2] 3)) (ppm.match-literal-list-argument (@p [1] 3))]
+  [[1 2 3] no])
+
+(extension-tests.assert-equal
+  "list pattern inside a nested custom pattern"
+  (ppm.match-nested-list-argument (@p (@p [1 2] 3) 4))
+  [1 3 4])
+
+(extension-tests.assert-equal
+  "custom pattern inside a list pattern"
+  (ppm.match-custom-in-list [(@p 1 2) 3])
+  [1 2])
+
+(extension-tests.assert-equal
+  "typed custom pattern with a list argument"
+  [(ppm.match-typed-list-argument (@p [5 6] "x")) (ppm.match-typed-list-argument (@p [] "x"))]
+  [5 0])
+
+(extension-tests.assert-equal
   "typed custom pattern uses its surface form"
   (ppm.match-typed-surface (@p 1 "x"))
   true)

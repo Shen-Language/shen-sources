@@ -18,3 +18,8 @@
   { symbol --> boolean }
   (nothing) -> true
   _ -> false)
+
+(define ppm.match-typed-list-argument
+  { ((list number) * string) --> number }
+  (first [X | _]) -> X
+  _ -> 0)

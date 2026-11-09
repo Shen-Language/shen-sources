@@ -34,12 +34,17 @@
   X -> X)
 
 (define surface-application
-  [[fn F] X] -> [F (surface-pattern X)]
+  [[fn F] X] -> [F (surface-argument X)]
   [F X] -> (let Application (surface-application F)
              (if (= Application (fail))
                  (fail)
-                 (append Application [(surface-pattern X)])))
+                 (append Application [(surface-argument X)])))
   _ -> (fail))
+
+\\ An argument keeps its list patterns as (cons H T), which pattern compilation takes.
+(define surface-argument
+  [cons H T] -> [cons (surface-argument H) (surface-argument T)]
+  Pattern -> (surface-pattern Pattern))
 
 (define compile-pattern
   Patt Handlers OnFail

@@ -76,6 +76,9 @@ handler's name.
 - Datatype rules for typed functions describe custom patterns in their surface
   form. The compiler's internal custom-pattern marker is not part of the type
   language.
+- A handler sees a custom pattern as an application, `[two A B]`, but list
+  patterns among its arguments keep their compiled form: `(two [A | _] B)`
+  reaches the handler as `[two [cons A _] B]`.
 - It is not mandatory to bind all the variables in the pattern, some of the inputs may be used by the pattern handler to decide how such pattern should be compiled.
 - It is not mandatory to register a test expression, but in such cases matching of values with such patterns will always succeed. Such kind of patterns are only safe to use in typed functions.
 - The order of calling the `AddTest` and `Bind` functions doesn't matter.

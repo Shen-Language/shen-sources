@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+
+- A list pattern as an argument of a custom pattern, such as `(two [A | _] B)`,
+  compiles. The programmable pattern-matching extension rewrote list arguments
+  into surface syntax, `[A | _]`, which pattern compilation refuses, and failed
+  with "not a legitimate constructor" when the custom pattern's head had no
+  known arity. Arguments now keep their list patterns as `(cons A _)`, as
+  handlers see them too.
+
 ## [43.5] - 2026-11-09
 
 ### Added
