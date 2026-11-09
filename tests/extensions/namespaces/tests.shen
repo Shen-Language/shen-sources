@@ -251,4 +251,125 @@
 (extension-tests.assert-error "exports must precede the body"
   (freeze (read-from-string "(shen.x.namespace a (define f -> 1) (export f))")))
 
+\\ Syntax annotation is separate from expansion and receives raw arguments.
+(set namespace-tests.*syntax-calls* 0)
+(set namespace-tests.*syntax-input* [])
+
+(define namespace-tests.annotate
+  [namespace-tests.labelled Label Expression]
+  -> (do (set namespace-tests.*syntax-calls*
+           (+ 1 (value namespace-tests.*syntax-calls*)))
+         (set namespace-tests.*syntax-input*
+           [namespace-tests.labelled Label Expression])
+         [namespace-tests.labelled [protect Label] Expression]))
+
+(define namespace-tests.introduced
+  [namespace-tests.declaration Name Field]
+  -> [Name (intern (cn (str Name) (cn "." (str Field))))])
+
+(define namespace-tests.annotated
+  Form
+  -> (shen.x.namespaces.qualify
+       Form "namespace-tests.scope"
+       (@p [[dsl | namespace-tests]]
+           [[size | namespace-tests.shape.area]])
+       []))
+
+(extension-tests.assert-equal "syntax registration returns its canonical head"
+  (shen.x.namespaces.register-syntax namespace-tests.labelled (fn namespace-tests.annotate))
+  namespace-tests.labelled)
+(extension-tests.assert-equal "use aliases select the annotator before arguments are qualified"
+  (namespace-tests.annotated [dsl.labelled size [size item]])
+  (@p [namespace-tests.labelled [protect size] [namespace-tests.shape.area namespace-tests.scope.item]] [item]))
+(extension-tests.assert-equal "the annotator sees a resolved head and untouched arguments"
+  (value namespace-tests.*syntax-input*) [namespace-tests.labelled size [size item]])
+(extension-tests.assert-equal "an annotator runs once for its form"
+  (value namespace-tests.*syntax-calls*) 1)
+(extension-tests.assert-equal "import aliases also select the canonical annotator"
+  (fst (shen.x.namespaces.qualify [build size [size item]] "namespace-tests.scope"
+         (@p [] [[build | namespace-tests.labelled] [size | namespace-tests.shape.area]]) []))
+  [namespace-tests.labelled [protect size] [namespace-tests.shape.area namespace-tests.scope.item]])
+(extension-tests.assert-equal "an imported head is not qualified a second time"
+  (fst (shen.x.namespaces.qualify [build label 42] "namespace-tests.scope"
+         (@p [[namespace-tests | missing]] [[build | namespace-tests.labelled]]) []))
+  [namespace-tests.labelled [protect label] 42])
+
+(defmacro namespace-tests.labelled-macro
+  [namespace-tests.labelled [protect Label] Expression] -> [cons Label [cons Expression []]])
+(extension-tests.assert-equal "ordinary macros consume annotations after expression qualification"
+  (read-from-string "(shen.x.namespace namespace-tests.scope (import namespace-tests labelled => field) (import namespace-tests.shape area => size) (define example X -> (field size (size X))))")
+  [[define namespace-tests.scope.example X -> [cons size [cons [namespace-tests.shape.area X] []]]]])
+(extension-tests.assert-equal "protected variables remain protected for later free-variable checks"
+  (read-from-string "(shen.x.namespace namespace-tests.scope (define free X -> (protect Y)))")
+  [[define namespace-tests.scope.free X -> [protect (protect Y)]]])
+(extension-tests.assert-equal "protected compound syntax is left intact"
+  (namespace-tests.annotated [protect [dsl.labelled size [size item]]])
+  (@p [protect [dsl.labelled size [size item]]] []))
+(extension-tests.assert-equal "protection does not escape into sibling expressions"
+  (fst (namespace-tests.annotated [cons [protect size] size]))
+  [cons [protect size] namespace-tests.shape.area])
+(extension-tests.assert-equal "scoped externals still apply to annotated value expressions"
+  (fst (namespace-tests.annotated [with-externals [cons size []] [dsl.labelled size [size item]]]))
+  [namespace-tests.labelled [protect size] [size namespace-tests.scope.item]])
+(extension-tests.assert-equal "a shadowed head does not select the original annotator"
+  (fst (shen.x.namespaces.qualify [build size] "namespace-tests.scope"
+         (@p [] [[build | namespace-tests.scope.build]]) []))
+  [namespace-tests.scope.build namespace-tests.scope.size])
+(extension-tests.assert-equal "initialising again preserves annotation registrations"
+  (do (shen.x.namespaces.initialise)
+      (fst (namespace-tests.annotated [dsl.labelled size 42])))
+  [namespace-tests.labelled [protect size] 42])
+
+(define namespace-tests.changed-head
+  _ -> [namespace-tests.other])
+(define namespace-tests.improper-form
+  _ -> [namespace-tests.invalid | tail])
+(define namespace-tests.annotation-error
+  _ -> (simple-error "annotation failed"))
+
+(shen.x.namespaces.register-syntax namespace-tests.invalid (fn namespace-tests.changed-head))
+(extension-tests.assert-error "annotation must preserve the resolved head"
+  (freeze (namespace-tests.annotated [dsl.invalid])))
+(shen.x.namespaces.register-syntax namespace-tests.invalid (fn namespace-tests.improper-form))
+(extension-tests.assert-error "annotation must return a proper form"
+  (freeze (namespace-tests.annotated [dsl.invalid])))
+(shen.x.namespaces.register-syntax namespace-tests.invalid (fn namespace-tests.annotation-error))
+(extension-tests.assert-equal "annotation errors propagate unchanged"
+  (trap-error (namespace-tests.annotated [dsl.invalid]) (/. E (error-to-string E)))
+  "annotation failed")
+(extension-tests.assert-error "syntax registration requires a non-variable symbol"
+  (freeze (shen.x.namespaces.register-syntax 42 (fn namespace-tests.annotate))))
+
+(extension-tests.assert-equal "definition registration returns its canonical head"
+  (shen.x.namespaces.register-definitions namespace-tests.declaration (fn namespace-tests.introduced))
+  namespace-tests.declaration)
+(extension-tests.assert-error "generated definitions cannot replace imported aliases"
+  (freeze (shen.x.namespaces.qualify [dsl.declaration row value] "namespace-tests.scope"
+            (@p [[dsl | namespace-tests]] [[row.value | namespace-tests.shape.area]]) [])))
+(extension-tests.assert-error "declaration checks also dispatch through imported heads"
+  (freeze (shen.x.namespaces.qualify [build row value] "namespace-tests.scope"
+            (@p [] [[build | namespace-tests.declaration] [row.value | namespace-tests.shape.area]]) [])))
+(extension-tests.assert-equal "generated definitions may use explicitly shadowed names"
+  (fst (shen.x.namespaces.qualify [dsl.declaration row value] "namespace-tests.scope"
+         (@p [[dsl | namespace-tests]] [[row.value | namespace-tests.scope.row.value]]) []))
+  [namespace-tests.declaration namespace-tests.scope.row value])
+
+(define namespace-tests.invalid-names _ -> [42])
+(shen.x.namespaces.register-definitions namespace-tests.declaration (fn namespace-tests.invalid-names))
+(extension-tests.assert-error "definition enumerators must return literal names"
+  (freeze (namespace-tests.annotated [dsl.declaration row value])))
+(extension-tests.assert-equal "definition unregistration returns its canonical head"
+  (shen.x.namespaces.unregister-definitions namespace-tests.declaration)
+  namespace-tests.declaration)
+(extension-tests.assert-equal "unregistering a declaration removes its checks"
+  (fst (namespace-tests.annotated [dsl.declaration row value]))
+  [namespace-tests.declaration namespace-tests.scope.row value])
+(extension-tests.assert-equal "syntax unregistration returns its canonical head"
+  (shen.x.namespaces.unregister-syntax namespace-tests.labelled)
+  namespace-tests.labelled)
+(extension-tests.assert-equal "unregistered forms use ordinary namespace qualification"
+  (fst (namespace-tests.annotated [dsl.labelled size 42]))
+  [namespace-tests.labelled namespace-tests.shape.area 42])
+(shen.x.namespaces.unregister-syntax namespace-tests.invalid)
+
 (shen.unregister-source-form shen.x.namespace)

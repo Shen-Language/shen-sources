@@ -132,6 +132,52 @@ A datatype label that is a system name would stay global, and a second namespace
 using it would replace the first one's rules. Reading such a datatype fails
 unless its label is shadowed, imported or external.
 
+## Syntax annotation hooks
+
+A DSL can preserve literal syntax without making its whole vocabulary external.
+Register its annotator before reading consumers:
+
+```shen
+(define example.annotate-field
+  [example.field Label Expression]
+  -> [example.field [protect Label] Expression])
+
+(shen.x.namespaces.register-syntax
+  example.field (fn example.annotate-field))
+```
+
+Namespaces resolves a form's head first, including `use` prefixes, imports and
+shadowing. A registered annotator receives that canonical head and the original,
+unqualified arguments. It returns one proper form with the same head, adding
+`protect` around literal syntax. Namespaces then qualifies the arguments in the
+caller's scope. It does not resolve the returned head again. Unregistered forms
+keep their ordinary behavior; this does not change macro expansion order.
+
+For example, `(field size (size X))`, with `field` imported from `example`,
+keeps its first `size` literal while resolving the function call normally.
+Protection may enclose an entire field descriptor or other compound syntax.
+`(protect X)` survives this pass intact, so later free-variable checking can
+still honor it. A DSL expander should unwrap protection only in the literal
+positions it consumes, leaving expression arguments alone. System punctuation
+such as `<-` and `;` already stays unchanged and needs no wrapper.
+
+`(shen.x.namespaces.unregister-syntax Head)` removes an annotator. Registration
+and removal return `Head`; registering again replaces the previous handler.
+Heads must be non-variable symbols. Handler errors propagate; returning a
+changed head or an improper form raises. Registrations survive another call to
+`initialise` and are ordinary image state.
+
+A declaration which generates definitions can separately register a name
+enumerator with `(shen.x.namespaces.register-definitions Head Names)`. Like an
+annotator, `Names` receives the resolved head and raw arguments. It returns a
+proper list of the literal names the declaration introduces, in their original
+spelling. These names are checked against imports before qualification, so a
+generated accessor cannot silently conflict with an imported alias. This hook
+does not expand the declaration or register its schema. Remove it with
+`(shen.x.namespaces.unregister-definitions Head)`; registration and removal
+return `Head`. Both hooks are registered once per declaration syntax, rather
+than once per declared type.
+
 ## Scoped externals
 
 Within a namespace, `with-externals` adds names for one enclosed form. Its first

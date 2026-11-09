@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Added
 
+- Namespace syntax annotators can protect literal parts of DSL forms while
+  expressions keep ordinary name resolution. Declaration name enumerators
+  also check generated definitions against imported aliases.
 - Namespaces can `export` names, optionally under other names, `import` another
   namespace's names, renaming them, and `shadow` system names. References
   through `use` prefixes and imports are checked against the owner's exports

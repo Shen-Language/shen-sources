@@ -6,7 +6,72 @@
 (package shen.x.namespaces [use => externals with-externals import export shadow]
 
 (define initialise
-  -> (shen.register-source-form shen.x.namespace (fn expand)))
+  -> (do (handlers *syntax-handlers*)
+         (handlers *definition-handlers*)
+         (shen.register-source-form shen.x.namespace (fn expand))))
+
+\\ Registrations survive initialise and saved images, as source-form handlers do.
+(define handlers
+  Key -> (trap-error (value Key) (/. E (set Key []))))
+
+(define register-syntax
+  Head Transformer -> (register Head Transformer *syntax-handlers*))
+
+(define unregister-syntax
+  Head -> (unregister Head *syntax-handlers*))
+
+(define register-definitions
+  Head Names -> (register Head Names *definition-handlers*))
+
+(define unregister-definitions
+  Head -> (unregister Head *definition-handlers*))
+
+(define register
+  Head Transformer Key
+  -> (do (set Key (shen.update-assoc Head Transformer (handlers Key)))
+         Head)
+    where (name? Head)
+  Head _ _ -> (error "invalid namespace syntax head: ~S~%" Head))
+
+(define unregister
+  Head Key
+  -> (do (set Key (remove (assoc Head (handlers Key))
+                         (handlers Key)))
+         Head))
+
+\\ Only the head has been resolved here. Arguments still have their original syntax.
+(define syntax-arguments
+  Head Args
+  -> (let Entry (assoc Head (value *syntax-handlers*))
+       (if (empty? Entry)
+           Args
+           (let Transformer (tl Entry)
+             (syntax-tail Head (Transformer [Head | Args]))))))
+
+(define syntax-tail
+  Head [Head | Args] -> Args where (shen.source-form-list? Args)
+  Head Form
+  -> (error
+       "namespace syntax handler for ~S must preserve its head and return a proper form: ~S~%"
+       Head Form))
+
+\\ Declarations may introduce more names than the one written after their head.
+\\ Their name enumerator has the same input convention as the syntax annotator.
+(define check-introduced
+  Head Args Owner (@p _ Imports)
+  -> (let Entry (assoc Head (value *definition-handlers*))
+       (if (empty? Entry)
+           skip
+           (let Names (tl Entry)
+             (check-names (external-symbols (Names [Head | Args]))
+                          Owner Imports)))))
+
+(define check-names
+  [] _ _ -> skip
+  [Name | Names] Owner Imports
+  -> (if (imported? Name Owner Imports)
+         (error "~S is imported and cannot be defined here~%" Name)
+         (check-names Names Owner Imports)))
 
 (define expand
   [shen.x.namespace Name | Forms] -> (header Name Forms [] [] [] []) where (name? Name)
@@ -163,10 +228,17 @@
 \\ Scoped externals affect this walk only; they are not published as externals.
 \\ They take precedence over imports and use prefixes, as namespace externals do.
 (define qualify
+  [protect X] _ _ _ -> (@p [protect X] [])
   [with-externals Expression Form] Owner Scope Externals ->
     (qualify Form Owner Scope (union (external-symbols (eval Expression)) Externals))
   [with-externals | Args] _ _ _ -> (error "invalid with-externals: ~S~%" Args)
-  [X | Xs] Owner Scope Externals -> (qualify-list [X | Xs] Owner Scope Externals)
+  [Head | Args] Owner Scope Externals
+  -> (let QualifiedHead (qualify Head Owner Scope Externals)
+          Check (check-introduced (fst QualifiedHead) Args Owner Scope)
+          Arguments (syntax-arguments (fst QualifiedHead) Args)
+          QualifiedArgs (qualify-list Arguments Owner Scope Externals)
+       (@p [(fst QualifiedHead) | (fst QualifiedArgs)]
+           (union (snd QualifiedHead) (snd QualifiedArgs))))
   X _ (@p _ Imports) Externals -> (@p (tl (assoc X Imports)) [])
     where (and (cons? (assoc X Imports)) (not (element? X Externals)))
   X Owner (@p Uses _) Externals ->

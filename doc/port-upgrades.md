@@ -12,6 +12,15 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+### Namespace syntax annotation
+
+Ports bundling namespaces should regenerate `extension-namespaces.kl` and keep
+calling `shen.x.namespaces.initialise`. It now preserves `protect` forms and
+supports optional syntax annotators and declaration name enumerators, registered
+before reading their consumers. Existing namespace syntax is unchanged. There
+are no new host primitives or initialization phases. See
+[namespaces](extensions/namespaces.md#syntax-annotation-hooks) for the contracts.
+
 ## 43.4
 
 ### Shared initializer expansion
