@@ -109,7 +109,8 @@
 \\ Build configuration.
 
 (define make-stlib.core-install-plan
-  -> [[load "Symbols/symbols1.shen"]
+  -> [[load "Data/data.shen"]
+      [load "Symbols/symbols1.shen"]
       [tc +]
       [load "Symbols/symbols2.shen"]
       [tc -]
@@ -468,13 +469,7 @@
        done))
 
 (define make-stlib.final-systemf-expression
-  -> [let (protect External) [external stlib]
-        [let (protect ExternalF)
-             [filter [lambda (protect X) [> [arity (protect X)] -1]]
-                     (protect External)]
-          [let (protect SystemfResult)
-               [map [fn systemf] (protect ExternalF)]
-            ok]]])
+  -> [map [fn systemf] [external stlib]])
 
 (define make-stlib.write-output
   File

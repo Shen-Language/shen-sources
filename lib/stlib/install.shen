@@ -1,4 +1,5 @@
-
+(tc -)
+(load "Data/data.shen")
 (load "Symbols/symbols1.shen")
 (tc +)
 (load "Symbols/symbols2.shen")
@@ -38,11 +39,7 @@
 (tc -)
 (load "package-stlib.shen")
 
-\\ all external functions of the standard library are declared as system functions
-(let External  (external stlib)
-     ExternalF (filter (/. X (> (arity X) -1)) External)
-     Systemf   (map (fn systemf) ExternalF)
-     ok)
+(map (fn systemf) (external stlib))
 
 (preclude-all-but [])
 (set shen.*userdefs* [])

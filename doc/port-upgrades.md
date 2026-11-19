@@ -12,6 +12,17 @@ listed under [Unreleased](#unreleased), as in the changelog.
 
 ## Unreleased
 
+## 43.7
+
+### Standard library exports
+
+Replace the generated kernel and `stlib.kl` together. The StLib initializer
+registers the S43 export set with `systemf`, including `to`, `stop`, `done`,
+`array`, `errout`, `nthhd`, and `=r`. In source that uses these names for
+local definitions, qualify the definitions and their references, or use
+`shadow` in a namespace. `read-data` and `eval-data` are also public system
+functions when StLib is loaded.
+
 ## 43.6
 
 ### Programmable pattern matching

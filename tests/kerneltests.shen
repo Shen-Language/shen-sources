@@ -1,5 +1,23 @@
 (maxinferences 1e7)
 
+(if (package? stlib)
+    (report "StLib package syntax"
+      (let Forms (read-from-string "(package stlib-regression []
+        (define pages N
+          -> (let _ (set *pages* [])
+                  _ (for Page = 1 to N (set *pages* [Page | (value *pages*)]))
+                  (reverse (value *pages*)))))")
+           Loaded (map (fn eval) Forms)
+        ((fn stlib-regression.pages) 3))
+      [1 2 3]
+
+      (map (fn arity) [read-data eval-data])
+      [1 1]
+
+      (map (/. Name (element? Name (external shen))) [to done constructor end])
+      [true true false false])
+    skip)
+
 (report "S43.1 public functions"
 
   (map (fn arity) [char-stream? read-unit-string write-string])

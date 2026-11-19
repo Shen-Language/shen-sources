@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [43.7] - 2026-11-19
+
+### Fixed
+
+- StLib registers its S43 exports during source and precompiled installation.
+  Syntax tokens such as `to` keep their spelling inside packages, so
+  `(for N = 1 to Pages ...)` expands there.
+
+### Added
+
+- StLib installs and exports `read-data` and `eval-data`.
+
 ## [43.6] - 2026-11-09
 
 ### Fixed
@@ -824,7 +836,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - y-or-n? fixed
 - compiler warnings suppressed in CLisp
 
-[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.6...HEAD
+[Unreleased]: https://github.com/Shen-Language/shen-sources/compare/shen-43.7...HEAD
+[43.7]: https://github.com/Shen-Language/shen-sources/compare/shen-43.6...shen-43.7
 [43.6]: https://github.com/Shen-Language/shen-sources/compare/shen-43.5...shen-43.6
 [43.5]: https://github.com/Shen-Language/shen-sources/compare/shen-43.4...shen-43.5
 [43.4]: https://github.com/Shen-Language/shen-sources/compare/shen-43.3...shen-43.4
